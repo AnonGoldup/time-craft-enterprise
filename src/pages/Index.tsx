@@ -1,9 +1,9 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Calendar, Users, BarChart3, Settings, Plus, Play, Pause } from "lucide-react";
+import { Clock, Calendar, Users, BarChart3, Settings, Plus, Play, Pause, Shield } from "lucide-react";
+import { Link } from "react-router-dom";
 import TimeEntryForm from "@/components/TimeEntryForm";
 import WeeklySummary from "@/components/WeeklySummary";
 import ProjectCard from "@/components/ProjectCard";
@@ -40,6 +40,15 @@ const Index = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
+              <Link to="/manager-approval">
+                <Button
+                  variant="outline"
+                  className="border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white"
+                >
+                  <Shield className="h-4 w-4 mr-2" />
+                  Manager Portal
+                </Button>
+              </Link>
               <Button
                 variant={isClockingIn ? "destructive" : "default"}
                 onClick={() => setIsClockingIn(!isClockingIn)}
