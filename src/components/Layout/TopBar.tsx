@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Bell, User, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +17,7 @@ export const TopBar: React.FC = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="bg-black/20 backdrop-blur-xl border-b border-white/10 px-6 py-4">
+    <div className="bg-black/20 backdrop-blur-xl border-b border-white/10 px-6 py-4 dark:bg-black/20 dark:border-white/10">
       <div className="flex items-center justify-between">
         {/* Logo and Brand */}
         <div className="flex items-center gap-4">
@@ -40,6 +41,8 @@ export const TopBar: React.FC = () => {
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-4">
+          <ThemeToggle />
+          
           <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
             <Bell className="h-5 w-5" />
           </Button>
