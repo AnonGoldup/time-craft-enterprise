@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -9,7 +8,8 @@ import {
   Calendar, 
   FileText,
   Settings,
-  Home
+  Home,
+  ClipboardList
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
@@ -31,6 +31,12 @@ const navigationItems = [
     label: 'Manager Approval',
     icon: CheckCircle,
     path: '/manager-approval',
+    roles: ['manager', 'admin', 'supervisor', 'foreman']
+  },
+  {
+    label: 'Daily Reporting',
+    icon: ClipboardList,
+    path: '/daily-reporting',
     roles: ['manager', 'admin', 'supervisor', 'foreman']
   },
   {

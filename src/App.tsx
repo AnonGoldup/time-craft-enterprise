@@ -10,13 +10,14 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { AppLayout } from "@/components/Layout/AppLayout";
 import Index from "./pages/Index";
 import ManagerApproval from "./pages/ManagerApproval";
+import DailyReporting from "./pages/DailyReporting";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <AuthProvider>
         <TooltipProvider>
           <Toaster />
@@ -34,6 +35,13 @@ const App = () => (
                 <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
                   <AppLayout>
                     <ManagerApproval />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/daily-reporting" element={
+                <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                  <AppLayout>
+                    <DailyReporting />
                   </AppLayout>
                 </ProtectedRoute>
               } />
