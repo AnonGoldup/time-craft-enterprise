@@ -74,19 +74,19 @@ export const Sidebar: React.FC = () => {
   );
 
   return (
-    <div className="w-64 bg-black/20 backdrop-blur-xl border-r border-white/10 h-[calc(100vh-73px)]">
+    <div className="w-64 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 h-[calc(100vh-73px)]">
       <div className="p-6">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">{user?.fullName?.charAt(0)}</span>
             </div>
             <div>
-              <p className="text-white font-medium">{user?.fullName}</p>
-              <p className="text-gray-400 text-sm capitalize">{user?.role}</p>
+              <p className="text-gray-900 dark:text-white font-medium">{user?.fullName}</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm capitalize">{user?.role}</p>
             </div>
           </div>
-          <div className="text-xs text-gray-500">{user?.department}</div>
+          <div className="text-xs text-gray-400 dark:text-gray-500">{user?.department}</div>
         </div>
 
         <nav className="space-y-2">
@@ -99,8 +99,8 @@ export const Sidebar: React.FC = () => {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200",
                   isActive
-                    ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                    : "text-gray-400 hover:text-white hover:bg-white/10"
+                    ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
+                    : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-700"
                 )}
               >
                 <item.icon className="h-5 w-5" />
@@ -111,11 +111,11 @@ export const Sidebar: React.FC = () => {
         </nav>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-white/10">
-        <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg p-4 border border-blue-500/30">
-          <h3 className="text-white font-medium text-sm mb-1">Quick Stats</h3>
-          <p className="text-gray-400 text-xs">This week: 40.5 hours</p>
-          <p className="text-gray-400 text-xs">Overtime: 2.5 hours</p>
+      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200 dark:border-slate-700">
+        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+          <h3 className="text-gray-900 dark:text-white font-medium text-sm mb-1">Quick Stats</h3>
+          <p className="text-gray-600 dark:text-gray-400 text-xs">This week: 40.5 hours</p>
+          <p className="text-gray-600 dark:text-gray-400 text-xs">Overtime: 2.5 hours</p>
         </div>
       </div>
     </div>
