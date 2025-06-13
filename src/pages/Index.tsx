@@ -1,15 +1,18 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Calendar, Users, BarChart3, Settings, Plus, Play, Pause, Shield } from "lucide-react";
+import { Clock, Calendar, Users, BarChart3, Settings, Plus, Play, Pause, Shield, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
-import TimeEntryForm from "@/components/TimeEntryForm";
+import { useAuth } from "@/contexts/AuthContext";
+import EnhancedTimeEntryForm from "@/components/EnhancedTimeEntryForm";
 import WeeklySummary from "@/components/WeeklySummary";
 import ProjectCard from "@/components/ProjectCard";
 import QuickActions from "@/components/QuickActions";
 
 const Index = () => {
+  const { user, logout, isManager } = useAuth();
   const [activeView, setActiveView] = useState("dashboard");
   const [isClockingIn, setIsClockingIn] = useState(false);
 
@@ -24,6 +27,14 @@ const Index = () => {
     { date: "2024-05-31", project: "PROJ002", hours: 7.5, status: "pending" },
     { date: "2024-05-30", project: "PROJ001", hours: 8.0, status: "approved" },
   ];
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  if (!user) {
+    return null; // This should not happen due to ProtectedRoute, but adding for safety
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -40,15 +51,17 @@ const Index = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <Link to="/manager-approval">
-                <Button
-                  variant="outline"
-                  className="border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white"
-                >
-                  <Shield className="h-4 w-4 mr-2" />
-                  Manager Portal
-                </Button>
-              </Link>
+              {isManager() && (
+                <Link to="/manager-approval">
+                  <Button
+                    variant="outline"
+                    className="border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white"
+                  >
+                    <Shield className="h-4 w-4 mr-2" />
+                    Manager Portal
+                  </Button>
+                </Link>
+              )}
               <Button
                 variant={isClockingIn ? "destructive" : "default"}
                 onClick={() => setIsClockingIn(!isClockingIn)}
@@ -57,9 +70,19 @@ const Index = () => {
                 {isClockingIn ? <Pause className="h-4 w-4 mr-2" /> : <Play className="h-4 w-4 mr-2" />}
                 {isClockingIn ? "Clock Out" : "Clock In"}
               </Button>
-              <Badge variant="outline" className="text-green-400 border-green-400">
-                John Doe
-              </Badge>
+              <div className="flex items-center space-x-2">
+                <Badge variant="outline" className="text-green-400 border-green-400">
+                  {user.fullName}
+                </Badge>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="border-red-400 text-red-400 hover:bg-red-400 hover:text-white"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -191,7 +214,7 @@ const Index = () => {
           </div>
         )}
 
-        {activeView === "entry" && <TimeEntryForm />}
+        {activeView === "entry" && <EnhancedTimeEntryForm />}
 
         {activeView === "projects" && (
           <div className="space-y-6">
