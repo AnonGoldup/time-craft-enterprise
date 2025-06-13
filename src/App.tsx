@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { AppLayout } from "@/components/Layout/AppLayout";
 import Index from "./pages/Index";
 import ManagerApproval from "./pages/ManagerApproval";
 import NotFound from "./pages/NotFound";
@@ -22,12 +23,16 @@ const App = () => (
           <Routes>
             <Route path="/" element={
               <ProtectedRoute>
-                <Index />
+                <AppLayout>
+                  <Index />
+                </AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/manager-approval" element={
               <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
-                <ManagerApproval />
+                <AppLayout>
+                  <ManagerApproval />
+                </AppLayout>
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

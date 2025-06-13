@@ -1,10 +1,8 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { 
   Clock, 
   AlertTriangle, 
@@ -13,11 +11,8 @@ import {
   XCircle, 
   Edit, 
   Search,
-  Filter,
   Download,
-  Users,
-  Calendar,
-  BarChart3
+  Users
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -138,7 +133,7 @@ const ManagerApproval = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-white mb-2">Manager Approval Dashboard</h1>
