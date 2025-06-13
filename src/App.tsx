@@ -9,8 +9,14 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { AppLayout } from "@/components/Layout/AppLayout";
 import Index from "./pages/Index";
+import TimeEntry from "./pages/TimeEntry";
 import ManagerApproval from "./pages/ManagerApproval";
 import DailyReporting from "./pages/DailyReporting";
+import Reports from "./pages/Reports";
+import TeamManagement from "./pages/TeamManagement";
+import Calendar from "./pages/Calendar";
+import Documents from "./pages/Documents";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +37,13 @@ const App = () => (
                   </AppLayout>
                 </ProtectedRoute>
               } />
+              <Route path="/time-entry" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <TimeEntry />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
               <Route path="/manager-approval" element={
                 <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
                   <AppLayout>
@@ -42,6 +55,41 @@ const App = () => (
                 <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
                   <AppLayout>
                     <DailyReporting />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/reports" element={
+                <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                  <AppLayout>
+                    <Reports />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/team" element={
+                <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                  <AppLayout>
+                    <TeamManagement />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/calendar" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <Calendar />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/documents" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <Documents />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute requiredRoles={['admin']}>
+                  <AppLayout>
+                    <Settings />
                   </AppLayout>
                 </ProtectedRoute>
               } />
