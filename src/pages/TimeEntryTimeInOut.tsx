@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
-import { ChevronLeft, MoreVertical, Plus } from 'lucide-react';
+import { ChevronLeft, MoreVertical, Plus, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProjectDetailsRow from '@/components/TimeEntry/ProjectDetailsRow';
 import TimeInOutRow from '@/components/TimeEntry/TimeInOutRow';
@@ -51,6 +51,12 @@ const TimeEntryTimeInOut = () => {
     setEntries([...entries, { id: entries.length + 1 }]);
   };
 
+  const deleteRow = (id: number) => {
+    if (entries.length > 1) {
+      setEntries(entries.filter(entry => entry.id !== id));
+    }
+  };
+
   const copyPreviousDay = () => {
     console.log('Copy previous day');
     // Implementation for copying previous day's data
@@ -59,6 +65,11 @@ const TimeEntryTimeInOut = () => {
   const copyPreviousWeek = () => {
     console.log('Copy previous week');
     // Implementation for copying previous week's data
+  };
+
+  const getRowBackgroundClass = (index: number) => {
+    if (index === 0) return '';
+    return index % 2 === 1 ? 'bg-slate-50/50 dark:bg-slate-800/30' : 'bg-blue-50/30 dark:bg-blue-900/10';
   };
 
   return (
@@ -111,7 +122,23 @@ const TimeEntryTimeInOut = () => {
             
             <TabsContent value="time-in-out" className="space-y-6 mt-6">
               {entries.map((entry, index) => (
-                <div key={entry.id} className="space-y-6 pb-6 border-b border-slate-200 dark:border-slate-700 last:border-b-0">
+                <div key={entry.id} className={`space-y-6 pb-6 border-b border-slate-200 dark:border-slate-700 last:border-b-0 rounded-lg p-4 ${getRowBackgroundClass(index)}`}>
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-medium text-slate-900 dark:text-white">
+                      Entry {index + 1}
+                    </h3>
+                    {entries.length > 1 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => deleteRow(entry.id)}
+                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+
                   {/* Project Details Row */}
                   <ProjectDetailsRow
                     selectedProject={selectedProject}
