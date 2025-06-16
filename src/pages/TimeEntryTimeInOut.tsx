@@ -284,16 +284,16 @@ const TimeEntryTimeInOut = () => {
 
                 <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
 
-                {/* Quick Fill Buttons - Reordered */}
+                {/* Quick Fill Buttons - Updated */}
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-slate-600 dark:text-slate-400">Quick:</span>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setQuickTime('6', 'AM', '3', 'PM')}
+                    onClick={() => setQuickTime('6', 'AM', '2', 'PM')}
                     className="h-8 px-3 text-xs border-slate-300 dark:border-slate-600"
                   >
-                    6-3
+                    6-2
                   </Button>
                   <Button
                     variant="outline"
