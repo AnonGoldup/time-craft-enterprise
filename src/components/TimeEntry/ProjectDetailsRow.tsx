@@ -78,7 +78,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
     try {
       setLoading(true);
       const response = await projectApi.getActive();
-      setProjects(response.data.data);
+      setProjects(response.data.data || []);
     } catch (error) {
       console.error('Failed to load projects:', error);
       // Fallback to mock data
@@ -94,22 +94,24 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   const loadEmployees = async () => {
     try {
       const response = await employeeApi.getActive();
-      setEmployees(response.data.data);
+      const employeeData = response.data.data || [];
+      setEmployees(employeeData);
     } catch (error) {
       console.error('Failed to load employees:', error);
       // Fallback to mock data
-      setEmployees([
+      const fallbackEmployees = [
         { employeeID: "EMP001", firstName: "John", lastName: "Doe", fullName: "John Doe", email: "john.doe@company.com", class: "Foreman", department: "Construction", unionID: 1, activeEmp: true, createdDate: "", modifiedDate: "" },
         { employeeID: "EMP002", firstName: "Jane", lastName: "Smith", fullName: "Jane Smith", email: "jane.smith@company.com", class: "Supervisor", department: "Construction", unionID: 1, activeEmp: true, createdDate: "", modifiedDate: "" },
         { employeeID: "EMP003", firstName: "Mike", lastName: "Johnson", fullName: "Mike Johnson", email: "mike.johnson@company.com", class: "Worker", department: "Construction", unionID: 1, activeEmp: true, createdDate: "", modifiedDate: "" }
-      ]);
+      ];
+      setEmployees(fallbackEmployees);
     }
   };
 
   const loadProjectExtras = async (projectId: number) => {
     try {
       const response = await projectApi.getExtras(projectId);
-      setProjectExtras(response.data.data);
+      setProjectExtras(response.data.data || []);
     } catch (error) {
       console.error('Failed to load project extras:', error);
       // Fallback to mock data
@@ -124,7 +126,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   const loadCostCodes = async (projectId: number, extraId?: number) => {
     try {
       const response = await projectApi.getCostCodes(projectId, extraId);
-      setCostCodes(response.data.data);
+      setCostCodes(response.data.data || []);
     } catch (error) {
       console.error('Failed to load cost codes:', error);
       // Fallback to mock data
@@ -157,10 +159,20 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   };
 
   const getSelectedEmployeeNames = () => {
+    if (!Array.isArray(employees) || !Array.isArray(selectedEmployees)) {
+      return [];
+    }
     return employees
       .filter(emp => selectedEmployees.includes(emp.employeeID))
       .map(emp => emp.fullName);
   };
+
+  // Ensure arrays are always defined before rendering
+  const safeProjects = Array.isArray(projects) ? projects : [];
+  const safeEmployees = Array.isArray(employees) ? employees : [];
+  const safeProjectExtras = Array.isArray(projectExtras) ? projectExtras : [];
+  const safeCostCodes = Array.isArray(costCodes) ? costCodes : [];
+  const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
 
   return (
     <div className="flex items-center gap-4 flex-wrap">
@@ -172,7 +184,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
             <SelectValue placeholder="Select project..." />
           </SelectTrigger>
           <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-            {projects.map((project) => (
+            {safeProjects.map((project) => (
               <SelectItem key={project.projectID} value={project.projectID.toString()}>
                 {project.projectCode} - {project.projectDescription}
               </SelectItem>
@@ -193,7 +205,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
             <SelectValue placeholder="Select extra..." />
           </SelectTrigger>
           <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-            {projectExtras.map((extra) => (
+            {safeProjectExtras.map((extra) => (
               <SelectItem key={extra.extraID} value={extra.extraID.toString()}>
                 {extra.extraValue} - {extra.description}
               </SelectItem>
@@ -222,7 +234,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
               <SelectValue placeholder="Select code..." />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-              {costCodes.map((code) => (
+              {safeCostCodes.map((code) => (
                 <SelectItem key={code.costCodeID} value={code.costCodeID.toString()}>
                   {code.costCode} - {code.description}
                 </SelectItem>
@@ -261,11 +273,11 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
                 aria-expanded={employeePopoverOpen}
                 className="w-48 justify-between border-slate-300 dark:border-slate-600"
               >
-                {selectedEmployees.length === 0
+                {safeSelectedEmployees.length === 0
                   ? "Select employees..."
-                  : selectedEmployees.length === 1
+                  : safeSelectedEmployees.length === 1
                   ? getSelectedEmployeeNames()[0]
-                  : `${selectedEmployees.length} employees selected`}
+                  : `${safeSelectedEmployees.length} employees selected`}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -274,7 +286,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
                 <CommandInput placeholder="Search employees..." />
                 <CommandEmpty>No employee found.</CommandEmpty>
                 <CommandGroup className="max-h-64 overflow-auto">
-                  {employees.map((employee) => (
+                  {safeEmployees.map((employee) => (
                     <CommandItem
                       key={employee.employeeID}
                       value={employee.fullName}
@@ -283,7 +295,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
                       <Check
                         className={cn(
                           "mr-2 h-4 w-4",
-                          selectedEmployees.includes(employee.employeeID) ? "opacity-100" : "opacity-0"
+                          safeSelectedEmployees.includes(employee.employeeID) ? "opacity-100" : "opacity-0"
                         )}
                       />
                       {employee.fullName}
@@ -303,7 +315,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
               <SelectValue placeholder="Select employee..." />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-              {employees.map((employee) => (
+              {safeEmployees.map((employee) => (
                 <SelectItem key={employee.employeeID} value={employee.employeeID}>
                   {employee.fullName} - {employee.class}
                 </SelectItem>
@@ -314,17 +326,17 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
       </div>
 
       {/* Selected employees badges (for multi-select) */}
-      {setSelectedEmployees && selectedEmployees.length > 0 && (
+      {setSelectedEmployees && safeSelectedEmployees.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2 w-full">
           {getSelectedEmployeeNames().map((name, index) => (
             <Badge
-              key={selectedEmployees[index]}
+              key={safeSelectedEmployees[index]}
               variant="secondary"
               className="text-xs"
             >
               {name}
               <button
-                onClick={() => removeEmployee(selectedEmployees[index])}
+                onClick={() => removeEmployee(safeSelectedEmployees[index])}
                 className="ml-1 hover:text-red-500"
                 type="button"
               >
