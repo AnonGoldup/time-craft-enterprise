@@ -5,83 +5,85 @@
 
 @layer base {
   :root {
-    --background: 248 250 252;
-    --foreground: 51 65 85;
+    /* Light mode colors based on your Power Apps scheme */
+    --background: 0 0% 100%; /* White (255,255,255) */
+    --foreground: 218 46% 27%; /* Primary text (37,52,100) */
 
-    --card: 255 255 255;
-    --card-foreground: 51 65 85;
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 218 46% 27%; /* Primary text */
 
-    --popover: 255 255 255;
-    --popover-foreground: 51 65 85;
+    --popover: 0 0% 100%; /* White */
+    --popover-foreground: 218 46% 27%; /* Primary text */
 
-    --primary: 59 130 246;
-    --primary-foreground: 255 255 255;
+    --primary: 0 0% 100%; /* White for primary */
+    --primary-foreground: 218 46% 27%; /* Primary text */
 
-    --secondary: 248 250 252;
-    --secondary-foreground: 71 85 105;
+    --secondary: 0 0% 96%; /* Tertiary light (244,244,244) */
+    --secondary-foreground: 218 46% 27%; /* Primary text */
 
-    --muted: 241 245 249;
-    --muted-foreground: 100 116 139;
+    --muted: 225 12% 85%; /* Highlight light (215,219,230) */
+    --muted-foreground: 221 20% 57%; /* Secondary text (115,131,176) */
 
-    --accent: 239 246 255;
-    --accent-foreground: 59 130 246;
+    --accent: 45 99% 59%; /* Accent yellow (254,189,47) */
+    --accent-foreground: 220 26% 12%; /* Accent text (22,25,39) */
 
-    --destructive: 239 68 68;
-    --destructive-foreground: 255 255 255;
+    --destructive: 0 84% 60%; /* Red for destructive actions */
+    --destructive-foreground: 0 0% 100%; /* White */
 
-    --border: 226 232 240;
-    --input: 226 232 240;
-    --ring: 59 130 246;
+    --border: 225 12% 85%; /* Highlight light */
+    --input: 225 12% 85%; /* Highlight light */
+    --ring: 45 99% 59%; /* Accent yellow */
 
     --radius: 0.5rem;
 
-    --sidebar-background: 51 65 85;
-    --sidebar-foreground: 203 213 225;
-    --sidebar-primary: 59 130 246;
-    --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 71 85 105;
-    --sidebar-accent-foreground: 226 232 240;
-    --sidebar-border: 71 85 105;
-    --sidebar-ring: 59 130 246;
+    --sidebar-background: 218 46% 27%; /* Primary text as sidebar bg */
+    --sidebar-foreground: 0 0% 97%; /* Light text (247,247,247) */
+    --sidebar-primary: 45 99% 59%; /* Accent yellow */
+    --sidebar-primary-foreground: 220 26% 12%; /* Accent text */
+    --sidebar-accent: 225 12% 85%; /* Highlight light */
+    --sidebar-accent-foreground: 218 46% 27%; /* Primary text */
+    --sidebar-border: 225 12% 85%; /* Highlight light */
+    --sidebar-ring: 45 99% 59%; /* Accent yellow */
   }
 
   .dark {
-    --background: 15 23 42;
-    --foreground: 248 250 252;
+    /* Dark mode colors based on your Power Apps scheme */
+    --background: 220 61% 9%; /* Primary dark (9,15,37) */
+    --foreground: 0 0% 97%; /* Light text (247,247,247) */
 
-    --card: 30 41 59;
-    --card-foreground: 248 250 252;
+    --card: 220 51% 12%; /* Tertiary dark (16,25,50) */
+    --card-foreground: 0 0% 97%; /* Light text */
 
-    --popover: 30 41 59;
-    --popover-foreground: 248 250 252;
+    --popover: 220 51% 12%; /* Tertiary dark */
+    --popover-foreground: 0 0% 97%; /* Light text */
 
-    --primary: 59 130 246;
-    --primary-foreground: 255 255 255;
+    --primary: 220 61% 9%; /* Primary dark */
+    --primary-foreground: 0 0% 97%; /* Light text */
 
-    --secondary: 51 65 85;
-    --secondary-foreground: 203 213 225;
+    --secondary: 220 51% 12%; /* Tertiary dark */
+    --secondary-foreground: 0 0% 97%; /* Light text */
 
-    --muted: 51 65 85;
-    --muted-foreground: 148 163 184;
+    --muted: 221 50% 18%; /* Highlight dark (23,33,69) */
+    --muted-foreground: 221 20% 57%; /* Secondary text (115,131,176) */
 
-    --accent: 30 58 138;
-    --accent-foreground: 186 230 253;
+    --accent: 45 99% 59%; /* Accent yellow (254,189,47) */
+    --accent-foreground: 220 26% 12%; /* Accent text (22,25,39) */
 
-    --destructive: 239 68 68;
-    --destructive-foreground: 255 255 255;
+    --destructive: 0 84% 60%; /* Red for destructive actions */
+    --destructive-foreground: 0 0% 100%; /* White */
 
-    --border: 71 85 105;
-    --input: 71 85 105;
-    --ring: 59 130 246;
+    --border: 221 50% 18%; /* Highlight dark */
+    --input: 221 50% 18%; /* Highlight dark */
+    --ring: 45 99% 59%; /* Accent yellow */
 
-    --sidebar-background: 30 41 59;
-    --sidebar-foreground: 203 213 225;
-    --sidebar-primary: 59 130 246;
-    --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 51 65 85;
-    --sidebar-accent-foreground: 226 232 240;
-    --sidebar-border: 71 85 105;
-    --sidebar-ring: 59 130 246;
+    --sidebar-background: 220 51% 12%; /* Tertiary dark */
+    --sidebar-foreground: 0 0% 97%; /* Light text */
+    --sidebar-primary: 45 99% 59%; /* Accent yellow */
+    --sidebar-primary-foreground: 220 26% 12%; /* Accent text */
+    --sidebar-accent: 221 50% 18%; /* Highlight dark */
+    --sidebar-accent-foreground: 0 0% 97%; /* Light text */
+    --sidebar-border: 221 50% 18%; /* Highlight dark */
+    --sidebar-ring: 45 99% 59%; /* Accent yellow */
   }
 }
 
