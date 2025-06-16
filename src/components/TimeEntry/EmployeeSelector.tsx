@@ -22,11 +22,11 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   setSelectedEmployee,
   selectedEmployees = [],
   setSelectedEmployees,
-  employees
+  employees = []
 }) => {
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false);
 
-  // Ensure arrays are always properly defined
+  // Ensure arrays are always properly defined and handle loading state
   const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
   const safeEmployees = Array.isArray(employees) ? employees : [];
 
@@ -85,7 +85,7 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
                 <CommandInput placeholder="Search employees..." />
                 <CommandEmpty>No employee found.</CommandEmpty>
                 <CommandGroup className="max-h-64 overflow-auto">
-                  {safeEmployees.map((employee) => (
+                  {safeEmployees.length > 0 ? safeEmployees.map((employee) => (
                     <CommandItem
                       key={employee.employeeID}
                       value={employee.fullName}
@@ -102,7 +102,9 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
                         {employee.class}
                       </span>
                     </CommandItem>
-                  ))}
+                  )) : (
+                    <CommandItem disabled>Loading employees...</CommandItem>
+                  )}
                 </CommandGroup>
               </Command>
             </PopoverContent>
@@ -114,11 +116,13 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
               <SelectValue placeholder="Select employee..." />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-              {safeEmployees.map((employee) => (
+              {safeEmployees.length > 0 ? safeEmployees.map((employee) => (
                 <SelectItem key={employee.employeeID} value={employee.employeeID}>
                   {employee.fullName} - {employee.class}
                 </SelectItem>
-              ))}
+              )) : (
+                <SelectItem value="" disabled>Loading employees...</SelectItem>
+              )}
             </SelectContent>
           </Select>
         )}
