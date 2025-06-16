@@ -21,10 +21,14 @@ export const TopBar: React.FC = () => {
       <div className="flex items-center justify-between">
         {/* Logo and Brand */}
         <div className="flex items-center gap-4">
-          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">TC</span>
+          <div className="w-8 h-8 rounded-lg overflow-hidden">
+            <img 
+              src="/lovable-uploads/87cab972-8ea0-4cf1-b931-cb547406f0ee.png" 
+              alt="Altatime Logo" 
+              className="w-full h-full object-cover"
+            />
           </div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">TimeCraft</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Altatime</h1>
         </div>
 
         {/* Search Bar */}
