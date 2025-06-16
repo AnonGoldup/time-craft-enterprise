@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,6 +15,7 @@ const TimeEntryStandard = () => {
   const [selectedExtra, setSelectedExtra] = useState('');
   const [selectedCostCode, setSelectedCostCode] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState('');
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [standardHours, setStandardHours] = useState('');
@@ -117,7 +119,7 @@ const TimeEntryStandard = () => {
                     )}
                   </div>
 
-                  {/* Project Details Row with multi-select employees */}
+                  {/* Project Details Row with multi-date and multi-employee selection, but no cost code input */}
                   <ProjectDetailsRow
                     selectedProject={selectedProject}
                     setSelectedProject={setSelectedProject}
@@ -127,10 +129,14 @@ const TimeEntryStandard = () => {
                     setSelectedCostCode={setSelectedCostCode}
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
+                    selectedDates={selectedDates}
+                    setSelectedDates={setSelectedDates}
                     selectedEmployee={selectedEmployee}
                     setSelectedEmployee={setSelectedEmployee}
                     selectedEmployees={selectedEmployees}
                     setSelectedEmployees={setSelectedEmployees}
+                    useCostCodeInput={false}
+                    useMultiDateSelection={true}
                   />
 
                   {/* Hours Entry Row */}
