@@ -1,115 +1,107 @@
 
 import React from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Clock } from 'lucide-react';
 
 interface HoursEntryRowProps {
   standardHours: string;
   setStandardHours: (value: string) => void;
   overtimeHours: string;
   setOvertimeHours: (value: string) => void;
+  totalHours: number;
+  setQuickHours: (hours: number) => void;
 }
 
 const HoursEntryRow: React.FC<HoursEntryRowProps> = ({
   standardHours,
   setStandardHours,
   overtimeHours,
-  setOvertimeHours
+  setOvertimeHours,
+  totalHours,
+  setQuickHours
 }) => {
-  const setQuickHours = (hours: number) => {
-    setStandardHours(hours.toString());
-  };
-
   return (
-    <div className="space-y-4">
-      {/* Hours Input */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="text-sm text-slate-600 dark:text-slate-400">Standard Hours</Label>
-          <div className="flex gap-1">
-            <Input
-              type="number"
-              step="0.25"
-              min="0"
-              max="24"
-              placeholder="8.0"
-              value={standardHours}
-              onChange={(e) => setStandardHours(e.target.value)}
-              className="border-slate-300 dark:border-slate-600"
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setStandardHours("")}
-              className="px-2 border-slate-300 dark:border-slate-600"
-            >
-              <X className="h-3 w-3" />
-            </Button>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label className="text-sm text-slate-600 dark:text-slate-400">Overtime Hours</Label>
-          <div className="flex gap-1">
-            <Input
-              type="number"
-              step="0.25"
-              min="0"
-              max="24"
-              placeholder="0.0"
-              value={overtimeHours}
-              onChange={(e) => setOvertimeHours(e.target.value)}
-              className="border-slate-300 dark:border-slate-600"
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setOvertimeHours("")}
-              className="px-2 border-slate-300 dark:border-slate-600"
-            >
-              <X className="h-3 w-3" />
-            </Button>
-          </div>
+    <div className="flex items-center gap-4 flex-wrap">
+      {/* Standard Hours */}
+      <div className="flex items-center gap-2">
+        <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded px-4 py-2 flex items-center gap-2">
+          <Clock className="h-4 w-4 text-emerald-600" />
+          <span className="text-sm text-emerald-800 dark:text-emerald-300 font-medium">ST:</span>
+          <Input
+            type="number"
+            step="0.25"
+            min="0"
+            max="24"
+            value={standardHours}
+            onChange={(e) => setStandardHours(e.target.value)}
+            className="w-16 text-center border-emerald-300 dark:border-emerald-700"
+            placeholder="8.0"
+          />
+          <span className="text-sm text-emerald-600 dark:text-emerald-400">hrs</span>
         </div>
       </div>
 
-      {/* Quick Hour Buttons */}
-      <div className="flex gap-2 flex-wrap">
+      {/* Overtime Hours */}
+      <div className="flex items-center gap-2">
+        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded px-4 py-2 flex items-center gap-2">
+          <Clock className="h-4 w-4 text-amber-600" />
+          <span className="text-sm text-amber-800 dark:text-amber-300 font-medium">OT:</span>
+          <Input
+            type="number"
+            step="0.25"
+            min="0"
+            max="24"
+            value={overtimeHours}
+            onChange={(e) => setOvertimeHours(e.target.value)}
+            className="w-16 text-center border-amber-300 dark:border-amber-700"
+            placeholder="0.0"
+          />
+          <span className="text-sm text-amber-600 dark:text-amber-400">hrs</span>
+        </div>
+      </div>
+
+      {/* Total Hours Display */}
+      <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded px-4 py-2">
+        <span className="text-sm font-medium text-blue-800 dark:text-blue-300">Total: {totalHours.toFixed(1)}h</span>
+      </div>
+
+      <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
+
+      {/* Quick Fill Buttons */}
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-slate-600 dark:text-slate-400">Quick:</span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setQuickHours(4)}
+          className="h-8 px-3 text-xs border-slate-300 dark:border-slate-600"
+        >
+          4h
+        </Button>
         <Button
           variant="outline"
           size="sm"
           onClick={() => setQuickHours(8)}
-          className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white"
+          className="h-8 px-3 text-xs border-slate-300 dark:border-slate-600"
         >
-          8 hrs
+          8h
         </Button>
         <Button
           variant="outline"
           size="sm"
           onClick={() => setQuickHours(10)}
-          className="border-green-400 text-green-400 hover:bg-green-400 hover:text-white"
+          className="h-8 px-3 text-xs border-slate-300 dark:border-slate-600"
         >
-          10 hrs
+          10h
         </Button>
         <Button
           variant="outline"
           size="sm"
           onClick={() => setQuickHours(12)}
-          className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white"
+          className="h-8 px-3 text-xs border-slate-300 dark:border-slate-600"
         >
-          12 hrs
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            setStandardHours("");
-            setOvertimeHours("");
-          }}
-          className="border-red-400 text-red-400 hover:bg-red-400 hover:text-white"
-        >
-          Clear All
+          12h
         </Button>
       </div>
     </div>
