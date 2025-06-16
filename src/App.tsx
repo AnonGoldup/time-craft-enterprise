@@ -10,6 +10,8 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { AppLayout } from "@/components/Layout/AppLayout";
 import Index from "./pages/Index";
 import TimeEntry from "./pages/TimeEntry";
+import TimeEntryStandard from "./pages/TimeEntryStandard";
+import TimeEntryTimeInOut from "./pages/TimeEntryTimeInOut";
 import ManagerApproval from "./pages/ManagerApproval";
 import DailyReporting from "./pages/DailyReporting";
 import Reports from "./pages/Reports";
