@@ -49,7 +49,9 @@ const TimeEntryTimeInOut = () => {
         <CardContent className="p-6">
           <Tabs defaultValue="time-in-out" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="enter-hours">Enter Hours</TabsTrigger>
+              <TabsTrigger value="enter-hours" asChild>
+                <Link to="/time-entry/standard">Enter Hours</Link>
+              </TabsTrigger>
               <TabsTrigger value="time-in-out" className="text-yellow-600">Time In/Out</TabsTrigger>
             </TabsList>
             
