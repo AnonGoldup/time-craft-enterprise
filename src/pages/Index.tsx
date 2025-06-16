@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Clock, Users, FileText, TrendingUp, Plus, Calendar } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   const quickStats = [
@@ -156,9 +157,17 @@ const Index = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
-                <Clock className="h-4 w-4 mr-2" />
-                Start Timer
+              <Button asChild className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
+                <Link to="/time-entry/standard">
+                  <Clock className="h-4 w-4 mr-2" />
+                  Standard Hours
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full justify-start">
+                <Link to="/time-entry/time-in-out">
+                  <Clock className="h-4 w-4 mr-2" />
+                  Time In/Out
+                </Link>
               </Button>
               <Button variant="outline" className="w-full justify-start">
                 <FileText className="h-4 w-4 mr-2" />
