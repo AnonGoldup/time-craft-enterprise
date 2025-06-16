@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,7 @@ import { Link } from 'react-router-dom';
 
 const TimeEntryTimeInOut = () => {
   const [selectedProject, setSelectedProject] = useState('');
+  const [selectedExtra, setSelectedExtra] = useState('');
   const [selectedCostCode, setSelectedCostCode] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedEmployee, setSelectedEmployee] = useState('');
@@ -81,6 +83,25 @@ const TimeEntryTimeInOut = () => {
                     onChange={(e) => setSelectedProject(e.target.value)}
                     className="w-48 border-slate-300 dark:border-slate-600"
                   />
+                </div>
+
+                <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
+
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 border-2 border-green-500 rounded flex items-center justify-center">
+                    <span className="text-green-500 text-xs font-bold">E</span>
+                  </div>
+                  <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[40px]">Extra:</span>
+                  <Select value={selectedExtra} onValueChange={setSelectedExtra}>
+                    <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
+                      <SelectValue placeholder="Select extra..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                      <SelectItem value="phase1">Phase 1</SelectItem>
+                      <SelectItem value="phase2">Phase 2</SelectItem>
+                      <SelectItem value="phase3">Phase 3</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
