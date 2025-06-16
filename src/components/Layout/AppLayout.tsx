@@ -11,11 +11,11 @@ interface AppLayoutProps {
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-slate-50 dark:bg-slate-950">
+      <div className="min-h-screen flex w-full bg-slate-50 dark:bg-slate-900">
         <AppSidebar />
         <SidebarInset>
           <TopBar />
-          <main className="flex-1 p-6 bg-slate-50 dark:bg-slate-950">
+          <main className="flex-1 p-6 bg-slate-50 dark:bg-slate-900">
             <div className="max-w-7xl mx-auto">
               {children}
             </div>

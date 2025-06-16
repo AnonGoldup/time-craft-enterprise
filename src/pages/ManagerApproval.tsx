@@ -136,80 +136,80 @@ const ManagerApproval = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2">Manager Approval Dashboard</h1>
-        <p className="text-gray-400">Review and approve team timesheet entries</p>
+        <h1 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">Manager Approval Dashboard</h1>
+        <p className="text-slate-600 dark:text-slate-400">Review and approve team timesheet entries</p>
       </div>
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <Card className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 backdrop-blur-xl border-blue-500/20">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-200 text-sm font-medium">PENDING APPROVAL</p>
-                <p className="text-3xl font-bold text-white">{pendingEntries.length}</p>
-                <p className="text-blue-200 text-xs mt-1">
+                <p className="text-blue-700 dark:text-blue-300 text-sm font-medium">PENDING APPROVAL</p>
+                <p className="text-3xl font-bold text-blue-900 dark:text-blue-100">{pendingEntries.length}</p>
+                <p className="text-blue-600 dark:text-blue-400 text-xs mt-1">
                   {pendingEntries.reduce((sum, entry) => sum + entry.standardHours + entry.overtimeHours, 0).toFixed(1)} hours
                 </p>
               </div>
-              <Clock className="h-8 w-8 text-blue-400" />
+              <Clock className="h-8 w-8 text-blue-600 dark:text-blue-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-red-500/20 to-red-600/20 backdrop-blur-xl border-red-500/20">
+        <Card className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red-200 dark:border-red-800">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-red-200 text-sm font-medium">OVERDUE (&gt;3 DAYS)</p>
-                <p className="text-3xl font-bold text-red-400">{overdueCount}</p>
+                <p className="text-red-700 dark:text-red-300 text-sm font-medium">OVERDUE (&gt;3 DAYS)</p>
+                <p className="text-3xl font-bold text-red-900 dark:text-red-100">{overdueCount}</p>
               </div>
-              <AlertTriangle className="h-8 w-8 text-red-400" />
+              <AlertTriangle className="h-8 w-8 text-red-600 dark:text-red-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-500/20 to-green-600/20 backdrop-blur-xl border-green-500/20">
+        <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-200 text-sm font-medium">APPROVAL RATE</p>
-                <p className="text-3xl font-bold text-green-400">{approvalRate}%</p>
-                <div className="w-full bg-gray-700/50 rounded-full h-1 mt-2">
-                  <div className="bg-green-400 h-1 rounded-full" style={{ width: `${approvalRate}%` }}></div>
+                <p className="text-green-700 dark:text-green-300 text-sm font-medium">APPROVAL RATE</p>
+                <p className="text-3xl font-bold text-green-900 dark:text-green-100">{approvalRate}%</p>
+                <div className="w-full bg-green-200 dark:bg-green-800 rounded-full h-1 mt-2">
+                  <div className="bg-green-600 dark:bg-green-400 h-1 rounded-full" style={{ width: `${approvalRate}%` }}></div>
                 </div>
               </div>
-              <TrendingUp className="h-8 w-8 text-green-400" />
+              <TrendingUp className="h-8 w-8 text-green-600 dark:text-green-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 backdrop-blur-xl border-purple-500/20">
+        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-purple-200 dark:border-purple-800">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-200 text-sm font-medium">APPROVED TODAY</p>
-                <p className="text-3xl font-bold text-white">{approvedToday}</p>
+                <p className="text-purple-700 dark:text-purple-300 text-sm font-medium">APPROVED TODAY</p>
+                <p className="text-3xl font-bold text-purple-900 dark:text-purple-100">{approvedToday}</p>
               </div>
-              <CheckCircle className="h-8 w-8 text-purple-400" />
+              <CheckCircle className="h-8 w-8 text-purple-600 dark:text-purple-400" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Filter Controls */}
-      <Card className="bg-black/20 backdrop-blur-xl border-white/10 mb-6">
+      <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 mb-6">
         <CardContent className="p-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <input
                   type="text"
                   placeholder="Search by project..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                 />
               </div>
               
@@ -247,11 +247,11 @@ const ManagerApproval = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <Button variant="outline" className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white">
+              <Button variant="outline" className="border-blue-300 dark:border-blue-600 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20">
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
-              <Button variant="outline" className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white">
+              <Button variant="outline" className="border-purple-300 dark:border-purple-600 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20">
                 Bulk Select
               </Button>
             </div>
@@ -263,9 +263,9 @@ const ManagerApproval = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Timesheet Entries List */}
         <div className="lg:col-span-2">
-          <Card className="bg-black/20 backdrop-blur-xl border-white/10">
+          <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
             <CardHeader>
-              <CardTitle className="text-white">Timesheet Entries</CardTitle>
+              <CardTitle className="text-slate-800 dark:text-white">Timesheet Entries</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 max-h-96 overflow-y-auto">
               {mockEntries
@@ -355,9 +355,9 @@ const ManagerApproval = () => {
 
         {/* Entry Details Panel */}
         <div className="lg:col-span-1">
-          <Card className="bg-black/20 backdrop-blur-xl border-white/10">
+          <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
             <CardHeader>
-              <CardTitle className="text-white">Entry Details</CardTitle>
+              <CardTitle className="text-slate-800 dark:text-white">Entry Details</CardTitle>
             </CardHeader>
             <CardContent>
               {selectedEntry ? (
@@ -477,9 +477,9 @@ const ManagerApproval = () => {
       </div>
 
       {/* Recent Approval Activity */}
-      <Card className="bg-black/20 backdrop-blur-xl border-white/10 mt-6">
+      <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 mt-6">
         <CardHeader>
-          <CardTitle className="text-white">Recent Approval Activity</CardTitle>
+          <CardTitle className="text-slate-800 dark:text-white">Recent Approval Activity</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

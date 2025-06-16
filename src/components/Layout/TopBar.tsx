@@ -18,7 +18,7 @@ export const TopBar: React.FC = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-4">
+    <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Logo and Brand */}
         <div className="flex items-center gap-4">
@@ -30,7 +30,7 @@ export const TopBar: React.FC = () => {
               className="w-full h-full object-cover"
             />
           </div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-white">Altatime</h1>
+          <h1 className="text-xl font-bold text-slate-800 dark:text-white">Altatime</h1>
         </div>
 
         {/* Search Bar */}
@@ -40,7 +40,7 @@ export const TopBar: React.FC = () => {
             <Input
               type="text"
               placeholder="Search projects, employees..."
-              className="pl-10 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:border-blue-500 dark:focus:border-blue-400"
+              className="pl-10 bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:border-blue-500 dark:focus:border-blue-400"
             />
           </div>
         </div>
@@ -55,19 +55,19 @@ export const TopBar: React.FC = () => {
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <Button variant="ghost" className="flex items-center gap-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                   <User className="h-4 w-4 text-white" />
                 </div>
                 <span className="hidden sm:block">{user?.fullName}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white">
-              <DropdownMenuItem className="hover:bg-slate-100 dark:hover:bg-slate-700">
+            <DropdownMenuContent align="end" className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white">
+              <DropdownMenuItem className="hover:bg-slate-100 dark:hover:bg-slate-600">
                 <User className="h-4 w-4 mr-2" />
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-slate-100 dark:hover:bg-slate-700">
+              <DropdownMenuItem className="hover:bg-slate-100 dark:hover:bg-slate-600">
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </DropdownMenuItem>
