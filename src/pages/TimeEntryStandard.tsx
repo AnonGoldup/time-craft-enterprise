@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -16,6 +15,7 @@ const TimeEntryStandard = () => {
   const [selectedCostCode, setSelectedCostCode] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedEmployee, setSelectedEmployee] = useState('');
+  const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [standardHours, setStandardHours] = useState('');
   const [overtimeHours, setOvertimeHours] = useState('');
   const [notes, setNotes] = useState('');
@@ -39,12 +39,10 @@ const TimeEntryStandard = () => {
 
   const copyPreviousDay = () => {
     console.log('Copy previous day');
-    // Implementation for copying previous day's data
   };
 
   const copyPreviousWeek = () => {
     console.log('Copy previous week');
-    // Implementation for copying previous week's data
   };
 
   const getRowBackgroundClass = (index: number) => {
@@ -119,7 +117,7 @@ const TimeEntryStandard = () => {
                     )}
                   </div>
 
-                  {/* Project Details Row */}
+                  {/* Project Details Row with multi-select employees */}
                   <ProjectDetailsRow
                     selectedProject={selectedProject}
                     setSelectedProject={setSelectedProject}
@@ -131,6 +129,8 @@ const TimeEntryStandard = () => {
                     setSelectedDate={setSelectedDate}
                     selectedEmployee={selectedEmployee}
                     setSelectedEmployee={setSelectedEmployee}
+                    selectedEmployees={selectedEmployees}
+                    setSelectedEmployees={setSelectedEmployees}
                   />
 
                   {/* Hours Entry Row */}
