@@ -48,6 +48,9 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   const [loading, setLoading] = useState(false);
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false);
 
+  // Ensure selectedEmployees is always an array
+  const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
+
   // Load initial data
   useEffect(() => {
     loadProjects();
@@ -78,7 +81,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
     try {
       setLoading(true);
       const response = await projectApi.getActive();
-      setProjects(response.data.data || []);
+      setProjects(Array.isArray(response.data.data) ? response.data.data : []);
     } catch (error) {
       console.error('Failed to load projects:', error);
       // Fallback to mock data
@@ -94,7 +97,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   const loadEmployees = async () => {
     try {
       const response = await employeeApi.getActive();
-      const employeeData = response.data.data || [];
+      const employeeData = Array.isArray(response.data.data) ? response.data.data : [];
       setEmployees(employeeData);
     } catch (error) {
       console.error('Failed to load employees:', error);
@@ -111,7 +114,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   const loadProjectExtras = async (projectId: number) => {
     try {
       const response = await projectApi.getExtras(projectId);
-      setProjectExtras(response.data.data || []);
+      setProjectExtras(Array.isArray(response.data.data) ? response.data.data : []);
     } catch (error) {
       console.error('Failed to load project extras:', error);
       // Fallback to mock data
@@ -126,7 +129,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   const loadCostCodes = async (projectId: number, extraId?: number) => {
     try {
       const response = await projectApi.getCostCodes(projectId, extraId);
-      setCostCodes(response.data.data || []);
+      setCostCodes(Array.isArray(response.data.data) ? response.data.data : []);
     } catch (error) {
       console.error('Failed to load cost codes:', error);
       // Fallback to mock data
@@ -141,9 +144,9 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   const handleEmployeeSelect = (employeeId: string) => {
     if (setSelectedEmployees) {
       // Multi-select mode
-      const newSelection = selectedEmployees.includes(employeeId)
-        ? selectedEmployees.filter(id => id !== employeeId)
-        : [...selectedEmployees, employeeId];
+      const newSelection = safeSelectedEmployees.includes(employeeId)
+        ? safeSelectedEmployees.filter(id => id !== employeeId)
+        : [...safeSelectedEmployees, employeeId];
       setSelectedEmployees(newSelection);
     } else {
       // Single select mode (fallback)
@@ -154,25 +157,18 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
 
   const removeEmployee = (employeeId: string) => {
     if (setSelectedEmployees) {
-      setSelectedEmployees(selectedEmployees.filter(id => id !== employeeId));
+      setSelectedEmployees(safeSelectedEmployees.filter(id => id !== employeeId));
     }
   };
 
   const getSelectedEmployeeNames = () => {
-    if (!Array.isArray(employees) || !Array.isArray(selectedEmployees)) {
+    if (!Array.isArray(employees) || !Array.isArray(safeSelectedEmployees)) {
       return [];
     }
     return employees
-      .filter(emp => selectedEmployees.includes(emp.employeeID))
+      .filter(emp => safeSelectedEmployees.includes(emp.employeeID))
       .map(emp => emp.fullName);
   };
-
-  // Ensure arrays are always defined before rendering
-  const safeProjects = Array.isArray(projects) ? projects : [];
-  const safeEmployees = Array.isArray(employees) ? employees : [];
-  const safeProjectExtras = Array.isArray(projectExtras) ? projectExtras : [];
-  const safeCostCodes = Array.isArray(costCodes) ? costCodes : [];
-  const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
 
   return (
     <div className="flex items-center gap-4 flex-wrap">
@@ -184,7 +180,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
             <SelectValue placeholder="Select project..." />
           </SelectTrigger>
           <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-            {safeProjects.map((project) => (
+            {projects.map((project) => (
               <SelectItem key={project.projectID} value={project.projectID.toString()}>
                 {project.projectCode} - {project.projectDescription}
               </SelectItem>
@@ -205,7 +201,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
             <SelectValue placeholder="Select extra..." />
           </SelectTrigger>
           <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-            {safeProjectExtras.map((extra) => (
+            {projectExtras.map((extra) => (
               <SelectItem key={extra.extraID} value={extra.extraID.toString()}>
                 {extra.extraValue} - {extra.description}
               </SelectItem>
@@ -234,7 +230,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
               <SelectValue placeholder="Select code..." />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-              {safeCostCodes.map((code) => (
+              {costCodes.map((code) => (
                 <SelectItem key={code.costCodeID} value={code.costCodeID.toString()}>
                   {code.costCode} - {code.description}
                 </SelectItem>
@@ -286,7 +282,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
                 <CommandInput placeholder="Search employees..." />
                 <CommandEmpty>No employee found.</CommandEmpty>
                 <CommandGroup className="max-h-64 overflow-auto">
-                  {safeEmployees.map((employee) => (
+                  {employees.map((employee) => (
                     <CommandItem
                       key={employee.employeeID}
                       value={employee.fullName}
@@ -315,7 +311,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
               <SelectValue placeholder="Select employee..." />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-              {safeEmployees.map((employee) => (
+              {employees.map((employee) => (
                 <SelectItem key={employee.employeeID} value={employee.employeeID}>
                   {employee.fullName} - {employee.class}
                 </SelectItem>
