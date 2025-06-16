@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChevronLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
 import ProjectDetailsRow from '@/components/TimeEntry/ProjectDetailsRow';
 import HoursEntryRow from '@/components/TimeEntry/HoursEntryRow';
 import NotesAndSubmitRow from '@/components/TimeEntry/NotesAndSubmitRow';
@@ -12,17 +14,49 @@ const TimeEntryStandard = () => {
   const [selectedProject, setSelectedProject] = useState('');
   const [selectedExtra, setSelectedExtra] = useState('');
   const [selectedCostCode, setSelectedCostCode] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState<string | string[]>('');
   const [selectedEmployee, setSelectedEmployee] = useState('');
   const [standardHours, setStandardHours] = useState('');
   const [overtimeHours, setOvertimeHours] = useState('');
   const [notes, setNotes] = useState('');
+  const [multiDateMode, setMultiDateMode] = useState(false);
 
-  const setQuickHours = (hours: number) => {
-    setStandardHours(hours.toString());
+  const handleCopyPreviousDay = () => {
+    // Mock implementation - in real app, this would fetch previous day's data
+    toast.success("Copied previous day's entry");
   };
 
-  const totalHours = (parseFloat(standardHours) || 0) + (parseFloat(overtimeHours) || 0);
+  const handleCopyPreviousWeek = () => {
+    // Mock implementation - in real app, this would fetch previous week's data
+    toast.success("Copied previous week's entry");
+  };
+
+  const handleAddMultipleEntries = () => {
+    setMultiDateMode(!multiDateMode);
+    if (!multiDateMode) {
+      // Convert single date to array
+      if (typeof selectedDate === 'string' && selectedDate) {
+        setSelectedDate([selectedDate]);
+      } else if (!selectedDate) {
+        setSelectedDate([]);
+      }
+      toast.success("Multiple date mode enabled");
+    } else {
+      // Convert array back to single date
+      if (Array.isArray(selectedDate) && selectedDate.length > 0) {
+        setSelectedDate(selectedDate[0]);
+      } else {
+        setSelectedDate('');
+      }
+      toast.success("Single date mode enabled");
+    }
+  };
+
+  const calculateTotalHours = () => {
+    const standard = parseFloat(standardHours) || 0;
+    const overtime = parseFloat(overtimeHours) || 0;
+    return standard + overtime;
+  };
 
   return (
     <div className="space-y-6">
@@ -39,6 +73,14 @@ const TimeEntryStandard = () => {
             Time Entry
           </h1>
         </div>
+        <Button
+          variant="outline"
+          onClick={handleAddMultipleEntries}
+          className={`${multiDateMode ? 'bg-blue-50 border-blue-300 text-blue-700' : ''}`}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          {multiDateMode ? 'Single Entry' : 'Multiple Entries'}
+        </Button>
       </div>
 
       <Card className="border-slate-200 dark:border-slate-700">
@@ -64,6 +106,11 @@ const TimeEntryStandard = () => {
                 setSelectedDate={setSelectedDate}
                 selectedEmployee={selectedEmployee}
                 setSelectedEmployee={setSelectedEmployee}
+                useCostCodeInput={false}
+                multiDateMode={multiDateMode}
+                onCopyPreviousDay={handleCopyPreviousDay}
+                onCopyPreviousWeek={handleCopyPreviousWeek}
+                onAddMultipleEntries={handleAddMultipleEntries}
               />
 
               {/* Hours Entry Row */}
@@ -72,14 +119,14 @@ const TimeEntryStandard = () => {
                 setStandardHours={setStandardHours}
                 overtimeHours={overtimeHours}
                 setOvertimeHours={setOvertimeHours}
-                totalHours={totalHours}
-                setQuickHours={setQuickHours}
               />
 
               {/* Notes and Submit Row */}
               <NotesAndSubmitRow
                 notes={notes}
                 setNotes={setNotes}
+                totalHours={calculateTotalHours()}
+                showTotalHours={true}
               />
             </TabsContent>
           </Tabs>
