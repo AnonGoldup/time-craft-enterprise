@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,7 +8,6 @@ import { Link } from 'react-router-dom';
 import ProjectDetailsRow from '@/components/TimeEntry/ProjectDetailsRow';
 import TimeInOutRow from '@/components/TimeEntry/TimeInOutRow';
 import NotesAndSubmitRow from '@/components/TimeEntry/NotesAndSubmitRow';
-
 const TimeEntryTimeInOut = () => {
   const [selectedProject, setSelectedProject] = useState('');
   const [selectedExtra, setSelectedExtra] = useState('');
@@ -29,8 +27,9 @@ const TimeEntryTimeInOut = () => {
   const [breakOutMinute, setBreakOutMinute] = useState('');
   const [breakOutPeriod, setBreakOutPeriod] = useState('AM');
   const [notes, setNotes] = useState('');
-  const [entries, setEntries] = useState([{ id: 1 }]);
-
+  const [entries, setEntries] = useState([{
+    id: 1
+  }]);
   const setQuickTime = (startHour: string, startPeriod: string, endHour: string, endPeriod: string) => {
     setTimeInHour(startHour);
     setTimeInMinute('00');
@@ -46,34 +45,29 @@ const TimeEntryTimeInOut = () => {
     setBreakOutMinute('00');
     setBreakOutPeriod('PM');
   };
-
   const addRow = () => {
-    setEntries([...entries, { id: entries.length + 1 }]);
+    setEntries([...entries, {
+      id: entries.length + 1
+    }]);
   };
-
   const deleteRow = (id: number) => {
     if (entries.length > 1) {
       setEntries(entries.filter(entry => entry.id !== id));
     }
   };
-
   const copyPreviousDay = () => {
     console.log('Copy previous day');
     // Implementation for copying previous day's data
   };
-
   const copyPreviousWeek = () => {
     console.log('Copy previous week');
     // Implementation for copying previous week's data
   };
-
   const getRowBackgroundClass = (index: number) => {
     if (index === 0) return '';
     return index % 2 === 1 ? 'bg-slate-50/50 dark:bg-slate-800/30' : 'bg-blue-50/30 dark:bg-blue-900/10';
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Link to="/time-entry" className="flex items-center gap-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200">
           <ChevronLeft className="h-4 w-4" />
@@ -111,104 +105,39 @@ const TimeEntryTimeInOut = () => {
       </div>
 
       <Card className="border-slate-200 dark:border-slate-700">
-        <CardContent className="p-6">
+        <CardContent className="p-6 bg-gray-200">
           <Tabs defaultValue="time-in-out" className="w-full">
             <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-800">
               <TabsTrigger value="enter-hours" asChild>
                 <Link to="/time-entry/standard" className="text-slate-600 dark:text-slate-400">Enter Hours</Link>
               </TabsTrigger>
-              <TabsTrigger value="time-in-out" className="text-blue-600 dark:text-blue-400">Time In/Out</TabsTrigger>
+              <TabsTrigger value="time-in-out" className="bg-[slate-00] bg-slate-600 hover:bg-slate-500 text-slate-950">Time In/Out</TabsTrigger>
             </TabsList>
             
             <TabsContent value="time-in-out" className="space-y-6 mt-6">
-              {entries.map((entry, index) => (
-                <div key={entry.id} className={`space-y-6 pb-6 border-b border-slate-200 dark:border-slate-700 last:border-b-0 rounded-lg p-4 ${getRowBackgroundClass(index)}`}>
+              {entries.map((entry, index) => <div key={entry.id} className={`space-y-6 pb-6 border-b border-slate-200 dark:border-slate-700 last:border-b-0 rounded-lg p-4 ${getRowBackgroundClass(index)}`}>
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-medium text-slate-900 dark:text-white">
                       Entry {index + 1}
                     </h3>
-                    {entries.length > 1 && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => deleteRow(entry.id)}
-                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                      >
+                    {entries.length > 1 && <Button variant="outline" size="sm" onClick={() => deleteRow(entry.id)} className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20">
                         <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
+                      </Button>}
                   </div>
 
                   {/* Project Details Row */}
-                  <ProjectDetailsRow
-                    selectedProject={selectedProject}
-                    setSelectedProject={setSelectedProject}
-                    selectedExtra={selectedExtra}
-                    setSelectedExtra={setSelectedExtra}
-                    selectedCostCode={selectedCostCode}
-                    setSelectedCostCode={setSelectedCostCode}
-                    selectedDate={selectedDate}
-                    setSelectedDate={setSelectedDate}
-                    selectedEmployee={selectedEmployee}
-                    setSelectedEmployee={setSelectedEmployee}
-                    useCostCodeInput={true}
-                  />
+                  <ProjectDetailsRow selectedProject={selectedProject} setSelectedProject={setSelectedProject} selectedExtra={selectedExtra} setSelectedExtra={setSelectedExtra} selectedCostCode={selectedCostCode} setSelectedCostCode={setSelectedCostCode} selectedDate={selectedDate} setSelectedDate={setSelectedDate} selectedEmployee={selectedEmployee} setSelectedEmployee={setSelectedEmployee} useCostCodeInput={true} />
 
                   {/* Time In/Out Row */}
-                  <TimeInOutRow
-                    timeInHour={timeInHour}
-                    setTimeInHour={setTimeInHour}
-                    timeInMinute={timeInMinute}
-                    setTimeInMinute={setTimeInMinute}
-                    timeInPeriod={timeInPeriod}
-                    setTimeInPeriod={setTimeInPeriod}
-                    timeOutHour={timeOutHour}
-                    setTimeOutHour={setTimeOutHour}
-                    timeOutMinute={timeOutMinute}
-                    setTimeOutMinute={setTimeOutMinute}
-                    timeOutPeriod={timeOutPeriod}
-                    setTimeOutPeriod={setTimeOutPeriod}
-                    breakInHour={breakInHour}
-                    setBreakInHour={setBreakInHour}
-                    breakInMinute={breakInMinute}
-                    setBreakInMinute={setBreakInMinute}
-                    breakInPeriod={breakInPeriod}
-                    setBreakInPeriod={setBreakInPeriod}
-                    breakOutHour={breakOutHour}
-                    setBreakOutHour={setBreakOutHour}
-                    breakOutMinute={breakOutMinute}
-                    setBreakOutMinute={setBreakOutMinute}
-                    breakOutPeriod={breakOutPeriod}
-                    setBreakOutPeriod={setBreakOutPeriod}
-                    setQuickTime={setQuickTime}
-                  />
-                </div>
-              ))}
+                  <TimeInOutRow timeInHour={timeInHour} setTimeInHour={setTimeInHour} timeInMinute={timeInMinute} setTimeInMinute={setTimeInMinute} timeInPeriod={timeInPeriod} setTimeInPeriod={setTimeInPeriod} timeOutHour={timeOutHour} setTimeOutHour={setTimeOutHour} timeOutMinute={timeOutMinute} setTimeOutMinute={setTimeOutMinute} timeOutPeriod={timeOutPeriod} setTimeOutPeriod={setTimeOutPeriod} breakInHour={breakInHour} setBreakInHour={setBreakInHour} breakInMinute={breakInMinute} setBreakInMinute={setBreakInMinute} breakInPeriod={breakInPeriod} setBreakInPeriod={setBreakInPeriod} breakOutHour={breakOutHour} setBreakOutHour={setBreakOutHour} breakOutMinute={breakOutMinute} setBreakOutMinute={setBreakOutMinute} breakOutPeriod={breakOutPeriod} setBreakOutPeriod={setBreakOutPeriod} setQuickTime={setQuickTime} />
+                </div>)}
 
               {/* Notes and Submit Row */}
-              <NotesAndSubmitRow
-                notes={notes}
-                setNotes={setNotes}
-                showTotalHours={true}
-                timeInHour={timeInHour}
-                timeInMinute={timeInMinute}
-                timeInPeriod={timeInPeriod}
-                timeOutHour={timeOutHour}
-                timeOutMinute={timeOutMinute}
-                timeOutPeriod={timeOutPeriod}
-                breakInHour={breakInHour}
-                breakInMinute={breakInMinute}
-                breakInPeriod={breakInPeriod}
-                breakOutHour={breakOutHour}
-                breakOutMinute={breakOutMinute}
-                breakOutPeriod={breakOutPeriod}
-              />
+              <NotesAndSubmitRow notes={notes} setNotes={setNotes} showTotalHours={true} timeInHour={timeInHour} timeInMinute={timeInMinute} timeInPeriod={timeInPeriod} timeOutHour={timeOutHour} timeOutMinute={timeOutMinute} timeOutPeriod={timeOutPeriod} breakInHour={breakInHour} breakInMinute={breakInMinute} breakInPeriod={breakInPeriod} breakOutHour={breakOutHour} breakOutMinute={breakOutMinute} breakOutPeriod={breakOutPeriod} />
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default TimeEntryTimeInOut;

@@ -1,9 +1,7 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar, Users, Building2 } from 'lucide-react';
-
 interface ProjectDetailsRowProps {
   selectedProject: string;
   setSelectedProject: (value: string) => void;
@@ -17,7 +15,6 @@ interface ProjectDetailsRowProps {
   setSelectedEmployee: (value: string) => void;
   useCostCodeInput?: boolean;
 }
-
 const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   selectedProject,
   setSelectedProject,
@@ -31,17 +28,11 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   setSelectedEmployee,
   useCostCodeInput = false
 }) => {
-  return (
-    <div className="flex items-center gap-4 flex-wrap">
+  return <div className="flex items-center gap-4 flex-wrap">
       <div className="flex items-center gap-2">
         <Building2 className="h-4 w-4 text-blue-500" />
         <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[60px]">Project:</span>
-        <Input
-          placeholder="Select project..."
-          value={selectedProject}
-          onChange={(e) => setSelectedProject(e.target.value)}
-          className="w-48 border-slate-300 dark:border-slate-600"
-        />
+        <Input placeholder="Select project..." value={selectedProject} onChange={e => setSelectedProject(e.target.value)} className="w-48 border-slate-300 dark:border-slate-600 bg-slate-50" />
       </div>
 
       <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
@@ -70,15 +61,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
           <span className="text-blue-500 text-xs font-bold">C</span>
         </div>
         <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[80px]">Cost Code:</span>
-        {useCostCodeInput ? (
-          <Input
-            placeholder="Select code..."
-            value={selectedCostCode}
-            onChange={(e) => setSelectedCostCode(e.target.value)}
-            className="w-48 border-slate-300 dark:border-slate-600"
-          />
-        ) : (
-          <Select value={selectedCostCode} onValueChange={setSelectedCostCode}>
+        {useCostCodeInput ? <Input placeholder="Select code..." value={selectedCostCode} onChange={e => setSelectedCostCode(e.target.value)} className="w-48 border-slate-300 dark:border-slate-600" /> : <Select value={selectedCostCode} onValueChange={setSelectedCostCode}>
             <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
               <SelectValue placeholder="Select code..." />
             </SelectTrigger>
@@ -87,8 +70,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
               <SelectItem value="materials">Materials</SelectItem>
               <SelectItem value="equipment">Equipment</SelectItem>
             </SelectContent>
-          </Select>
-        )}
+          </Select>}
       </div>
 
       <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
@@ -96,12 +78,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
       <div className="flex items-center gap-2">
         <Calendar className="h-4 w-4 text-blue-500" />
         <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[40px]">Date:</span>
-        <Input
-          type="date"
-          value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
-          className="w-36 border-slate-300 dark:border-slate-600"
-        />
+        <Input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} className="w-36 border-slate-300 dark:border-slate-600 bg-slate-50" />
       </div>
 
       <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
@@ -120,8 +97,6 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
           </SelectContent>
         </Select>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ProjectDetailsRow;
