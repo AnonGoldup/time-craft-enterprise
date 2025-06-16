@@ -1,7 +1,10 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChevronLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
+import { ChevronLeft, MoreVertical, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProjectDetailsRow from '@/components/TimeEntry/ProjectDetailsRow';
 import TimeInOutRow from '@/components/TimeEntry/TimeInOutRow';
@@ -26,6 +29,7 @@ const TimeEntryTimeInOut = () => {
   const [breakOutMinute, setBreakOutMinute] = useState('');
   const [breakOutPeriod, setBreakOutPeriod] = useState('AM');
   const [notes, setNotes] = useState('');
+  const [entries, setEntries] = useState([{ id: 1 }]);
 
   const setQuickTime = (startHour: string, startPeriod: string, endHour: string, endPeriod: string) => {
     setTimeInHour(startHour);
@@ -43,6 +47,20 @@ const TimeEntryTimeInOut = () => {
     setBreakOutPeriod('PM');
   };
 
+  const addRow = () => {
+    setEntries([...entries, { id: entries.length + 1 }]);
+  };
+
+  const copyPreviousDay = () => {
+    console.log('Copy previous day');
+    // Implementation for copying previous day's data
+  };
+
+  const copyPreviousWeek = () => {
+    console.log('Copy previous week');
+    // Implementation for copying previous week's data
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -58,6 +76,27 @@ const TimeEntryTimeInOut = () => {
             Time Entry
           </h1>
         </div>
+        <div className="flex items-center gap-2">
+          <ContextMenu>
+            <ContextMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </ContextMenuTrigger>
+            <ContextMenuContent className="w-48">
+              <ContextMenuItem onClick={copyPreviousDay}>
+                Copy previous day
+              </ContextMenuItem>
+              <ContextMenuItem onClick={copyPreviousWeek}>
+                Copy previous week
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+          <Button onClick={addRow} size="sm" className="h-8 gap-1">
+            <Plus className="h-4 w-4" />
+            Add Row
+          </Button>
+        </div>
       </div>
 
       <Card className="border-slate-200 dark:border-slate-700">
@@ -71,49 +110,53 @@ const TimeEntryTimeInOut = () => {
             </TabsList>
             
             <TabsContent value="time-in-out" className="space-y-6 mt-6">
-              {/* Project Details Row */}
-              <ProjectDetailsRow
-                selectedProject={selectedProject}
-                setSelectedProject={setSelectedProject}
-                selectedExtra={selectedExtra}
-                setSelectedExtra={setSelectedExtra}
-                selectedCostCode={selectedCostCode}
-                setSelectedCostCode={setSelectedCostCode}
-                selectedDate={selectedDate}
-                setSelectedDate={setSelectedDate}
-                selectedEmployee={selectedEmployee}
-                setSelectedEmployee={setSelectedEmployee}
-                useCostCodeInput={true}
-              />
+              {entries.map((entry, index) => (
+                <div key={entry.id} className="space-y-6 pb-6 border-b border-slate-200 dark:border-slate-700 last:border-b-0">
+                  {/* Project Details Row */}
+                  <ProjectDetailsRow
+                    selectedProject={selectedProject}
+                    setSelectedProject={setSelectedProject}
+                    selectedExtra={selectedExtra}
+                    setSelectedExtra={setSelectedExtra}
+                    selectedCostCode={selectedCostCode}
+                    setSelectedCostCode={setSelectedCostCode}
+                    selectedDate={selectedDate}
+                    setSelectedDate={setSelectedDate}
+                    selectedEmployee={selectedEmployee}
+                    setSelectedEmployee={setSelectedEmployee}
+                    useCostCodeInput={true}
+                  />
 
-              {/* Time In/Out Row */}
-              <TimeInOutRow
-                timeInHour={timeInHour}
-                setTimeInHour={setTimeInHour}
-                timeInMinute={timeInMinute}
-                setTimeInMinute={setTimeInMinute}
-                timeInPeriod={timeInPeriod}
-                setTimeInPeriod={setTimeInPeriod}
-                timeOutHour={timeOutHour}
-                setTimeOutHour={setTimeOutHour}
-                timeOutMinute={timeOutMinute}
-                setTimeOutMinute={setTimeOutMinute}
-                timeOutPeriod={timeOutPeriod}
-                setTimeOutPeriod={setTimeOutPeriod}
-                breakInHour={breakInHour}
-                setBreakInHour={setBreakInHour}
-                breakInMinute={breakInMinute}
-                setBreakInMinute={setBreakInMinute}
-                breakInPeriod={breakInPeriod}
-                setBreakInPeriod={setBreakInPeriod}
-                breakOutHour={breakOutHour}
-                setBreakOutHour={setBreakOutHour}
-                breakOutMinute={breakOutMinute}
-                setBreakOutMinute={setBreakOutMinute}
-                breakOutPeriod={breakOutPeriod}
-                setBreakOutPeriod={setBreakOutPeriod}
-                setQuickTime={setQuickTime}
-              />
+                  {/* Time In/Out Row */}
+                  <TimeInOutRow
+                    timeInHour={timeInHour}
+                    setTimeInHour={setTimeInHour}
+                    timeInMinute={timeInMinute}
+                    setTimeInMinute={setTimeInMinute}
+                    timeInPeriod={timeInPeriod}
+                    setTimeInPeriod={setTimeInPeriod}
+                    timeOutHour={timeOutHour}
+                    setTimeOutHour={setTimeOutHour}
+                    timeOutMinute={timeOutMinute}
+                    setTimeOutMinute={setTimeOutMinute}
+                    timeOutPeriod={timeOutPeriod}
+                    setTimeOutPeriod={setTimeOutPeriod}
+                    breakInHour={breakInHour}
+                    setBreakInHour={setBreakInHour}
+                    breakInMinute={breakInMinute}
+                    setBreakInMinute={setBreakInMinute}
+                    breakInPeriod={breakInPeriod}
+                    setBreakInPeriod={setBreakInPeriod}
+                    breakOutHour={breakOutHour}
+                    setBreakOutHour={setBreakOutHour}
+                    breakOutMinute={breakOutMinute}
+                    setBreakOutMinute={setBreakOutMinute}
+                    breakOutPeriod={breakOutPeriod}
+                    setBreakOutPeriod={setBreakOutPeriod}
+                    setQuickTime={setQuickTime}
+                  />
+                </div>
+              ))}
 
               {/* Notes and Submit Row */}
               <NotesAndSubmitRow
