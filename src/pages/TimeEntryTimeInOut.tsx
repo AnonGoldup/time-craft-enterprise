@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -121,7 +120,18 @@ const TimeEntryTimeInOut = () => {
                 notes={notes}
                 setNotes={setNotes}
                 showTotalHours={true}
-                totalHours={8.0}
+                timeInHour={timeInHour}
+                timeInMinute={timeInMinute}
+                timeInPeriod={timeInPeriod}
+                timeOutHour={timeOutHour}
+                timeOutMinute={timeOutMinute}
+                timeOutPeriod={timeOutPeriod}
+                breakInHour={breakInHour}
+                breakInMinute={breakInMinute}
+                breakInPeriod={breakInPeriod}
+                breakOutHour={breakOutHour}
+                breakOutMinute={breakOutMinute}
+                breakOutPeriod={breakOutPeriod}
               />
             </TabsContent>
           </Tabs>
