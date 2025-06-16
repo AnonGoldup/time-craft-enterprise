@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plug } from 'lucide-react';
 
 interface TimeInOutRowProps {
   timeInHour: string;
@@ -60,6 +60,11 @@ const TimeInOutRow: React.FC<TimeInOutRowProps> = ({
 }) => {
   const hours = Array.from({length: 12}, (_, i) => i + 1);
   const minutes = ['00', '15', '30', '45'];
+
+  const handleAddBreak = () => {
+    // This will allow users to add another break entry
+    console.log('Add another break clicked');
+  };
 
   return (
     <div className="flex items-center gap-4 flex-wrap">
@@ -209,6 +214,17 @@ const TimeInOutRow: React.FC<TimeInOutRowProps> = ({
           </SelectContent>
         </Select>
       </div>
+
+      {/* Add Break Button */}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleAddBreak}
+        className="h-8 w-8 p-0 border-slate-300 dark:border-slate-600"
+        title="Add another break"
+      >
+        <Plug className="h-4 w-4" />
+      </Button>
 
       <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
 
