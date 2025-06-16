@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -56,6 +57,8 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
 
   // Ensure selectedEmployees is always an array
   const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
+  // Ensure employees is always an array
+  const safeEmployees = Array.isArray(employees) ? employees : [];
 
   // Load initial data
   useEffect(() => {
@@ -168,10 +171,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   };
 
   const getSelectedEmployeeNames = () => {
-    if (!Array.isArray(employees) || !Array.isArray(safeSelectedEmployees)) {
-      return [];
-    }
-    return employees
+    return safeEmployees
       .filter(emp => safeSelectedEmployees.includes(emp.employeeID))
       .map(emp => emp.fullName);
   };
@@ -296,7 +296,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
                   <CommandInput placeholder="Search employees..." />
                   <CommandEmpty>No employee found.</CommandEmpty>
                   <CommandGroup className="max-h-64 overflow-auto">
-                    {employees.map((employee) => (
+                    {safeEmployees.map((employee) => (
                       <CommandItem
                         key={employee.employeeID}
                         value={employee.fullName}
@@ -325,7 +325,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
                 <SelectValue placeholder="Select employee..." />
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                {employees.map((employee) => (
+                {safeEmployees.map((employee) => (
                   <SelectItem key={employee.employeeID} value={employee.employeeID}>
                     {employee.fullName} - {employee.class}
                   </SelectItem>
