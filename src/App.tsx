@@ -46,6 +46,20 @@ const App = () => (
                   </AppLayout>
                 </ProtectedRoute>
               } />
+              <Route path="/time-entry/standard" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <TimeEntryStandard />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/time-entry/time-in-out" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <TimeEntryTimeInOut />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
               <Route path="/manager-approval" element={
                 <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
                   <AppLayout>
