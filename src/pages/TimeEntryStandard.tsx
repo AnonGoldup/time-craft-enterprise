@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar, Users, Building2, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const TimeEntryStandard = () => {
   const [selectedProject, setSelectedProject] = useState('');
@@ -32,7 +33,9 @@ const TimeEntryStandard = () => {
           <Tabs defaultValue="enter-hours" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="enter-hours" className="text-yellow-600">Enter Hours</TabsTrigger>
-              <TabsTrigger value="time-in-out">Time In/Out</TabsTrigger>
+              <TabsTrigger value="time-in-out" asChild>
+                <Link to="/time-entry/time-in-out">Time In/Out</Link>
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="enter-hours" className="space-y-6 mt-6">
