@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { projectApi, employeeApi, Project, Employee, ProjectExtra, CostCode } from '@/services/api';
+import MultiDatePicker from './MultiDatePicker';
 
 interface ProjectDetailsRowProps {
   selectedProject: string;
@@ -19,11 +19,14 @@ interface ProjectDetailsRowProps {
   setSelectedCostCode: (value: string) => void;
   selectedDate: string;
   setSelectedDate: (value: string) => void;
+  selectedDates?: Date[];
+  setSelectedDates?: (dates: Date[]) => void;
   selectedEmployee: string;
   setSelectedEmployee: (value: string) => void;
   selectedEmployees?: string[];
   setSelectedEmployees?: (value: string[]) => void;
   useCostCodeInput?: boolean;
+  useMultiDateSelection?: boolean;
 }
 
 const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
@@ -35,11 +38,14 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   setSelectedCostCode,
   selectedDate,
   setSelectedDate,
+  selectedDates = [],
+  setSelectedDates,
   selectedEmployee,
   setSelectedEmployee,
   selectedEmployees = [],
   setSelectedEmployees,
-  useCostCodeInput = false
+  useCostCodeInput = false,
+  useMultiDateSelection = false
 }) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -171,159 +177,168 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-4 flex-wrap">
-      <div className="flex items-center gap-2">
-        <Building2 className="h-4 w-4 text-blue-500" />
-        <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[60px]">Project:</span>
-        <Select value={selectedProject} onValueChange={setSelectedProject}>
-          <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
-            <SelectValue placeholder="Select project..." />
-          </SelectTrigger>
-          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-            {projects.map((project) => (
-              <SelectItem key={project.projectID} value={project.projectID.toString()}>
-                {project.projectCode} - {project.projectDescription}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
-
-      <div className="flex items-center gap-2">
-        <div className="h-4 w-4 border-2 border-green-500 rounded flex items-center justify-center">
-          <span className="text-green-500 text-xs font-bold">E</span>
-        </div>
-        <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[40px]">Extra:</span>
-        <Select value={selectedExtra} onValueChange={setSelectedExtra} disabled={!selectedProject}>
-          <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
-            <SelectValue placeholder="Select extra..." />
-          </SelectTrigger>
-          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-            {projectExtras.map((extra) => (
-              <SelectItem key={extra.extraID} value={extra.extraID.toString()}>
-                {extra.extraValue} - {extra.description}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
-
-      <div className="flex items-center gap-2">
-        <div className="h-4 w-4 border-2 border-blue-500 rounded flex items-center justify-center">
-          <span className="text-blue-500 text-xs font-bold">C</span>
-        </div>
-        <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[80px]">Cost Code:</span>
-        {useCostCodeInput ? (
-          <Input 
-            placeholder="Select code..." 
-            value={selectedCostCode} 
-            onChange={e => setSelectedCostCode(e.target.value)} 
-            className="w-48 border-slate-300 dark:border-slate-600" 
-          />
-        ) : (
-          <Select value={selectedCostCode} onValueChange={setSelectedCostCode} disabled={!selectedProject}>
+    <div className="space-y-4">
+      <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-2">
+          <Building2 className="h-4 w-4 text-blue-500" />
+          <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[60px]">Project:</span>
+          <Select value={selectedProject} onValueChange={setSelectedProject}>
             <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
-              <SelectValue placeholder="Select code..." />
+              <SelectValue placeholder="Select project..." />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-              {costCodes.map((code) => (
-                <SelectItem key={code.costCodeID} value={code.costCodeID.toString()}>
-                  {code.costCode} - {code.description}
+              {projects.map((project) => (
+                <SelectItem key={project.projectID} value={project.projectID.toString()}>
+                  {project.projectCode} - {project.projectDescription}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-        )}
-      </div>
+        </div>
 
-      <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
+        <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
 
-      <div className="flex items-center gap-2">
-        <Calendar className="h-4 w-4 text-blue-500" />
-        <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[40px]">Date:</span>
-        <Input 
-          type="date" 
-          value={selectedDate} 
-          onChange={e => setSelectedDate(e.target.value)} 
-          className="w-36 border-slate-300 dark:border-slate-600 bg-slate-50" 
-        />
-      </div>
-
-      <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
-
-      <div className="flex items-center gap-2">
-        <Users className="h-4 w-4 text-blue-500" />
-        <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[70px]">Employee:</span>
-        
-        {setSelectedEmployees ? (
-          // Multi-select mode
-          <Popover open={employeePopoverOpen} onOpenChange={setEmployeePopoverOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={employeePopoverOpen}
-                className="w-48 justify-between border-slate-300 dark:border-slate-600"
-              >
-                {safeSelectedEmployees.length === 0
-                  ? "Select employees..."
-                  : safeSelectedEmployees.length === 1
-                  ? getSelectedEmployeeNames()[0]
-                  : `${safeSelectedEmployees.length} employees selected`}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-48 p-0">
-              <Command>
-                <CommandInput placeholder="Search employees..." />
-                <CommandEmpty>No employee found.</CommandEmpty>
-                <CommandGroup className="max-h-64 overflow-auto">
-                  {employees.map((employee) => (
-                    <CommandItem
-                      key={employee.employeeID}
-                      value={employee.fullName}
-                      onSelect={() => handleEmployeeSelect(employee.employeeID)}
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          safeSelectedEmployees.includes(employee.employeeID) ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {employee.fullName}
-                      <span className="ml-auto text-xs text-slate-500">
-                        {employee.class}
-                      </span>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
-        ) : (
-          // Single select mode (fallback)
-          <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-4 border-2 border-green-500 rounded flex items-center justify-center">
+            <span className="text-green-500 text-xs font-bold">E</span>
+          </div>
+          <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[40px]">Extra:</span>
+          <Select value={selectedExtra} onValueChange={setSelectedExtra} disabled={!selectedProject}>
             <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
-              <SelectValue placeholder="Select employee..." />
+              <SelectValue placeholder="Select extra..." />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-              {employees.map((employee) => (
-                <SelectItem key={employee.employeeID} value={employee.employeeID}>
-                  {employee.fullName} - {employee.class}
+              {projectExtras.map((extra) => (
+                <SelectItem key={extra.extraID} value={extra.extraID.toString()}>
+                  {extra.extraValue} - {extra.description}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-        )}
+        </div>
+
+        <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
+
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-4 border-2 border-blue-500 rounded flex items-center justify-center">
+            <span className="text-blue-500 text-xs font-bold">C</span>
+          </div>
+          <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[80px]">Cost Code:</span>
+          {useCostCodeInput ? (
+            <Input 
+              placeholder="Select code..." 
+              value={selectedCostCode} 
+              onChange={e => setSelectedCostCode(e.target.value)} 
+              className="w-48 border-slate-300 dark:border-slate-600" 
+            />
+          ) : (
+            <Select value={selectedCostCode} onValueChange={setSelectedCostCode} disabled={!selectedProject}>
+              <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
+                <SelectValue placeholder="Select code..." />
+              </SelectTrigger>
+              <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                {costCodes.map((code) => (
+                  <SelectItem key={code.costCodeID} value={code.costCodeID.toString()}>
+                    {code.costCode} - {code.description}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+
+        <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
+
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-blue-500" />
+          <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[40px]">Date:</span>
+          {useMultiDateSelection && setSelectedDates ? (
+            <MultiDatePicker
+              selectedDates={selectedDates}
+              onDatesChange={setSelectedDates}
+            />
+          ) : (
+            <Input 
+              type="date" 
+              value={selectedDate} 
+              onChange={e => setSelectedDate(e.target.value)} 
+              className="w-36 border-slate-300 dark:border-slate-600 bg-slate-50" 
+            />
+          )}
+        </div>
+
+        <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
+
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-blue-500" />
+          <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[70px]">Employee:</span>
+          
+          {setSelectedEmployees ? (
+            // Multi-select mode
+            <Popover open={employeePopoverOpen} onOpenChange={setEmployeePopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={employeePopoverOpen}
+                  className="w-48 justify-between border-slate-300 dark:border-slate-600"
+                >
+                  {safeSelectedEmployees.length === 0
+                    ? "Select employees..."
+                    : safeSelectedEmployees.length === 1
+                    ? getSelectedEmployeeNames()[0]
+                    : `${safeSelectedEmployees.length} employees selected`}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-48 p-0">
+                <Command>
+                  <CommandInput placeholder="Search employees..." />
+                  <CommandEmpty>No employee found.</CommandEmpty>
+                  <CommandGroup className="max-h-64 overflow-auto">
+                    {employees.map((employee) => (
+                      <CommandItem
+                        key={employee.employeeID}
+                        value={employee.fullName}
+                        onSelect={() => handleEmployeeSelect(employee.employeeID)}
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            safeSelectedEmployees.includes(employee.employeeID) ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        {employee.fullName}
+                        <span className="ml-auto text-xs text-slate-500">
+                          {employee.class}
+                        </span>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          ) : (
+            // Single select mode (fallback)
+            <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+              <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
+                <SelectValue placeholder="Select employee..." />
+              </SelectTrigger>
+              <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                {employees.map((employee) => (
+                  <SelectItem key={employee.employeeID} value={employee.employeeID}>
+                    {employee.fullName} - {employee.class}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
       </div>
 
       {/* Selected employees badges (for multi-select) */}
       {setSelectedEmployees && safeSelectedEmployees.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2 w-full">
+        <div className="flex flex-wrap gap-1">
           {getSelectedEmployeeNames().map((name, index) => (
             <Badge
               key={safeSelectedEmployees[index]}
