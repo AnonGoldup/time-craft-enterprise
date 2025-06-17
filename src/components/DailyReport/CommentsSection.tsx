@@ -24,7 +24,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <Card>
         <CollapsibleTrigger asChild>
-          <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+          <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 py-3">
             <div className="flex items-center justify-between">
               <CardTitle>Comments</CardTitle>
               {isOpen ? (
@@ -36,9 +36,9 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
           </CardHeader>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4 pt-0">
             {/* Description Of Work Performed */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Description Of Work Performed</label>
                 <div className="flex items-center space-x-2">
@@ -54,12 +54,12 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                 placeholder="Enter description of work performed..."
                 value={commentFields.descriptionOfWork}
                 onChange={(e) => updateCommentField('descriptionOfWork', e.target.value)}
-                rows={3}
+                rows={2}
               />
             </div>
 
             {/* Job Site Conditions */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Job Site Conditions</label>
                 <div className="flex items-center space-x-2">
@@ -75,12 +75,12 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                 placeholder="Enter job site conditions..."
                 value={commentFields.jobSiteConditions}
                 onChange={(e) => updateCommentField('jobSiteConditions', e.target.value)}
-                rows={3}
+                rows={2}
               />
             </div>
 
             {/* Extra Work/Favors */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Extra Work/Favors</label>
                 <div className="flex items-center space-x-2">
@@ -96,12 +96,12 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                 placeholder="Enter extra work/favors..."
                 value={commentFields.extraWorkFavors}
                 onChange={(e) => updateCommentField('extraWorkFavors', e.target.value)}
-                rows={3}
+                rows={2}
               />
             </div>
 
             {/* Accident Report */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Accident Report</label>
                 <div className="flex items-center space-x-2">
@@ -117,12 +117,12 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                 placeholder="Enter accident report..."
                 value={commentFields.accidentReport}
                 onChange={(e) => updateCommentField('accidentReport', e.target.value)}
-                rows={3}
+                rows={2}
               />
             </div>
 
             {/* Near Misses/Hazard ID's */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Near Misses/Hazard ID's</label>
                 <div className="flex items-center space-x-2">
@@ -138,12 +138,12 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                 placeholder="Enter near misses/hazard ID's..."
                 value={commentFields.nearMissesHazardIds}
                 onChange={(e) => updateCommentField('nearMissesHazardIds', e.target.value)}
-                rows={3}
+                rows={2}
               />
             </div>
 
             {/* Job Site Cleanliness */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Job Site Cleanliness</label>
                 <div className="flex items-center space-x-2">
@@ -159,12 +159,12 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                 placeholder="Enter job site cleanliness notes..."
                 value={commentFields.jobSiteCleanliness}
                 onChange={(e) => updateCommentField('jobSiteCleanliness', e.target.value)}
-                rows={3}
+                rows={2}
               />
             </div>
 
             {/* Comments/Problems */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Comments/Problems</label>
                 <div className="flex items-center space-x-2">
@@ -180,12 +180,12 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                 placeholder="Enter comments/problems..."
                 value={commentFields.commentsProblems}
                 onChange={(e) => updateCommentField('commentsProblems', e.target.value)}
-                rows={3}
+                rows={2}
               />
             </div>
 
             {/* Internal Comments */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Internal Comments</label>
                 <div className="flex items-center space-x-2">
@@ -201,7 +201,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                 placeholder="Enable and browse setting for spell check..."
                 value={commentFields.internalComments}
                 onChange={(e) => updateCommentField('internalComments', e.target.value)}
-                rows={3}
+                rows={2}
               />
             </div>
           </CardContent>

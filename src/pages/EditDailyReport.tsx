@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -271,7 +272,7 @@ const EditDailyReport: React.FC = () => {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -335,7 +336,7 @@ const EditDailyReport: React.FC = () => {
       ))}
 
       {/* Add Crew Button */}
-      <div className="flex justify-center">
+      <div className="flex justify-center py-2">
         <Button onClick={addCrew} className="flex items-center gap-2 bg-green-600 hover:bg-green-700">
           <Plus className="h-4 w-4" />
           Add Crew
@@ -388,7 +389,7 @@ const EditDailyReport: React.FC = () => {
       />
 
       {/* Save Button */}
-      <div className="flex justify-end">
+      <div className="flex justify-end pt-2">
         <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700">
           Save Data
         </Button>

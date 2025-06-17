@@ -22,7 +22,7 @@ const IssuesSection: React.FC<IssuesSectionProps> = ({
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <Card>
         <CollapsibleTrigger asChild>
-          <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+          <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 py-3">
             <div className="flex items-center justify-between">
               <CardTitle>Issues</CardTitle>
               {isOpen ? (
@@ -32,14 +32,14 @@ const IssuesSection: React.FC<IssuesSectionProps> = ({
               )}
             </div>
           </CardHeader>
-        </CollapsibleTrigger>
+        </CollipsibleTrigger>
         <CollapsibleContent>
-          <CardContent>
+          <CardContent className="pt-0">
             <Textarea
               placeholder="No issues on Project"
               value={issues}
               onChange={(e) => setIssues(e.target.value)}
-              rows={3}
+              rows={2}
             />
           </CardContent>
         </CollapsibleContent>

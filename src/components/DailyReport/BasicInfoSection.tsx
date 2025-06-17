@@ -45,7 +45,7 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <Card>
         <CollapsibleTrigger asChild>
-          <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+          <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 py-3">
             <div className="flex items-center justify-between">
               <CardTitle>Daily Report Information</CardTitle>
               {isOpen ? (
@@ -57,8 +57,8 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
           </CardHeader>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <CardContent className="space-y-3 pt-0">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <label className="text-sm font-medium">Custom Number:</label>
                 <Input
@@ -97,7 +97,7 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
               <div>
                 <label className="text-sm font-medium">Weather:</label>
                 <Select value={formData.weather} onValueChange={(value) => setFormData({...formData, weather: value})}>
@@ -145,7 +145,7 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium">Time On Site:</label>
                 <Select value={formData.timeOnSite} onValueChange={(value) => setFormData({...formData, timeOnSite: value})}>
