@@ -173,8 +173,8 @@ export const Sidebar: React.FC = () => {
             className={cn(
               "flex items-center justify-between w-full gap-3 px-3 py-2 rounded-lg transition-colors duration-200",
               isActive || isSubmenuItemActive
-                ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
-                : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-700"
+                ? "bg-accent text-accent-foreground border border-accent/20"
+                : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             )}
           >
             <div className="flex items-center gap-3">
@@ -193,8 +193,8 @@ export const Sidebar: React.FC = () => {
                     className={cn(
                       "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 text-sm",
                       location.pathname === subItem.path
-                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
-                        : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-700"
+                        ? "bg-accent text-accent-foreground border border-accent/20"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                     )}
                   >
                     <span className="font-medium">{subItem.label}</span>
@@ -214,8 +214,8 @@ export const Sidebar: React.FC = () => {
         className={cn(
           "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200",
           isActive
-            ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
-            : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-700"
+            ? "bg-accent text-accent-foreground border border-accent/20"
+            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
         )}
       >
         <item.icon className="h-5 w-5" />
@@ -225,19 +225,19 @@ export const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="w-64 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 h-[calc(100vh-73px)]">
+    <div className="w-64 bg-sidebar border-r border-sidebar-border h-[calc(100vh-73px)]">
       <div className="p-6">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold">{user?.fullName?.charAt(0)}</span>
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+              <span className="text-primary-foreground font-bold">{user?.fullName?.charAt(0)}</span>
             </div>
             <div>
-              <p className="text-gray-900 dark:text-white font-medium">{user?.fullName}</p>
-              <p className="text-gray-500 dark:text-gray-400 text-sm capitalize">{user?.role}</p>
+              <p className="text-sidebar-foreground font-medium">{user?.fullName}</p>
+              <p className="text-sidebar-foreground/60 text-sm capitalize">{user?.role}</p>
             </div>
           </div>
-          <div className="text-xs text-gray-400 dark:text-gray-500">{user?.department}</div>
+          <div className="text-xs text-sidebar-foreground/40">{user?.department}</div>
         </div>
 
         <nav className="space-y-4">
@@ -249,7 +249,7 @@ export const Sidebar: React.FC = () => {
           {/* Timesheet Module */}
           {filteredTimesheetModule.length > 0 && (
             <div className="space-y-2">
-              <div className="text-xs font-medium text-gray-400 dark:text-gray-500 px-3 py-1">
+              <div className="text-xs font-medium text-sidebar-foreground/40 px-3 py-1">
                 Timesheet Module
               </div>
               {filteredTimesheetModule.map(renderMenuItem)}
@@ -259,7 +259,7 @@ export const Sidebar: React.FC = () => {
           {/* Project Management Module */}
           {filteredProjectModule.length > 0 && (
             <div className="space-y-2">
-              <div className="text-xs font-medium text-gray-400 dark:text-gray-500 px-3 py-1">
+              <div className="text-xs font-medium text-sidebar-foreground/40 px-3 py-1">
                 Project Management Module
               </div>
               {filteredProjectModule.map(renderMenuItem)}
@@ -269,7 +269,7 @@ export const Sidebar: React.FC = () => {
           {/* Administrator Module */}
           {filteredAdminModule.length > 0 && (
             <div className="space-y-2">
-              <div className="text-xs font-medium text-gray-400 dark:text-gray-500 px-3 py-1">
+              <div className="text-xs font-medium text-sidebar-foreground/40 px-3 py-1">
                 Administrator Module
               </div>
               {filteredAdminModule.map(renderMenuItem)}
@@ -278,8 +278,8 @@ export const Sidebar: React.FC = () => {
         </nav>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200 dark:border-slate-700">
-        <div className="text-xs text-gray-400 dark:text-gray-500">
+      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-sidebar-border">
+        <div className="text-xs text-sidebar-foreground/40">
           v1.0.0
         </div>
       </div>
