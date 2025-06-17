@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 export const LogsSection: React.FC = () => {
   return (
     <div className="space-y-4 border-t pt-6">
-      <h3 className="text-lg font-medium text-blue-600">Logs</h3>
+      <h3 className="text-lg font-medium text-primary">Logs</h3>
       
       <div className="space-y-4">
         <div className="flex items-center justify-between">

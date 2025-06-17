@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -7,7 +6,7 @@ import { useColorTheme } from '@/contexts/ThemeContext';
 export const InputFormsSection: React.FC = () => {
   return (
     <div className="border-t pt-3">
-      <h3 className="text-lg font-medium text-blue-600 mb-2">Input Forms</h3>
+      <h3 className="text-lg font-medium text-primary mb-2">Input Forms</h3>
       <div className="flex items-center justify-between">
         <Label>Display Pay Rate With Labor Class:</Label>
         <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
@@ -28,7 +27,7 @@ export const InputFormsSection: React.FC = () => {
 export const OutputFormsSection: React.FC = () => {
   return (
     <div className="border-t pt-3">
-      <h3 className="text-lg font-medium text-blue-600 mb-2">Output Forms</h3>
+      <h3 className="text-lg font-medium text-primary mb-2">Output Forms</h3>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Track Contract Number:</Label>
@@ -65,7 +64,7 @@ export const OutputFormsSection: React.FC = () => {
 export const ReportsSection: React.FC = () => {
   return (
     <div className="border-t pt-3">
-      <h3 className="text-lg font-medium text-blue-600 mb-2">Reports</h3>
+      <h3 className="text-lg font-medium text-primary mb-2">Reports</h3>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Labor Unit Productivity - Default Unit Tracking:</Label>
@@ -111,7 +110,7 @@ export const ColorSection: React.FC = () => {
 
   return (
     <div className="border-t pt-3">
-      <h3 className="text-lg font-medium text-blue-600 mb-2">Color</h3>
+      <h3 className="text-lg font-medium text-primary mb-2">Color</h3>
       <div>
         <Label className="mb-3 block">Color Theme:</Label>
         <RadioGroup 
@@ -120,10 +119,10 @@ export const ColorSection: React.FC = () => {
           className="grid grid-cols-2 gap-2"
         >
           {themes.map((theme) => (
-            <div key={theme.id} className="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-800">
+            <div key={theme.id} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted transition-colors">
               <RadioGroupItem value={theme.id} id={theme.id} />
               <div 
-                className="w-6 h-6 rounded border border-gray-300" 
+                className="w-8 h-8 rounded-lg border-2 border-border shadow-sm" 
                 style={{ backgroundColor: `hsl(${theme.colors.primary})` }}
                 title={theme.name}
               ></div>
@@ -141,7 +140,7 @@ export const ColorSection: React.FC = () => {
 export const HierarchyLoginSection: React.FC = () => {
   return (
     <div className="border-t pt-3">
-      <h3 className="text-lg font-medium mb-2">Hierarchy/Login Settings</h3>
+      <h3 className="text-lg font-medium text-primary mb-2">Hierarchy/Login Settings</h3>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Number Project by Division:</Label>

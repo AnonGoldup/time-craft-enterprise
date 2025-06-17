@@ -178,6 +178,10 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
     } else {
       root.style.removeProperty('--theme-font-family');
     }
+
+    // Add theme-specific class to body for more targeted styling
+    document.body.className = document.body.className.replace(/theme-\w+/g, '');
+    document.body.classList.add(`theme-${theme.id}`);
   };
 
   useEffect(() => {
