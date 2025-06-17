@@ -6,87 +6,112 @@
 /* Import theme variables */
 @import './styles/theme-variables.css';
 
+/* AltaPro Admin Theme - CSS Variables */
 @layer base {
   :root {
-    /* Light mode colors based on your Power Apps scheme */
-    --background: 0 0% 100%; /* White (255,255,255) */
-    --foreground: 218 46% 27%; /* Primary text (37,52,100) */
-
-    --card: 0 0% 100%; /* White */
-    --card-foreground: 218 46% 27%; /* Primary text */
-
-    --popover: 0 0% 100%; /* White */
-    --popover-foreground: 218 46% 27%; /* Primary text */
-
-    --primary: 0 0% 100%; /* White for primary */
-    --primary-foreground: 218 46% 27%; /* Primary text */
-
-    --secondary: 0 0% 96%; /* Tertiary light (244,244,244) */
-    --secondary-foreground: 218 46% 27%; /* Primary text */
-
-    --muted: 225 12% 85%; /* Highlight light (215,219,230) */
-    --muted-foreground: 221 20% 57%; /* Secondary text (115,131,176) */
-
-    --accent: 45 99% 59%; /* Accent yellow (254,189,47) */
-    --accent-foreground: 220 26% 12%; /* Accent text (22,25,39) */
-
-    --destructive: 0 84% 60%; /* Red for destructive actions */
-    --destructive-foreground: 0 0% 100%; /* White */
-
-    --border: 225 12% 85%; /* Highlight light */
-    --input: 225 12% 85%; /* Highlight light */
-    --ring: 45 99% 59%; /* Accent yellow */
-
+    /* Base Colors */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    
+    /* Card Colors */
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    
+    /* Popover Colors */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    
+    /* Primary Colors */
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    
+    /* Secondary Colors */
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    
+    /* Muted Colors */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    
+    /* Accent Colors */
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    
+    /* Destructive Colors */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    
+    /* Border Colors */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    
+    /* Chart Colors */
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    
+    /* Border Radius */
     --radius: 0.5rem;
-
-    --sidebar-background: 218 46% 27%; /* Primary text as sidebar bg */
-    --sidebar-foreground: 0 0% 97%; /* Light text (247,247,247) */
-    --sidebar-primary: 45 99% 59%; /* Accent yellow */
-    --sidebar-primary-foreground: 220 26% 12%; /* Accent text */
-    --sidebar-accent: 225 12% 85%; /* Highlight light */
-    --sidebar-accent-foreground: 218 46% 27%; /* Primary text */
-    --sidebar-border: 225 12% 85%; /* Highlight light */
-    --sidebar-ring: 45 99% 59%; /* Accent yellow */
+    
+    /* AltaPro Brand Colors */
+    --altapro-orange: 25 95% 53%;
+    --altapro-dark: 222 47% 8%;
+    --altapro-darker: 222 47% 6%;
+    --altapro-light: 210 40% 98%;
+    
+    /* Sidebar Specific Colors - AltaPro Theme */
+    --sidebar-background: var(--altapro-dark);
+    --sidebar-foreground: var(--altapro-light);
+    --sidebar-primary: var(--altapro-orange);
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 215 20% 15%;
+    --sidebar-accent-foreground: var(--altapro-light);
+    --sidebar-border: 215 20% 15%;
+    --sidebar-ring: var(--altapro-orange);
   }
 
   .dark {
-    /* Dark mode colors based on your Power Apps scheme */
-    --background: 220 61% 9%; /* Primary dark (9,15,37) */
-    --foreground: 0 0% 97%; /* Light text (247,247,247) */
-
-    --card: 220 51% 12%; /* Tertiary dark (16,25,50) */
-    --card-foreground: 0 0% 97%; /* Light text */
-
-    --popover: 220 51% 12%; /* Tertiary dark */
-    --popover-foreground: 0 0% 97%; /* Light text */
-
-    --primary: 220 61% 9%; /* Primary dark */
-    --primary-foreground: 0 0% 97%; /* Light text */
-
-    --secondary: 220 51% 12%; /* Tertiary dark */
-    --secondary-foreground: 0 0% 97%; /* Light text */
-
-    --muted: 221 50% 18%; /* Highlight dark (23,33,69) */
-    --muted-foreground: 221 20% 57%; /* Secondary text (115,131,176) */
-
-    --accent: 45 99% 59%; /* Accent yellow (254,189,47) */
-    --accent-foreground: 220 26% 12%; /* Accent text (22,25,39) */
-
-    --destructive: 0 84% 60%; /* Red for destructive actions */
-    --destructive-foreground: 0 0% 100%; /* White */
-
-    --border: 221 50% 18%; /* Highlight dark */
-    --input: 221 50% 18%; /* Highlight dark */
-    --ring: 45 99% 59%; /* Accent yellow */
-
-    --sidebar-background: 220 51% 12%; /* Tertiary dark */
-    --sidebar-foreground: 0 0% 97%; /* Light text */
-    --sidebar-primary: 45 99% 59%; /* Accent yellow */
-    --sidebar-primary-foreground: 220 26% 12%; /* Accent text */
-    --sidebar-accent: 221 50% 18%; /* Highlight dark */
-    --sidebar-accent-foreground: 0 0% 97%; /* Light text */
-    --sidebar-border: 221 50% 18%; /* Highlight dark */
-    --sidebar-ring: 45 99% 59%; /* Accent yellow */
+    /* Dark mode colors */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    
+    /* Dark Sidebar Colors */
+    --sidebar-background: var(--altapro-darker);
+    --sidebar-foreground: 210 40% 95%;
+    --sidebar-primary: var(--altapro-orange);
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 215 20% 12%;
+    --sidebar-accent-foreground: 210 40% 95%;
+    --sidebar-border: 215 20% 12%;
+    --sidebar-ring: var(--altapro-orange);
   }
 }
 
@@ -113,5 +138,82 @@
   
   .enhanced-header {
     @apply transition-all duration-200;
+  }
+}
+
+/* AltaPro Sidebar Styles */
+@layer components {
+  .bg-sidebar {
+    background-color: hsl(var(--sidebar-background));
+  }
+
+  .text-sidebar-foreground {
+    color: hsl(var(--sidebar-foreground));
+  }
+
+  .text-sidebar-foreground\/70 {
+    color: hsl(var(--sidebar-foreground) / 0.7);
+  }
+
+  .text-sidebar-foreground\/60 {
+    color: hsl(var(--sidebar-foreground) / 0.6);
+  }
+
+  .border-sidebar-border {
+    border-color: hsl(var(--sidebar-border));
+  }
+
+  .bg-sidebar-accent {
+    background-color: hsl(var(--sidebar-accent));
+  }
+
+  .text-sidebar-accent-foreground {
+    color: hsl(var(--sidebar-accent-foreground));
+  }
+
+  .ring-sidebar-ring {
+    --tw-ring-color: hsl(var(--sidebar-ring));
+  }
+
+  .focus\:ring-sidebar-ring:focus {
+    --tw-ring-color: hsl(var(--sidebar-ring));
+  }
+
+  /* Sidebar Menu Button Styles */
+  [data-sidebar="menu-button"] {
+    @apply w-full flex items-center gap-2 p-2 rounded-md outline-none transition-all;
+    color: hsl(var(--sidebar-foreground));
+  }
+
+  [data-sidebar="menu-button"]:hover {
+    background-color: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+  }
+
+  [data-sidebar="menu-button"]:focus {
+    background-color: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+    box-shadow: 0 0 0 2px hsl(var(--sidebar-ring));
+  }
+
+  [data-sidebar="menu-button"][data-active="true"] {
+    background-color: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+    font-weight: 500;
+  }
+
+  /* Group Labels */
+  [data-sidebar="group-label"] {
+    @apply px-2 text-xs font-medium uppercase tracking-wider;
+    color: hsl(var(--sidebar-foreground) / 0.6);
+  }
+
+  /* Primary Button in Sidebar */
+  .bg-primary {
+    background-color: hsl(var(--sidebar-primary));
+  }
+
+  .text-primary-foreground {
+    color: hsl(var(--sidebar-primary-foreground));
   }
 }
