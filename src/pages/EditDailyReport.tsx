@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -362,10 +361,16 @@ const EditDailyReport: React.FC = () => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Crews</CardTitle>
-          <Button onClick={addCrewEntry} size="sm" className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Add Line
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={addCrewEntry} size="sm" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Add Crew
+            </Button>
+            <Button onClick={addCrewEntry} size="sm" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Add Line
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <Table>
