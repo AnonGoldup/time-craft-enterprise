@@ -6,45 +6,39 @@
 /* Import theme variables */
 @import './styles/theme-variables.css';
 
-/* AltaPro Admin Theme - CSS Variables */
+/* Unity Theme for Loveable.dev - Complete Theme File */
 @layer base {
   :root {
-    /* Base Colors */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Unity Core Colors */
+    --background: 0 0% 97%;
+    --foreground: 222 13% 16%;
     
-    /* Card Colors */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222 13% 16%;
     
-    /* Popover Colors */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222 13% 16%;
     
-    /* Primary Colors */
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
     
-    /* Secondary Colors */
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 222 13% 16%;
     
-    /* Muted Colors */
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 42%;
     
-    /* Accent Colors */
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 100%;
     
-    /* Destructive Colors */
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
     
-    /* Border Colors */
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 25 95% 53%;
+    
+    --radius: 0.5rem;
     
     /* Chart Colors */
     --chart-1: 12 76% 61%;
@@ -53,64 +47,61 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     
-    /* Border Radius */
-    --radius: 0.5rem;
-    
-    /* AltaPro Brand Colors */
+    /* Unity + AltaPro Brand Colors */
     --altapro-orange: 25 95% 53%;
-    --altapro-dark: 222 47% 8%;
-    --altapro-darker: 222 47% 6%;
-    --altapro-light: 210 40% 98%;
+    --altapro-dark: 222 13% 16%;
+    --altapro-darker: 222 13% 14%;
+    --altapro-light: 0 0% 98%;
     
-    /* Sidebar Specific Colors - AltaPro Theme */
+    /* Sidebar Specific Colors - Unity + AltaPro Theme */
     --sidebar-background: var(--altapro-dark);
     --sidebar-foreground: var(--altapro-light);
     --sidebar-primary: var(--altapro-orange);
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 215 20% 15%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 222 13% 20%;
     --sidebar-accent-foreground: var(--altapro-light);
-    --sidebar-border: 215 20% 15%;
+    --sidebar-border: 222 13% 20%;
     --sidebar-ring: var(--altapro-orange);
   }
 
   .dark {
-    /* Dark mode colors */
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Unity Dark Mode Colors */
+    --background: 222 13% 16%;
+    --foreground: 0 0% 98%;
     
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 222 13% 18%;
+    --card-foreground: 0 0% 98%;
     
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 222 13% 16%;
+    --popover-foreground: 0 0% 98%;
     
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
     
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 222 13% 20%;
+    --secondary-foreground: 0 0% 98%;
     
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 222 13% 20%;
+    --muted-foreground: 0 0% 60%;
     
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 100%;
     
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
     
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 222 13% 20%;
+    --input: 222 13% 20%;
+    --ring: 25 95% 53%;
     
     /* Dark Sidebar Colors */
     --sidebar-background: var(--altapro-darker);
-    --sidebar-foreground: 210 40% 95%;
+    --sidebar-foreground: 0 0% 95%;
     --sidebar-primary: var(--altapro-orange);
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 215 20% 12%;
-    --sidebar-accent-foreground: 210 40% 95%;
-    --sidebar-border: 215 20% 12%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 222 13% 18%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 222 13% 18%;
     --sidebar-ring: var(--altapro-orange);
   }
 }
@@ -122,26 +113,40 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--theme-font-family, var(--font-primary, ui-sans-serif, system-ui, sans-serif));
+    font-family: var(--theme-font-family, var(--font-primary, 'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif));
   }
 }
 
-/* Enhanced theme utilities */
+/* Unity Enhanced Components */
 @layer utilities {
   .enhanced-card {
     @apply transition-all duration-200;
+    box-shadow: 0 4px 20px rgba(250, 128, 41, 0.1);
+    border-left: 4px solid hsl(var(--primary));
+  }
+  
+  .enhanced-card:hover {
+    box-shadow: 0 8px 30px rgba(250, 128, 41, 0.15);
+    transform: translateY(-1px);
   }
   
   .enhanced-input {
     @apply transition-all duration-200;
   }
   
+  .enhanced-input:focus {
+    box-shadow: 0 0 0 3px rgba(250, 128, 41, 0.1);
+    border-color: hsl(var(--primary));
+  }
+  
   .enhanced-header {
     @apply transition-all duration-200;
+    background: linear-gradient(135deg, hsl(var(--sidebar-background)) 0%, hsl(var(--primary)) 100%);
+    color: white;
   }
 }
 
-/* AltaPro Sidebar Styles */
+/* Unity + AltaPro Sidebar Styles */
 @layer components {
   .bg-sidebar {
     background-color: hsl(var(--sidebar-background));
@@ -179,9 +184,9 @@
     --tw-ring-color: hsl(var(--sidebar-ring));
   }
 
-  /* Sidebar Menu Button Styles */
+  /* Unity Sidebar Menu Button Styles */
   [data-sidebar="menu-button"] {
-    @apply w-full flex items-center gap-2 p-2 rounded-md outline-none transition-all;
+    @apply w-full flex items-center gap-2 p-2 rounded-md outline-none transition-all duration-200;
     color: hsl(var(--sidebar-foreground));
   }
 
@@ -197,8 +202,8 @@
   }
 
   [data-sidebar="menu-button"][data-active="true"] {
-    background-color: hsl(var(--sidebar-accent));
-    color: hsl(var(--sidebar-accent-foreground));
+    background-color: rgba(250, 128, 41, 0.2);
+    color: hsl(var(--sidebar-primary));
     font-weight: 500;
   }
 
@@ -208,6 +213,19 @@
     color: hsl(var(--sidebar-foreground) / 0.6);
   }
 
+  /* Unity Button Enhancements */
+  .btn-primary {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(250, 128, 41, 0.3);
+  }
+
   /* Primary Button in Sidebar */
   .bg-primary {
     background-color: hsl(var(--sidebar-primary));
@@ -215,5 +233,31 @@
 
   .text-primary-foreground {
     color: hsl(var(--sidebar-primary-foreground));
+  }
+
+  /* Unity Tag Colors */
+  .tag-dribbble {
+    background-color: rgba(234, 76, 137, 0.1);
+    color: #ea4c89;
+  }
+
+  .tag-design {
+    background-color: rgba(250, 128, 41, 0.1);
+    color: #fa8029;
+  }
+
+  .tag-research {
+    background-color: rgba(123, 104, 238, 0.1);
+    color: #7b68ee;
+  }
+
+  .tag-behance {
+    background-color: rgba(23, 105, 255, 0.1);
+    color: #1769ff;
+  }
+
+  .tag-dev {
+    background-color: rgba(0, 212, 170, 0.1);
+    color: #00d4aa;
   }
 }
