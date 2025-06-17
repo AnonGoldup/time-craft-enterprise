@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, ChevronRight, History } from 'lucide-react';
@@ -11,7 +12,7 @@ const navigationItems = [{
   path: '/',
   roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
 }, {
-  label: 'Log',
+  label: 'Time Log',
   icon: History,
   path: '/log',
   roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
