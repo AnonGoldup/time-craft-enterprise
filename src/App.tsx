@@ -25,6 +25,7 @@ const Calendar = lazy(() => import("./pages/Calendar"));
 const Documents = lazy(() => import("./pages/Documents"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Projects = lazy(() => import("./pages/Projects"));
+const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -107,6 +108,13 @@ const App = () => (
                     <ProtectedRoute>
                       <AppLayout>
                         <Projects />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/projects/:projectId" element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <ProjectDetail />
                       </AppLayout>
                     </ProtectedRoute>
                   } />

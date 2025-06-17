@@ -78,6 +78,10 @@ const Projects = () => {
     }
   };
 
+  const handleProjectClick = (projectId: string) => {
+    navigate(`/projects/${projectId}`);
+  };
+
   const renderProjectsView = () => {
     switch (viewMode) {
       case 'list':
@@ -86,6 +90,7 @@ const Projects = () => {
             projects={sortedProjects}
             isAdmin={isAdmin}
             onIconClick={handleIconClick}
+            onProjectClick={handleProjectClick}
           />
         );
       case 'card':
@@ -94,6 +99,7 @@ const Projects = () => {
             projects={sortedProjects}
             isAdmin={isAdmin}
             onIconClick={handleIconClick}
+            onProjectClick={handleProjectClick}
           />
         );
       case 'tile':
@@ -102,6 +108,7 @@ const Projects = () => {
             projects={sortedProjects}
             isAdmin={isAdmin}
             onIconClick={handleIconClick}
+            onProjectClick={handleProjectClick}
           />
         );
       default:
