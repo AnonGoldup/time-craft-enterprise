@@ -15,7 +15,6 @@ import { LoadingState } from "@/components/ui/loading";
 // Lazy load pages for better performance
 const Index = lazy(() => import("./pages/Index"));
 const Log = lazy(() => import("./pages/Log"));
-const TimeEntry = lazy(() => import("./pages/TimeEntry"));
 const TimeEntryStandard = lazy(() => import("./pages/TimeEntryStandard"));
 const TimeEntryTimeInOut = lazy(() => import("./pages/TimeEntryTimeInOut"));
 const ManagerApproval = lazy(() => import("./pages/ManagerApproval"));
@@ -64,7 +63,7 @@ const App = () => (
                   <Route path="/time-entry" element={
                     <ProtectedRoute>
                       <AppLayout>
-                        <TimeEntry />
+                        <TimeEntryStandard />
                       </AppLayout>
                     </ProtectedRoute>
                   } />

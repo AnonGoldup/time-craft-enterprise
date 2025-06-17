@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
-import { ChevronLeft, MoreVertical, Plus, Trash2 } from 'lucide-react';
+import { MoreVertical, Plus, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProjectDetailsRow from '@/components/TimeEntry/ProjectDetailsRow';
 import HoursEntryRow from '@/components/TimeEntry/HoursEntryRow';
@@ -54,13 +54,6 @@ const TimeEntryStandard = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Link to="/time-entry" className="flex items-center gap-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200">
-          <ChevronLeft className="h-4 w-4" />
-          <span>Back to Time Entry</span>
-        </Link>
-      </div>
-
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
