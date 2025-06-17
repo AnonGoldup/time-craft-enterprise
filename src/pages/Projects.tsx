@@ -23,51 +23,26 @@ const Projects = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [sortBy, setSortBy] = useState<SortBy>('number');
   const [filterBy, setFilterBy] = useState<FilterBy>('all');
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   
   const isAdmin = user?.role === 'admin';
-  const projectsPerPage = 20;
 
-  const loadProjects = (currentPage: number = 1) => {
-    console.log('loadProjects called, page:', currentPage);
+  useEffect(() => {
+    console.log('Loading projects on mount...');
     setLoading(true);
     
     // Simulate API call
     setTimeout(() => {
-      const startIndex = (currentPage - 1) * projectsPerPage;
-      const endIndex = startIndex + projectsPerPage;
-      const newProjects = mockProjects.slice(startIndex, endIndex);
-      
-      if (currentPage === 1) {
-        setProjects(newProjects);
-      } else {
-        setProjects(prev => [...prev, ...newProjects]);
-      }
-      
-      setHasMore(endIndex < mockProjects.length);
+      setProjects(mockProjects);
       setLoading(false);
-      console.log('Projects loaded:', newProjects.length);
+      console.log('Projects loaded:', mockProjects.length);
     }, 500);
-  };
-
-  useEffect(() => {
-    console.log('Loading projects on mount...');
-    loadProjects(1);
   }, []);
-
-  const loadMore = () => {
-    if (!loading && hasMore) {
-      const nextPage = page + 1;
-      setPage(nextPage);
-      loadProjects(nextPage);
-    }
-  };
 
   // Apply filtering
   const filteredProjects = projects.filter(project => {
     const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.code.toLowerCase().includes(searchTerm.toLowerCase());
+      project.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.manager.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesFilter = filterBy === 'all' || project.status === filterBy;
     
@@ -134,7 +109,7 @@ const Projects = () => {
     }
   };
 
-  if (loading && projects.length === 0) {
+  if (loading) {
     return <LoadingState message="Loading projects..." />;
   }
 
@@ -157,15 +132,9 @@ const Projects = () => {
         <div className="space-y-6">
           {renderProjectsView()}
           
-          {hasMore && (
-            <div className="flex justify-center pt-6">
-              <Button 
-                variant="outline" 
-                onClick={loadMore}
-                disabled={loading}
-              >
-                {loading ? 'Loading...' : 'Load More Projects'}
-              </Button>
+          {sortedProjects.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              No projects found matching your criteria.
             </div>
           )}
         </div>
