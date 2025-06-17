@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,6 +28,20 @@ const Projects = lazy(() => import("./pages/Projects"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const EditDailyReport = lazy(() => import("./pages/EditDailyReport"));
+const CompanySettings = lazy(() => import("./pages/CompanySettings"));
+
+// Company Settings sub-pages
+const CompanySetup = lazy(() => import("./pages/settings/CompanySetup"));
+const AddDivision = lazy(() => import("./pages/settings/AddDivision"));
+const AddOccupancyType = lazy(() => import("./pages/settings/AddOccupancyType"));
+const AddProject = lazy(() => import("./pages/settings/AddProject"));
+const AddSystem = lazy(() => import("./pages/settings/AddSystem"));
+const AddPhase = lazy(() => import("./pages/settings/AddPhase"));
+const AddUser = lazy(() => import("./pages/settings/AddUser"));
+const UserLog = lazy(() => import("./pages/settings/UserLog"));
+const UsersLoggedOn = lazy(() => import("./pages/settings/UsersLoggedOn"));
+const AddEmployee = lazy(() => import("./pages/settings/AddEmployee"));
+const EmployeeLog = lazy(() => import("./pages/settings/EmployeeLog"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -146,6 +161,93 @@ const App = () => (
                       </AppLayout>
                     </ProtectedRoute>
                   } />
+                  <Route path="/company-settings" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <CompanySettings />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  
+                  {/* Company Settings Sub-pages */}
+                  <Route path="/settings/company-setup" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <CompanySetup />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/settings/add-division" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <AddDivision />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/settings/add-occupancy-type" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <AddOccupancyType />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/settings/add-project" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <AddProject />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/settings/add-system" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <AddSystem />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/settings/add-phase" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <AddPhase />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/settings/add-user" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <AddUser />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/settings/user-log" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <UserLog />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/settings/users-logged-on" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <UsersLoggedOn />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/settings/add-employee" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <AddEmployee />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/settings/employee-log" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <EmployeeLog />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

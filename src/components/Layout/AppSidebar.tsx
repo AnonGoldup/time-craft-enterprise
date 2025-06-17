@@ -132,6 +132,12 @@ const administratorModule = [
     ]
   },
   {
+    label: 'Company Settings',
+    icon: Settings,
+    path: '/company-settings',
+    roles: ['admin']
+  },
+  {
     label: 'Settings',
     icon: Settings,
     path: '/settings',
