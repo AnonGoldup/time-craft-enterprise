@@ -5,54 +5,54 @@ import { Progress } from '@/components/ui/progress';
 
 export const ProjectBudgetSection: React.FC = () => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Budget</CardTitle>
+    <Card className="bg-white rounded-xl shadow-sm border border-border hover:shadow-md transition-all duration-200">
+      <CardHeader className="border-b border-border">
+        <CardTitle className="text-foreground font-semibold">Budget</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Hours Budget */}
-          <div>
-            <div className="mb-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium">Actual Hrs to Date</span>
-                <span className="text-red-600 font-bold">175%</span>
+          <div className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium text-foreground">Actual Hrs to Date</span>
+                <span className="text-destructive font-bold text-lg">175%</span>
               </div>
-              <div className="bg-red-500 text-white text-center py-2 rounded font-bold">
+              <div className="bg-destructive text-destructive-foreground text-center py-3 rounded-lg font-bold text-xl shadow-sm">
                 36.36K hrs
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
+              <div className="space-y-1">
                 <div className="text-muted-foreground">Budget to Date</div>
-                <div className="font-medium">20.73K hrs</div>
+                <div className="font-semibold text-foreground">20.73K hrs</div>
               </div>
-              <div>
+              <div className="space-y-1">
                 <div className="text-muted-foreground">Remaining</div>
-                <div className="font-medium text-red-600">-15627.21 hrs</div>
+                <div className="font-semibold text-destructive">-15627.21 hrs</div>
               </div>
             </div>
           </div>
 
           {/* Cost Budget */}
-          <div>
-            <div className="mb-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium">Actual Costs</span>
-                <span className="text-red-600 font-bold">121%</span>
+          <div className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium text-foreground">Actual Costs</span>
+                <span className="text-destructive font-bold text-lg">121%</span>
               </div>
-              <div className="bg-red-500 text-white text-center py-2 rounded font-bold">
+              <div className="bg-destructive text-destructive-foreground text-center py-3 rounded-lg font-bold text-xl shadow-sm">
                 $4.05M
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
+              <div className="space-y-1">
                 <div className="text-muted-foreground">Budget to Date</div>
-                <div className="font-medium">$3.34M</div>
+                <div className="font-semibold text-foreground">$3.34M</div>
               </div>
-              <div>
+              <div className="space-y-1">
                 <div className="text-muted-foreground">Remaining</div>
-                <div className="font-medium text-red-600">-$715909</div>
+                <div className="font-semibold text-destructive">-$715909</div>
               </div>
             </div>
           </div>

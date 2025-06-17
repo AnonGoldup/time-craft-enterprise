@@ -20,21 +20,21 @@ export const ProjectFieldNotes: React.FC = () => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Field Notes</CardTitle>
+    <Card className="bg-white rounded-xl shadow-sm border border-border hover:shadow-md transition-all duration-200">
+      <CardHeader className="border-b border-border">
+        <CardTitle className="text-foreground font-semibold">Field Notes</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
           {fieldNotes.map((note) => (
-            <div key={note.id} className="aspect-square relative">
+            <div key={note.id} className="aspect-square relative group">
               {note.hasImage ? (
-                <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                  <Camera className="h-8 w-8 text-gray-400" />
+                <div className="w-full h-full bg-muted rounded-lg flex items-center justify-center border border-border hover:border-primary/20 transition-all duration-200 cursor-pointer group-hover:shadow-md">
+                  <Camera className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
               ) : (
-                <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center p-2">
-                  <div className="text-xs text-center text-gray-500">
+                <div className="w-full h-full bg-muted/50 rounded-lg flex items-center justify-center p-2 border border-border">
+                  <div className="text-xs text-center text-muted-foreground">
                     {note.text}
                   </div>
                 </div>
@@ -43,10 +43,10 @@ export const ProjectFieldNotes: React.FC = () => {
           ))}
         </div>
         
-        <div className="bg-gray-800 text-white p-4 rounded-lg">
-          <div className="text-sm font-medium">{mainNote.date}</div>
-          <div className="font-bold">{mainNote.title}</div>
-          <div className="text-sm text-gray-300">{mainNote.author}</div>
+        <div className="bg-gradient-to-r from-primary to-accent text-white p-4 rounded-lg shadow-sm">
+          <div className="text-sm font-medium opacity-90">{mainNote.date}</div>
+          <div className="font-bold text-lg">{mainNote.title}</div>
+          <div className="text-sm opacity-75">{mainNote.author}</div>
         </div>
       </CardContent>
     </Card>
