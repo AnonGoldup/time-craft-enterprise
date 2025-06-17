@@ -52,7 +52,7 @@ const timesheetModule = [
   {
     label: 'User Settings',
     icon: Settings,
-    path: '/settings',
+    path: '/user-settings',
     roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
   }
 ];
@@ -134,6 +134,12 @@ const administratorModule = [
         path: '/reports/employee-timecards'
       }
     ]
+  },
+  {
+    label: 'Company Settings',
+    icon: Settings,
+    path: '/company-settings',
+    roles: ['admin']
   }
 ];
 
