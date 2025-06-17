@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -163,7 +162,7 @@ const Index = () => {
                   Standard Hours
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="w-full justify-start">
+              <Button asChild className="w-full justify-start bg-green-600 hover:bg-green-700 text-white">
                 <Link to="/time-entry/time-in-out">
                   <Clock className="h-4 w-4 mr-2" />
                   Time In/Out
