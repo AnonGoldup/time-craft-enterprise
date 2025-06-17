@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ArrowLeft, Plus, X } from 'lucide-react';
+import { employeeApi, Employee } from '@/services/api';
 
 interface CrewEntry {
   id: string;
@@ -45,9 +45,12 @@ const EditDailyReport: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loadingEmployees, setLoadingEmployees] = useState(true);
+
   const [formData, setFormData] = useState({
     customNumber: '',
-    reportFrom: '16-0020 - Borden Park Pool',
+    reportFrom: '',
     date: '06/10/2025',
     weather: 'Cloudy',
     timeOnSite: '7:00 AM',
@@ -141,6 +144,22 @@ const EditDailyReport: React.FC = () => {
     return crewEntries.reduce((sum, entry) => sum + entry[type], 0);
   };
 
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        setLoadingEmployees(true);
+        const response = await employeeApi.getActive();
+        setEmployees(response.data.data);
+      } catch (error) {
+        console.error('Failed to fetch employees:', error);
+      } finally {
+        setLoadingEmployees(false);
+      }
+    };
+
+    fetchEmployees();
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -181,12 +200,23 @@ const EditDailyReport: React.FC = () => {
             </div>
             <div>
               <label className="text-sm font-medium">Report From:</label>
-              <Select value={formData.reportFrom} onValueChange={(value) => setFormData({...formData, reportFrom: value})}>
+              <Select 
+                value={formData.reportFrom} 
+                onValueChange={(value) => setFormData({...formData, reportFrom: value})}
+                disabled={loadingEmployees}
+              >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder={loadingEmployees ? "Loading employees..." : "Select an employee contact"} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="16-0020 - Borden Park Pool">16-0020 - Borden Park Pool</SelectItem>
+                  {employees.map((employee) => (
+                    <SelectItem 
+                      key={employee.employeeID} 
+                      value={`${employee.department} — ${employee.lastName}, ${employee.firstName}`}
+                    >
+                      {employee.department} — {employee.lastName}, {employee.firstName}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
