@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -243,6 +242,18 @@ const EditDailyReport: React.FC = () => {
     }));
   };
 
+  const removeSubcontractor = (id: string) => {
+    setSubcontractors(subcontractors.filter(entry => entry.id !== id));
+  };
+
+  const removeEquipment = (id: string) => {
+    setEquipment(equipment.filter(entry => entry.id !== id));
+  };
+
+  const removeMaterial = (id: string) => {
+    setMaterials(materials.filter(entry => entry.id !== id));
+  };
+
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -345,6 +356,7 @@ const EditDailyReport: React.FC = () => {
         setIsOpen={setIsSubcontractorsOpen}
         onAddSubcontractor={addSubcontractor}
         onUpdateSubcontractor={updateSubcontractor}
+        onRemoveSubcontractor={removeSubcontractor}
       />
 
       {/* Equipment Section */}
@@ -354,6 +366,7 @@ const EditDailyReport: React.FC = () => {
         setIsOpen={setIsEquipmentOpen}
         onAddEquipment={addEquipment}
         onUpdateEquipment={updateEquipment}
+        onRemoveEquipment={removeEquipment}
       />
 
       {/* Materials Section */}
@@ -363,6 +376,7 @@ const EditDailyReport: React.FC = () => {
         setIsOpen={setIsMaterialsOpen}
         onAddMaterial={addMaterial}
         onUpdateMaterial={updateMaterial}
+        onRemoveMaterial={removeMaterial}
       />
 
       {/* Issues Section */}

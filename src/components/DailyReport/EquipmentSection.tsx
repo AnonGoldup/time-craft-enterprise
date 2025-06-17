@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Plus, ChevronDown, ChevronRight } from 'lucide-react';
+import { Plus, ChevronDown, ChevronRight, X } from 'lucide-react';
 import { EquipmentEntry } from './types';
 
 interface EquipmentSectionProps {
@@ -14,6 +14,7 @@ interface EquipmentSectionProps {
   setIsOpen: (open: boolean) => void;
   onAddEquipment: () => void;
   onUpdateEquipment: (id: string, field: keyof EquipmentEntry, value: string | number) => void;
+  onRemoveEquipment: (id: string) => void;
 }
 
 const EquipmentSection: React.FC<EquipmentSectionProps> = ({
@@ -21,7 +22,8 @@ const EquipmentSection: React.FC<EquipmentSectionProps> = ({
   isOpen,
   setIsOpen,
   onAddEquipment,
-  onUpdateEquipment
+  onUpdateEquipment,
+  onRemoveEquipment
 }) => {
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -56,12 +58,13 @@ const EquipmentSection: React.FC<EquipmentSectionProps> = ({
                   <TableHead className="text-white">Equipment</TableHead>
                   <TableHead className="text-white">Hours</TableHead>
                   <TableHead className="text-white">Notes</TableHead>
+                  <TableHead className="text-white w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {equipment.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center text-gray-500">
+                    <TableCell colSpan={4} className="text-center text-gray-500">
                       No equipment added
                     </TableCell>
                   </TableRow>
@@ -87,6 +90,16 @@ const EquipmentSection: React.FC<EquipmentSectionProps> = ({
                           value={entry.notes} 
                           onChange={(e) => onUpdateEquipment(entry.id, 'notes', e.target.value)}
                         />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onRemoveEquipment(entry.id)}
+                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))

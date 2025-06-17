@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Plus, ChevronDown, ChevronRight } from 'lucide-react';
+import { Plus, ChevronDown, ChevronRight, X } from 'lucide-react';
 import { MaterialEntry } from './types';
 
 interface MaterialsSectionProps {
@@ -14,6 +14,7 @@ interface MaterialsSectionProps {
   setIsOpen: (open: boolean) => void;
   onAddMaterial: () => void;
   onUpdateMaterial: (id: string, field: keyof MaterialEntry, value: string | number) => void;
+  onRemoveMaterial: (id: string) => void;
 }
 
 const MaterialsSection: React.FC<MaterialsSectionProps> = ({
@@ -21,7 +22,8 @@ const MaterialsSection: React.FC<MaterialsSectionProps> = ({
   isOpen,
   setIsOpen,
   onAddMaterial,
-  onUpdateMaterial
+  onUpdateMaterial,
+  onRemoveMaterial
 }) => {
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -57,12 +59,13 @@ const MaterialsSection: React.FC<MaterialsSectionProps> = ({
                   <TableHead className="text-white">Quantity</TableHead>
                   <TableHead className="text-white">Per</TableHead>
                   <TableHead className="text-white">Notes</TableHead>
+                  <TableHead className="text-white w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {materials.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center text-gray-500">
+                    <TableCell colSpan={5} className="text-center text-gray-500">
                       No materials added
                     </TableCell>
                   </TableRow>
@@ -95,6 +98,16 @@ const MaterialsSection: React.FC<MaterialsSectionProps> = ({
                           value={entry.notes} 
                           onChange={(e) => onUpdateMaterial(entry.id, 'notes', e.target.value)}
                         />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onRemoveMaterial(entry.id)}
+                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))

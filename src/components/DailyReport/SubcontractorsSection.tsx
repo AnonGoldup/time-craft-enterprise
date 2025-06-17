@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Plus, ChevronDown, ChevronRight } from 'lucide-react';
+import { Plus, ChevronDown, ChevronRight, X } from 'lucide-react';
 import { SubcontractorEntry } from './types';
 
 interface SubcontractorsSectionProps {
@@ -14,6 +14,7 @@ interface SubcontractorsSectionProps {
   setIsOpen: (open: boolean) => void;
   onAddSubcontractor: () => void;
   onUpdateSubcontractor: (id: string, field: keyof SubcontractorEntry, value: string | number) => void;
+  onRemoveSubcontractor: (id: string) => void;
 }
 
 const SubcontractorsSection: React.FC<SubcontractorsSectionProps> = ({
@@ -21,7 +22,8 @@ const SubcontractorsSection: React.FC<SubcontractorsSectionProps> = ({
   isOpen,
   setIsOpen,
   onAddSubcontractor,
-  onUpdateSubcontractor
+  onUpdateSubcontractor,
+  onRemoveSubcontractor
 }) => {
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -56,12 +58,13 @@ const SubcontractorsSection: React.FC<SubcontractorsSectionProps> = ({
                   <TableHead className="text-white">Subcontractors</TableHead>
                   <TableHead className="text-white">Workers</TableHead>
                   <TableHead className="text-white">Comments</TableHead>
+                  <TableHead className="text-white w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {subcontractors.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center text-gray-500">
+                    <TableCell colSpan={4} className="text-center text-gray-500">
                       No subcontractors added
                     </TableCell>
                   </TableRow>
@@ -87,6 +90,16 @@ const SubcontractorsSection: React.FC<SubcontractorsSectionProps> = ({
                           value={entry.comments} 
                           onChange={(e) => onUpdateSubcontractor(entry.id, 'comments', e.target.value)}
                         />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onRemoveSubcontractor(entry.id)}
+                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))
