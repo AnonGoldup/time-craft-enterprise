@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Save, X } from 'lucide-react';
+import { Save, X, AlertTriangle } from 'lucide-react';
 import ProjectDetailsRow from './ProjectDetailsRow';
 
 interface TimeEntry {
@@ -46,46 +46,89 @@ const TimeEntryEditForm: React.FC<TimeEntryEditFormProps> = ({
   const [selectedProject, setSelectedProject] = useState('');
   const [selectedExtra, setSelectedExtra] = useState('');
   const [selectedCostCode, setSelectedCostCode] = useState('');
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({});
 
   React.useEffect(() => {
     if (entry) {
       setFormData(entry);
-      // Initialize the cascade dropdown states based on entry data
-      // Note: These would need to be mapped from the entry's string values to IDs
-      setSelectedProject(''); // Would need to map projectCode to projectID
-      setSelectedExtra(''); // Would need to map extraValue to extraID
-      setSelectedCostCode(''); // Would need to map costCode to costCodeID
+      setSelectedProject('');
+      setSelectedExtra('');
+      setSelectedCostCode('');
+      setValidationErrors({});
     }
   }, [entry]);
 
   if (!formData) return null;
 
+  const validateTimeValue = (value: number, fieldName: string): string | null => {
+    if (value < 0) {
+      return `${fieldName} cannot be negative`;
+    }
+    if (value > 16) {
+      return `${fieldName} cannot exceed 16 hours`;
+    }
+    return null;
+  };
+
+  const validateTotalTime = (standard: number, overtime: number, doubleTime: number): string | null => {
+    const total = standard + overtime + doubleTime;
+    if (total > 16) {
+      return 'Total hours cannot exceed 16 hours per day';
+    }
+    return null;
+  };
+
   const handleInputChange = (field: keyof TimeEntry, value: string | number) => {
-    setFormData(prev => prev ? { ...prev, [field]: value } : null);
+    const newFormData = { ...formData, [field]: value };
+    setFormData(newFormData);
+
+    // Clear validation error for this field
+    const newErrors = { ...validationErrors };
+    delete newErrors[field];
+
+    // Validate time fields
+    if (field === 'standardHours' || field === 'overtimeHours' || field === 'doubleTimeHours' || field === 'breaks') {
+      const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
+      const error = validateTimeValue(numValue, field);
+      if (error) {
+        newErrors[field] = error;
+      }
+
+      // Validate total time for hour fields
+      if (field === 'standardHours' || field === 'overtimeHours' || field === 'doubleTimeHours') {
+        const standard = field === 'standardHours' ? numValue : (newFormData.standardHours || 0);
+        const overtime = field === 'overtimeHours' ? numValue : (newFormData.overtimeHours || 0);
+        const doubleTime = field === 'doubleTimeHours' ? numValue : (newFormData.doubleTimeHours || 0);
+        
+        const totalError = validateTotalTime(standard, overtime, doubleTime);
+        if (totalError) {
+          newErrors.total = totalError;
+        } else {
+          delete newErrors.total;
+        }
+      }
+    }
+
+    setValidationErrors(newErrors);
   };
 
   const handleProjectChange = (projectId: string) => {
     setSelectedProject(projectId);
     setSelectedExtra('');
     setSelectedCostCode('');
-    // Update formData with the selected project details
-    // This would need proper mapping from project ID to project code
   };
 
   const handleExtraChange = (extraId: string) => {
     setSelectedExtra(extraId);
     setSelectedCostCode('');
-    // Update formData with the selected extra details
   };
 
   const handleCostCodeChange = (costCodeId: string) => {
     setSelectedCostCode(costCodeId);
-    // Update formData with the selected cost code details
   };
 
   const handleSave = () => {
-    if (formData) {
-      // Recalculate total hours
+    if (formData && Object.keys(validationErrors).length === 0) {
       const standardHours = formData.standardHours || 0;
       const overtimeHours = formData.overtimeHours || 0;
       const doubleTimeHours = formData.doubleTimeHours || 0;
@@ -95,6 +138,8 @@ const TimeEntryEditForm: React.FC<TimeEntryEditFormProps> = ({
       onSave(updatedEntry);
       onClose();
       toast.success('Time entry updated successfully');
+    } else {
+      toast.error('Please fix validation errors before saving');
     }
   };
 
@@ -169,9 +214,18 @@ const TimeEntryEditForm: React.FC<TimeEntryEditFormProps> = ({
                   id="breaks"
                   type="number"
                   step="0.25"
+                  min="0"
+                  max="16"
                   value={formData.breaks || 0}
                   onChange={(e) => handleInputChange('breaks', parseFloat(e.target.value) || 0)}
+                  className={validationErrors.breaks ? 'border-red-500' : ''}
                 />
+                {validationErrors.breaks && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                    <AlertTriangle className="h-3 w-3" />
+                    {validationErrors.breaks}
+                  </p>
+                )}
               </div>
             </div>
           )}
@@ -185,9 +239,18 @@ const TimeEntryEditForm: React.FC<TimeEntryEditFormProps> = ({
                   id="standardHours"
                   type="number"
                   step="0.25"
+                  min="0"
+                  max="16"
                   value={formData.standardHours || 0}
                   onChange={(e) => handleInputChange('standardHours', parseFloat(e.target.value) || 0)}
+                  className={validationErrors.standardHours || validationErrors.total ? 'border-red-500' : ''}
                 />
+                {validationErrors.standardHours && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                    <AlertTriangle className="h-3 w-3" />
+                    {validationErrors.standardHours}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="overtimeHours">Overtime Hours</Label>
@@ -195,9 +258,18 @@ const TimeEntryEditForm: React.FC<TimeEntryEditFormProps> = ({
                   id="overtimeHours"
                   type="number"
                   step="0.25"
+                  min="0"
+                  max="16"
                   value={formData.overtimeHours || 0}
                   onChange={(e) => handleInputChange('overtimeHours', parseFloat(e.target.value) || 0)}
+                  className={validationErrors.overtimeHours || validationErrors.total ? 'border-red-500' : ''}
                 />
+                {validationErrors.overtimeHours && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                    <AlertTriangle className="h-3 w-3" />
+                    {validationErrors.overtimeHours}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="doubleTimeHours">Double Time Hours</Label>
@@ -205,11 +277,28 @@ const TimeEntryEditForm: React.FC<TimeEntryEditFormProps> = ({
                   id="doubleTimeHours"
                   type="number"
                   step="0.25"
+                  min="0"
+                  max="16"
                   value={formData.doubleTimeHours || 0}
                   onChange={(e) => handleInputChange('doubleTimeHours', parseFloat(e.target.value) || 0)}
+                  className={validationErrors.doubleTimeHours || validationErrors.total ? 'border-red-500' : ''}
                 />
+                {validationErrors.doubleTimeHours && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                    <AlertTriangle className="h-3 w-3" />
+                    {validationErrors.doubleTimeHours}
+                  </p>
+                )}
               </div>
             </div>
+          )}
+
+          {/* Total validation error */}
+          {validationErrors.total && (
+            <p className="text-red-500 text-sm flex items-center gap-1">
+              <AlertTriangle className="h-3 w-3" />
+              {validationErrors.total}
+            </p>
           )}
 
           {/* Location */}
@@ -241,7 +330,10 @@ const TimeEntryEditForm: React.FC<TimeEntryEditFormProps> = ({
             <X className="h-4 w-4 mr-2" />
             Cancel
           </Button>
-          <Button onClick={handleSave}>
+          <Button 
+            onClick={handleSave}
+            disabled={Object.keys(validationErrors).length > 0}
+          >
             <Save className="h-4 w-4 mr-2" />
             Save Changes
           </Button>

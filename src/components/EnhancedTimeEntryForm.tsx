@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -128,16 +127,24 @@ const EnhancedTimeEntryForm = () => {
       errors.standardHours = "Standard hours cannot be negative";
     }
 
+    if (standardHours > 16) {
+      errors.standardHours = "Standard hours cannot exceed 16 hours";
+    }
+
     if (overtimeHours < 0) {
       errors.overtimeHours = "Overtime hours cannot be negative";
+    }
+
+    if (overtimeHours > 16) {
+      errors.overtimeHours = "Overtime hours cannot exceed 16 hours";
     }
 
     if (totalHours === 0) {
       errors.hours = "Total hours must be greater than 0";
     }
 
-    if (totalHours > 24) {
-      errors.hours = "Total hours cannot exceed 24 per day";
+    if (totalHours > 16) {
+      errors.hours = "Total hours cannot exceed 16 hours per day";
     }
 
     return errors;
@@ -146,6 +153,14 @@ const EnhancedTimeEntryForm = () => {
   const updateEntry = (id: number, field: string, value: string) => {
     setEntries(entries.map(entry => {
       if (entry.id === id) {
+        // Validate time inputs
+        if (field === 'standardHours' || field === 'overtimeHours') {
+          const numValue = parseFloat(value) || 0;
+          if (numValue < 0 || numValue > 16) {
+            return entry; // Don't update if invalid
+          }
+        }
+
         const updatedEntry = { ...entry, [field]: value };
         
         // Clear related fields when project changes
@@ -212,7 +227,9 @@ const EnhancedTimeEntryForm = () => {
   };
 
   const setQuickHours = (entryId: number, hours: number) => {
-    updateEntry(entryId, 'standardHours', hours.toString());
+    if (hours <= 16) {
+      updateEntry(entryId, 'standardHours', hours.toString());
+    }
   };
 
   const handleSubmit = async () => {

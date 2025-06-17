@@ -45,8 +45,8 @@ const TimeEntryTimeInOut = () => {
     setBreakInHour('12');
     setBreakInMinute('00');
     setBreakInPeriod('PM');
-    setBreakOutHour('1');
-    setBreakOutMinute('00');
+    setBreakOutHour('12');
+    setBreakOutMinute('30');
     setBreakOutPeriod('PM');
   };
 
