@@ -1,11 +1,9 @@
-
 import React, { useState } from 'react';
-import { Users, Check, ChevronsUpDown } from 'lucide-react';
+import { Users, Check, ChevronsUpDown, X } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Employee } from '@/services/api';
 
@@ -26,7 +24,7 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
 }) => {
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false);
 
-  // Ensure arrays are always properly defined and handle loading state
+  // Ensure arrays are always properly defined
   const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
   const safeEmployees = Array.isArray(employees) ? employees : [];
 
@@ -85,24 +83,26 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
                 <CommandInput placeholder="Search employees..." />
                 <CommandEmpty>No employee found.</CommandEmpty>
                 <CommandGroup className="max-h-64 overflow-auto">
-                  {safeEmployees.length > 0 ? safeEmployees.map((employee) => (
-                    <CommandItem
-                      key={employee.employeeID}
-                      value={employee.fullName}
-                      onSelect={() => handleEmployeeSelect(employee.employeeID)}
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          safeSelectedEmployees.includes(employee.employeeID) ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {employee.fullName}
-                      <span className="ml-auto text-xs text-slate-500">
-                        {employee.class}
-                      </span>
-                    </CommandItem>
-                  )) : (
+                  {safeEmployees.length > 0 ? (
+                    safeEmployees.map((employee) => (
+                      <CommandItem
+                        key={employee.employeeID}
+                        value={employee.fullName}
+                        onSelect={() => handleEmployeeSelect(employee.employeeID)}
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            safeSelectedEmployees.includes(employee.employeeID) ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        {employee.fullName}
+                        <span className="ml-auto text-xs text-slate-500">
+                          {employee.class}
+                        </span>
+                      </CommandItem>
+                    ))
+                  ) : (
                     <CommandItem disabled>Loading employees...</CommandItem>
                   )}
                 </CommandGroup>
@@ -110,43 +110,40 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
             </PopoverContent>
           </Popover>
         ) : (
-          // Single select mode (fallback)
-          <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
-            <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
-              <SelectValue placeholder="Select employee..." />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-              {safeEmployees.length > 0 ? safeEmployees.map((employee) => (
-                <SelectItem key={employee.employeeID} value={employee.employeeID}>
-                  {employee.fullName} - {employee.class}
-                </SelectItem>
-              )) : (
-                <SelectItem value="" disabled>Loading employees...</SelectItem>
-              )}
-            </SelectContent>
-          </Select>
+          // Single select mode
+          <select
+            value={selectedEmployee}
+            onChange={(e) => setSelectedEmployee(e.target.value)}
+            className="w-48 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md"
+          >
+            <option value="">Select employee...</option>
+            {safeEmployees.map((employee) => (
+              <option key={employee.employeeID} value={employee.employeeID}>
+                {employee.fullName} ({employee.class})
+              </option>
+            ))}
+          </select>
         )}
       </div>
 
-      {/* Selected employees badges (for multi-select) */}
+      {/* Display selected employees as badges in multi-select mode */}
       {setSelectedEmployees && safeSelectedEmployees.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {getSelectedEmployeeNames().map((name, index) => (
-            <Badge
-              key={safeSelectedEmployees[index]}
-              variant="secondary"
-              className="text-xs"
-            >
-              {name}
-              <button
-                onClick={() => removeEmployee(safeSelectedEmployees[index])}
-                className="ml-1 hover:text-red-500"
-                type="button"
+        <div className="flex flex-wrap gap-2 ml-[86px]">
+          {safeEmployees
+            .filter(emp => safeSelectedEmployees.includes(emp.employeeID))
+            .map(employee => (
+              <Badge
+                key={employee.employeeID}
+                variant="secondary"
+                className="flex items-center gap-1"
               >
-                ×
-              </button>
-            </Badge>
-          ))}
+                <span>{employee.fullName}</span>
+                <X
+                  className="h-3 w-3 cursor-pointer hover:text-red-500"
+                  onClick={() => removeEmployee(employee.employeeID)}
+                />
+              </Badge>
+            ))}
         </div>
       )}
     </div>
