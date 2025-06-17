@@ -5,8 +5,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export const InputFormsSection: React.FC = () => {
   return (
-    <div className="space-y-3 border-t pt-4">
-      <h3 className="text-lg font-medium text-blue-600">Input Forms</h3>
+    <div className="border-t pt-3">
+      <h3 className="text-lg font-medium text-blue-600 mb-2">Input Forms</h3>
       <div className="flex items-center justify-between">
         <Label className="text-red-500">Display Pay Rate With Labor Class:</Label>
         <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
@@ -26,8 +26,8 @@ export const InputFormsSection: React.FC = () => {
 
 export const OutputFormsSection: React.FC = () => {
   return (
-    <div className="space-y-3 border-t pt-4">
-      <h3 className="text-lg font-medium text-blue-600">Output Forms</h3>
+    <div className="border-t pt-3">
+      <h3 className="text-lg font-medium text-blue-600 mb-2">Output Forms</h3>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label className="text-red-500">Track Contract Number:</Label>
@@ -63,8 +63,8 @@ export const OutputFormsSection: React.FC = () => {
 
 export const ReportsSection: React.FC = () => {
   return (
-    <div className="space-y-3 border-t pt-4">
-      <h3 className="text-lg font-medium text-blue-600">Reports</h3>
+    <div className="border-t pt-3">
+      <h3 className="text-lg font-medium text-blue-600 mb-2">Reports</h3>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label className="text-red-500">Labor Unit Productivity - Default Unit Tracking:</Label>
@@ -102,37 +102,36 @@ export const ReportsSection: React.FC = () => {
 };
 
 export const ColorSection: React.FC = () => {
+  const colorThemes = [
+    { id: 'belize-hole', name: 'BELIZE HOLE', color: 'bg-blue-600', hex: '#2563eb' },
+    { id: 'amethyst', name: 'AMETHYST', color: 'bg-purple-600', hex: '#9333ea' },
+    { id: 'alizarin', name: 'ALIZARIN', color: 'bg-red-600', hex: '#dc2626' },
+    { id: 'carrot', name: 'CARROT', color: 'bg-orange-500', hex: '#f97316' },
+    { id: 'casablanca', name: 'CASABLANCA', color: 'bg-yellow-400', hex: '#facc15' },
+    { id: 'pigment-green', name: 'PIGMENT GREEN', color: 'bg-green-600', hex: '#16a34a' },
+    { id: 'emerald', name: 'EMERALD', color: 'bg-emerald-500', hex: '#10b981' },
+    { id: 'turquoise', name: 'TURQUOISE', color: 'bg-cyan-500', hex: '#06b6d4' },
+    { id: 'midnight', name: 'MIDNIGHT', color: 'bg-slate-800', hex: '#1e293b' },
+    { id: 'silver', name: 'SILVER', color: 'bg-gray-400', hex: '#9ca3af' },
+    { id: 'charcoal', name: 'CHARCOAL', color: 'bg-gray-700', hex: '#374151' },
+    { id: 'rose', name: 'ROSE', color: 'bg-rose-500', hex: '#f43f5e' },
+  ];
+
   return (
-    <div className="space-y-3 border-t pt-4">
-      <h3 className="text-lg font-medium text-blue-600">Color</h3>
-      <div className="space-y-2">
-        <Label className="text-red-500">Color Theme:</Label>
-        <RadioGroup defaultValue="belize-hole" className="space-y-1">
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="belize-hole" id="belize-hole" />
-            <div className="w-5 h-5 bg-blue-600 rounded"></div>
-            <Label htmlFor="belize-hole">BELIZE HOLE</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="amethyst" id="amethyst" />
-            <div className="w-5 h-5 bg-purple-600 rounded"></div>
-            <Label htmlFor="amethyst">AMETHYST</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="alizarin" id="alizarin" />
-            <div className="w-5 h-5 bg-red-600 rounded"></div>
-            <Label htmlFor="alizarin">ALIZARIN</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="carrot" id="carrot" />
-            <div className="w-5 h-5 bg-orange-500 rounded"></div>
-            <Label htmlFor="carrot">CARROT</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="casablanca" id="casablanca" />
-            <div className="w-5 h-5 bg-yellow-400 rounded"></div>
-            <Label htmlFor="casablanca">CASABLANCA</Label>
-          </div>
+    <div className="border-t pt-3">
+      <h3 className="text-lg font-medium text-blue-600 mb-2">Color</h3>
+      <div>
+        <Label className="text-red-500 mb-3 block">Color Theme:</Label>
+        <RadioGroup defaultValue="belize-hole" className="grid grid-cols-2 gap-2">
+          {colorThemes.map((theme) => (
+            <div key={theme.id} className="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-800">
+              <RadioGroupItem value={theme.id} id={theme.id} />
+              <div className={`w-6 h-6 ${theme.color} rounded border border-gray-300`} title={theme.hex}></div>
+              <Label htmlFor={theme.id} className="text-sm font-medium cursor-pointer flex-1">
+                {theme.name}
+              </Label>
+            </div>
+          ))}
         </RadioGroup>
       </div>
     </div>
@@ -141,8 +140,8 @@ export const ColorSection: React.FC = () => {
 
 export const HierarchyLoginSection: React.FC = () => {
   return (
-    <div className="space-y-3 border-t pt-4">
-      <h3 className="text-lg font-medium">Hierarchy/Login Settings</h3>
+    <div className="border-t pt-3">
+      <h3 className="text-lg font-medium mb-2">Hierarchy/Login Settings</h3>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Number Project by Division:</Label>
