@@ -10,7 +10,7 @@ import { ProjectsViewControls } from '@/components/Projects/ProjectsViewControls
 import { ProjectsListView } from '@/components/Projects/ProjectsListView';
 import { ProjectsCardView } from '@/components/Projects/ProjectsCardView';
 import { ProjectsTileView } from '@/components/Projects/ProjectsTileView';
-import { Project, ViewMode, mockProjects } from '@/components/Projects/types';
+import { Project, ViewMode, SortBy, FilterBy, mockProjects } from '@/components/Projects/types';
 
 const Projects = () => {
   console.log('Projects component rendering...');
@@ -21,6 +21,8 @@ const Projects = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [sortBy, setSortBy] = useState<SortBy>('number');
+  const [filterBy, setFilterBy] = useState<FilterBy>('all');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   
@@ -62,10 +64,29 @@ const Projects = () => {
     }
   };
 
-  const filteredProjects = projects.filter(project =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.code.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Apply filtering
+  const filteredProjects = projects.filter(project => {
+    const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.code.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesFilter = filterBy === 'all' || project.status === filterBy;
+    
+    return matchesSearch && matchesFilter;
+  });
+
+  // Apply sorting
+  const sortedProjects = [...filteredProjects].sort((a, b) => {
+    switch (sortBy) {
+      case 'number':
+        return a.code.localeCompare(b.code, undefined, { numeric: true });
+      case 'name':
+        return a.name.localeCompare(b.name);
+      case 'manager':
+        return a.manager.localeCompare(b.manager);
+      default:
+        return 0;
+    }
+  });
 
   const handleIconClick = (action: string, projectId: string) => {
     console.log('Icon clicked:', action, projectId);
@@ -87,7 +108,7 @@ const Projects = () => {
       case 'list':
         return (
           <ProjectsListView
-            projects={filteredProjects}
+            projects={sortedProjects}
             isAdmin={isAdmin}
             onIconClick={handleIconClick}
           />
@@ -95,7 +116,7 @@ const Projects = () => {
       case 'card':
         return (
           <ProjectsCardView
-            projects={filteredProjects}
+            projects={sortedProjects}
             isAdmin={isAdmin}
             onIconClick={handleIconClick}
           />
@@ -103,7 +124,7 @@ const Projects = () => {
       case 'tile':
         return (
           <ProjectsTileView
-            projects={filteredProjects}
+            projects={sortedProjects}
             isAdmin={isAdmin}
             onIconClick={handleIconClick}
           />
@@ -126,6 +147,10 @@ const Projects = () => {
         onSearchChange={setSearchTerm}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        filterBy={filterBy}
+        onFilterChange={setFilterBy}
       />
 
       <ScrollArea className="h-[calc(100vh-300px)]">
