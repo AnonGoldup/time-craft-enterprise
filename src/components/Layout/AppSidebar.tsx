@@ -76,24 +76,24 @@ export const AppSidebar: React.FC = () => {
     return submenu.some(sub => location.pathname === sub.path);
   };
   return <Sidebar className="border-slate-200 dark:border-slate-800">
-      <SidebarHeader className="p-6 bg-slate-600">
+      <SidebarHeader className="p-6 bg-sidebar border-b border-sidebar-border">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold">{user?.fullName?.charAt(0)}</span>
           </div>
           <div className="group-data-[collapsible=icon]:hidden">
-            <p className="text-slate-900 dark:text-white font-medium">{user?.fullName}</p>
-            <p className="text-slate-500 dark:text-slate-400 text-sm capitalize">{user?.role}</p>
+            <p className="text-sidebar-foreground font-medium">{user?.fullName}</p>
+            <p className="text-sidebar-foreground/70 text-sm capitalize">{user?.role}</p>
           </div>
         </div>
-        <div className="text-xs text-slate-400 dark:text-slate-500 group-data-[collapsible=icon]:hidden">
+        <div className="text-xs text-sidebar-foreground/60 group-data-[collapsible=icon]:hidden">
           {user?.department}
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="bg-slate-600">
+      <SidebarContent className="bg-sidebar">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-slate-600 dark:text-slate-400">Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sidebar-foreground/70">Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {filteredItems.map(item => {
@@ -104,7 +104,7 @@ export const AppSidebar: React.FC = () => {
                 return <Collapsible key={item.path} defaultOpen={isActive || isSubmenuItemActive}>
                       <SidebarMenuItem>
                         <CollapsibleTrigger asChild>
-                          <SidebarMenuButton isActive={isActive || isSubmenuItemActive} className="hover:bg-slate-100 dark:hover:bg-slate-800">
+                          <SidebarMenuButton isActive={isActive || isSubmenuItemActive} className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
                             <item.icon className="h-4 w-4" />
                             <span>{item.label}</span>
                             <ChevronRight className="h-4 w-4 ml-auto transition-transform group-data-[state=open]:rotate-90" />
@@ -125,7 +125,7 @@ export const AppSidebar: React.FC = () => {
                     </Collapsible>;
               }
               return <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton asChild isActive={isActive} className="hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <SidebarMenuButton asChild isActive={isActive} className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
                       <Link to={item.path}>
                         <item.icon className="h-4 w-4" />
                         <span>{item.label}</span>
@@ -138,8 +138,8 @@ export const AppSidebar: React.FC = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t border-slate-200 dark:border-slate-800">
-        <div className="text-xs text-slate-400 dark:text-slate-500 group-data-[collapsible=icon]:hidden">
+      <SidebarFooter className="p-4 border-t border-sidebar-border bg-sidebar">
+        <div className="text-xs text-sidebar-foreground/60 group-data-[collapsible=icon]:hidden">
           v1.0.0
         </div>
       </SidebarFooter>

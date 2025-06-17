@@ -12,28 +12,28 @@ const Index = () => {
       value: "40.5",
       description: "2.5 hours overtime",
       icon: Clock,
-      color: "text-blue-600"
+      color: "text-blue-600 dark:text-blue-400"
     },
     {
       title: "Active Projects",
       value: "8",
       description: "3 due this week",
       icon: FileText,
-      color: "text-green-600"
+      color: "text-green-600 dark:text-green-400"
     },
     {
       title: "Team Members",
       value: "24",
       description: "All present today",
       icon: Users,
-      color: "text-purple-600"
+      color: "text-purple-600 dark:text-purple-400"
     },
     {
       title: "Productivity",
       value: "94%",
       description: "+5% from last week",
       icon: TrendingUp,
-      color: "text-orange-600"
+      color: "text-orange-600 dark:text-orange-400"
     }
   ];
 
@@ -66,10 +66,10 @@ const Index = () => {
       {/* Header Section */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-foreground">
             Dashboard
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-muted-foreground mt-1">
             Welcome back! Here's your overview for today.
           </p>
         </div>
@@ -78,7 +78,7 @@ const Index = () => {
             <Calendar className="h-4 w-4" />
             View Calendar
           </Button>
-          <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+          <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white">
             <Plus className="h-4 w-4" />
             Clock In
           </Button>
@@ -88,21 +88,21 @@ const Index = () => {
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {quickStats.map((stat, index) => (
-          <Card key={index} className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+          <Card key={index} className="bg-card border-border">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  <p className="text-sm font-medium text-muted-foreground">
                     {stat.title}
                   </p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                  <p className="text-2xl font-bold text-foreground mt-1">
                     {stat.value}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     {stat.description}
                   </p>
                 </div>
-                <div className={`p-3 rounded-lg bg-gray-50 dark:bg-slate-700 ${stat.color}`}>
+                <div className={`p-3 rounded-lg bg-muted ${stat.color}`}>
                   <stat.icon className="h-6 w-6" />
                 </div>
               </div>
@@ -114,29 +114,29 @@ const Index = () => {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
-        <Card className="lg:col-span-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+        <Card className="lg:col-span-2 bg-card border-border">
           <CardHeader className="pb-4">
-            <CardTitle className="text-gray-900 dark:text-white">Recent Activity</CardTitle>
-            <CardDescription className="text-gray-600 dark:text-gray-400">
+            <CardTitle className="text-foreground">Recent Activity</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Your latest time entries and activities
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {recentActivities.map((activity) => (
-                <div key={activity.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
+                <div key={activity.id} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
                   <div className="flex items-center space-x-4">
                     <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
                       <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-white">{activity.action}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{activity.project}</p>
+                      <p className="font-medium text-foreground">{activity.action}</p>
+                      <p className="text-sm text-muted-foreground">{activity.project}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">{activity.time}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{activity.duration}</p>
+                    <p className="text-sm font-medium text-foreground">{activity.time}</p>
+                    <p className="text-xs text-muted-foreground">{activity.duration}</p>
                   </div>
                 </div>
               ))}
@@ -148,10 +148,10 @@ const Index = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+        <Card className="bg-card border-border">
           <CardHeader className="pb-4">
-            <CardTitle className="text-gray-900 dark:text-white">Quick Actions</CardTitle>
-            <CardDescription className="text-gray-600 dark:text-gray-400">
+            <CardTitle className="text-foreground">Quick Actions</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Common tasks and shortcuts
             </CardDescription>
           </CardHeader>
@@ -193,10 +193,10 @@ const Index = () => {
       </div>
 
       {/* Weekly Summary */}
-      <Card className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+      <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-gray-900 dark:text-white">Weekly Summary</CardTitle>
-          <CardDescription className="text-gray-600 dark:text-gray-400">
+          <CardTitle className="text-foreground">Weekly Summary</CardTitle>
+          <CardDescription className="text-muted-foreground">
             Your time distribution for this week
           </CardDescription>
         </CardHeader>
@@ -204,15 +204,15 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
               <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">40.5h</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Total Hours</p>
+              <p className="text-sm text-muted-foreground">Total Hours</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-green-600 dark:text-green-400">95%</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Efficiency</p>
+              <p className="text-sm text-muted-foreground">Efficiency</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">3</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Projects</p>
+              <p className="text-sm text-muted-foreground">Projects</p>
             </div>
           </div>
         </CardContent>
