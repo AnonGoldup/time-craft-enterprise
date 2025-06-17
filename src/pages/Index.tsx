@@ -1,11 +1,16 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Clock, Users, FileText, TrendingUp, Plus, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import TimeEntryTypeSelector from '@/components/TimeEntry/TimeEntryTypeSelector';
+import EnhancedTimeEntryForm from '@/components/EnhancedTimeEntryForm';
+import TimeEntryForm from '@/components/TimeEntryForm';
 
 const Index = () => {
+  const [timeEntryType, setTimeEntryType] = useState<'standard' | 'time-in-out' | 'enhanced'>('enhanced');
+
   const quickStats = [
     {
       title: "Hours This Week",
@@ -61,6 +66,25 @@ const Index = () => {
     }
   ];
 
+  const renderTimeEntryForm = () => {
+    switch (timeEntryType) {
+      case 'enhanced':
+        return <EnhancedTimeEntryForm />;
+      case 'standard':
+        return <TimeEntryForm />;
+      case 'time-in-out':
+        return (
+          <div className="text-center py-8">
+            <Clock className="h-12 w-12 mx-auto mb-4 text-blue-500" />
+            <h3 className="text-lg font-semibold mb-2">Time In/Out Coming Soon</h3>
+            <p className="text-gray-600 dark:text-gray-400">This feature is currently under development.</p>
+          </div>
+        );
+      default:
+        return <EnhancedTimeEntryForm />;
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Section */}
@@ -110,6 +134,23 @@ const Index = () => {
           </Card>
         ))}
       </div>
+
+      {/* Time Entry Section */}
+      <Card className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-gray-900 dark:text-white">Time Entry</CardTitle>
+          <CardDescription className="text-gray-600 dark:text-gray-400">
+            Track your time and manage your work hours
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <TimeEntryTypeSelector
+            selectedType={timeEntryType}
+            onTypeChange={setTimeEntryType}
+          />
+          {renderTimeEntryForm()}
+        </CardContent>
+      </Card>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -210,7 +251,7 @@ const Index = () => {
             </div>
           </div>
         </CardContent>
-      </Card>
+      </div>
     </div>
   );
 };
