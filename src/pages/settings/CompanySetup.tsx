@@ -41,6 +41,7 @@ const CompanySetup = () => {
               <CardDescription>Basic company details and contact information</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Company Details Section */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="companyName">Company Name</Label>
@@ -98,7 +99,7 @@ const CompanySetup = () => {
                 <h3 className="text-lg font-medium text-blue-600">Milestone</h3>
                 <div className="flex items-center justify-between">
                   <Label className="text-red-500">Search by phase:</Label>
-                  <RadioGroup defaultValue="yes" className="flex gap-4">
+                  <RadioGroup defaultValue="yes">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="search-phase-yes" />
                       <Label htmlFor="search-phase-yes">Yes</Label>
@@ -116,7 +117,7 @@ const CompanySetup = () => {
                 <h3 className="text-lg font-medium text-blue-600">Weather Format</h3>
                 <div className="flex items-center justify-between">
                   <Label className="text-red-500">Select Weather Format:</Label>
-                  <RadioGroup defaultValue="celsius" className="flex gap-4">
+                  <RadioGroup defaultValue="celsius">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="fahrenheit" id="fahrenheit" />
                       <Label htmlFor="fahrenheit">Fahrenheit</Label>
@@ -134,7 +135,7 @@ const CompanySetup = () => {
                 <h3 className="text-lg font-medium text-blue-600">Printing</h3>
                 <div className="flex items-center justify-between">
                   <Label className="text-red-500">Print Letterhead on the First Page Only:</Label>
-                  <RadioGroup defaultValue="yes" className="flex gap-4">
+                  <RadioGroup defaultValue="yes">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="letterhead-yes" />
                       <Label htmlFor="letterhead-yes">Yes</Label>
@@ -168,9 +169,9 @@ const CompanySetup = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
+                      <div className="space-y-2">
                         <Label className="text-red-500 text-sm">Daily Report Log Default Sort:</Label>
-                        <RadioGroup defaultValue="pr-date" className="flex gap-2">
+                        <RadioGroup defaultValue="pr-date">
                           <div className="flex items-center space-x-1">
                             <RadioGroupItem value="pr-no" id="daily-pr-no" />
                             <Label htmlFor="daily-pr-no" className="text-sm">PR No</Label>
@@ -182,9 +183,9 @@ const CompanySetup = () => {
                         </RadioGroup>
                       </div>
 
-                      <div className="flex items-center justify-between">
+                      <div className="space-y-2">
                         <Label className="text-red-500 text-sm">RFI Log Default Sort:</Label>
-                        <RadioGroup defaultValue="rfi-no" className="flex gap-2">
+                        <RadioGroup defaultValue="rfi-no">
                           <div className="flex items-center space-x-1">
                             <RadioGroupItem value="rfi-no" id="rfi-no" />
                             <Label htmlFor="rfi-no" className="text-sm">RFI No</Label>
@@ -196,9 +197,9 @@ const CompanySetup = () => {
                         </RadioGroup>
                       </div>
 
-                      <div className="flex items-center justify-between">
+                      <div className="space-y-2">
                         <Label className="text-red-500 text-sm">COR Log Default Sort:</Label>
-                        <RadioGroup defaultValue="cor-no" className="flex gap-2">
+                        <RadioGroup defaultValue="cor-no">
                           <div className="flex items-center space-x-1">
                             <RadioGroupItem value="cor-no" id="cor-no" />
                             <Label htmlFor="cor-no" className="text-sm">COR No</Label>
@@ -216,9 +217,9 @@ const CompanySetup = () => {
                     </div>
 
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
+                      <div className="space-y-2">
                         <Label className="text-red-500 text-sm">Submittal Log Default Sort:</Label>
-                        <RadioGroup defaultValue="trans-no" className="flex gap-2">
+                        <RadioGroup defaultValue="trans-no">
                           <div className="flex items-center space-x-1">
                             <RadioGroupItem value="sub-no" id="sub-no" />
                             <Label htmlFor="sub-no" className="text-sm">Sub No</Label>
@@ -238,9 +239,9 @@ const CompanySetup = () => {
                         </RadioGroup>
                       </div>
 
-                      <div className="flex items-center justify-between">
+                      <div className="space-y-2">
                         <Label className="text-red-500 text-sm">PO Log Default Sort:</Label>
-                        <RadioGroup defaultValue="po-no" className="flex gap-2">
+                        <RadioGroup defaultValue="po-no">
                           <div className="flex items-center space-x-1">
                             <RadioGroupItem value="po-no" id="po-no" />
                             <Label htmlFor="po-no" className="text-sm">PO No</Label>
@@ -252,9 +253,9 @@ const CompanySetup = () => {
                         </RadioGroup>
                       </div>
 
-                      <div className="flex items-center justify-between">
+                      <div className="space-y-2">
                         <Label className="text-red-500 text-sm">Pay App Log Default Sort:</Label>
-                        <RadioGroup defaultValue="pa-no" className="flex gap-2">
+                        <RadioGroup defaultValue="pa-no">
                           <div className="flex items-center space-x-1">
                             <RadioGroupItem value="pa-no" id="pa-no" />
                             <Label htmlFor="pa-no" className="text-sm">PA No</Label>
@@ -281,9 +282,9 @@ const CompanySetup = () => {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex items-center justify-between">
+                    <div className="space-y-2">
                       <Label className="text-red-500 text-sm">Drawing Set Log Default Sort:</Label>
-                      <RadioGroup defaultValue="sheet-no" className="flex gap-2">
+                      <RadioGroup defaultValue="sheet-no">
                         <div className="flex items-center space-x-1">
                           <RadioGroupItem value="prefix" id="prefix" />
                           <Label htmlFor="prefix" className="text-sm">Prefix</Label>
@@ -303,9 +304,9 @@ const CompanySetup = () => {
                       </RadioGroup>
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="space-y-2">
                       <Label className="text-red-500 text-sm">Correspondence Log Default Sort:</Label>
-                      <RadioGroup defaultValue="date" className="flex gap-2">
+                      <RadioGroup defaultValue="date">
                         <div className="flex items-center space-x-1">
                           <RadioGroupItem value="number" id="corr-number" />
                           <Label htmlFor="corr-number" className="text-sm">Number</Label>
@@ -330,9 +331,9 @@ const CompanySetup = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  <div className="space-y-2">
                     <Label className="text-red-500 text-sm">Meeting Minutes Log Default Sort:</Label>
-                    <RadioGroup defaultValue="number" className="flex gap-2">
+                    <RadioGroup defaultValue="number">
                       <div className="flex items-center space-x-1">
                         <RadioGroupItem value="number" id="meeting-number" />
                         <Label htmlFor="meeting-number" className="text-sm">Number</Label>
@@ -359,7 +360,7 @@ const CompanySetup = () => {
                 <h3 className="text-lg font-medium text-blue-600">Input Forms</h3>
                 <div className="flex items-center justify-between">
                   <Label className="text-red-500">Display Pay Rate With Labor Class:</Label>
-                  <RadioGroup defaultValue="yes" className="flex gap-4">
+                  <RadioGroup defaultValue="yes">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="pay-rate-yes" />
                       <Label htmlFor="pay-rate-yes">Yes</Label>
@@ -378,7 +379,7 @@ const CompanySetup = () => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <Label className="text-red-500">Track Contract Number:</Label>
-                    <RadioGroup defaultValue="yes" className="flex gap-4">
+                    <RadioGroup defaultValue="yes">
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yes" id="track-contract-yes" />
                         <Label htmlFor="track-contract-yes">Yes</Label>
@@ -392,7 +393,7 @@ const CompanySetup = () => {
 
                   <div className="flex items-center justify-between">
                     <Label className="text-red-500">Force 'Print Preview' On Display Of Output Forms:</Label>
-                    <RadioGroup defaultValue="yes" className="flex gap-4">
+                    <RadioGroup defaultValue="yes">
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yes" id="print-preview-yes" />
                         <Label htmlFor="print-preview-yes">Yes</Label>
@@ -412,7 +413,7 @@ const CompanySetup = () => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <Label className="text-red-500">Labor Unit Productivity - Default Unit Tracking:</Label>
-                    <RadioGroup defaultValue="units-per-hour" className="flex gap-4">
+                    <RadioGroup defaultValue="units-per-hour">
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="units-per-hour" id="units-per-hour" />
                         <Label htmlFor="units-per-hour">Units per Hour</Label>
@@ -427,7 +428,7 @@ const CompanySetup = () => {
                   <div className="flex items-center justify-between">
                     <Label className="text-red-500">Labor Unit Productivity - Include Units Per Day:</Label>
                     <div className="flex items-center gap-4">
-                      <RadioGroup defaultValue="yes" className="flex gap-4">
+                      <RadioGroup defaultValue="yes">
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="yes" id="units-per-day-yes" />
                           <Label htmlFor="units-per-day-yes">Yes</Label>
@@ -448,9 +449,9 @@ const CompanySetup = () => {
                 <h3 className="text-lg font-medium text-blue-600">Color</h3>
                 <div className="space-y-3">
                   <Label className="text-red-500">Color Theme:</Label>
-                  <div className="grid grid-cols-1 gap-2">
+                  <RadioGroup defaultValue="belize-hole">
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="belize-hole" id="belize-hole" defaultChecked />
+                      <RadioGroupItem value="belize-hole" id="belize-hole" />
                       <div className="w-6 h-6 bg-blue-600 rounded"></div>
                       <Label htmlFor="belize-hole">BELIZE HOLE</Label>
                     </div>
@@ -474,7 +475,7 @@ const CompanySetup = () => {
                       <div className="w-6 h-6 bg-yellow-400 rounded"></div>
                       <Label htmlFor="casablanca">CASABLANCA</Label>
                     </div>
-                  </div>
+                  </RadioGroup>
                 </div>
               </div>
 
@@ -484,7 +485,7 @@ const CompanySetup = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <Label>Number Project by Division:</Label>
-                    <RadioGroup defaultValue="no" className="flex gap-4">
+                    <RadioGroup defaultValue="no">
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yes" id="division-yes" />
                         <Label htmlFor="division-yes">Yes</Label>
@@ -498,7 +499,7 @@ const CompanySetup = () => {
 
                   <div className="flex items-center justify-between">
                     <Label>Top Hierarchy Level:</Label>
-                    <RadioGroup defaultValue="occupancy" className="flex gap-4">
+                    <RadioGroup defaultValue="occupancy">
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="division" id="hierarchy-division" />
                         <Label htmlFor="hierarchy-division">Division</Label>
@@ -524,6 +525,7 @@ const CompanySetup = () => {
           </Card>
         </TabsContent>
 
+        
         <TabsContent value="rfis" className="space-y-6">
           <Card>
             <CardHeader>
