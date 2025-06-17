@@ -52,7 +52,7 @@ const timesheetModule = [
   {
     label: 'User Settings',
     icon: Settings,
-    path: '/user-settings',
+    path: '/settings',
     roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
   }
 ];
