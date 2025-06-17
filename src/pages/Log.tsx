@@ -10,6 +10,7 @@ import { format, startOfWeek, endOfWeek, addWeeks, subWeeks, eachDayOfInterval }
 import { toast } from 'sonner';
 import { LoadingState } from '@/components/ui/loading';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
+import TimeEntryEditForm from '@/components/TimeEntry/TimeEntryEditForm';
 
 interface TimeEntry {
   entryID: number;
@@ -46,6 +47,8 @@ const Log = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
 
   // Enhanced data loading with error handling
   useEffect(() => {
@@ -135,9 +138,16 @@ const Log = () => {
       });
       return;
     }
-    toast.success(`Editing entry ${entry.entryID}`, {
-      description: "Redirecting to edit form..."
-    });
+    setEditingEntry(entry);
+    setIsEditFormOpen(true);
+  };
+
+  const handleSaveEntry = (updatedEntry: TimeEntry) => {
+    setTimeEntries(entries => 
+      entries.map(entry => 
+        entry.entryID === updatedEntry.entryID ? updatedEntry : entry
+      )
+    );
   };
 
   const handleDeleteEntry = async (entryID: number) => {
@@ -417,6 +427,17 @@ const Log = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Edit Form Modal */}
+        <TimeEntryEditForm
+          isOpen={isEditFormOpen}
+          onClose={() => {
+            setIsEditFormOpen(false);
+            setEditingEntry(null);
+          }}
+          entry={editingEntry}
+          onSave={handleSaveEntry}
+        />
       </div>
     </ErrorBoundary>
   );
