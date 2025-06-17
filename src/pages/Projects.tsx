@@ -27,22 +27,17 @@ const Projects = () => {
   const isAdmin = user?.role === 'admin';
   const projectsPerPage = 20;
 
-  useEffect(() => {
-    console.log('Loading projects on mount...');
-    loadProjects();
-  }, []);
-
-  const loadProjects = () => {
-    console.log('loadProjects called, page:', page);
+  const loadProjects = (currentPage: number = 1) => {
+    console.log('loadProjects called, page:', currentPage);
     setLoading(true);
     
     // Simulate API call
     setTimeout(() => {
-      const startIndex = (page - 1) * projectsPerPage;
+      const startIndex = (currentPage - 1) * projectsPerPage;
       const endIndex = startIndex + projectsPerPage;
       const newProjects = mockProjects.slice(startIndex, endIndex);
       
-      if (page === 1) {
+      if (currentPage === 1) {
         setProjects(newProjects);
       } else {
         setProjects(prev => [...prev, ...newProjects]);
@@ -54,10 +49,16 @@ const Projects = () => {
     }, 500);
   };
 
+  useEffect(() => {
+    console.log('Loading projects on mount...');
+    loadProjects(1);
+  }, []);
+
   const loadMore = () => {
     if (!loading && hasMore) {
-      setPage(prev => prev + 1);
-      loadProjects();
+      const nextPage = page + 1;
+      setPage(nextPage);
+      loadProjects(nextPage);
     }
   };
 
