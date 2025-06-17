@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Copy, Save, Send, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import { projectApi, costCodeApi, timesheetApi, Project, CostCode, ProjectExtra, TimesheetEntry } from "@/services/api";
+import { projectApi, timesheetApi, Project, CostCode, ProjectExtra, TimesheetEntry } from "@/services/api";
 
 interface EntryFormData {
   id: number;
@@ -57,9 +57,9 @@ const EnhancedTimeEntryForm = () => {
     try {
       // Mock data for now - replace with actual API call
       const mockProjects: Project[] = [
-        { projectID: 1, projectCode: "PROJ001", projectDescription: "Office Building Renovation", status: "In progress", isActive: true, createdDate: "", modifiedDate: "" },
-        { projectID: 2, projectCode: "PROJ002", projectDescription: "Shopping Mall Construction", status: "In progress", isActive: true, createdDate: "", modifiedDate: "" },
-        { projectID: 3, projectCode: "PROJ003", projectDescription: "Residential Complex", status: "In progress", isActive: true, createdDate: "", modifiedDate: "" }
+        { ProjectID: 1, ProjectCode: "PROJ001", ProjectDescription: "Office Building Renovation", Status: "In progress", IsActive: true },
+        { ProjectID: 2, ProjectCode: "PROJ002", ProjectDescription: "Shopping Mall Construction", Status: "In progress", IsActive: true },
+        { ProjectID: 3, ProjectCode: "PROJ003", ProjectDescription: "Residential Complex", Status: "In progress", IsActive: true }
       ];
       setProjects(mockProjects);
     } catch (error) {
@@ -71,15 +71,15 @@ const EnhancedTimeEntryForm = () => {
     try {
       // Mock data for now - replace with actual API call
       const mockCostCodes: CostCode[] = [
-        { costCodeID: 1, costCode: "LAB-001-001", costCodeForSAGE: "LAB001001", description: "General Labor", isActive: true },
-        { costCodeID: 2, costCode: "EQP-001-001", costCodeForSAGE: "EQP001001", description: "Equipment Operation", isActive: true },
-        { costCodeID: 3, costCode: "MAT-001-001", costCodeForSAGE: "MAT001001", description: "Material Handling", isActive: true }
+        { CostCodeID: 1, CostCode: "LAB-001-001", Description: "General Labor" },
+        { CostCodeID: 2, CostCode: "EQP-001-001", Description: "Equipment Operation" },
+        { CostCodeID: 3, CostCode: "MAT-001-001", Description: "Material Handling" }
       ];
       
       // Set cost codes for all projects (simplified for demo)
       const costCodesByProject: { [key: string]: CostCode[] } = {};
       projects.forEach(project => {
-        costCodesByProject[project.projectID.toString()] = mockCostCodes;
+        costCodesByProject[project.ProjectID.toString()] = mockCostCodes;
       });
       setCostCodes(costCodesByProject);
     } catch (error) {
@@ -91,9 +91,9 @@ const EnhancedTimeEntryForm = () => {
     try {
       // Mock data for now - replace with actual API call
       const mockExtras: ProjectExtra[] = [
-        { extraID: 1, projectID: projectId, extraValue: "Phase 1", description: "Foundation Work", isActive: true },
-        { extraID: 2, projectID: projectId, extraValue: "Phase 2", description: "Structural Work", isActive: true },
-        { extraID: 3, projectID: projectId, extraValue: "Phase 3", description: "Finishing Work", isActive: true }
+        { ExtraID: 1, ExtraValue: "Phase 1", Description: "Foundation Work" },
+        { ExtraID: 2, ExtraValue: "Phase 2", Description: "Structural Work" },
+        { ExtraID: 3, ExtraValue: "Phase 3", Description: "Finishing Work" }
       ];
       
       setProjectExtras(prev => ({
@@ -236,42 +236,21 @@ const EnhancedTimeEntryForm = () => {
     try {
       setLoading(true);
       
-      // Convert form data to API format
-      const apiEntries: Omit<TimesheetEntry, 'entryID'>[] = validatedEntries.map(entry => ({
-        employeeID: user.employeeId,
-        dateWorked: entry.date,
-        projectID: parseInt(entry.projectID),
-        extraID: entry.extraID ? parseInt(entry.extraID) : undefined,
-        costCodeID: parseInt(entry.costCodeID),
-        payID: 1, // Standard hours
-        hours: parseFloat(entry.standardHours) || 0,
-        unionID: 1,
-        entryType: 'Regular',
-        notes: entry.notes || undefined,
-        status: 'Draft',
-        createdBy: user.employeeId
+      // Convert form data to API format with correct property names
+      const apiEntries: Omit<TimesheetEntry, 'EntryID'>[] = validatedEntries.map(entry => ({
+        EmployeeID: user.employeeId,
+        DateWorked: entry.date,
+        ProjectID: parseInt(entry.projectID),
+        ExtraID: entry.extraID ? parseInt(entry.extraID) : undefined,
+        CostCodeID: parseInt(entry.costCodeID),
+        StandardHours: parseFloat(entry.standardHours) || 0,
+        OvertimeHours: parseFloat(entry.overtimeHours) || 0,
+        Notes: entry.notes || undefined,
+        Status: 'Draft'
       }));
 
-      // Add overtime entries if applicable
-      const overtimeEntries: Omit<TimesheetEntry, 'entryID'>[] = validatedEntries
-        .filter(entry => parseFloat(entry.overtimeHours) > 0)
-        .map(entry => ({
-          employeeID: user.employeeId,
-          dateWorked: entry.date,
-          projectID: parseInt(entry.projectID),
-          extraID: entry.extraID ? parseInt(entry.extraID) : undefined,
-          costCodeID: parseInt(entry.costCodeID),
-          payID: 2, // Overtime hours
-          hours: parseFloat(entry.overtimeHours),
-          unionID: 1,
-          entryType: 'Regular',
-          notes: entry.notes || undefined,
-          status: 'Draft',
-          createdBy: user.employeeId
-        }));
-
       // Submit all entries
-      for (const entry of [...apiEntries, ...overtimeEntries]) {
+      for (const entry of apiEntries) {
         // Mock API call for now
         console.log('Submitting entry:', entry);
       }
@@ -386,8 +365,8 @@ const EnhancedTimeEntryForm = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {projects.map((project) => (
-                      <SelectItem key={project.projectID} value={project.projectID.toString()}>
-                        {project.projectCode} - {project.projectDescription}
+                      <SelectItem key={project.ProjectID} value={project.ProjectID.toString()}>
+                        {project.ProjectCode} - {project.ProjectDescription}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -414,8 +393,8 @@ const EnhancedTimeEntryForm = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {projectExtras[entry.projectID]?.map((extra) => (
-                        <SelectItem key={extra.extraID} value={extra.extraID.toString()}>
-                          {extra.extraValue} - {extra.description}
+                        <SelectItem key={extra.ExtraID} value={extra.ExtraID.toString()}>
+                          {extra.ExtraValue} - {extra.Description}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -435,8 +414,8 @@ const EnhancedTimeEntryForm = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {costCodes[entry.projectID]?.map((code) => (
-                        <SelectItem key={code.costCodeID} value={code.costCodeID.toString()}>
-                          {code.costCode} - {code.description}
+                        <SelectItem key={code.CostCodeID} value={code.CostCodeID.toString()}>
+                          {code.CostCode} - {code.Description}
                         </SelectItem>
                       ))}
                     </SelectContent>
