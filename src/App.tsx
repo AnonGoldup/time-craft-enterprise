@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { AppLayoutEnhanced as AppLayout } from "@/components/Layout/AppLayoutEnhanced";
+import { AppLayout } from "@/components/Layout/AppLayoutEnhanced";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { Suspense, lazy } from "react";
 import { LoadingState } from "@/components/ui/loading";
