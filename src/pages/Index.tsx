@@ -137,7 +137,7 @@ const Index = () => {
               ))}
             </div>
             <Button variant="outline" className="w-full mt-4">
-              View All Activity
+              View Last Month's Activity
             </Button>
           </CardContent>
         </Card>
