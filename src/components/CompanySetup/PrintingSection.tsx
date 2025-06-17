@@ -5,11 +5,11 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export const PrintingSection: React.FC = () => {
   return (
-    <div className="space-y-4 border-t pt-6">
+    <div className="space-y-3 border-t pt-4">
       <h3 className="text-lg font-medium text-blue-600">Printing</h3>
       <div className="flex items-center justify-between">
         <Label className="text-red-500">Print Letterhead on the First Page Only:</Label>
-        <RadioGroup defaultValue="yes">
+        <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="yes" id="letterhead-yes" />
             <Label htmlFor="letterhead-yes">Yes</Label>

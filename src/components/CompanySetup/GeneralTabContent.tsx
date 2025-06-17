@@ -15,9 +15,9 @@ import {
 
 export const GeneralTabContent: React.FC = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <CompanyDetailsSection />
-      <div className="space-y-6">
+      <div className="space-y-4">
         <MilestoneSection />
         <WeatherFormatSection />
         <PrintingSection />

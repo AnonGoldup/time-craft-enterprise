@@ -5,11 +5,11 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export const InputFormsSection: React.FC = () => {
   return (
-    <div className="space-y-4 border-t pt-6">
+    <div className="space-y-3 border-t pt-4">
       <h3 className="text-lg font-medium text-blue-600">Input Forms</h3>
       <div className="flex items-center justify-between">
         <Label className="text-red-500">Display Pay Rate With Labor Class:</Label>
-        <RadioGroup defaultValue="yes">
+        <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="yes" id="pay-rate-yes" />
             <Label htmlFor="pay-rate-yes">Yes</Label>
@@ -26,12 +26,12 @@ export const InputFormsSection: React.FC = () => {
 
 export const OutputFormsSection: React.FC = () => {
   return (
-    <div className="space-y-4 border-t pt-6">
+    <div className="space-y-3 border-t pt-4">
       <h3 className="text-lg font-medium text-blue-600">Output Forms</h3>
-      <div className="space-y-3">
+      <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label className="text-red-500">Track Contract Number:</Label>
-          <RadioGroup defaultValue="yes">
+          <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="yes" id="track-contract-yes" />
               <Label htmlFor="track-contract-yes">Yes</Label>
@@ -45,7 +45,7 @@ export const OutputFormsSection: React.FC = () => {
 
         <div className="flex items-center justify-between">
           <Label className="text-red-500">Force 'Print Preview' On Display Of Output Forms:</Label>
-          <RadioGroup defaultValue="yes">
+          <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="yes" id="print-preview-yes" />
               <Label htmlFor="print-preview-yes">Yes</Label>
@@ -63,12 +63,12 @@ export const OutputFormsSection: React.FC = () => {
 
 export const ReportsSection: React.FC = () => {
   return (
-    <div className="space-y-4 border-t pt-6">
+    <div className="space-y-3 border-t pt-4">
       <h3 className="text-lg font-medium text-blue-600">Reports</h3>
-      <div className="space-y-3">
+      <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label className="text-red-500">Labor Unit Productivity - Default Unit Tracking:</Label>
-          <RadioGroup defaultValue="units-per-hour">
+          <RadioGroup defaultValue="units-per-hour" className="flex flex-row gap-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="units-per-hour" id="units-per-hour" />
               <Label htmlFor="units-per-hour">Units per Hour</Label>
@@ -83,7 +83,7 @@ export const ReportsSection: React.FC = () => {
         <div className="flex items-center justify-between">
           <Label className="text-red-500">Labor Unit Productivity - Include Units Per Day:</Label>
           <div className="flex items-center gap-4">
-            <RadioGroup defaultValue="yes">
+            <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="yes" id="units-per-day-yes" />
                 <Label htmlFor="units-per-day-yes">Yes</Label>
@@ -103,34 +103,34 @@ export const ReportsSection: React.FC = () => {
 
 export const ColorSection: React.FC = () => {
   return (
-    <div className="space-y-4 border-t pt-6">
+    <div className="space-y-3 border-t pt-4">
       <h3 className="text-lg font-medium text-blue-600">Color</h3>
-      <div className="space-y-3">
+      <div className="space-y-2">
         <Label className="text-red-500">Color Theme:</Label>
-        <RadioGroup defaultValue="belize-hole">
+        <RadioGroup defaultValue="belize-hole" className="space-y-1">
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="belize-hole" id="belize-hole" />
-            <div className="w-6 h-6 bg-blue-600 rounded"></div>
+            <div className="w-5 h-5 bg-blue-600 rounded"></div>
             <Label htmlFor="belize-hole">BELIZE HOLE</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="amethyst" id="amethyst" />
-            <div className="w-6 h-6 bg-purple-600 rounded"></div>
+            <div className="w-5 h-5 bg-purple-600 rounded"></div>
             <Label htmlFor="amethyst">AMETHYST</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="alizarin" id="alizarin" />
-            <div className="w-6 h-6 bg-red-600 rounded"></div>
+            <div className="w-5 h-5 bg-red-600 rounded"></div>
             <Label htmlFor="alizarin">ALIZARIN</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="carrot" id="carrot" />
-            <div className="w-6 h-6 bg-orange-500 rounded"></div>
+            <div className="w-5 h-5 bg-orange-500 rounded"></div>
             <Label htmlFor="carrot">CARROT</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="casablanca" id="casablanca" />
-            <div className="w-6 h-6 bg-yellow-400 rounded"></div>
+            <div className="w-5 h-5 bg-yellow-400 rounded"></div>
             <Label htmlFor="casablanca">CASABLANCA</Label>
           </div>
         </RadioGroup>
@@ -141,12 +141,12 @@ export const ColorSection: React.FC = () => {
 
 export const HierarchyLoginSection: React.FC = () => {
   return (
-    <div className="space-y-4 border-t pt-6">
+    <div className="space-y-3 border-t pt-4">
       <h3 className="text-lg font-medium">Hierarchy/Login Settings</h3>
-      <div className="space-y-4">
+      <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Number Project by Division:</Label>
-          <RadioGroup defaultValue="no">
+          <RadioGroup defaultValue="no" className="flex flex-row gap-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="yes" id="division-yes" />
               <Label htmlFor="division-yes">Yes</Label>
@@ -160,7 +160,7 @@ export const HierarchyLoginSection: React.FC = () => {
 
         <div className="flex items-center justify-between">
           <Label>Top Hierarchy Level:</Label>
-          <RadioGroup defaultValue="occupancy">
+          <RadioGroup defaultValue="occupancy" className="flex flex-row gap-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="division" id="hierarchy-division" />
               <Label htmlFor="hierarchy-division">Division</Label>

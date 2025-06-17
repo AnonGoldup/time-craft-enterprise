@@ -5,11 +5,11 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export const WeatherFormatSection: React.FC = () => {
   return (
-    <div className="space-y-4 border-t pt-6">
+    <div className="space-y-3 border-t pt-4">
       <h3 className="text-lg font-medium text-blue-600">Weather Format</h3>
       <div className="flex items-center justify-between">
         <Label className="text-red-500">Select Weather Format:</Label>
-        <RadioGroup defaultValue="celsius">
+        <RadioGroup defaultValue="celsius" className="flex flex-row gap-4">
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="fahrenheit" id="fahrenheit" />
             <Label htmlFor="fahrenheit">Fahrenheit</Label>
