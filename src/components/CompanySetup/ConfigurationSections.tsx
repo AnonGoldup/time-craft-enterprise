@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export const InputFormsSection: React.FC = () => {
   return (
@@ -9,16 +9,10 @@ export const InputFormsSection: React.FC = () => {
       <h3 className="text-lg font-medium text-blue-600">Input Forms</h3>
       <div className="flex items-center justify-between">
         <Label className="text-red-500">Display Pay Rate With Labor Class:</Label>
-        <RadioGroup defaultValue="yes">
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="yes" id="pay-rate-yes" />
-            <Label htmlFor="pay-rate-yes">Yes</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="no" id="pay-rate-no" />
-            <Label htmlFor="pay-rate-no">No</Label>
-          </div>
-        </RadioGroup>
+        <div className="flex items-center space-x-2">
+          <Checkbox id="pay-rate" defaultChecked={true} />
+          <Label htmlFor="pay-rate">Yes</Label>
+        </div>
       </div>
     </div>
   );
