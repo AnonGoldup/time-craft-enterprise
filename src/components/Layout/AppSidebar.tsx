@@ -5,6 +5,7 @@ import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Hom
 import { useAuth } from '@/contexts/AuthContext';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton, SidebarFooter } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 const navigationItems = [{
   label: 'Dashboard',
@@ -67,19 +68,26 @@ const navigationItems = [{
 
 export const AppSidebar: React.FC = () => {
   const location = useLocation();
-  const {
-    user,
-    hasRole
-  } = useAuth();
+  const { user, hasRole } = useAuth();
   const filteredItems = navigationItems.filter(item => hasRole(item.roles));
+  
   const isSubmenuActive = (submenu: any[]) => {
     return submenu.some(sub => location.pathname === sub.path);
   };
-  return <Sidebar className="border-slate-200 dark:border-slate-800">
+
+  // Enhanced keyboard navigation
+  useKeyboardNavigation({
+    enabled: true, // You could make this conditional based on focus state
+  });
+
+  return (
+    <Sidebar className="border-border bg-sidebar">
       <SidebarHeader className="p-6 bg-sidebar border-b border-sidebar-border">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold">{user?.fullName?.charAt(0)}</span>
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <span className="text-primary-foreground font-bold" aria-label={`${user?.fullName} avatar`}>
+              {user?.fullName?.charAt(0)}
+            </span>
           </div>
           <div className="group-data-[collapsible=icon]:hidden">
             <p className="text-sidebar-foreground font-medium">{user?.fullName}</p>
@@ -97,42 +105,69 @@ export const AppSidebar: React.FC = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               {filteredItems.map(item => {
-              const isActive = location.pathname === item.path;
-              const hasSubmenu = item.submenu && item.submenu.length > 0;
-              const isSubmenuItemActive = hasSubmenu && isSubmenuActive(item.submenu);
-              if (hasSubmenu) {
-                return <Collapsible key={item.path} defaultOpen={isActive || isSubmenuItemActive}>
+                const isActive = location.pathname === item.path;
+                const hasSubmenu = item.submenu && item.submenu.length > 0;
+                const isSubmenuItemActive = hasSubmenu && isSubmenuActive(item.submenu);
+                
+                if (hasSubmenu) {
+                  return (
+                    <Collapsible key={item.path} defaultOpen={isActive || isSubmenuItemActive}>
                       <SidebarMenuItem>
                         <CollapsibleTrigger asChild>
-                          <SidebarMenuButton isActive={isActive || isSubmenuItemActive} className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-                            <item.icon className="h-4 w-4" />
+                          <SidebarMenuButton 
+                            isActive={isActive || isSubmenuItemActive} 
+                            className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:bg-sidebar-accent focus:text-sidebar-accent-foreground focus:outline-none focus:ring-2 focus:ring-sidebar-ring transition-colors"
+                            aria-expanded={isActive || isSubmenuItemActive}
+                            aria-label={`${item.label} menu`}
+                          >
+                            <item.icon className="h-4 w-4" aria-hidden="true" />
                             <span>{item.label}</span>
-                            <ChevronRight className="h-4 w-4 ml-auto transition-transform group-data-[state=open]:rotate-90" />
+                            <ChevronRight className="h-4 w-4 ml-auto transition-transform group-data-[state=open]:rotate-90" aria-hidden="true" />
                           </SidebarMenuButton>
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <SidebarMenuSub>
-                            {item.submenu.map(subItem => <SidebarMenuSubItem key={subItem.path}>
-                                <SidebarMenuSubButton asChild isActive={location.pathname === subItem.path}>
-                                  <Link to={subItem.path}>
+                            {item.submenu.map(subItem => (
+                              <SidebarMenuSubItem key={subItem.path}>
+                                <SidebarMenuSubButton 
+                                  asChild 
+                                  isActive={location.pathname === subItem.path}
+                                  className="focus:outline-none focus:ring-2 focus:ring-sidebar-ring transition-colors"
+                                >
+                                  <Link 
+                                    to={subItem.path}
+                                    aria-label={subItem.label}
+                                  >
                                     <span>{subItem.label}</span>
                                   </Link>
                                 </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>)}
+                              </SidebarMenuSubItem>
+                            ))}
                           </SidebarMenuSub>
                         </CollapsibleContent>
                       </SidebarMenuItem>
-                    </Collapsible>;
-              }
-              return <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton asChild isActive={isActive} className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-                      <Link to={item.path}>
-                        <item.icon className="h-4 w-4" />
+                    </Collapsible>
+                  );
+                }
+                
+                return (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton 
+                      asChild 
+                      isActive={isActive} 
+                      className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:bg-sidebar-accent focus:text-sidebar-accent-foreground focus:outline-none focus:ring-2 focus:ring-sidebar-ring transition-colors"
+                    >
+                      <Link 
+                        to={item.path}
+                        aria-label={item.label}
+                      >
+                        <item.icon className="h-4 w-4" aria-hidden="true" />
                         <span>{item.label}</span>
                       </Link>
                     </SidebarMenuButton>
-                  </SidebarMenuItem>;
-            })}
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -143,5 +178,6 @@ export const AppSidebar: React.FC = () => {
           v1.0.0
         </div>
       </SidebarFooter>
-    </Sidebar>;
+    </Sidebar>
+  );
 };
