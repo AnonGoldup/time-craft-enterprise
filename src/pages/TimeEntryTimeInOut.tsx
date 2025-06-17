@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -33,6 +34,7 @@ const TimeEntryTimeInOut = () => {
   const [entries, setEntries] = useState([{
     id: 1
   }]);
+
   const setQuickTime = (startHour: string, startPeriod: string, endHour: string, endPeriod: string) => {
     setTimeInHour(startHour);
     setTimeInMinute('00');
@@ -47,26 +49,32 @@ const TimeEntryTimeInOut = () => {
     setBreakOutMinute('00');
     setBreakOutPeriod('PM');
   };
+
   const addRow = () => {
     setEntries([...entries, {
       id: entries.length + 1
     }]);
   };
+
   const deleteRow = (id: number) => {
     if (entries.length > 1) {
       setEntries(entries.filter(entry => entry.id !== id));
     }
   };
+
   const copyPreviousDay = () => {
     console.log('Copy previous day');
   };
+
   const copyPreviousWeek = () => {
     console.log('Copy previous week');
   };
+
   const getRowBackgroundClass = (index: number) => {
     if (index === 0) return '';
     return index % 2 === 1 ? 'bg-slate-50/50 dark:bg-slate-800/30' : 'bg-blue-50/30 dark:bg-blue-900/10';
   };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -129,7 +137,7 @@ const TimeEntryTimeInOut = () => {
                     )}
                   </div>
 
-                  {/* Project Details Row with multi-select employees and multi-date selection */}
+                  {/* Project Details Row with multi-select employees and multi-date selection, using dropdown for cost codes */}
                   <ProjectDetailsRow 
                     selectedProject={selectedProject} 
                     setSelectedProject={setSelectedProject} 
@@ -145,7 +153,7 @@ const TimeEntryTimeInOut = () => {
                     setSelectedEmployee={setSelectedEmployee} 
                     selectedEmployees={selectedEmployees} 
                     setSelectedEmployees={setSelectedEmployees} 
-                    useCostCodeInput={true}
+                    useCostCodeInput={false}
                     useMultiDateSelection={true}
                   />
 
