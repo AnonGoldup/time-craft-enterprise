@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import theme variables */
+@import './styles/theme-variables.css';
+
 @layer base {
   :root {
     /* Light mode colors based on your Power Apps scheme */
@@ -94,6 +97,21 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--theme-font-family, ui-sans-serif, system-ui, sans-serif);
+    font-family: var(--theme-font-family, var(--font-primary, ui-sans-serif, system-ui, sans-serif));
+  }
+}
+
+/* Enhanced theme utilities */
+@layer utilities {
+  .enhanced-card {
+    @apply transition-all duration-200;
+  }
+  
+  .enhanced-input {
+    @apply transition-all duration-200;
+  }
+  
+  .enhanced-header {
+    @apply transition-all duration-200;
   }
 }

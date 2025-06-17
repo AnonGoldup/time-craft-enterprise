@@ -7,62 +7,62 @@ import { Label } from '@/components/ui/label';
 
 export const CompanyDetailsSection: React.FC = () => {
   return (
-    <Card>
-      <CardHeader>
+    <Card className="enhanced-card">
+      <CardHeader className="enhanced-header rounded-t-lg">
         <CardTitle>Company Information</CardTitle>
-        <CardDescription>Basic company details and contact information</CardDescription>
+        <CardDescription className="text-white/90">Basic company details and contact information</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Company Details Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="companyName">Company Name</Label>
-            <Input id="companyName" defaultValue="AltaPro Electric Ltd" />
+            <Input id="companyName" defaultValue="AltaPro Electric Ltd" className="enhanced-input" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="addressLine1">Address (line 1)</Label>
-            <Input id="addressLine1" defaultValue="13415 149 Street" />
+            <Input id="addressLine1" defaultValue="13415 149 Street" className="enhanced-input" />
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="addressLine2">Address (line 2)</Label>
-            <Input id="addressLine2" placeholder="Suite, unit, etc." />
+            <Input id="addressLine2" placeholder="Suite, unit, etc." className="enhanced-input" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="county">County</Label>
-            <Input id="county" defaultValue="AB" />
+            <Input id="county" defaultValue="AB" className="enhanced-input" />
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="city">City</Label>
-            <Input id="city" defaultValue="Edmonton" />
+            <Input id="city" defaultValue="Edmonton" className="enhanced-input" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="stateProvince">State / Province</Label>
-            <Input id="stateProvince" defaultValue="AB" />
+            <Input id="stateProvince" defaultValue="AB" className="enhanced-input" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="postalCode">ZIP / Postal Code</Label>
-            <Input id="postalCode" defaultValue="T5L2T3" />
+            <Input id="postalCode" defaultValue="T5L2T3" className="enhanced-input" />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="country">Country</Label>
-            <Input id="country" defaultValue="Canada" />
+            <Input id="country" defaultValue="Canada" className="enhanced-input" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="phone">Phone</Label>
-            <Input id="phone" defaultValue="780-444-6510" />
+            <Input id="phone" defaultValue="780-444-6510" className="enhanced-input" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="fax">Fax</Label>
-            <Input id="fax" defaultValue="780-483-4073" />
+            <Input id="fax" defaultValue="780-483-4073" className="enhanced-input" />
           </div>
         </div>
         

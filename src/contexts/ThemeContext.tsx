@@ -167,6 +167,9 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
 
   const applyTheme = (theme: ColorTheme) => {
     const root = document.documentElement;
+    const body = document.body;
+    
+    // Apply Tailwind CSS variables
     Object.entries(theme.colors).forEach(([key, value]) => {
       const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
       root.style.setProperty(cssVar, value);
@@ -179,9 +182,33 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
       root.style.removeProperty('--theme-font-family');
     }
 
-    // Add theme-specific class to body for more targeted styling
-    document.body.className = document.body.className.replace(/theme-\w+/g, '');
-    document.body.classList.add(`theme-${theme.id}`);
+    // Remove all existing theme classes and add new one
+    body.className = body.className.replace(/theme-\w+/g, '');
+    body.classList.add(`theme-${theme.id}`);
+
+    // Apply additional theme-specific CSS variables for enhanced styling
+    switch (theme.id) {
+      case 'unity':
+        root.style.setProperty('--theme-primary-rgb', '250, 128, 41');
+        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #1f2124 0%, #fa8029 100%)');
+        break;
+      case 'belize-hole':
+        root.style.setProperty('--theme-primary-rgb', '52, 152, 219');
+        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #2980b9 0%, #3498db 100%)');
+        break;
+      case 'dark-emerald':
+        root.style.setProperty('--theme-primary-rgb', '46, 204, 113');
+        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)');
+        break;
+      case 'amethyst':
+        root.style.setProperty('--theme-primary-rgb', '155, 89, 182');
+        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%)');
+        break;
+      case 'alizarin':
+        root.style.setProperty('--theme-primary-rgb', '231, 76, 60');
+        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #c0392b 0%, #e74c3c 100%)');
+        break;
+    }
   };
 
   useEffect(() => {

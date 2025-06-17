@@ -1,0 +1,148 @@
+
+/* Theme-specific CSS Custom Properties */
+
+/* Unity Theme Variables */
+.theme-unity {
+  /* Unity Color Palette */
+  --color-primary-dark: #1f2124;
+  --color-accent-orange: #fa8029;
+  --color-light-gray: #f7f7f7;
+  --color-white: #ffffff;
+  
+  /* Additional UI Colors */
+  --color-sidebar-bg: #2a2b2e;
+  --color-card-bg: #ffffff;
+  --color-border: #e5e5e5;
+  --color-text-primary: #1f2124;
+  --color-text-secondary: #6b6b6b;
+  --color-text-light: #9a9a9a;
+  
+  /* Typography */
+  --font-primary: 'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  
+  /* Unity specific enhancements */
+  --unity-header-bg: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-accent-orange) 100%);
+  --unity-card-shadow: 0 4px 20px rgba(250, 128, 41, 0.1);
+  --unity-input-focus: 0 0 0 3px rgba(250, 128, 41, 0.1);
+}
+
+/* Belize Hole Theme Variables */
+.theme-belize-hole {
+  --color-primary-dark: #2980b9;
+  --color-accent: #3498db;
+  --color-light-gray: #ecf0f1;
+  --belize-header-bg: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+  --belize-card-shadow: 0 4px 20px rgba(52, 152, 219, 0.1);
+  --belize-input-focus: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* Dark Emerald Theme Variables */
+.theme-dark-emerald {
+  --color-primary-dark: #27ae60;
+  --color-accent: #2ecc71;
+  --color-light-gray: #f1f8e9;
+  --emerald-header-bg: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  --emerald-card-shadow: 0 4px 20px rgba(46, 204, 113, 0.1);
+  --emerald-input-focus: 0 0 0 3px rgba(46, 204, 113, 0.1);
+}
+
+/* Amethyst Theme Variables */
+.theme-amethyst {
+  --color-primary-dark: #8e44ad;
+  --color-accent: #9b59b6;
+  --color-light-gray: #f8f4fd;
+  --amethyst-header-bg: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+  --amethyst-card-shadow: 0 4px 20px rgba(155, 89, 182, 0.1);
+  --amethyst-input-focus: 0 0 0 3px rgba(155, 89, 182, 0.1);
+}
+
+/* Alizarin Theme Variables */
+.theme-alizarin {
+  --color-primary-dark: #c0392b;
+  --color-accent: #e74c3c;
+  --color-light-gray: #fdf2f2;
+  --alizarin-header-bg: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+  --alizarin-card-shadow: 0 4px 20px rgba(231, 76, 60, 0.1);
+  --alizarin-input-focus: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+/* Enhanced Theme Styling */
+.theme-unity .enhanced-card {
+  box-shadow: var(--unity-card-shadow);
+  border-left: 4px solid var(--color-accent-orange);
+}
+
+.theme-unity .enhanced-input:focus {
+  box-shadow: var(--unity-input-focus);
+  border-color: var(--color-accent-orange);
+}
+
+.theme-unity .enhanced-header {
+  background: var(--unity-header-bg);
+  color: white;
+}
+
+.theme-belize-hole .enhanced-card {
+  box-shadow: var(--belize-card-shadow);
+  border-left: 4px solid hsl(221 83% 53%);
+}
+
+.theme-belize-hole .enhanced-input:focus {
+  box-shadow: var(--belize-input-focus);
+}
+
+.theme-dark-emerald .enhanced-card {
+  box-shadow: var(--emerald-card-shadow);
+  border-left: 4px solid hsl(142 71% 45%);
+}
+
+.theme-dark-emerald .enhanced-input:focus {
+  box-shadow: var(--emerald-input-focus);
+}
+
+.theme-amethyst .enhanced-card {
+  box-shadow: var(--amethyst-card-shadow);
+  border-left: 4px solid hsl(271 81% 56%);
+}
+
+.theme-amethyst .enhanced-input:focus {
+  box-shadow: var(--amethyst-input-focus);
+}
+
+.theme-alizarin .enhanced-card {
+  box-shadow: var(--alizarin-card-shadow);
+  border-left: 4px solid hsl(0 84% 60%);
+}
+
+.theme-alizarin .enhanced-input:focus {
+  box-shadow: var(--alizarin-input-focus);
+}

@@ -21,7 +21,7 @@ export default {
 		extend: {
 			fontFamily: {
 				'general-sans': ['General Sans', 'sans-serif'],
-				'theme': ['var(--theme-font-family)', 'sans-serif'],
+				'theme': ['var(--theme-font-family)', 'var(--font-primary)', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -72,6 +72,12 @@ export default {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			backgroundImage: {
+				'theme-gradient': 'var(--theme-gradient)',
+			},
+			boxShadow: {
+				'theme': '0 4px 20px rgba(var(--theme-primary-rgb), 0.1)',
 			},
 			keyframes: {
 				'accordion-down': {
