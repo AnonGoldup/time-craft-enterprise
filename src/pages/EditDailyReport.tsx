@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ArrowLeft, Plus, X } from 'lucide-react';
+import { ArrowLeft, Plus, X, Trash2 } from 'lucide-react';
 import { employeeApi, Employee } from '@/services/api';
 
 interface CrewEntry {
@@ -19,6 +19,12 @@ interface CrewEntry {
   lost: number;
   work: string;
   comments: string;
+}
+
+interface Crew {
+  id: string;
+  name: string;
+  entries: CrewEntry[];
 }
 
 interface SubcontractorEntry {
@@ -62,10 +68,17 @@ const EditDailyReport: React.FC = () => {
     totalWorkers: 3
   });
 
-  const [crewEntries, setCrewEntries] = useState<CrewEntry[]>([
-    { id: '1', employee: '', costCode: '', workType: 'Base Contract', st: 8, ot: 0, lost: 0, work: 'Travel Time', comments: '' },
-    { id: '2', employee: '', costCode: '', workType: 'Base Contract', st: 8, ot: 0, lost: 0, work: 'Travel Time', comments: '' },
-    { id: '3', employee: '', costCode: '', workType: 'Base Contract', st: 6, ot: 0, lost: 0, work: 'Travel Time', comments: '' }
+  // Initialize with one crew containing sample entries
+  const [crews, setCrews] = useState<Crew[]>([
+    {
+      id: '1',
+      name: 'Crew 1',
+      entries: [
+        { id: '1', employee: '', costCode: '', workType: 'Base Contract', st: 8, ot: 0, lost: 0, work: 'Travel Time', comments: '' },
+        { id: '2', employee: '', costCode: '', workType: 'Base Contract', st: 8, ot: 0, lost: 0, work: 'Travel Time', comments: '' },
+        { id: '3', employee: '', costCode: '', workType: 'Base Contract', st: 6, ot: 0, lost: 0, work: 'Travel Time', comments: '' }
+      ]
+    }
   ]);
 
   const [subcontractors, setSubcontractors] = useState<SubcontractorEntry[]>([]);
@@ -101,7 +114,24 @@ const EditDailyReport: React.FC = () => {
     'Work Under Protest'
   ];
 
-  const addCrewEntry = () => {
+  // Crew management functions
+  const addCrew = () => {
+    const newCrewNumber = crews.length + 1;
+    const newCrew: Crew = {
+      id: Date.now().toString(),
+      name: `Crew ${newCrewNumber}`,
+      entries: []
+    };
+    setCrews([...crews, newCrew]);
+  };
+
+  const removeCrew = (crewId: string) => {
+    if (crews.length > 1) {
+      setCrews(crews.filter(crew => crew.id !== crewId));
+    }
+  };
+
+  const addCrewEntry = (crewId: string) => {
     const newEntry: CrewEntry = {
       id: Date.now().toString(),
       employee: '',
@@ -113,16 +143,32 @@ const EditDailyReport: React.FC = () => {
       work: '',
       comments: ''
     };
-    setCrewEntries([...crewEntries, newEntry]);
+    
+    setCrews(crews.map(crew => 
+      crew.id === crewId 
+        ? { ...crew, entries: [...crew.entries, newEntry] }
+        : crew
+    ));
   };
 
-  const removeCrewEntry = (id: string) => {
-    setCrewEntries(crewEntries.filter(entry => entry.id !== id));
+  const removeCrewEntry = (crewId: string, entryId: string) => {
+    setCrews(crews.map(crew => 
+      crew.id === crewId 
+        ? { ...crew, entries: crew.entries.filter(entry => entry.id !== entryId) }
+        : crew
+    ));
   };
 
-  const updateCrewEntry = (id: string, field: keyof CrewEntry, value: string | number) => {
-    setCrewEntries(crewEntries.map(entry => 
-      entry.id === id ? { ...entry, [field]: value } : entry
+  const updateCrewEntry = (crewId: string, entryId: string, field: keyof CrewEntry, value: string | number) => {
+    setCrews(crews.map(crew => 
+      crew.id === crewId 
+        ? {
+            ...crew,
+            entries: crew.entries.map(entry => 
+              entry.id === entryId ? { ...entry, [field]: value } : entry
+            )
+          }
+        : crew
     ));
   };
 
@@ -160,7 +206,7 @@ const EditDailyReport: React.FC = () => {
   const handleSave = () => {
     console.log('Saving daily report...', {
       formData,
-      crewEntries,
+      crews,
       subcontractors,
       equipment,
       materials,
@@ -170,8 +216,15 @@ const EditDailyReport: React.FC = () => {
     navigate('/daily-reporting');
   };
 
-  const getTotalHours = (type: 'st' | 'ot' | 'lost') => {
-    return crewEntries.reduce((sum, entry) => sum + entry[type], 0);
+  const getTotalHoursForCrew = (crewId: string, type: 'st' | 'ot' | 'lost') => {
+    const crew = crews.find(c => c.id === crewId);
+    return crew ? crew.entries.reduce((sum, entry) => sum + entry[type], 0) : 0;
+  };
+
+  const getAllTotalHours = (type: 'st' | 'ot' | 'lost') => {
+    return crews.reduce((total, crew) => 
+      total + crew.entries.reduce((sum, entry) => sum + entry[type], 0), 0
+    );
   };
 
   useEffect(() => {
@@ -357,148 +410,188 @@ const EditDailyReport: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Crews Section */}
+      {/* Multiple Crews Section */}
+      {crews.map((crew) => (
+        <Card key={crew.id}>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>{crew.name}</CardTitle>
+            <div className="flex gap-2">
+              <Button onClick={() => addCrewEntry(crew.id)} size="sm" className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Add Line
+              </Button>
+              {crews.length > 1 && (
+                <Button 
+                  onClick={() => removeCrew(crew.id)} 
+                  size="sm" 
+                  variant="outline"
+                  className="flex items-center gap-2 text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Remove Crew
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-blue-700 hover:bg-blue-700">
+                  <TableHead className="text-white">Employees</TableHead>
+                  <TableHead className="text-white">Cost Code</TableHead>
+                  <TableHead className="text-white">Work Type</TableHead>
+                  <TableHead className="text-white">ST</TableHead>
+                  <TableHead className="text-white">OT</TableHead>
+                  <TableHead className="text-white">Lost</TableHead>
+                  <TableHead className="text-white">Work</TableHead>
+                  <TableHead className="text-white">Comments</TableHead>
+                  <TableHead className="text-white">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {crew.entries.map((entry) => (
+                  <TableRow key={entry.id}>
+                    <TableCell>
+                      <Select
+                        value={entry.employee}
+                        onValueChange={(value) => updateCrewEntry(crew.id, entry.id, 'employee', value)}
+                        disabled={loadingEmployees}
+                      >
+                        <SelectTrigger className="min-w-[200px]">
+                          <SelectValue placeholder={loadingEmployees ? "Loading..." : "Select Employee"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {employees.map((employee) => (
+                            <SelectItem 
+                              key={employee.employeeID} 
+                              value={`${employee.lastName}, ${employee.firstName}`}
+                            >
+                              {employee.lastName}, {employee.firstName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={entry.costCode}
+                        onChange={(e) => updateCrewEntry(crew.id, entry.id, 'costCode', e.target.value)}
+                        placeholder="Cost Code"
+                        className="min-w-[120px]"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={entry.workType}
+                        onValueChange={(value) => updateCrewEntry(crew.id, entry.id, 'workType', value)}
+                      >
+                        <SelectTrigger className="min-w-[150px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {workTypeOptions.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        type="number"
+                        value={entry.st}
+                        onChange={(e) => updateCrewEntry(crew.id, entry.id, 'st', parseInt(e.target.value) || 0)}
+                        className="w-16"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        type="number"
+                        value={entry.ot}
+                        onChange={(e) => updateCrewEntry(crew.id, entry.id, 'ot', parseInt(e.target.value) || 0)}
+                        className="w-16"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        type="number"
+                        value={entry.lost}
+                        onChange={(e) => updateCrewEntry(crew.id, entry.id, 'lost', parseInt(e.target.value) || 0)}
+                        className="w-16"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={entry.work}
+                        onChange={(e) => updateCrewEntry(crew.id, entry.id, 'work', e.target.value)}
+                        className="min-w-[150px]"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={entry.comments}
+                        onChange={(e) => updateCrewEntry(crew.id, entry.id, 'comments', e.target.value)}
+                        className="min-w-[200px]"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeCrewEntry(crew.id, entry.id)}
+                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                <TableRow className="bg-blue-600 hover:bg-blue-600">
+                  <TableCell className="text-white font-bold">Total Hours:</TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell className="text-white font-bold">{getTotalHoursForCrew(crew.id, 'st')}</TableCell>
+                  <TableCell className="text-white font-bold">{getTotalHoursForCrew(crew.id, 'ot')}</TableCell>
+                  <TableCell className="text-white font-bold">{getTotalHoursForCrew(crew.id, 'lost')}</TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      ))}
+
+      {/* Add Crew Button */}
+      <div className="flex justify-center">
+        <Button onClick={addCrew} className="flex items-center gap-2 bg-green-600 hover:bg-green-700">
+          <Plus className="h-4 w-4" />
+          Add Crew
+        </Button>
+      </div>
+
+      {/* Grand Total Summary */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Crews</CardTitle>
-          <div className="flex gap-2">
-            <Button onClick={addCrewEntry} size="sm" className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add Crew
-            </Button>
-            <Button onClick={addCrewEntry} size="sm" className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add Line
-            </Button>
-          </div>
+        <CardHeader>
+          <CardTitle>Grand Total Summary</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-blue-700 hover:bg-blue-700">
-                <TableHead className="text-white">Employees</TableHead>
-                <TableHead className="text-white">Cost Code</TableHead>
-                <TableHead className="text-white">Work Type</TableHead>
-                <TableHead className="text-white">ST</TableHead>
-                <TableHead className="text-white">OT</TableHead>
-                <TableHead className="text-white">Lost</TableHead>
-                <TableHead className="text-white">Work</TableHead>
-                <TableHead className="text-white">Comments</TableHead>
-                <TableHead className="text-white">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {crewEntries.map((entry) => (
-                <TableRow key={entry.id}>
-                  <TableCell>
-                    <Select
-                      value={entry.employee}
-                      onValueChange={(value) => updateCrewEntry(entry.id, 'employee', value)}
-                      disabled={loadingEmployees}
-                    >
-                      <SelectTrigger className="min-w-[200px]">
-                        <SelectValue placeholder={loadingEmployees ? "Loading..." : "Select Employee"} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {employees.map((employee) => (
-                          <SelectItem 
-                            key={employee.employeeID} 
-                            value={`${employee.lastName}, ${employee.firstName}`}
-                          >
-                            {employee.lastName}, {employee.firstName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      value={entry.costCode}
-                      onChange={(e) => updateCrewEntry(entry.id, 'costCode', e.target.value)}
-                      placeholder="Cost Code"
-                      className="min-w-[120px]"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Select
-                      value={entry.workType}
-                      onValueChange={(value) => updateCrewEntry(entry.id, 'workType', value)}
-                    >
-                      <SelectTrigger className="min-w-[150px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {workTypeOptions.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      type="number"
-                      value={entry.st}
-                      onChange={(e) => updateCrewEntry(entry.id, 'st', parseInt(e.target.value) || 0)}
-                      className="w-16"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      type="number"
-                      value={entry.ot}
-                      onChange={(e) => updateCrewEntry(entry.id, 'ot', parseInt(e.target.value) || 0)}
-                      className="w-16"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      type="number"
-                      value={entry.lost}
-                      onChange={(e) => updateCrewEntry(entry.id, 'lost', parseInt(e.target.value) || 0)}
-                      className="w-16"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      value={entry.work}
-                      onChange={(e) => updateCrewEntry(entry.id, 'work', e.target.value)}
-                      className="min-w-[150px]"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      value={entry.comments}
-                      onChange={(e) => updateCrewEntry(entry.id, 'comments', e.target.value)}
-                      className="min-w-[200px]"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeCrewEntry(entry.id)}
-                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-              <TableRow className="bg-blue-600 hover:bg-blue-600">
-                <TableCell className="text-white font-bold">Total Hours:</TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell className="text-white font-bold">{getTotalHours('st')}</TableCell>
-                <TableCell className="text-white font-bold">{getTotalHours('ot')}</TableCell>
-                <TableCell className="text-white font-bold">{getTotalHours('lost')}</TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="bg-blue-100 dark:bg-blue-900 p-4 rounded">
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{getAllTotalHours('st')}</div>
+              <div className="text-sm text-blue-600 dark:text-blue-400">Total ST Hours</div>
+            </div>
+            <div className="bg-orange-100 dark:bg-orange-900 p-4 rounded">
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{getAllTotalHours('ot')}</div>
+              <div className="text-sm text-orange-600 dark:text-orange-400">Total OT Hours</div>
+            </div>
+            <div className="bg-red-100 dark:bg-red-900 p-4 rounded">
+              <div className="text-2xl font-bold text-red-600 dark:text-red-400">{getAllTotalHours('lost')}</div>
+              <div className="text-sm text-red-600 dark:text-red-400">Total Lost Hours</div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
