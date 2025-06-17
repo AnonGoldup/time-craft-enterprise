@@ -109,6 +109,12 @@ const Index = () => {
         </div>
       </div>
 
+      {/* Time Entry Type Selector */}
+      <TimeEntryTypeSelector
+        selectedType={timeEntryType}
+        onTypeChange={setTimeEntryType}
+      />
+
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {quickStats.map((stat, index) => (
@@ -144,10 +150,6 @@ const Index = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <TimeEntryTypeSelector
-            selectedType={timeEntryType}
-            onTypeChange={setTimeEntryType}
-          />
           {renderTimeEntryForm()}
         </CardContent>
       </Card>
