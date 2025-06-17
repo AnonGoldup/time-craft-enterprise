@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Users, Check, ChevronsUpDown, X } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
@@ -50,8 +51,8 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
 
   const getSelectedEmployeeNames = () => {
     return safeEmployees
-      .filter(emp => safeSelectedEmployees.includes(emp.employeeID))
-      .map(emp => emp.fullName);
+      .filter(emp => safeSelectedEmployees.includes(emp.EmployeeID))
+      .map(emp => emp.FullName);
   };
 
   return (
@@ -86,19 +87,19 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
                   {safeEmployees.length > 0 ? (
                     safeEmployees.map((employee) => (
                       <CommandItem
-                        key={employee.employeeID}
-                        value={employee.fullName}
-                        onSelect={() => handleEmployeeSelect(employee.employeeID)}
+                        key={employee.EmployeeID}
+                        value={employee.FullName}
+                        onSelect={() => handleEmployeeSelect(employee.EmployeeID)}
                       >
                         <Check
                           className={cn(
                             "mr-2 h-4 w-4",
-                            safeSelectedEmployees.includes(employee.employeeID) ? "opacity-100" : "opacity-0"
+                            safeSelectedEmployees.includes(employee.EmployeeID) ? "opacity-100" : "opacity-0"
                           )}
                         />
-                        {employee.fullName}
+                        {employee.FullName}
                         <span className="ml-auto text-xs text-slate-500">
-                          {employee.class}
+                          {employee.Class}
                         </span>
                       </CommandItem>
                     ))
@@ -118,8 +119,8 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
           >
             <option value="">Select employee...</option>
             {safeEmployees.map((employee) => (
-              <option key={employee.employeeID} value={employee.employeeID}>
-                {employee.fullName} ({employee.class})
+              <option key={employee.EmployeeID} value={employee.EmployeeID}>
+                {employee.FullName} ({employee.Class})
               </option>
             ))}
           </select>
@@ -130,17 +131,17 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
       {setSelectedEmployees && safeSelectedEmployees.length > 0 && (
         <div className="flex flex-wrap gap-2 ml-[86px]">
           {safeEmployees
-            .filter(emp => safeSelectedEmployees.includes(emp.employeeID))
+            .filter(emp => safeSelectedEmployees.includes(emp.EmployeeID))
             .map(employee => (
               <Badge
-                key={employee.employeeID}
+                key={employee.EmployeeID}
                 variant="secondary"
                 className="flex items-center gap-1"
               >
-                <span>{employee.fullName}</span>
+                <span>{employee.FullName}</span>
                 <X
                   className="h-3 w-3 cursor-pointer hover:text-red-500"
-                  onClick={() => removeEmployee(employee.employeeID)}
+                  onClick={() => removeEmployee(employee.EmployeeID)}
                 />
               </Badge>
             ))}
