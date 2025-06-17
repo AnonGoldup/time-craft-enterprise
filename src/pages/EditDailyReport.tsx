@@ -13,8 +13,6 @@ import { employeeApi, Employee } from '@/services/api';
 interface CrewEntry {
   id: string;
   employee: string;
-  costCode: string;
-  workType: string;
   st: number;
   ot: number;
   lost: number;
@@ -25,6 +23,8 @@ interface CrewEntry {
 interface Crew {
   id: string;
   name: string;
+  costCode: string;
+  workType: string;
   entries: CrewEntry[];
 }
 
@@ -74,10 +74,12 @@ const EditDailyReport: React.FC = () => {
     {
       id: '1',
       name: 'Crew 1',
+      costCode: '',
+      workType: 'Base Contract',
       entries: [
-        { id: '1', employee: '', costCode: '', workType: 'Base Contract', st: 8, ot: 0, lost: 0, work: 'Travel Time', comments: '' },
-        { id: '2', employee: '', costCode: '', workType: 'Base Contract', st: 8, ot: 0, lost: 0, work: 'Travel Time', comments: '' },
-        { id: '3', employee: '', costCode: '', workType: 'Base Contract', st: 6, ot: 0, lost: 0, work: 'Travel Time', comments: '' }
+        { id: '1', employee: '', st: 8, ot: 0, lost: 0, work: 'Travel Time', comments: '' },
+        { id: '2', employee: '', st: 8, ot: 0, lost: 0, work: 'Travel Time', comments: '' },
+        { id: '3', employee: '', st: 6, ot: 0, lost: 0, work: 'Travel Time', comments: '' }
       ]
     }
   ]);
@@ -123,6 +125,8 @@ const EditDailyReport: React.FC = () => {
     const newCrew: Crew = {
       id: Date.now().toString(),
       name: `Crew ${newCrewNumber}`,
+      costCode: '',
+      workType: 'Base Contract',
       entries: []
     };
     setCrews([...crews, newCrew]);
@@ -135,12 +139,16 @@ const EditDailyReport: React.FC = () => {
     }
   };
 
+  const updateCrew = (crewId: string, field: 'costCode' | 'workType', value: string) => {
+    setCrews(crews.map(crew => 
+      crew.id === crewId ? { ...crew, [field]: value } : crew
+    ));
+  };
+
   const addCrewEntry = (crewId: string) => {
     const newEntry: CrewEntry = {
       id: Date.now().toString(),
       employee: '',
-      costCode: '',
-      workType: 'Base Contract',
       st: 0,
       ot: 0,
       lost: 0,
@@ -461,13 +469,41 @@ const EditDailyReport: React.FC = () => {
               )}
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            {/* Crew-level Cost Code and Work Type */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div>
+                <label className="text-sm font-medium">Cost Code:</label>
+                <Input
+                  value={crew.costCode}
+                  onChange={(e) => updateCrew(crew.id, 'costCode', e.target.value)}
+                  placeholder="Enter cost code..."
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Work Type:</label>
+                <Select
+                  value={crew.workType}
+                  onValueChange={(value) => updateCrew(crew.id, 'workType', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {workTypeOptions.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             <Table>
               <TableHeader>
                 <TableRow className="bg-blue-700 hover:bg-blue-700">
                   <TableHead className="text-white">Employees</TableHead>
-                  <TableHead className="text-white">Cost Code</TableHead>
-                  <TableHead className="text-white">Work Type</TableHead>
                   <TableHead className="text-white">ST</TableHead>
                   <TableHead className="text-white">OT</TableHead>
                   <TableHead className="text-white">Lost</TableHead>
@@ -495,31 +531,6 @@ const EditDailyReport: React.FC = () => {
                               value={`${employee.lastName}, ${employee.firstName}`}
                             >
                               {employee.lastName}, {employee.firstName}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>
-                      <Input
-                        value={entry.costCode}
-                        onChange={(e) => updateCrewEntry(crew.id, entry.id, 'costCode', e.target.value)}
-                        placeholder="Cost Code"
-                        className="min-w-[120px]"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        value={entry.workType}
-                        onValueChange={(value) => updateCrewEntry(crew.id, entry.id, 'workType', value)}
-                      >
-                        <SelectTrigger className="min-w-[150px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {workTypeOptions.map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {type}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -577,8 +588,6 @@ const EditDailyReport: React.FC = () => {
                 ))}
                 <TableRow className="bg-blue-600 hover:bg-blue-600">
                   <TableCell className="text-white font-bold">Total Hours:</TableCell>
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
                   <TableCell className="text-white font-bold">{getTotalHoursForCrew(crew.id, 'st')}</TableCell>
                   <TableCell className="text-white font-bold">{getTotalHoursForCrew(crew.id, 'ot')}</TableCell>
                   <TableCell className="text-white font-bold">{getTotalHoursForCrew(crew.id, 'lost')}</TableCell>
