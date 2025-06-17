@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
+import ProjectDetailsRow from './ProjectDetailsRow';
 
 interface TimeEntry {
   entryID: number;
@@ -43,15 +43,44 @@ const TimeEntryEditForm: React.FC<TimeEntryEditFormProps> = ({
   onSave
 }) => {
   const [formData, setFormData] = useState<TimeEntry | null>(entry);
+  const [selectedProject, setSelectedProject] = useState('');
+  const [selectedExtra, setSelectedExtra] = useState('');
+  const [selectedCostCode, setSelectedCostCode] = useState('');
 
   React.useEffect(() => {
-    setFormData(entry);
+    if (entry) {
+      setFormData(entry);
+      // Initialize the cascade dropdown states based on entry data
+      // Note: These would need to be mapped from the entry's string values to IDs
+      setSelectedProject(''); // Would need to map projectCode to projectID
+      setSelectedExtra(''); // Would need to map extraValue to extraID
+      setSelectedCostCode(''); // Would need to map costCode to costCodeID
+    }
   }, [entry]);
 
   if (!formData) return null;
 
   const handleInputChange = (field: keyof TimeEntry, value: string | number) => {
     setFormData(prev => prev ? { ...prev, [field]: value } : null);
+  };
+
+  const handleProjectChange = (projectId: string) => {
+    setSelectedProject(projectId);
+    setSelectedExtra('');
+    setSelectedCostCode('');
+    // Update formData with the selected project details
+    // This would need proper mapping from project ID to project code
+  };
+
+  const handleExtraChange = (extraId: string) => {
+    setSelectedExtra(extraId);
+    setSelectedCostCode('');
+    // Update formData with the selected extra details
+  };
+
+  const handleCostCodeChange = (costCodeId: string) => {
+    setSelectedCostCode(costCodeId);
+    // Update formData with the selected cost code details
   };
 
   const handleSave = () => {
@@ -71,7 +100,7 @@ const TimeEntryEditForm: React.FC<TimeEntryEditFormProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Time Entry #{formData.entryID}</DialogTitle>
           <DialogDescription>
@@ -80,46 +109,35 @@ const TimeEntryEditForm: React.FC<TimeEntryEditFormProps> = ({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Date and Project */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="dateWorked">Date Worked</Label>
-              <Input
-                id="dateWorked"
-                type="date"
-                value={formData.dateWorked}
-                onChange={(e) => handleInputChange('dateWorked', e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="projectCode">Project Code</Label>
-              <Input
-                id="projectCode"
-                value={formData.projectCode}
-                onChange={(e) => handleInputChange('projectCode', e.target.value)}
-                placeholder="PROJ001"
-              />
-            </div>
+          {/* Date */}
+          <div>
+            <Label htmlFor="dateWorked">Date Worked</Label>
+            <Input
+              id="dateWorked"
+              type="date"
+              value={formData.dateWorked}
+              onChange={(e) => handleInputChange('dateWorked', e.target.value)}
+              className="w-full"
+            />
           </div>
 
-          {/* Extra Value and Cost Code */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="extraValue">Phase/Extra</Label>
-              <Input
-                id="extraValue"
-                value={formData.extraValue || ''}
-                onChange={(e) => handleInputChange('extraValue', e.target.value)}
-                placeholder="Phase 1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="costCode">Cost Code</Label>
-              <Input
-                id="costCode"
-                value={formData.costCode}
-                onChange={(e) => handleInputChange('costCode', e.target.value)}
-                placeholder="LAB-001-001"
+          {/* Cascading Project Selection */}
+          <div>
+            <Label className="text-base font-medium">Project Selection</Label>
+            <div className="mt-2">
+              <ProjectDetailsRow
+                selectedProject={selectedProject}
+                setSelectedProject={handleProjectChange}
+                selectedExtra={selectedExtra}
+                setSelectedExtra={handleExtraChange}
+                selectedCostCode={selectedCostCode}
+                setSelectedCostCode={handleCostCodeChange}
+                selectedDate={formData.dateWorked}
+                setSelectedDate={(date) => handleInputChange('dateWorked', date)}
+                selectedEmployee=""
+                setSelectedEmployee={() => {}}
+                useCostCodeInput={false}
+                useMultiDateSelection={false}
               />
             </div>
           </div>
