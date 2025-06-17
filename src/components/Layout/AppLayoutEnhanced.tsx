@@ -12,29 +12,69 @@ interface AppLayoutProps {
   children: React.ReactNode;
 }
 
+// Route mapping for breadcrumb generation
+const routeLabels: Record<string, string> = {
+  '/': 'Dashboard',
+  '/log': 'Time Log',
+  '/time-entry': 'Time Entry',
+  '/time-entry/standard': 'Standard Hours',
+  '/time-entry/time-in-out': 'Time In/Out',
+  '/manager-approval': 'Manager Approval',
+  '/daily-reporting': 'Daily Reporting',
+  '/reports': 'Reports',
+  '/team': 'Team Management',
+  '/projects': 'Projects',
+  '/calendar': 'Calendar',
+  '/documents': 'Documents',
+  '/settings': 'Settings',
+  '/company-settings': 'Company Settings',
+  '/export-payroll': 'Export Payroll',
+  '/settings/company-setup': 'Company Setup',
+  '/settings/add-division': 'Add Division',
+  '/settings/add-occupancy-type': 'Add Occupancy Type',
+  '/settings/add-project': 'Add Project',
+  '/settings/add-system': 'Add System',
+  '/settings/add-phase': 'Add Phase',
+  '/settings/add-user': 'Add User',
+  '/settings/user-log': 'User Log',
+  '/settings/users-logged-on': 'Users Logged On',
+  '/settings/add-employee': 'Add Employee',
+  '/settings/employee-log': 'Employee Log'
+};
+
 const getBreadcrumbItems = (pathname: string) => {
-  const paths = pathname.split('/').filter(Boolean);
-  const items = [];
-  
-  if (paths.length === 0) {
-    items.push({
+  // Handle root path
+  if (pathname === '/') {
+    return [{
       label: 'Dashboard',
       current: true
-    });
-  } else {
-    paths.forEach((path, index) => {
-      const href = '/' + paths.slice(0, index + 1).join('/');
-      const isLast = index === paths.length - 1;
+    }];
+  }
 
-      // Convert path to readable label
-      const label = path.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  const items = [];
+  const pathSegments = pathname.split('/').filter(Boolean);
+  
+  // Build cumulative paths
+  for (let i = 0; i < pathSegments.length; i++) {
+    const currentPath = '/' + pathSegments.slice(0, i + 1).join('/');
+    const isLast = i === pathSegments.length - 1;
+    
+    // Get label from route mapping or convert path segment
+    const label = routeLabels[currentPath] || 
+      pathSegments[i].split('-').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join(' ');
+
+    // Only add valid routes that exist in our mapping
+    if (routeLabels[currentPath] || isLast) {
       items.push({
         label,
-        href: isLast ? undefined : href,
+        href: isLast ? undefined : currentPath,
         current: isLast
       });
-    });
+    }
   }
+
   return items;
 };
 
