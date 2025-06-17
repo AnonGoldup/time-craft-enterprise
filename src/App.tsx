@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,6 +26,7 @@ const Settings = lazy(() => import("./pages/Settings"));
 const Projects = lazy(() => import("./pages/Projects"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const EditDailyReport = lazy(() => import("./pages/EditDailyReport"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -87,6 +87,13 @@ const App = () => (
                     <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
                       <AppLayout>
                         <DailyReporting />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/daily-reporting/edit/:id" element={
+                    <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                      <AppLayout>
+                        <EditDailyReport />
                       </AppLayout>
                     </ProtectedRoute>
                   } />

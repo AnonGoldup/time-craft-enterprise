@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Plus, FileText, Users, Clock } from 'lucide-react';
+import { Search, Plus, FileText, Users, Clock, Pen } from 'lucide-react';
 
 interface DailyReport {
   drNo: number;
@@ -38,6 +38,7 @@ const mockReports: DailyReport[] = [
 ];
 
 const DailyReporting: React.FC = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDrNo, setSelectedDrNo] = useState('');
   const [notesComments, setNotesComments] = useState('');
@@ -48,6 +49,10 @@ const DailyReporting: React.FC = () => {
     report.foreman.toLowerCase().includes(searchTerm.toLowerCase()) ||
     report.date.includes(searchTerm)
   );
+
+  const handleEditReport = (drNo: number) => {
+    navigate(`/daily-reporting/edit/${drNo}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -206,6 +211,15 @@ const DailyReporting: React.FC = () => {
                 >
                   <TableCell>
                     <div className="flex space-x-1">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="h-6 w-6 p-0"
+                        onClick={() => handleEditReport(report.drNo)}
+                        title="Edit Daily Report"
+                      >
+                        <Pen className="h-3 w-3" />
+                      </Button>
                       <Button variant="outline" size="sm" className="h-6 w-6 p-0">
                         <FileText className="h-3 w-3" />
                       </Button>
