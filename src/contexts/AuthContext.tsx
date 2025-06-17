@@ -98,6 +98,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           department: 'Construction',
           isActive: true
         });
+      } else if (email === 'admin@company.com' && password === 'password') {
+        const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzIiwiZW1wbG95ZWVJZCI6IkFEMDAxIiwiZW1haWwiOiJhZG1pbkBjb21wYW55LmNvbSIsImZ1bGxOYW1lIjoiQWRtaW4gVXNlciIsInJvbGUiOiJhZG1pbiIsImRlcGFydG1lbnQiOiJBZG1pbmlzdHJhdGlvbiIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NDA5OTUyMDAsImV4cCI6MjY0MDk5ODgwMH0.mockSignature';
+        
+        localStorage.setItem('authToken', mockToken);
+        
+        setUser({
+          userId: '3',
+          employeeId: 'AD001',
+          email: 'admin@company.com',
+          fullName: 'Admin User',
+          role: 'admin',
+          department: 'Administration',
+          isActive: true
+        });
       } else {
         throw new Error('Invalid credentials');
       }

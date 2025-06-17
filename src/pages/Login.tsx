@@ -101,6 +101,7 @@ const Login = () => {
                 <div className="space-y-1 text-gray-300">
                   <p><strong>Employee:</strong> john.doe@company.com / password</p>
                   <p><strong>Manager:</strong> manager@company.com / password</p>
+                  <p><strong>Admin:</strong> admin@company.com / password</p>
                 </div>
               </div>
             </div>
