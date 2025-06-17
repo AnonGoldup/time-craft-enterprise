@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { ArrowLeft, Plus, X, Trash2 } from 'lucide-react';
 import { employeeApi, Employee } from '@/services/api';
 
@@ -88,6 +89,8 @@ const EditDailyReport: React.FC = () => {
   const [comments, setComments] = useState('');
   const [issues, setIssues] = useState('');
 
+  const [confirmDeleteCrewId, setConfirmDeleteCrewId] = useState<string | null>(null);
+
   // Generate time options in 15-minute intervals
   const generateTimeOptions = () => {
     const times = [];
@@ -128,6 +131,7 @@ const EditDailyReport: React.FC = () => {
   const removeCrew = (crewId: string) => {
     if (crews.length > 1) {
       setCrews(crews.filter(crew => crew.id !== crewId));
+      setConfirmDeleteCrewId(null);
     }
   };
 
@@ -421,15 +425,39 @@ const EditDailyReport: React.FC = () => {
                 Add Line
               </Button>
               {crews.length > 1 && (
-                <Button 
-                  onClick={() => removeCrew(crew.id)} 
-                  size="sm" 
-                  variant="outline"
-                  className="flex items-center gap-2 text-red-600 hover:text-red-700"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Remove Crew
-                </Button>
+                <AlertDialog open={confirmDeleteCrewId === crew.id} onOpenChange={(open) => !open && setConfirmDeleteCrewId(null)}>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      onClick={() => setConfirmDeleteCrewId(crew.id)} 
+                      size="sm" 
+                      variant="outline"
+                      className="flex items-center gap-2 text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Remove Crew
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        You are about to delete the Crew from the Daily Report.
+                        If you continue, all data entered into this crew will be lost.
+                        <br /><br />
+                        Are you sure that you want to delete this Crew?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>NO</AlertDialogCancel>
+                      <AlertDialogAction 
+                        onClick={() => removeCrew(crew.id)}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        Yes, delete this Crew
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
             </div>
           </CardHeader>
