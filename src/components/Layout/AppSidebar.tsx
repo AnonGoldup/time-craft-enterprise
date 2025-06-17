@@ -1,13 +1,19 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, ChevronRight } from 'lucide-react';
+import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, ChevronRight, History } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton, SidebarFooter } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+
 const navigationItems = [{
   label: 'Dashboard',
   icon: Home,
   path: '/',
+  roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
+}, {
+  label: 'Log',
+  icon: History,
+  path: '/log',
   roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
 }, {
   label: 'Time Entry',
@@ -57,6 +63,7 @@ const navigationItems = [{
   path: '/settings',
   roles: ['admin']
 }];
+
 export const AppSidebar: React.FC = () => {
   const location = useLocation();
   const {

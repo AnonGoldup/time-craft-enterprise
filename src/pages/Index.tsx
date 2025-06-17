@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, Users, FileText, TrendingUp, Plus, Calendar } from 'lucide-react';
+import { Clock, Users, FileText, TrendingUp, Plus, Calendar, History } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
@@ -166,6 +167,12 @@ const Index = () => {
                 <Link to="/time-entry/time-in-out">
                   <Clock className="h-4 w-4 mr-2" />
                   Time In/Out
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full justify-start">
+                <Link to="/log">
+                  <History className="h-4 w-4 mr-2" />
+                  View Time Log
                 </Link>
               </Button>
               <Button variant="outline" className="w-full justify-start">
