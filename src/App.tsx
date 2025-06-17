@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { AppLayout } from "@/components/Layout/AppLayout";
 import Index from "./pages/Index";
+import Log from "./pages/Log";
 import TimeEntry from "./pages/TimeEntry";
 import TimeEntryStandard from "./pages/TimeEntryStandard";
 import TimeEntryTimeInOut from "./pages/TimeEntryTimeInOut";
@@ -36,6 +37,13 @@ const App = () => (
                 <ProtectedRoute>
                   <AppLayout>
                     <Index />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/log" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <Log />
                   </AppLayout>
                 </ProtectedRoute>
               } />
