@@ -1,262 +1,27 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, History, FolderOpen, UserCheck, Download, Timer } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from '@/components/ui/sidebar';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { SidebarContent } from '@/components/ui/sidebar';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
+import { SidebarNavigationGroup } from './SidebarNavigation/SidebarNavigationGroup';
+import { navigationItems, timesheetModule, projectManagementModule, administratorModule } from './SidebarNavigation/navigationData';
 
 export const SidebarNavigation: React.FC = () => {
-  const location = useLocation();
   const { hasRole } = useAuth();
 
-  const navigationItems = [
-    {
-      label: 'Dashboard',
-      icon: Home,
-      path: '/',
-      roles: ['employee', 'admin']
-    }
-  ];
-
-  const timesheetModule = [
-    {
-      label: 'Timesheets',
-      icon: Clock,
-      path: '/time-entry',
-      roles: ['employee', 'admin'],
-      submenu: [
-        {
-          label: 'Standard Hours',
-          path: '/time-entry/standard'
-        },
-        {
-          label: 'Time In/Out',
-          path: '/time-entry/time-in-out'
-        }
-      ]
-    },
-    {
-      label: 'Time Log',
-      icon: History,
-      path: '/log',
-      roles: ['employee', 'admin']
-    },
-    {
-      label: 'Calendar',
-      icon: Calendar,
-      path: '/calendar',
-      roles: ['employee', 'admin']
-    },
-    {
-      label: 'Documents',
-      icon: FileText,
-      path: '/documents',
-      roles: ['employee', 'admin']
-    }
-  ];
-
-  const projectManagementModule = [
-    {
-      label: 'Projects',
-      icon: FolderOpen,
-      path: '/projects',
-      roles: ['employee', 'admin']
-    },
-    {
-      label: 'Daily Reporting',
-      icon: ClipboardList,
-      path: '/daily-reporting',
-      roles: ['admin']
-    }
-  ];
-
-  const administratorModule = [
-    {
-      label: 'Manager Approval',
-      icon: CheckCircle,
-      path: '/manager-approval',
-      roles: ['admin']
-    },
-    {
-      label: 'Team Management',
-      icon: Users,
-      path: '/team',
-      roles: ['admin']
-    },
-    {
-      label: 'Export Payroll',
-      icon: Download,
-      path: '/export-payroll',
-      roles: ['admin']
-    },
-    {
-      label: 'Reports',
-      icon: BarChart3,
-      path: '/reports',
-      roles: ['admin'],
-      submenu: [
-        {
-          label: 'Hours Breakdown-Excel',
-          path: '/reports/hours-breakdown'
-        },
-        {
-          label: 'Labor Percent Complete',
-          path: '/reports/labor-percent'
-        },
-        {
-          label: 'Audit Labor Hours',
-          path: '/reports/audit-labor'
-        },
-        {
-          label: 'Weekly Timesheets (Total)',
-          path: '/reports/weekly-total'
-        },
-        {
-          label: 'Weekly Timesheets (by Project)',
-          path: '/reports/weekly-project'
-        },
-        {
-          label: 'Employee Timecards',
-          path: '/reports/employee-timecards'
-        }
-      ]
-    },
-    {
-      label: 'Company Settings',
-      icon: Settings,
-      path: '/company-settings',
-      roles: ['admin']
-    },
-    {
-      label: 'Settings',
-      icon: Settings,
-      path: '/settings',
-      roles: ['admin']
-    }
-  ];
-
+  const filteredNavigationItems = navigationItems.filter(item => hasRole(item.roles));
   const filteredTimesheetModule = timesheetModule.filter(item => hasRole(item.roles));
   const filteredProjectModule = projectManagementModule.filter(item => hasRole(item.roles));
   const filteredAdminModule = administratorModule.filter(item => hasRole(item.roles));
 
-  const isSubmenuActive = (submenu: any[]) => {
-    return submenu.some(sub => location.pathname === sub.path);
-  };
-
   useKeyboardNavigation({ enabled: true });
-
-  const renderMenuItem = (item: any) => {
-    const isActive = location.pathname === item.path;
-    const hasSubmenu = item.submenu && item.submenu.length > 0;
-    const isSubmenuItemActive = hasSubmenu && isSubmenuActive(item.submenu);
-
-    if (hasSubmenu) {
-      return (
-        <Collapsible key={item.path} defaultOpen={isActive || isSubmenuItemActive}>
-          <SidebarMenuItem>
-            <CollapsibleTrigger asChild>
-              <SidebarMenuButton
-                isActive={isActive || isSubmenuItemActive}
-                className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:bg-sidebar-accent focus:text-sidebar-accent-foreground focus:outline-none focus:ring-2 focus:ring-sidebar-ring transition-colors"
-                aria-expanded={isActive || isSubmenuItemActive}
-                aria-label={`${item.label} menu`}
-              >
-                <item.icon className="h-4 w-4" aria-hidden="true" />
-                <span>{item.label}</span>
-              </SidebarMenuButton>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarMenuSub>
-                {item.submenu.map((subItem: any) => (
-                  <SidebarMenuSubItem key={subItem.path}>
-                    <SidebarMenuSubButton
-                      asChild
-                      isActive={location.pathname === subItem.path}
-                      className="focus:outline-none focus:ring-2 focus:ring-sidebar-ring transition-colors"
-                    >
-                      <Link to={subItem.path} aria-label={subItem.label}>
-                        <span>{subItem.label}</span>
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                ))}
-              </SidebarMenuSub>
-            </CollapsibleContent>
-          </SidebarMenuItem>
-        </Collapsible>
-      );
-    }
-
-    return (
-      <SidebarMenuItem key={item.path}>
-        <SidebarMenuButton
-          asChild
-          isActive={isActive}
-          className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:bg-sidebar-accent focus:text-sidebar-accent-foreground focus:outline-none focus:ring-2 focus:ring-sidebar-ring transition-colors"
-        >
-          <Link to={item.path} aria-label={item.label}>
-            <item.icon className="h-4 w-4" aria-hidden="true" />
-            <span>{item.label}</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    );
-  };
 
   return (
     <SidebarContent className="bg-sidebar">
-      {/* Dashboard */}
-      <SidebarGroup>
-        <SidebarGroupContent>
-          <SidebarMenu>
-            {navigationItems.filter(item => hasRole(item.roles)).map(renderMenuItem)}
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
-
-      {/* Timesheet Module */}
-      {filteredTimesheetModule.length > 0 && (
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/60 text-xs font-medium px-2">
-            Timesheet Module
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {filteredTimesheetModule.map(renderMenuItem)}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      )}
-
-      {/* Project Management Module */}
-      {filteredProjectModule.length > 0 && (
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/60 text-xs font-medium px-2">
-            Project Management Module
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {filteredProjectModule.map(renderMenuItem)}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      )}
-
-      {/* Administrator Module */}
-      {filteredAdminModule.length > 0 && (
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/60 text-xs font-medium px-2">
-            Administrator Module
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {filteredAdminModule.map(renderMenuItem)}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      )}
+      <SidebarNavigationGroup items={filteredNavigationItems} />
+      <SidebarNavigationGroup title="Timesheet Module" items={filteredTimesheetModule} />
+      <SidebarNavigationGroup title="Project Management Module" items={filteredProjectModule} />
+      <SidebarNavigationGroup title="Administrator Module" items={filteredAdminModule} />
     </SidebarContent>
   );
 };
