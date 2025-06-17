@@ -24,6 +24,7 @@ const TeamManagement = lazy(() => import("./pages/TeamManagement"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Documents = lazy(() => import("./pages/Documents"));
 const Settings = lazy(() => import("./pages/Settings"));
+const Projects = lazy(() => import("./pages/Projects"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -57,13 +58,6 @@ const App = () => (
                     <ProtectedRoute>
                       <AppLayout>
                         <Log />
-                      </AppLayout>
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/time-entry" element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <TimeEntryStandard />
                       </AppLayout>
                     </ProtectedRoute>
                   } />
@@ -106,6 +100,13 @@ const App = () => (
                     <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
                       <AppLayout>
                         <TeamManagement />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/projects" element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Projects />
                       </AppLayout>
                     </ProtectedRoute>
                   } />
