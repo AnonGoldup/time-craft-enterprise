@@ -111,9 +111,9 @@ const TimeEntryTimeInOut = () => {
           <Tabs defaultValue="time-in-out" className="w-full">
             <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-800">
               <TabsTrigger value="enter-hours" asChild>
-                <Link to="/time-entry" className="text-slate-600 dark:text-slate-400">Enter Hours</Link>
+                <Link to="/time-entry/standard" className="text-slate-600 dark:text-slate-400">Enter Hours</Link>
               </TabsTrigger>
-              <TabsTrigger value="time-in-out" className="bg-[slate-00] bg-slate-600 hover:bg-slate-500 text-slate-950">Time In/Out</TabsTrigger>
+              <TabsTrigger value="time-in-out" className="text-blue-600 dark:text-blue-400">Time In/Out</TabsTrigger>
             </TabsList>
             
             <TabsContent value="time-in-out" className="space-y-6 mt-6">
