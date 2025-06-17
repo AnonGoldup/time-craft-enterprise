@@ -10,17 +10,23 @@ interface ProjectsTileViewProps {
   projects: Project[];
   isAdmin: boolean;
   onIconClick: (action: string, projectId: string) => void;
+  onProjectClick: (projectId: string) => void;
 }
 
 export const ProjectsTileView: React.FC<ProjectsTileViewProps> = ({
   projects,
   isAdmin,
   onIconClick,
+  onProjectClick,
 }) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
       {projects.map((project) => (
-        <Card key={project.id} className="bg-card border-border hover:border-border/60 transition-colors">
+        <Card 
+          key={project.id} 
+          className="bg-card border-border hover:border-border/60 transition-colors cursor-pointer"
+          onClick={() => onProjectClick(project.id)}
+        >
           <CardContent className="p-4">
             <div className="text-center space-y-2">
               <div className="text-sm font-medium">{project.code}</div>
@@ -30,7 +36,10 @@ export const ProjectsTileView: React.FC<ProjectsTileViewProps> = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => onIconClick('daily-reports', project.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onIconClick('daily-reports', project.id);
+                  }}
                   className="h-6 w-6"
                 >
                   <Clipboard className="h-3 w-3" />
@@ -38,7 +47,10 @@ export const ProjectsTileView: React.FC<ProjectsTileViewProps> = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => onIconClick('time-log', project.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onIconClick('time-log', project.id);
+                  }}
                   className="h-6 w-6"
                 >
                   <Clock className="h-3 w-3" />
@@ -47,7 +59,10 @@ export const ProjectsTileView: React.FC<ProjectsTileViewProps> = ({
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => onIconClick('edit', project.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onIconClick('edit', project.id);
+                    }}
                     className="h-6 w-6"
                   >
                     <Pen className="h-3 w-3" />

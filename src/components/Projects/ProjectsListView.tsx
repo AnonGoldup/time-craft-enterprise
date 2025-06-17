@@ -17,12 +17,14 @@ interface ProjectsListViewProps {
   projects: Project[];
   isAdmin: boolean;
   onIconClick: (action: string, projectId: string) => void;
+  onProjectClick: (projectId: string) => void;
 }
 
 export const ProjectsListView: React.FC<ProjectsListViewProps> = ({
   projects,
   isAdmin,
   onIconClick,
+  onProjectClick,
 }) => {
   return (
     <div className="border rounded-lg">
@@ -40,7 +42,10 @@ export const ProjectsListView: React.FC<ProjectsListViewProps> = ({
           {projects.map((project) => (
             <TableRow key={project.id}>
               <TableCell>
-                <div>
+                <div 
+                  className="cursor-pointer hover:text-primary"
+                  onClick={() => onProjectClick(project.id)}
+                >
                   <div className="font-medium">{project.code} - {project.name}</div>
                   <div className="text-sm text-muted-foreground">{project.category}</div>
                 </div>

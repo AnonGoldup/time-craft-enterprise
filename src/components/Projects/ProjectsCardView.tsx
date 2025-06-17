@@ -10,17 +10,23 @@ interface ProjectsCardViewProps {
   projects: Project[];
   isAdmin: boolean;
   onIconClick: (action: string, projectId: string) => void;
+  onProjectClick: (projectId: string) => void;
 }
 
 export const ProjectsCardView: React.FC<ProjectsCardViewProps> = ({
   projects,
   isAdmin,
   onIconClick,
+  onProjectClick,
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {projects.map((project) => (
-        <Card key={project.id} className="bg-card border-border">
+        <Card 
+          key={project.id} 
+          className="bg-card border-border cursor-pointer hover:border-border/60 transition-colors"
+          onClick={() => onProjectClick(project.id)}
+        >
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
               <div>
@@ -47,7 +53,10 @@ export const ProjectsCardView: React.FC<ProjectsCardViewProps> = ({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onIconClick('daily-reports', project.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onIconClick('daily-reports', project.id);
+                }}
                 className="flex-1"
               >
                 <Clipboard className="h-4 w-4 mr-2" />
@@ -56,7 +65,10 @@ export const ProjectsCardView: React.FC<ProjectsCardViewProps> = ({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onIconClick('time-log', project.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onIconClick('time-log', project.id);
+                }}
                 className="flex-1"
               >
                 <Clock className="h-4 w-4 mr-2" />
@@ -66,7 +78,10 @@ export const ProjectsCardView: React.FC<ProjectsCardViewProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => onIconClick('edit', project.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onIconClick('edit', project.id);
+                  }}
                 >
                   <Pen className="h-4 w-4" />
                 </Button>
