@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -29,6 +28,7 @@ const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const EditDailyReport = lazy(() => import("./pages/EditDailyReport"));
 const CompanySettings = lazy(() => import("./pages/CompanySettings"));
+const ExportPayrollData = lazy(() => import("./pages/ExportPayrollData"));
 
 // Company Settings sub-pages
 const CompanySetup = lazy(() => import("./pages/settings/CompanySetup"));
@@ -249,6 +249,13 @@ const App = () => (
                   } />
                   
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="/export-payroll" element={
+                    <ProtectedRoute requiredRoles={['admin']}>
+                      <AppLayout>
+                        <ExportPayrollData />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
