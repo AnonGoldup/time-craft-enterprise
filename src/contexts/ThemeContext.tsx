@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface ColorTheme {
@@ -25,6 +24,28 @@ export interface ColorTheme {
 }
 
 const colorThemes: ColorTheme[] = [
+  {
+    id: 'unity',
+    name: 'UNITY',
+    fontFamily: 'General Sans',
+    colors: {
+      primary: '22 89% 57%', // #fa8029 orange
+      primaryForeground: '0 0% 100%', // white
+      secondary: '214 12% 92%', // light gray #f7f7f7
+      secondaryForeground: '210 6% 13%', // dark #1f2124
+      accent: '22 89% 57%', // #fa8029 orange
+      accentForeground: '0 0% 100%', // white
+      background: '0 0% 100%', // white
+      foreground: '210 6% 13%', // dark #1f2124
+      card: '0 0% 100%', // white
+      cardForeground: '210 6% 13%', // dark #1f2124
+      border: '214 12% 92%', // light gray #f7f7f7
+      input: '214 12% 92%', // light gray #f7f7f7
+      ring: '22 89% 57%', // #fa8029 orange
+      muted: '214 12% 92%', // light gray #f7f7f7
+      mutedForeground: '210 6% 45%' // medium gray
+    }
+  },
   {
     id: 'belize-hole',
     name: 'BELIZE HOLE',
@@ -108,28 +129,6 @@ const colorThemes: ColorTheme[] = [
       muted: '0 20% 95%',
       mutedForeground: '0 20% 40%'
     }
-  },
-  {
-    id: 'unity',
-    name: 'UNITY',
-    fontFamily: 'General Sans',
-    colors: {
-      primary: '22 89% 57%', // #fa8029 orange
-      primaryForeground: '0 0% 100%', // white
-      secondary: '214 12% 92%', // light gray #f7f7f7
-      secondaryForeground: '210 6% 13%', // dark #1f2124
-      accent: '22 89% 57%', // #fa8029 orange
-      accentForeground: '0 0% 100%', // white
-      background: '0 0% 100%', // white
-      foreground: '210 6% 13%', // dark #1f2124
-      card: '0 0% 100%', // white
-      cardForeground: '210 6% 13%', // dark #1f2124
-      border: '214 12% 92%', // light gray #f7f7f7
-      input: '214 12% 92%', // light gray #f7f7f7
-      ring: '22 89% 57%', // #fa8029 orange
-      muted: '214 12% 92%', // light gray #f7f7f7
-      mutedForeground: '210 6% 45%' // medium gray
-    }
   }
 ];
 
@@ -154,7 +153,10 @@ interface ThemeProviderProps {
 }
 
 export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [currentTheme, setCurrentTheme] = useState<ColorTheme>(colorThemes[0]);
+  // Default to Unity theme
+  const [currentTheme, setCurrentTheme] = useState<ColorTheme>(
+    colorThemes.find(t => t.id === 'unity') || colorThemes[0]
+  );
 
   const setTheme = (themeId: string) => {
     const theme = colorThemes.find(t => t.id === themeId);
@@ -216,7 +218,8 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
     if (savedTheme) {
       setTheme(savedTheme);
     } else {
-      applyTheme(currentTheme);
+      // Default to Unity theme if no saved theme
+      setTheme('unity');
     }
   }, []);
 

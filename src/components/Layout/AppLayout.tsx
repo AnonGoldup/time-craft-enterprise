@@ -11,17 +11,21 @@ interface AppLayoutProps {
 export const AppLayout: React.FC<AppLayoutProps> = ({
   children
 }) => {
-  return <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background theme-unity">
         <AppSidebar />
         <SidebarInset>
           <TopBar />
           <main className="flex-1 p-6 bg-background">
             <div className="max-w-7xl mx-auto">
-              {children}
+              <div className="unity-fade-in">
+                {children}
+              </div>
             </div>
           </main>
         </SidebarInset>
       </div>
-    </SidebarProvider>;
+    </SidebarProvider>
+  );
 };
