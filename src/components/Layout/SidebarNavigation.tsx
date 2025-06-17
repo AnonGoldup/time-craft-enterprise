@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, History, FolderOpen, UserCheck, Download, Timer } from 'lucide-react';
@@ -85,21 +86,9 @@ export const SidebarNavigation: React.FC = () => {
       roles: ['admin']
     },
     {
-      label: 'User Log',
-      icon: UserCheck,
-      path: '/user-log',
-      roles: ['admin']
-    },
-    {
       label: 'Export Payroll',
       icon: Download,
       path: '/export-payroll',
-      roles: ['admin']
-    },
-    {
-      label: 'Time Settings',
-      icon: Timer,
-      path: '/time-settings',
       roles: ['admin']
     },
     {
