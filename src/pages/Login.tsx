@@ -41,9 +41,10 @@ const Login = () => {
             <Clock className="h-8 w-8 text-white" />
           </div>
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            TimeSheet Pro
+            AltaTimesheet
           </CardTitle>
-          <p className="text-gray-400">Sign in to manage your timesheet</p>
+          <p className="text-gray-400">AltaPro Electric Ltd.</p>
+          <p className="text-gray-500 text-sm">Sign in to manage your timesheet</p>
         </CardHeader>
         
         <CardContent>
@@ -100,7 +101,6 @@ const Login = () => {
                 <p className="text-blue-200 font-medium mb-2">Demo Credentials:</p>
                 <div className="space-y-1 text-gray-300">
                   <p><strong>Employee:</strong> john.doe@company.com / password</p>
-                  <p><strong>Manager:</strong> manager@company.com / password</p>
                   <p><strong>Admin:</strong> admin@company.com / password</p>
                 </div>
               </div>

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,13 +45,13 @@ const ManagerApproval = () => {
       id: "1",
       employeeName: "Sarah Johnson",
       employeeId: "SJ002",
-      project: "Mobile App Development",
-      projectCode: "MOB-2025-01",
+      project: "Electrical Installation Project",
+      projectCode: "EIP-2025-01",
       date: "2024-06-03",
       standardHours: 8.0,
       overtimeHours: 2.0,
       status: "pending",
-      notes: "Worked extra hours to complete critical feature implementation for the upcoming release deadline.",
+      notes: "Worked extra hours to complete electrical panel installation for the upcoming inspection deadline.",
       submittedDate: "Jun 03, 2025 6:45 PM",
       submittedBy: "sarah.johnson@company.com"
     },
@@ -58,13 +59,13 @@ const ManagerApproval = () => {
       id: "2",
       employeeName: "John Smith",
       employeeId: "JS001",
-      project: "Cloud Migration Project",
-      projectCode: "CLD-2025-02",
+      project: "Commercial Wiring Project",
+      projectCode: "CWP-2025-02",
       date: "2024-06-04",
       standardHours: 7.5,
       overtimeHours: 0.0,
       status: "pending",
-      notes: "Standard development work on migration scripts.",
+      notes: "Standard electrical wiring work on commercial building.",
       submittedDate: "Jun 04, 2025 5:30 PM",
       submittedBy: "john.smith@company.com"
     },
@@ -72,13 +73,13 @@ const ManagerApproval = () => {
       id: "3",
       employeeName: "Mike Davis",
       employeeId: "MD003",
-      project: "Data Analytics Platform",
-      projectCode: "DAP-2025-03",
+      project: "Industrial Electrical Upgrade",
+      projectCode: "IEU-2025-03",
       date: "2024-06-05",
       standardHours: 8.0,
       overtimeHours: 3.0,
       status: "pending",
-      notes: "Extended hours for data processing optimization.",
+      notes: "Extended hours for industrial electrical system upgrade.",
       submittedDate: "Jun 05, 2025 7:15 PM",
       submittedBy: "mike.davis@company.com"
     },
@@ -86,13 +87,13 @@ const ManagerApproval = () => {
       id: "4",
       employeeName: "Emily Chen",
       employeeId: "EC004",
-      project: "Security Audit",
-      projectCode: "SEC-2025-04",
+      project: "Electrical Safety Inspection",
+      projectCode: "ESI-2025-04",
       date: "2024-06-06",
       standardHours: 6.0,
       overtimeHours: 0.0,
       status: "approved",
-      notes: "Security assessment and documentation.",
+      notes: "Electrical safety inspection and documentation.",
       submittedDate: "Jun 06, 2025 4:00 PM",
       submittedBy: "emily.chen@company.com"
     }
@@ -136,8 +137,8 @@ const ManagerApproval = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">Manager Approval Dashboard</h1>
-        <p className="text-slate-600 dark:text-slate-400">Review and approve team timesheet entries</p>
+        <h1 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">Timesheet Approval Dashboard</h1>
+        <p className="text-slate-600 dark:text-slate-400">Review and approve employee timesheet entries</p>
       </div>
 
       {/* Metrics Cards */}

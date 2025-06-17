@@ -92,35 +92,35 @@ const App = () => (
                     </ProtectedRoute>
                   } />
                   <Route path="/manager-approval" element={
-                    <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                    <ProtectedRoute requiredRoles={['admin']}>
                       <AppLayout>
                         <ManagerApproval />
                       </AppLayout>
                     </ProtectedRoute>
                   } />
                   <Route path="/daily-reporting" element={
-                    <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                    <ProtectedRoute requiredRoles={['admin']}>
                       <AppLayout>
                         <DailyReporting />
                       </AppLayout>
                     </ProtectedRoute>
                   } />
                   <Route path="/daily-reporting/edit/:id" element={
-                    <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                    <ProtectedRoute requiredRoles={['admin']}>
                       <AppLayout>
                         <EditDailyReport />
                       </AppLayout>
                     </ProtectedRoute>
                   } />
                   <Route path="/reports" element={
-                    <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                    <ProtectedRoute requiredRoles={['admin']}>
                       <AppLayout>
                         <Reports />
                       </AppLayout>
                     </ProtectedRoute>
                   } />
                   <Route path="/team" element={
-                    <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                    <ProtectedRoute requiredRoles={['admin']}>
                       <AppLayout>
                         <TeamManagement />
                       </AppLayout>

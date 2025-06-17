@@ -7,7 +7,7 @@ export interface User {
   employeeId: string;
   email: string;
   fullName: string;
-  role: 'employee' | 'manager' | 'admin' | 'supervisor' | 'foreman';
+  role: 'employee' | 'admin';
   department: string;
   isActive: boolean;
 }
@@ -71,7 +71,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // Mock authentication - replace with actual API call
       if (email === 'john.doe@company.com' && password === 'password') {
-        const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiZW1wbG95ZWVJZCI6IkpEMDAxIiwiZW1haWwiOiJqb2huLmRvZUBjb21wYW55LmNvbSIsImZ1bGxOYW1lIjoiSm9obiBEb2UiLCJyb2xlIjoiZW1wbG95ZWUiLCJkZXBhcnRtZW50IjoiQ29uc3RydWN0aW9uIiwiaXNBY3RpdmUiOnRydWUsImlhdCI6MTY0MDk5NTIwMCwiZXhwIjoyNjQwOTk4ODAwfQ.mockSignature';
+        const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiZW1wbG95ZWVJZCI6IkpEMDAxIiwiZW1haWwiOiJqb2huLmRvZUBjb21wYW55LmNvbSIsImZ1bGxOYW1lIjoiSm9obiBEb2UiLCJyb2xlIjoiZW1wbG95ZWUiLCJkZXBhcnRtZW50IjoiRWxlY3RyaWNhbCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NDA5OTUyMDAsImV4cCI6MjY0MDk5ODgwMH0.mockSignature';
         
         localStorage.setItem('authToken', mockToken);
         
@@ -81,21 +81,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email: 'john.doe@company.com',
           fullName: 'John Doe',
           role: 'employee',
-          department: 'Construction',
-          isActive: true
-        });
-      } else if (email === 'manager@company.com' && password === 'password') {
-        const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyIiwiZW1wbG95ZWVJZCI6Ik1HMDAxIiwiZW1haWwiOiJtYW5hZ2VyQGNvbXBhbnkuY29tIiwiZnVsbE5hbWUiOiJNaWtlIE1hbmFnZXIiLCJyb2xlIjoibWFuYWdlciIsImRlcGFydG1lbnQiOiJDb25zdHJ1Y3Rpb24iLCJpc0FjdGl2ZSI6dHJ1ZSwiaWF0IjoxNjQwOTk1MjAwLCJleHAiOjI2NDA5OTg4MDB9.mockSignature';
-        
-        localStorage.setItem('authToken', mockToken);
-        
-        setUser({
-          userId: '2',
-          employeeId: 'MG001',
-          email: 'manager@company.com',
-          fullName: 'Mike Manager',
-          role: 'manager',
-          department: 'Construction',
+          department: 'Electrical',
           isActive: true
         });
       } else if (email === 'admin@company.com' && password === 'password') {
@@ -133,7 +119,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const isManager = (): boolean => {
-    return hasRole(['manager', 'admin', 'supervisor', 'foreman']);
+    return hasRole(['admin']);
   };
 
   const value = {

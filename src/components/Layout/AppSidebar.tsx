@@ -12,7 +12,7 @@ const navigationItems = [
     label: 'Dashboard',
     icon: Home,
     path: '/',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
+    roles: ['employee', 'admin']
   }
 ];
 
@@ -21,7 +21,7 @@ const timesheetModule = [
     label: 'Timesheets',
     icon: Clock,
     path: '/time-entry',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman'],
+    roles: ['employee', 'admin'],
     submenu: [
       {
         label: 'Standard Hours',
@@ -37,19 +37,19 @@ const timesheetModule = [
     label: 'Time Log',
     icon: History,
     path: '/log',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
+    roles: ['employee', 'admin']
   },
   {
     label: 'Calendar',
     icon: Calendar,
     path: '/calendar',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
+    roles: ['employee', 'admin']
   },
   {
     label: 'Documents',
     icon: FileText,
     path: '/documents',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
+    roles: ['employee', 'admin']
   }
 ];
 
@@ -58,13 +58,13 @@ const projectManagementModule = [
     label: 'Projects',
     icon: FolderOpen,
     path: '/projects',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
+    roles: ['employee', 'admin']
   },
   {
     label: 'Daily Reporting',
     icon: ClipboardList,
     path: '/daily-reporting',
-    roles: ['manager', 'admin', 'supervisor', 'foreman']
+    roles: ['admin']
   }
 ];
 
@@ -73,13 +73,13 @@ const administratorModule = [
     label: 'Manager Approval',
     icon: CheckCircle,
     path: '/manager-approval',
-    roles: ['manager', 'admin', 'supervisor', 'foreman']
+    roles: ['admin']
   },
   {
     label: 'Team Management',
     icon: Users,
     path: '/team',
-    roles: ['manager', 'admin', 'supervisor', 'foreman']
+    roles: ['admin']
   },
   {
     label: 'User Log',
@@ -103,7 +103,7 @@ const administratorModule = [
     label: 'Reports',
     icon: BarChart3,
     path: '/reports',
-    roles: ['manager', 'admin', 'supervisor', 'foreman'],
+    roles: ['admin'],
     submenu: [
       {
         label: 'Hours Breakdown-Excel',
@@ -300,7 +300,7 @@ export const AppSidebar: React.FC = () => {
 
       <SidebarFooter className="p-4 border-t border-sidebar-border bg-sidebar">
         <div className="text-xs text-sidebar-foreground/60 group-data-[collapsible=icon]:hidden">
-          v1.0.0
+          AltaPro Electric Ltd. v1.0.0
         </div>
       </SidebarFooter>
     </Sidebar>
