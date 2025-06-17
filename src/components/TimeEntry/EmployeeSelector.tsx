@@ -19,13 +19,13 @@ interface EmployeeSelectorProps {
 const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   selectedEmployee,
   setSelectedEmployee,
-  selectedEmployees = [],
+  selectedEmployees,
   setSelectedEmployees,
-  employees = []
+  employees
 }) => {
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false);
 
-  // Ensure arrays are always properly defined
+  // Ensure arrays are always properly defined with fallbacks
   const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
   const safeEmployees = Array.isArray(employees) ? employees : [];
 
@@ -50,10 +50,28 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   };
 
   const getSelectedEmployeeNames = () => {
+    if (!safeEmployees.length) return [];
     return safeEmployees
-      .filter(emp => safeSelectedEmployees.includes(emp.EmployeeID))
-      .map(emp => emp.FullName);
+      .filter(emp => emp && safeSelectedEmployees.includes(emp.EmployeeID))
+      .map(emp => emp.FullName || 'Unknown');
   };
+
+  const selectedNames = getSelectedEmployeeNames();
+
+  // Don't render Command if there's no data
+  if (!safeEmployees.length && employeePopoverOpen) {
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-blue-500" />
+          <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[70px]">Employee:</span>
+          <div className="w-48 px-3 py-2 text-sm text-gray-500 border border-slate-300 dark:border-slate-600 rounded-md">
+            Loading employees...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">
@@ -74,40 +92,43 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
                 {safeSelectedEmployees.length === 0
                   ? "Select employees..."
                   : safeSelectedEmployees.length === 1
-                  ? getSelectedEmployeeNames()[0]
+                  ? selectedNames[0] || "1 employee selected"
                   : `${safeSelectedEmployees.length} employees selected`}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-48 p-0">
-              <Command>
-                <CommandInput placeholder="Search employees..." />
-                <CommandEmpty>No employee found.</CommandEmpty>
-                <CommandGroup className="max-h-64 overflow-auto">
-                  {safeEmployees.length > 0 ? (
-                    safeEmployees.map((employee) => (
-                      <CommandItem
-                        key={employee.EmployeeID}
-                        value={employee.FullName}
-                        onSelect={() => handleEmployeeSelect(employee.EmployeeID)}
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            safeSelectedEmployees.includes(employee.EmployeeID) ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                        {employee.FullName}
-                        <span className="ml-auto text-xs text-slate-500">
-                          {employee.Class}
-                        </span>
-                      </CommandItem>
-                    ))
-                  ) : (
-                    <CommandItem disabled>Loading employees...</CommandItem>
-                  )}
-                </CommandGroup>
-              </Command>
+              {safeEmployees.length > 0 ? (
+                <Command>
+                  <CommandInput placeholder="Search employees..." />
+                  <CommandEmpty>No employee found.</CommandEmpty>
+                  <CommandGroup className="max-h-64 overflow-auto">
+                    {safeEmployees.map((employee) => {
+                      if (!employee || !employee.EmployeeID) return null;
+                      return (
+                        <CommandItem
+                          key={employee.EmployeeID}
+                          value={`${employee.FullName || ''} ${employee.EmployeeID}`}
+                          onSelect={() => handleEmployeeSelect(employee.EmployeeID)}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              safeSelectedEmployees.includes(employee.EmployeeID) ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          <span>{employee.FullName || 'Unknown'}</span>
+                          <span className="ml-auto text-xs text-slate-500">
+                            {employee.Class || ''}
+                          </span>
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
+                </Command>
+              ) : (
+                <div className="p-2 text-sm text-gray-500">Loading employees...</div>
+              )}
             </PopoverContent>
           </Popover>
         ) : (
@@ -115,14 +136,17 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
           <select
             value={selectedEmployee}
             onChange={(e) => setSelectedEmployee(e.target.value)}
-            className="w-48 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md"
+            className="w-48 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-gray-800"
           >
             <option value="">Select employee...</option>
-            {safeEmployees.map((employee) => (
-              <option key={employee.EmployeeID} value={employee.EmployeeID}>
-                {employee.FullName} ({employee.Class})
-              </option>
-            ))}
+            {safeEmployees.map((employee) => {
+              if (!employee || !employee.EmployeeID) return null;
+              return (
+                <option key={employee.EmployeeID} value={employee.EmployeeID}>
+                  {employee.FullName || 'Unknown'} ({employee.Class || 'N/A'})
+                </option>
+              );
+            })}
           </select>
         )}
       </div>
@@ -131,14 +155,14 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
       {setSelectedEmployees && safeSelectedEmployees.length > 0 && (
         <div className="flex flex-wrap gap-2 ml-[86px]">
           {safeEmployees
-            .filter(emp => safeSelectedEmployees.includes(emp.EmployeeID))
+            .filter(emp => emp && safeSelectedEmployees.includes(emp.EmployeeID))
             .map(employee => (
               <Badge
                 key={employee.EmployeeID}
                 variant="secondary"
                 className="flex items-center gap-1"
               >
-                <span>{employee.FullName}</span>
+                <span>{employee.FullName || 'Unknown'}</span>
                 <X
                   className="h-3 w-3 cursor-pointer hover:text-red-500"
                   onClick={() => removeEmployee(employee.EmployeeID)}

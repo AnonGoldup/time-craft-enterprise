@@ -28,8 +28,8 @@ const ExtraSelector: React.FC<ExtraSelectorProps> = ({
         </SelectTrigger>
         <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
           {projectExtras.map((extra) => (
-            <SelectItem key={extra.extraID} value={extra.extraID.toString()}>
-              {extra.extraValue} - {extra.description}
+            <SelectItem key={extra.ExtraID} value={extra.ExtraID.toString()}>
+              {extra.ExtraValue} - {extra.Description}
             </SelectItem>
           ))}
         </SelectContent>

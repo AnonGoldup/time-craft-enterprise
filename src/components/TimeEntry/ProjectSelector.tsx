@@ -25,8 +25,8 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
         </SelectTrigger>
         <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
           {projects.map((project) => (
-            <SelectItem key={project.projectID} value={project.projectID.toString()}>
-              {project.projectCode} - {project.projectDescription}
+            <SelectItem key={project.ProjectID} value={project.ProjectID.toString()}>
+              {project.ProjectCode} - {project.ProjectDescription}
             </SelectItem>
           ))}
         </SelectContent>
