@@ -22,9 +22,9 @@ const IssuesSection: React.FC<IssuesSectionProps> = ({
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <Card>
         <CollapsibleTrigger asChild>
-          <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 py-3">
+          <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 py-2">
             <div className="flex items-center justify-between">
-              <CardTitle>Issues</CardTitle>
+              <CardTitle className="text-lg">Issues</CardTitle>
               {isOpen ? (
                 <ChevronDown className="h-4 w-4" />
               ) : (
@@ -32,9 +32,9 @@ const IssuesSection: React.FC<IssuesSectionProps> = ({
               )}
             </div>
           </CardHeader>
-        </CollipsibleTrigger>
+        </CollapsibleTrigger>
         <CollapsibleContent>
-          <CardContent className="pt-0">
+          <CardContent className="pt-0 pb-4">
             <Textarea
               placeholder="No issues on Project"
               value={issues}
