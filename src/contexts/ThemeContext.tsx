@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 export interface ColorTheme {
   id: string;
   name: string;
+  fontFamily?: string;
   colors: {
     primary: string;
     primaryForeground: string;
@@ -107,6 +108,28 @@ const colorThemes: ColorTheme[] = [
       muted: '0 20% 95%',
       mutedForeground: '0 20% 40%'
     }
+  },
+  {
+    id: 'unity',
+    name: 'UNITY',
+    fontFamily: 'General Sans',
+    colors: {
+      primary: '22 89% 57%', // #fa8029 orange
+      primaryForeground: '0 0% 100%', // white
+      secondary: '214 12% 92%', // light gray #f7f7f7
+      secondaryForeground: '210 6% 13%', // dark #1f2124
+      accent: '22 89% 57%', // #fa8029 orange
+      accentForeground: '0 0% 100%', // white
+      background: '0 0% 100%', // white
+      foreground: '210 6% 13%', // dark #1f2124
+      card: '0 0% 100%', // white
+      cardForeground: '210 6% 13%', // dark #1f2124
+      border: '214 12% 92%', // light gray #f7f7f7
+      input: '214 12% 92%', // light gray #f7f7f7
+      ring: '22 89% 57%', // #fa8029 orange
+      muted: '214 12% 92%', // light gray #f7f7f7
+      mutedForeground: '210 6% 45%' // medium gray
+    }
   }
 ];
 
@@ -148,6 +171,13 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
       const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
       root.style.setProperty(cssVar, value);
     });
+    
+    // Apply font family if specified
+    if (theme.fontFamily) {
+      root.style.setProperty('--theme-font-family', theme.fontFamily);
+    } else {
+      root.style.removeProperty('--theme-font-family');
+    }
   };
 
   useEffect(() => {
