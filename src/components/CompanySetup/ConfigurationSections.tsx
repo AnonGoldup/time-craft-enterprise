@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useColorTheme } from '@/contexts/ThemeContext';
 
 export const InputFormsSection: React.FC = () => {
   return (
@@ -102,31 +102,30 @@ export const ReportsSection: React.FC = () => {
 };
 
 export const ColorSection: React.FC = () => {
-  const colorThemes = [
-    { id: 'belize-hole', name: 'BELIZE HOLE', color: 'bg-blue-600', hex: '#2563eb' },
-    { id: 'amethyst', name: 'AMETHYST', color: 'bg-purple-600', hex: '#9333ea' },
-    { id: 'alizarin', name: 'ALIZARIN', color: 'bg-red-600', hex: '#dc2626' },
-    { id: 'carrot', name: 'CARROT', color: 'bg-orange-500', hex: '#f97316' },
-    { id: 'casablanca', name: 'CASABLANCA', color: 'bg-yellow-400', hex: '#facc15' },
-    { id: 'pigment-green', name: 'PIGMENT GREEN', color: 'bg-green-600', hex: '#16a34a' },
-    { id: 'emerald', name: 'EMERALD', color: 'bg-emerald-500', hex: '#10b981' },
-    { id: 'turquoise', name: 'TURQUOISE', color: 'bg-cyan-500', hex: '#06b6d4' },
-    { id: 'midnight', name: 'MIDNIGHT', color: 'bg-slate-800', hex: '#1e293b' },
-    { id: 'silver', name: 'SILVER', color: 'bg-gray-400', hex: '#9ca3af' },
-    { id: 'charcoal', name: 'CHARCOAL', color: 'bg-gray-700', hex: '#374151' },
-    { id: 'rose', name: 'ROSE', color: 'bg-rose-500', hex: '#f43f5e' },
-  ];
+  const { currentTheme, setTheme, themes } = useColorTheme();
+
+  const handleThemeChange = (themeId: string) => {
+    setTheme(themeId);
+  };
 
   return (
     <div className="border-t pt-3">
       <h3 className="text-lg font-medium text-blue-600 mb-2">Color</h3>
       <div>
         <Label className="text-red-500 mb-3 block">Color Theme:</Label>
-        <RadioGroup defaultValue="belize-hole" className="grid grid-cols-2 gap-2">
-          {colorThemes.map((theme) => (
+        <RadioGroup 
+          value={currentTheme.id} 
+          onValueChange={handleThemeChange}
+          className="grid grid-cols-2 gap-2"
+        >
+          {themes.map((theme) => (
             <div key={theme.id} className="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-800">
               <RadioGroupItem value={theme.id} id={theme.id} />
-              <div className={`w-6 h-6 ${theme.color} rounded border border-gray-300`} title={theme.hex}></div>
+              <div 
+                className="w-6 h-6 rounded border border-gray-300" 
+                style={{ backgroundColor: `hsl(${theme.colors.primary})` }}
+                title={theme.name}
+              ></div>
               <Label htmlFor={theme.id} className="text-sm font-medium cursor-pointer flex-1">
                 {theme.name}
               </Label>

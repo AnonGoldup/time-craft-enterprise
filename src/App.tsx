@@ -6,6 +6,7 @@ import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ColorThemeProvider } from "@/contexts/ThemeContext";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { Suspense } from "react";
 import { LoadingState } from "@/components/ui/loading";
@@ -24,17 +25,19 @@ const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Suspense fallback={<LoadingState message="Loading application..." />}>
-                <AppRoutes />
-              </Suspense>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
+        <ColorThemeProvider>
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Suspense fallback={<LoadingState message="Loading application..." />}>
+                  <AppRoutes />
+                </Suspense>
+              </BrowserRouter>
+            </TooltipProvider>
+          </AuthProvider>
+        </ColorThemeProvider>
       </ThemeProvider>
     </QueryClientProvider>
   </ErrorBoundary>
