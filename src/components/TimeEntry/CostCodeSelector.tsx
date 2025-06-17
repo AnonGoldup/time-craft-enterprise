@@ -39,8 +39,8 @@ const CostCodeSelector: React.FC<CostCodeSelectorProps> = ({
           </SelectTrigger>
           <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
             {costCodes.map((code) => (
-              <SelectItem key={code.CostCodeID} value={code.CostCodeID.toString()}>
-                {code.CostCode} - {code.Description}
+              <SelectItem key={code.costCodeID} value={code.costCodeID.toString()}>
+                {code.costCode} - {code.description}
               </SelectItem>
             ))}
           </SelectContent>

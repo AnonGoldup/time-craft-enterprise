@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
-import { Users, Check, ChevronsUpDown, X } from 'lucide-react';
+import { Users, Check, ChevronsUpDown } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Employee } from '@/services/api';
 
@@ -19,13 +20,13 @@ interface EmployeeSelectorProps {
 const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   selectedEmployee,
   setSelectedEmployee,
-  selectedEmployees,
+  selectedEmployees = [],
   setSelectedEmployees,
   employees
 }) => {
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false);
 
-  // Ensure arrays are always properly defined with fallbacks
+  // Ensure arrays are always properly defined
   const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
   const safeEmployees = Array.isArray(employees) ? employees : [];
 
@@ -50,28 +51,10 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   };
 
   const getSelectedEmployeeNames = () => {
-    if (!safeEmployees.length) return [];
     return safeEmployees
-      .filter(emp => emp && safeSelectedEmployees.includes(emp.EmployeeID))
-      .map(emp => emp.FullName || 'Unknown');
+      .filter(emp => safeSelectedEmployees.includes(emp.employeeID))
+      .map(emp => emp.fullName);
   };
-
-  const selectedNames = getSelectedEmployeeNames();
-
-  // Don't render Command if there's no data
-  if (!safeEmployees.length && employeePopoverOpen) {
-    return (
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-blue-500" />
-          <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[70px]">Employee:</span>
-          <div className="w-48 px-3 py-2 text-sm text-gray-500 border border-slate-300 dark:border-slate-600 rounded-md">
-            Loading employees...
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-2">
@@ -92,83 +75,74 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
                 {safeSelectedEmployees.length === 0
                   ? "Select employees..."
                   : safeSelectedEmployees.length === 1
-                  ? selectedNames[0] || "1 employee selected"
+                  ? getSelectedEmployeeNames()[0]
                   : `${safeSelectedEmployees.length} employees selected`}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-48 p-0">
-              {safeEmployees.length > 0 ? (
-                <Command>
-                  <CommandInput placeholder="Search employees..." />
-                  <CommandEmpty>No employee found.</CommandEmpty>
-                  <CommandGroup className="max-h-64 overflow-auto">
-                    {safeEmployees.map((employee) => {
-                      if (!employee || !employee.EmployeeID) return null;
-                      return (
-                        <CommandItem
-                          key={employee.EmployeeID}
-                          value={`${employee.FullName || ''} ${employee.EmployeeID}`}
-                          onSelect={() => handleEmployeeSelect(employee.EmployeeID)}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              safeSelectedEmployees.includes(employee.EmployeeID) ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          <span>{employee.FullName || 'Unknown'}</span>
-                          <span className="ml-auto text-xs text-slate-500">
-                            {employee.Class || ''}
-                          </span>
-                        </CommandItem>
-                      );
-                    })}
-                  </CommandGroup>
-                </Command>
-              ) : (
-                <div className="p-2 text-sm text-gray-500">Loading employees...</div>
-              )}
+              <Command>
+                <CommandInput placeholder="Search employees..." />
+                <CommandEmpty>No employee found.</CommandEmpty>
+                <CommandGroup className="max-h-64 overflow-auto">
+                  {safeEmployees.map((employee) => (
+                    <CommandItem
+                      key={employee.employeeID}
+                      value={employee.fullName}
+                      onSelect={() => handleEmployeeSelect(employee.employeeID)}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          safeSelectedEmployees.includes(employee.employeeID) ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      {employee.fullName}
+                      <span className="ml-auto text-xs text-slate-500">
+                        {employee.class}
+                      </span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </Command>
             </PopoverContent>
           </Popover>
         ) : (
-          // Single select mode
-          <select
-            value={selectedEmployee}
-            onChange={(e) => setSelectedEmployee(e.target.value)}
-            className="w-48 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-gray-800"
-          >
-            <option value="">Select employee...</option>
-            {safeEmployees.map((employee) => {
-              if (!employee || !employee.EmployeeID) return null;
-              return (
-                <option key={employee.EmployeeID} value={employee.EmployeeID}>
-                  {employee.FullName || 'Unknown'} ({employee.Class || 'N/A'})
-                </option>
-              );
-            })}
-          </select>
+          // Single select mode (fallback)
+          <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+            <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
+              <SelectValue placeholder="Select employee..." />
+            </SelectTrigger>
+            <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+              {safeEmployees.map((employee) => (
+                <SelectItem key={employee.employeeID} value={employee.employeeID}>
+                  {employee.fullName} - {employee.class}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         )}
       </div>
 
-      {/* Display selected employees as badges in multi-select mode */}
+      {/* Selected employees badges (for multi-select) */}
       {setSelectedEmployees && safeSelectedEmployees.length > 0 && (
-        <div className="flex flex-wrap gap-2 ml-[86px]">
-          {safeEmployees
-            .filter(emp => emp && safeSelectedEmployees.includes(emp.EmployeeID))
-            .map(employee => (
-              <Badge
-                key={employee.EmployeeID}
-                variant="secondary"
-                className="flex items-center gap-1"
+        <div className="flex flex-wrap gap-1">
+          {getSelectedEmployeeNames().map((name, index) => (
+            <Badge
+              key={safeSelectedEmployees[index]}
+              variant="secondary"
+              className="text-xs"
+            >
+              {name}
+              <button
+                onClick={() => removeEmployee(safeSelectedEmployees[index])}
+                className="ml-1 hover:text-red-500"
+                type="button"
               >
-                <span>{employee.FullName || 'Unknown'}</span>
-                <X
-                  className="h-3 w-3 cursor-pointer hover:text-red-500"
-                  onClick={() => removeEmployee(employee.EmployeeID)}
-                />
-              </Badge>
-            ))}
+                ×
+              </button>
+            </Badge>
+          ))}
         </div>
       )}
     </div>
