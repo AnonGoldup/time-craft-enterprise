@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, History, FolderOpen, UserCheck, Download, Timer, ChevronDown } from 'lucide-react';
@@ -48,6 +47,12 @@ const timesheetModule = [
     label: 'Documents',
     icon: FileText,
     path: '/documents',
+    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
+  },
+  {
+    label: 'User Settings',
+    icon: Settings,
+    path: '/settings',
     roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
   }
 ];
@@ -129,12 +134,6 @@ const administratorModule = [
         path: '/reports/employee-timecards'
       }
     ]
-  },
-  {
-    label: 'Settings',
-    icon: Settings,
-    path: '/settings',
-    roles: ['admin']
   }
 ];
 
