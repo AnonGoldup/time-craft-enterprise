@@ -8,7 +8,7 @@ export const MilestoneSection: React.FC = () => {
     <div className="space-y-3 border-t pt-4">
       <h3 className="text-lg font-medium text-blue-600">Milestone</h3>
       <div className="flex items-center justify-between">
-        <Label className="text-red-500">Search by phase:</Label>
+        <Label>Search by phase:</Label>
         <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="yes" id="search-phase-yes" />

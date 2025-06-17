@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -8,7 +9,7 @@ export const InputFormsSection: React.FC = () => {
     <div className="border-t pt-3">
       <h3 className="text-lg font-medium text-blue-600 mb-2">Input Forms</h3>
       <div className="flex items-center justify-between">
-        <Label className="text-red-500">Display Pay Rate With Labor Class:</Label>
+        <Label>Display Pay Rate With Labor Class:</Label>
         <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="yes" id="pay-rate-yes" />
@@ -30,7 +31,7 @@ export const OutputFormsSection: React.FC = () => {
       <h3 className="text-lg font-medium text-blue-600 mb-2">Output Forms</h3>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label className="text-red-500">Track Contract Number:</Label>
+          <Label>Track Contract Number:</Label>
           <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="yes" id="track-contract-yes" />
@@ -44,7 +45,7 @@ export const OutputFormsSection: React.FC = () => {
         </div>
 
         <div className="flex items-center justify-between">
-          <Label className="text-red-500">Force 'Print Preview' On Display Of Output Forms:</Label>
+          <Label>Force 'Print Preview' On Display Of Output Forms:</Label>
           <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="yes" id="print-preview-yes" />
@@ -67,7 +68,7 @@ export const ReportsSection: React.FC = () => {
       <h3 className="text-lg font-medium text-blue-600 mb-2">Reports</h3>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label className="text-red-500">Labor Unit Productivity - Default Unit Tracking:</Label>
+          <Label>Labor Unit Productivity - Default Unit Tracking:</Label>
           <RadioGroup defaultValue="units-per-hour" className="flex flex-row gap-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="units-per-hour" id="units-per-hour" />
@@ -81,7 +82,7 @@ export const ReportsSection: React.FC = () => {
         </div>
 
         <div className="flex items-center justify-between">
-          <Label className="text-red-500">Labor Unit Productivity - Include Units Per Day:</Label>
+          <Label>Labor Unit Productivity - Include Units Per Day:</Label>
           <div className="flex items-center gap-4">
             <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
               <div className="flex items-center space-x-2">
@@ -93,7 +94,7 @@ export const ReportsSection: React.FC = () => {
                 <Label htmlFor="units-per-day-no">No</Label>
               </div>
             </RadioGroup>
-            <span className="text-sm text-red-400">Calculated based on 8 hour day</span>
+            <span className="text-sm text-muted-foreground">Calculated based on 8 hour day</span>
           </div>
         </div>
       </div>
@@ -112,7 +113,7 @@ export const ColorSection: React.FC = () => {
     <div className="border-t pt-3">
       <h3 className="text-lg font-medium text-blue-600 mb-2">Color</h3>
       <div>
-        <Label className="text-red-500 mb-3 block">Color Theme:</Label>
+        <Label className="mb-3 block">Color Theme:</Label>
         <RadioGroup 
           value={currentTheme.id} 
           onValueChange={handleThemeChange}

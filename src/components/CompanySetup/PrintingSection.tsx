@@ -8,7 +8,7 @@ export const PrintingSection: React.FC = () => {
     <div className="space-y-3 border-t pt-4">
       <h3 className="text-lg font-medium text-blue-600">Printing</h3>
       <div className="flex items-center justify-between">
-        <Label className="text-red-500">Print Letterhead on the First Page Only:</Label>
+        <Label>Print Letterhead on the First Page Only:</Label>
         <RadioGroup defaultValue="yes" className="flex flex-row gap-4">
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="yes" id="letterhead-yes" />
