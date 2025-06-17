@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, Users, FileText, TrendingUp, Plus, Calendar, History } from 'lucide-react';
+import { Clock, Users, FileText, TrendingUp, Calendar, History } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
@@ -77,10 +76,6 @@ const Index = () => {
           <Button variant="outline" className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
             View Calendar
-          </Button>
-          <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white">
-            <Plus className="h-4 w-4" />
-            Clock In
           </Button>
         </div>
       </div>
