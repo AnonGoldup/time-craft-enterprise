@@ -3,18 +3,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { SidebarMenuButton, SidebarMenuItem as SidebarMenuItemUI, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-
-interface MenuItem {
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  path: string;
-  roles: string[];
-  submenu?: { label: string; path: string }[];
-}
-
-interface SidebarMenuItemProps {
-  item: MenuItem;
-}
+import type { SidebarMenuItemProps } from './types';
 
 export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item }) => {
   const location = useLocation();

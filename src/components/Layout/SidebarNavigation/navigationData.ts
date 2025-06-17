@@ -1,7 +1,8 @@
 
 import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, History, FolderOpen, Download } from 'lucide-react';
+import type { MenuItem } from './types';
 
-export const navigationItems = [
+export const navigationItems: MenuItem[] = [
   {
     label: 'Dashboard',
     icon: Home,
@@ -10,7 +11,7 @@ export const navigationItems = [
   }
 ];
 
-export const timesheetModule = [
+export const timesheetModule: MenuItem[] = [
   {
     label: 'Timesheets',
     icon: Clock,
@@ -47,7 +48,7 @@ export const timesheetModule = [
   }
 ];
 
-export const projectManagementModule = [
+export const projectManagementModule: MenuItem[] = [
   {
     label: 'Projects',
     icon: FolderOpen,
@@ -62,7 +63,7 @@ export const projectManagementModule = [
   }
 ];
 
-export const administratorModule = [
+export const administratorModule: MenuItem[] = [
   {
     label: 'Manager Approval',
     icon: CheckCircle,
