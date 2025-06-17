@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +13,8 @@ import { employeeApi, Employee } from '@/services/api';
 interface CrewEntry {
   id: string;
   employee: string;
+  costCode: string;
+  workType: string;
   st: number;
   ot: number;
   lost: number;
@@ -61,9 +64,9 @@ const EditDailyReport: React.FC = () => {
   });
 
   const [crewEntries, setCrewEntries] = useState<CrewEntry[]>([
-    { id: '1', employee: 'Quinn, Brandon - QUINN, B', st: 8, ot: 0, lost: 0, work: 'Travel Time', comments: '' },
-    { id: '2', employee: 'Korver, Mark - KORVER, M', st: 8, ot: 0, lost: 0, work: 'Travel Time', comments: '' },
-    { id: '3', employee: 'Nielsen, Catherine - NIELSEN', st: 6, ot: 0, lost: 0, work: 'Travel Time', comments: '' }
+    { id: '1', employee: '', costCode: '', workType: 'Base Contract', st: 8, ot: 0, lost: 0, work: 'Travel Time', comments: '' },
+    { id: '2', employee: '', costCode: '', workType: 'Base Contract', st: 8, ot: 0, lost: 0, work: 'Travel Time', comments: '' },
+    { id: '3', employee: '', costCode: '', workType: 'Base Contract', st: 6, ot: 0, lost: 0, work: 'Travel Time', comments: '' }
   ]);
 
   const [subcontractors, setSubcontractors] = useState<SubcontractorEntry[]>([]);
@@ -73,10 +76,38 @@ const EditDailyReport: React.FC = () => {
   const [comments, setComments] = useState('');
   const [issues, setIssues] = useState('');
 
+  // Generate time options in 15-minute intervals
+  const generateTimeOptions = () => {
+    const times = [];
+    for (let hour = 0; hour < 24; hour++) {
+      for (let minute = 0; minute < 60; minute += 15) {
+        const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+        const ampm = hour < 12 ? 'AM' : 'PM';
+        const timeString = `${hour12}:${minute.toString().padStart(2, '0')} ${ampm}`;
+        times.push(timeString);
+      }
+    }
+    return times;
+  };
+
+  const timeOptions = generateTimeOptions();
+
+  // Work type options
+  const workTypeOptions = [
+    'Base Contract',
+    'COR - Approved',
+    'Field Work Order / T&M',
+    'Price / Do Not Proceed',
+    'Price / Proceed',
+    'Work Under Protest'
+  ];
+
   const addCrewEntry = () => {
     const newEntry: CrewEntry = {
       id: Date.now().toString(),
       employee: '',
+      costCode: '',
+      workType: 'Base Contract',
       st: 0,
       ot: 0,
       lost: 0,
@@ -280,17 +311,33 @@ const EditDailyReport: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium">Time On Site:</label>
-              <Input
-                value={formData.timeOnSite}
-                onChange={(e) => setFormData({...formData, timeOnSite: e.target.value})}
-              />
+              <Select value={formData.timeOnSite} onValueChange={(value) => setFormData({...formData, timeOnSite: value})}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {timeOptions.map((time) => (
+                    <SelectItem key={time} value={time}>
+                      {time}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <label className="text-sm font-medium">Time Off Site:</label>
-              <Input
-                value={formData.timeOffSite}
-                onChange={(e) => setFormData({...formData, timeOffSite: e.target.value})}
-              />
+              <Select value={formData.timeOffSite} onValueChange={(value) => setFormData({...formData, timeOffSite: value})}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {timeOptions.map((time) => (
+                    <SelectItem key={time} value={time}>
+                      {time}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardContent>
@@ -324,7 +371,9 @@ const EditDailyReport: React.FC = () => {
           <Table>
             <TableHeader>
               <TableRow className="bg-blue-700 hover:bg-blue-700">
-                <TableHead className="text-white">Employee</TableHead>
+                <TableHead className="text-white">Employees</TableHead>
+                <TableHead className="text-white">Cost Code</TableHead>
+                <TableHead className="text-white">Work Type</TableHead>
                 <TableHead className="text-white">ST</TableHead>
                 <TableHead className="text-white">OT</TableHead>
                 <TableHead className="text-white">Lost</TableHead>
@@ -337,11 +386,50 @@ const EditDailyReport: React.FC = () => {
               {crewEntries.map((entry) => (
                 <TableRow key={entry.id}>
                   <TableCell>
-                    <Input
+                    <Select
                       value={entry.employee}
-                      onChange={(e) => updateCrewEntry(entry.id, 'employee', e.target.value)}
-                      className="min-w-[200px]"
+                      onValueChange={(value) => updateCrewEntry(entry.id, 'employee', value)}
+                      disabled={loadingEmployees}
+                    >
+                      <SelectTrigger className="min-w-[200px]">
+                        <SelectValue placeholder={loadingEmployees ? "Loading..." : "Select Employee"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {employees.map((employee) => (
+                          <SelectItem 
+                            key={employee.employeeID} 
+                            value={`${employee.lastName}, ${employee.firstName}`}
+                          >
+                            {employee.lastName}, {employee.firstName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      value={entry.costCode}
+                      onChange={(e) => updateCrewEntry(entry.id, 'costCode', e.target.value)}
+                      placeholder="Cost Code"
+                      className="min-w-[120px]"
                     />
+                  </TableCell>
+                  <TableCell>
+                    <Select
+                      value={entry.workType}
+                      onValueChange={(value) => updateCrewEntry(entry.id, 'workType', value)}
+                    >
+                      <SelectTrigger className="min-w-[150px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {workTypeOptions.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                   <TableCell>
                     <Input
@@ -395,6 +483,8 @@ const EditDailyReport: React.FC = () => {
               ))}
               <TableRow className="bg-blue-600 hover:bg-blue-600">
                 <TableCell className="text-white font-bold">Total Hours:</TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
                 <TableCell className="text-white font-bold">{getTotalHours('st')}</TableCell>
                 <TableCell className="text-white font-bold">{getTotalHours('ot')}</TableCell>
                 <TableCell className="text-white font-bold">{getTotalHours('lost')}</TableCell>
