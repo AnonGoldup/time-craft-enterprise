@@ -1,75 +1,26 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ArrowLeft, Plus, X, Trash2, ChevronDown, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { employeeApi, Employee } from '@/services/api';
-
-interface CrewEntry {
-  id: string;
-  employee: string;
-  st: number;
-  ot: number;
-  lost: number;
-  work: string;
-  comments: string;
-}
-
-interface Crew {
-  id: string;
-  name: string;
-  costCode: string;
-  workType: string;
-  entries: CrewEntry[];
-}
-
-interface SubcontractorEntry {
-  id: string;
-  subcontractor: string;
-  workers: number;
-  comments: string;
-}
-
-interface EquipmentEntry {
-  id: string;
-  equipment: string;
-  hours: number;
-  notes: string;
-}
-
-interface MaterialEntry {
-  id: string;
-  material: string;
-  quantity: number;
-  per: string;
-  notes: string;
-}
-
-interface CommentFields {
-  descriptionOfWork: string;
-  descriptionOfWorkInternal: boolean;
-  jobSiteConditions: string;
-  jobSiteConditionsInternal: boolean;
-  extraWorkFavors: string;
-  extraWorkFavorsInternal: boolean;
-  accidentReport: string;
-  accidentReportInternal: boolean;
-  nearMissesHazardIds: string;
-  nearMissesHazardIdsInternal: boolean;
-  jobSiteCleanliness: string;
-  jobSiteCleanlinessInternal: boolean;
-  commentsProblems: string;
-  commentsProblemsInternal: boolean;
-  internalComments: string;
-  internalCommentsInternal: boolean;
-}
+import { 
+  Crew, 
+  CrewEntry, 
+  SubcontractorEntry, 
+  EquipmentEntry, 
+  MaterialEntry, 
+  CommentFields, 
+  FormData 
+} from '@/components/DailyReport/types';
+import BasicInfoSection from '@/components/DailyReport/BasicInfoSection';
+import CommentsSection from '@/components/DailyReport/CommentsSection';
+import CrewSection from '@/components/DailyReport/CrewSection';
+import GrandTotalSummary from '@/components/DailyReport/GrandTotalSummary';
+import SubcontractorsSection from '@/components/DailyReport/SubcontractorsSection';
+import EquipmentSection from '@/components/DailyReport/EquipmentSection';
+import MaterialsSection from '@/components/DailyReport/MaterialsSection';
+import IssuesSection from '@/components/DailyReport/IssuesSection';
 
 const EditDailyReport: React.FC = () => {
   const { id } = useParams();
@@ -78,7 +29,7 @@ const EditDailyReport: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loadingEmployees, setLoadingEmployees] = useState(true);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     customNumber: '',
     reportFrom: '',
     date: '06/10/2025',
@@ -109,7 +60,6 @@ const EditDailyReport: React.FC = () => {
   const [equipment, setEquipment] = useState<EquipmentEntry[]>([]);
   const [materials, setMaterials] = useState<MaterialEntry[]>([]);
 
-  const [comments, setComments] = useState('');
   const [commentFields, setCommentFields] = useState<CommentFields>({
     descriptionOfWork: '',
     descriptionOfWorkInternal: false,
@@ -130,7 +80,6 @@ const EditDailyReport: React.FC = () => {
   });
 
   const [issues, setIssues] = useState('');
-
   const [confirmDeleteCrewId, setConfirmDeleteCrewId] = useState<string | null>(null);
 
   // Collapsible states for each section
@@ -141,32 +90,6 @@ const EditDailyReport: React.FC = () => {
   const [isMaterialsOpen, setIsMaterialsOpen] = useState(false);
   const [isIssuesOpen, setIsIssuesOpen] = useState(false);
   const [crewExpandStates, setCrewExpandStates] = useState<Record<string, boolean>>({});
-
-  // Generate time options in 15-minute intervals
-  const generateTimeOptions = () => {
-    const times = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 15) {
-        const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-        const ampm = hour < 12 ? 'AM' : 'PM';
-        const timeString = `${hour12}:${minute.toString().padStart(2, '0')} ${ampm}`;
-        times.push(timeString);
-      }
-    }
-    return times;
-  };
-
-  const timeOptions = generateTimeOptions();
-
-  // Work type options
-  const workTypeOptions = [
-    'Base Contract',
-    'COR - Approved',
-    'Field Work Order / T&M',
-    'Price / Do Not Proceed',
-    'Price / Proceed',
-    'Work Under Protest'
-  ];
 
   // Crew management functions
   const addCrew = () => {
@@ -243,6 +166,12 @@ const EditDailyReport: React.FC = () => {
     setSubcontractors([...subcontractors, newEntry]);
   };
 
+  const updateSubcontractor = (id: string, field: keyof SubcontractorEntry, value: string | number) => {
+    setSubcontractors(subcontractors.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
+  };
+
   const addEquipment = () => {
     const newEntry: EquipmentEntry = {
       id: Date.now().toString(),
@@ -251,6 +180,12 @@ const EditDailyReport: React.FC = () => {
       notes: ''
     };
     setEquipment([...equipment, newEntry]);
+  };
+
+  const updateEquipment = (id: string, field: keyof EquipmentEntry, value: string | number) => {
+    setEquipment(equipment.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
   };
 
   const addMaterial = () => {
@@ -262,6 +197,12 @@ const EditDailyReport: React.FC = () => {
       notes: ''
     };
     setMaterials([...materials, newEntry]);
+  };
+
+  const updateMaterial = (id: string, field: keyof MaterialEntry, value: string | number) => {
+    setMaterials(materials.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
   };
 
   const updateCommentField = (field: keyof CommentFields, value: string | boolean) => {
@@ -278,7 +219,7 @@ const EditDailyReport: React.FC = () => {
       subcontractors,
       equipment,
       materials,
-      comments,
+      commentFields,
       issues
     });
     navigate('/daily-reporting');
@@ -342,532 +283,44 @@ const EditDailyReport: React.FC = () => {
         </Button>
       </div>
 
-      {/* Main Form - Collapsible */}
-      <Collapsible open={isBasicInfoOpen} onOpenChange={setIsBasicInfoOpen}>
-        <Card>
-          <CollapsibleTrigger asChild>
-            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-              <div className="flex items-center justify-between">
-                <CardTitle>Daily Report Information</CardTitle>
-                {isBasicInfoOpen ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-              </div>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Custom Number:</label>
-                  <Input
-                    value={formData.customNumber}
-                    onChange={(e) => setFormData({...formData, customNumber: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Report From:</label>
-                  <Select 
-                    value={formData.reportFrom} 
-                    onValueChange={(value) => setFormData({...formData, reportFrom: value})}
-                    disabled={loadingEmployees}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={loadingEmployees ? "Loading employees..." : "Select an employee contact"} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {employees.map((employee) => (
-                        <SelectItem 
-                          key={employee.employeeID} 
-                          value={`${employee.department} — ${employee.lastName}, ${employee.firstName}`}
-                        >
-                          {employee.department} — {employee.lastName}, {employee.firstName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Date:</label>
-                  <Input
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) => setFormData({...formData, date: e.target.value})}
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Weather:</label>
-                  <Select value={formData.weather} onValueChange={(value) => setFormData({...formData, weather: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Cloudy">Cloudy</SelectItem>
-                      <SelectItem value="Sunny">Sunny</SelectItem>
-                      <SelectItem value="Rainy">Rainy</SelectItem>
-                      <SelectItem value="Snowy">Snowy</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Wind:</label>
-                  <Select value={formData.wind} onValueChange={(value) => setFormData({...formData, wind: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Light Breeze">Light Breeze</SelectItem>
-                      <SelectItem value="Calm">Calm</SelectItem>
-                      <SelectItem value="Windy">Windy</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Temperature:</label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      value={formData.temperature}
-                      onChange={(e) => setFormData({...formData, temperature: e.target.value})}
-                    />
-                    <span className="text-sm">°C</span>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Total Workers:</label>
-                  <Input
-                    type="number"
-                    value={formData.totalWorkers}
-                    onChange={(e) => setFormData({...formData, totalWorkers: parseInt(e.target.value)})}
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Time On Site:</label>
-                  <Select value={formData.timeOnSite} onValueChange={(value) => setFormData({...formData, timeOnSite: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {timeOptions.map((time) => (
-                        <SelectItem key={time} value={time}>
-                          {time}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Time Off Site:</label>
-                  <Select value={formData.timeOffSite} onValueChange={(value) => setFormData({...formData, timeOffSite: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {timeOptions.map((time) => (
-                        <SelectItem key={time} value={time}>
-                          {time}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
+      {/* Basic Info Section */}
+      <BasicInfoSection
+        formData={formData}
+        setFormData={setFormData}
+        employees={employees}
+        loadingEmployees={loadingEmployees}
+        isOpen={isBasicInfoOpen}
+        setIsOpen={setIsBasicInfoOpen}
+      />
 
-      {/* Comments Section - Collapsible */}
-      <Collapsible open={isCommentsOpen} onOpenChange={setIsCommentsOpen}>
-        <Card>
-          <CollapsibleTrigger asChild>
-            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-              <div className="flex items-center justify-between">
-                <CardTitle>Comments</CardTitle>
-                {isCommentsOpen ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-              </div>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent className="space-y-6">
-              {/* Description Of Work Performed */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Description Of Work Performed</label>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="descriptionOfWorkInternal"
-                      checked={commentFields.descriptionOfWorkInternal}
-                      onCheckedChange={(checked) => updateCommentField('descriptionOfWorkInternal', checked as boolean)}
-                    />
-                    <label htmlFor="descriptionOfWorkInternal" className="text-sm">Internal</label>
-                  </div>
-                </div>
-                <Textarea
-                  placeholder="Enter description of work performed..."
-                  value={commentFields.descriptionOfWork}
-                  onChange={(e) => updateCommentField('descriptionOfWork', e.target.value)}
-                  rows={3}
-                />
-              </div>
+      {/* Comments Section */}
+      <CommentsSection
+        commentFields={commentFields}
+        updateCommentField={updateCommentField}
+        isOpen={isCommentsOpen}
+        setIsOpen={setIsCommentsOpen}
+      />
 
-              {/* Job Site Conditions */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Job Site Conditions</label>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="jobSiteConditionsInternal"
-                      checked={commentFields.jobSiteConditionsInternal}
-                      onCheckedChange={(checked) => updateCommentField('jobSiteConditionsInternal', checked as boolean)}
-                    />
-                    <label htmlFor="jobSiteConditionsInternal" className="text-sm">Internal</label>
-                  </div>
-                </div>
-                <Textarea
-                  placeholder="Enter job site conditions..."
-                  value={commentFields.jobSiteConditions}
-                  onChange={(e) => updateCommentField('jobSiteConditions', e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              {/* Extra Work/Favors */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Extra Work/Favors</label>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="extraWorkFavorsInternal"
-                      checked={commentFields.extraWorkFavorsInternal}
-                      onCheckedChange={(checked) => updateCommentField('extraWorkFavorsInternal', checked as boolean)}
-                    />
-                    <label htmlFor="extraWorkFavorsInternal" className="text-sm">Internal</label>
-                  </div>
-                </div>
-                <Textarea
-                  placeholder="Enter extra work/favors..."
-                  value={commentFields.extraWorkFavors}
-                  onChange={(e) => updateCommentField('extraWorkFavors', e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              {/* Accident Report */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Accident Report</label>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="accidentReportInternal"
-                      checked={commentFields.accidentReportInternal}
-                      onCheckedChange={(checked) => updateCommentField('accidentReportInternal', checked as boolean)}
-                    />
-                    <label htmlFor="accidentReportInternal" className="text-sm">Internal</label>
-                  </div>
-                </div>
-                <Textarea
-                  placeholder="Enter accident report..."
-                  value={commentFields.accidentReport}
-                  onChange={(e) => updateCommentField('accidentReport', e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              {/* Near Misses/Hazard ID's */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Near Misses/Hazard ID's</label>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="nearMissesHazardIdsInternal"
-                      checked={commentFields.nearMissesHazardIdsInternal}
-                      onCheckedChange={(checked) => updateCommentField('nearMissesHazardIdsInternal', checked as boolean)}
-                    />
-                    <label htmlFor="nearMissesHazardIdsInternal" className="text-sm">Internal</label>
-                  </div>
-                </div>
-                <Textarea
-                  placeholder="Enter near misses/hazard ID's..."
-                  value={commentFields.nearMissesHazardIds}
-                  onChange={(e) => updateCommentField('nearMissesHazardIds', e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              {/* Job Site Cleanliness */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Job Site Cleanliness</label>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="jobSiteCleanlinessInternal"
-                      checked={commentFields.jobSiteCleanlinessInternal}
-                      onCheckedChange={(checked) => updateCommentField('jobSiteCleanlinessInternal', checked as boolean)}
-                    />
-                    <label htmlFor="jobSiteCleanlinessInternal" className="text-sm">Internal</label>
-                  </div>
-                </div>
-                <Textarea
-                  placeholder="Enter job site cleanliness notes..."
-                  value={commentFields.jobSiteCleanliness}
-                  onChange={(e) => updateCommentField('jobSiteCleanliness', e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              {/* Comments/Problems */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Comments/Problems</label>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="commentsProblemsInternal"
-                      checked={commentFields.commentsProblemsInternal}
-                      onCheckedChange={(checked) => updateCommentField('commentsProblemsInternal', checked as boolean)}
-                    />
-                    <label htmlFor="commentsProblemsInternal" className="text-sm">Internal</label>
-                  </div>
-                </div>
-                <Textarea
-                  placeholder="Enter comments/problems..."
-                  value={commentFields.commentsProblems}
-                  onChange={(e) => updateCommentField('commentsProblems', e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              {/* Internal Comments */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Internal Comments</label>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="internalCommentsInternal"
-                      checked={commentFields.internalCommentsInternal}
-                      onCheckedChange={(checked) => updateCommentField('internalCommentsInternal', checked as boolean)}
-                    />
-                    <label htmlFor="internalCommentsInternal" className="text-sm">Internal</label>
-                  </div>
-                </div>
-                <Textarea
-                  placeholder="Enable and browse setting for spell check..."
-                  value={commentFields.internalComments}
-                  onChange={(e) => updateCommentField('internalComments', e.target.value)}
-                  rows={3}
-                />
-              </div>
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
-
-      {/* Multiple Crews Section - Each crew collapsible */}
+      {/* Crew Sections */}
       {crews.map((crew) => (
-        <Collapsible 
-          key={crew.id} 
-          open={crewExpandStates[crew.id] !== false} 
-          onOpenChange={() => toggleCrewExpand(crew.id)}
-        >
-          <Card>
-            <CollapsibleTrigger asChild>
-              <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CardTitle>{crew.name}</CardTitle>
-                    {crewExpandStates[crew.id] !== false ? (
-                      <ChevronDown className="h-4 w-4" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4" />
-                    )}
-                  </div>
-                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                    <Button onClick={() => addCrewEntry(crew.id)} size="sm" className="flex items-center gap-2">
-                      <Plus className="h-4 w-4" />
-                      Add Line
-                    </Button>
-                    {crews.length > 1 && (
-                      <AlertDialog open={confirmDeleteCrewId === crew.id} onOpenChange={(open) => !open && setConfirmDeleteCrewId(null)}>
-                        <AlertDialogTrigger asChild>
-                          <Button 
-                            onClick={() => setConfirmDeleteCrewId(crew.id)} 
-                            size="sm" 
-                            variant="outline"
-                            className="flex items-center gap-2 text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            Remove Crew
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              You are about to delete the Crew from the Daily Report.
-                              If you continue, all data entered into this crew will be lost.
-                              <br /><br />
-                              Are you sure that you want to delete this Crew?
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>NO</AlertDialogCancel>
-                            <AlertDialogAction 
-                              onClick={() => removeCrew(crew.id)}
-                              className="bg-blue-600 hover:bg-blue-700"
-                            >
-                              Yes, delete this Crew
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    )}
-                  </div>
-                </div>
-              </CardHeader>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <CardContent className="space-y-4">
-                {/* Crew-level Cost Code and Work Type */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div>
-                    <label className="text-sm font-medium">Cost Code:</label>
-                    <Input
-                      value={crew.costCode}
-                      onChange={(e) => updateCrew(crew.id, 'costCode', e.target.value)}
-                      placeholder="Enter cost code..."
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Work Type:</label>
-                    <Select
-                      value={crew.workType}
-                      onValueChange={(value) => updateCrew(crew.id, 'workType', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {workTypeOptions.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-blue-700 hover:bg-blue-700">
-                      <TableHead className="text-white">Employees</TableHead>
-                      <TableHead className="text-white">ST</TableHead>
-                      <TableHead className="text-white">OT</TableHead>
-                      <TableHead className="text-white">Lost</TableHead>
-                      <TableHead className="text-white">Work</TableHead>
-                      <TableHead className="text-white">Comments</TableHead>
-                      <TableHead className="text-white">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {crew.entries.map((entry) => (
-                      <TableRow key={entry.id}>
-                        <TableCell>
-                          <Select
-                            value={entry.employee}
-                            onValueChange={(value) => updateCrewEntry(crew.id, entry.id, 'employee', value)}
-                            disabled={loadingEmployees}
-                          >
-                            <SelectTrigger className="min-w-[200px]">
-                              <SelectValue placeholder={loadingEmployees ? "Loading..." : "Select Employee"} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {employees.map((employee) => (
-                                <SelectItem 
-                                  key={employee.employeeID} 
-                                  value={`${employee.lastName}, ${employee.firstName}`}
-                                >
-                                  {employee.lastName}, {employee.firstName}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            value={entry.st}
-                            onChange={(e) => updateCrewEntry(crew.id, entry.id, 'st', parseInt(e.target.value) || 0)}
-                            className="w-16"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            value={entry.ot}
-                            onChange={(e) => updateCrewEntry(crew.id, entry.id, 'ot', parseInt(e.target.value) || 0)}
-                            className="w-16"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            value={entry.lost}
-                            onChange={(e) => updateCrewEntry(crew.id, entry.id, 'lost', parseInt(e.target.value) || 0)}
-                            className="w-16"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            value={entry.work}
-                            onChange={(e) => updateCrewEntry(crew.id, entry.id, 'work', e.target.value)}
-                            className="min-w-[150px]"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            value={entry.comments}
-                            onChange={(e) => updateCrewEntry(crew.id, entry.id, 'comments', e.target.value)}
-                            className="min-w-[200px]"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeCrewEntry(crew.id, entry.id)}
-                            className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow className="bg-blue-600 hover:bg-blue-600">
-                      <TableCell className="text-white font-bold">Total Hours:</TableCell>
-                      <TableCell className="text-white font-bold">{getTotalHoursForCrew(crew.id, 'st')}</TableCell>
-                      <TableCell className="text-white font-bold">{getTotalHoursForCrew(crew.id, 'ot')}</TableCell>
-                      <TableCell className="text-white font-bold">{getTotalHoursForCrew(crew.id, 'lost')}</TableCell>
-                      <TableCell></TableCell>
-                      <TableCell></TableCell>
-                      <TableCell></TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </CollapsibleContent>
-          </Card>
-        </Collapsible>
+        <CrewSection
+          key={crew.id}
+          crew={crew}
+          employees={employees}
+          loadingEmployees={loadingEmployees}
+          isExpanded={crewExpandStates[crew.id] !== false}
+          showDeleteConfirmation={confirmDeleteCrewId === crew.id}
+          canDelete={crews.length > 1}
+          onToggleExpanded={() => toggleCrewExpand(crew.id)}
+          onAddEntry={() => addCrewEntry(crew.id)}
+          onRemoveEntry={(entryId) => removeCrewEntry(crew.id, entryId)}
+          onUpdateCrew={(field, value) => updateCrew(crew.id, field, value)}
+          onUpdateEntry={(entryId, field, value) => updateCrewEntry(crew.id, entryId, field, value)}
+          onRequestDelete={() => setConfirmDeleteCrewId(crew.id)}
+          onConfirmDelete={() => removeCrew(crew.id)}
+          onCancelDelete={() => setConfirmDeleteCrewId(null)}
+          getTotalHours={(type) => getTotalHoursForCrew(crew.id, type)}
+        />
       ))}
 
       {/* Add Crew Button */}
@@ -879,251 +332,46 @@ const EditDailyReport: React.FC = () => {
       </div>
 
       {/* Grand Total Summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Grand Total Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="bg-blue-100 dark:bg-blue-900 p-4 rounded">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{getAllTotalHours('st')}</div>
-              <div className="text-sm text-blue-600 dark:text-blue-400">Total ST Hours</div>
-            </div>
-            <div className="bg-orange-100 dark:bg-orange-900 p-4 rounded">
-              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{getAllTotalHours('ot')}</div>
-              <div className="text-sm text-orange-600 dark:text-orange-400">Total OT Hours</div>
-            </div>
-            <div className="bg-red-100 dark:bg-red-900 p-4 rounded">
-              <div className="text-2xl font-bold text-red-600 dark:text-red-400">{getAllTotalHours('lost')}</div>
-              <div className="text-sm text-red-600 dark:text-red-400">Total Lost Hours</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <GrandTotalSummary
+        totalST={getAllTotalHours('st')}
+        totalOT={getAllTotalHours('ot')}
+        totalLost={getAllTotalHours('lost')}
+      />
 
-      {/* Subcontractors Section - Collapsible */}
-      <Collapsible open={isSubcontractorsOpen} onOpenChange={setIsSubcontractorsOpen}>
-        <Card>
-          <CollapsibleTrigger asChild>
-            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-              <div className="flex items-center justify-between">
-                <CardTitle>Subcontractors</CardTitle>
-                <div className="flex items-center gap-2">
-                  {isSubcontractorsOpen ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                  <Button 
-                    onClick={(e) => { e.stopPropagation(); addSubcontractor(); }} 
-                    size="sm" 
-                    className="flex items-center gap-2"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add Subcontractor
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-blue-700 hover:bg-blue-700">
-                    <TableHead className="text-white">Subcontractors</TableHead>
-                    <TableHead className="text-white">Workers</TableHead>
-                    <TableHead className="text-white">Comments</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {subcontractors.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={3} className="text-center text-gray-500">
-                        No subcontractors added
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    subcontractors.map((entry) => (
-                      <TableRow key={entry.id}>
-                        <TableCell>
-                          <Input value={entry.subcontractor} />
-                        </TableCell>
-                        <TableCell>
-                          <Input type="number" value={entry.workers} className="w-20" />
-                        </TableCell>
-                        <TableCell>
-                          <Input value={entry.comments} />
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
+      {/* Subcontractors Section */}
+      <SubcontractorsSection
+        subcontractors={subcontractors}
+        isOpen={isSubcontractorsOpen}
+        setIsOpen={setIsSubcontractorsOpen}
+        onAddSubcontractor={addSubcontractor}
+        onUpdateSubcontractor={updateSubcontractor}
+      />
 
-      {/* Equipment Section - Collapsible */}
-      <Collapsible open={isEquipmentOpen} onOpenChange={setIsEquipmentOpen}>
-        <Card>
-          <CollapsibleTrigger asChild>
-            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-              <div className="flex items-center justify-between">
-                <CardTitle>Equipment</CardTitle>
-                <div className="flex items-center gap-2">
-                  {isEquipmentOpen ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                  <Button 
-                    onClick={(e) => { e.stopPropagation(); addEquipment(); }} 
-                    size="sm" 
-                    className="flex items-center gap-2"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add Equipment
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-blue-700 hover:bg-blue-700">
-                    <TableHead className="text-white">Equipment</TableHead>
-                    <TableHead className="text-white">Hours</TableHead>
-                    <TableHead className="text-white">Notes</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {equipment.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={3} className="text-center text-gray-500">
-                        No equipment added
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    equipment.map((entry) => (
-                      <TableRow key={entry.id}>
-                        <TableCell>
-                          <Input value={entry.equipment} />
-                        </TableCell>
-                        <TableCell>
-                          <Input type="number" value={entry.hours} className="w-20" />
-                        </TableCell>
-                        <TableCell>
-                          <Input value={entry.notes} />
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
+      {/* Equipment Section */}
+      <EquipmentSection
+        equipment={equipment}
+        isOpen={isEquipmentOpen}
+        setIsOpen={setIsEquipmentOpen}
+        onAddEquipment={addEquipment}
+        onUpdateEquipment={updateEquipment}
+      />
 
-      {/* Materials Section - Collapsible */}
-      <Collapsible open={isMaterialsOpen} onOpenChange={setIsMaterialsOpen}>
-        <Card>
-          <CollapsibleTrigger asChild>
-            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-              <div className="flex items-center justify-between">
-                <CardTitle>Materials</CardTitle>
-                <div className="flex items-center gap-2">
-                  {isMaterialsOpen ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                  <Button 
-                    onClick={(e) => { e.stopPropagation(); addMaterial(); }} 
-                    size="sm" 
-                    className="flex items-center gap-2"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add Material
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-blue-700 hover:bg-blue-700">
-                    <TableHead className="text-white">Materials</TableHead>
-                    <TableHead className="text-white">Quantity</TableHead>
-                    <TableHead className="text-white">Per</TableHead>
-                    <TableHead className="text-white">Notes</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {materials.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-center text-gray-500">
-                        No materials added
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    materials.map((entry) => (
-                      <TableRow key={entry.id}>
-                        <TableCell>
-                          <Input value={entry.material} />
-                        </TableCell>
-                        <TableCell>
-                          <Input type="number" value={entry.quantity} className="w-20" />
-                        </TableCell>
-                        <TableCell>
-                          <Input value={entry.per} className="w-20" />
-                        </TableCell>
-                        <TableCell>
-                          <Input value={entry.notes} />
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
+      {/* Materials Section */}
+      <MaterialsSection
+        materials={materials}
+        isOpen={isMaterialsOpen}
+        setIsOpen={setIsMaterialsOpen}
+        onAddMaterial={addMaterial}
+        onUpdateMaterial={updateMaterial}
+      />
 
-      {/* Issues Section - Collapsible */}
-      <Collapsible open={isIssuesOpen} onOpenChange={setIsIssuesOpen}>
-        <Card>
-          <CollapsibleTrigger asChild>
-            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-              <div className="flex items-center justify-between">
-                <CardTitle>Issues</CardTitle>
-                {isIssuesOpen ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-              </div>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent>
-              <Textarea
-                placeholder="No issues on Project"
-                value={issues}
-                onChange={(e) => setIssues(e.target.value)}
-                rows={3}
-              />
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
+      {/* Issues Section */}
+      <IssuesSection
+        issues={issues}
+        setIssues={setIssues}
+        isOpen={isIssuesOpen}
+        setIsOpen={setIsIssuesOpen}
+      />
 
       {/* Save Button */}
       <div className="flex justify-end">
