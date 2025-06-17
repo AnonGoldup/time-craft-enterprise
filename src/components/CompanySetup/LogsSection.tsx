@@ -11,7 +11,7 @@ export const LogsSection: React.FC = () => {
       
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <Label className="text-red-500">Display Hierarchy On Spreadsheet And Printer Versions Of Logs:</Label>
+          <Label>Display Hierarchy On Spreadsheet And Printer Versions Of Logs:</Label>
           <div className="flex gap-4">
             <div className="flex items-center space-x-2">
               <Checkbox id="division" defaultChecked={false} />
@@ -27,7 +27,7 @@ export const LogsSection: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-3">
             <div className="space-y-2">
-              <Label className="text-red-500 text-sm">Daily Report Log Default Sort:</Label>
+              <Label className="text-sm">Daily Report Log Default Sort:</Label>
               <RadioGroup defaultValue="pr-date">
                 <div className="flex items-center space-x-1">
                   <RadioGroupItem value="pr-no" id="daily-pr-no" />
@@ -41,7 +41,7 @@ export const LogsSection: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-red-500 text-sm">RFI Log Default Sort:</Label>
+              <Label className="text-sm">RFI Log Default Sort:</Label>
               <RadioGroup defaultValue="rfi-no">
                 <div className="flex items-center space-x-1">
                   <RadioGroupItem value="rfi-no" id="rfi-no" />
@@ -55,7 +55,7 @@ export const LogsSection: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-red-500 text-sm">COR Log Default Sort:</Label>
+              <Label className="text-sm">COR Log Default Sort:</Label>
               <RadioGroup defaultValue="cor-no">
                 <div className="flex items-center space-x-1">
                   <RadioGroupItem value="cor-no" id="cor-no" />
@@ -75,7 +75,7 @@ export const LogsSection: React.FC = () => {
 
           <div className="space-y-3">
             <div className="space-y-2">
-              <Label className="text-red-500 text-sm">Submittal Log Default Sort:</Label>
+              <Label className="text-sm">Submittal Log Default Sort:</Label>
               <RadioGroup defaultValue="trans-no">
                 <div className="flex items-center space-x-1">
                   <RadioGroupItem value="sub-no" id="sub-no" />
@@ -97,7 +97,7 @@ export const LogsSection: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-red-500 text-sm">PO Log Default Sort:</Label>
+              <Label className="text-sm">PO Log Default Sort:</Label>
               <RadioGroup defaultValue="po-no">
                 <div className="flex items-center space-x-1">
                   <RadioGroupItem value="po-no" id="po-no" />
@@ -111,7 +111,7 @@ export const LogsSection: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-red-500 text-sm">Pay App Log Default Sort:</Label>
+              <Label className="text-sm">Pay App Log Default Sort:</Label>
               <RadioGroup defaultValue="pa-no">
                 <div className="flex items-center space-x-1">
                   <RadioGroupItem value="pa-no" id="pa-no" />
@@ -140,7 +140,7 @@ export const LogsSection: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-red-500 text-sm">Drawing Set Log Default Sort:</Label>
+            <Label className="text-sm">Drawing Set Log Default Sort:</Label>
             <RadioGroup defaultValue="sheet-no">
               <div className="flex items-center space-x-1">
                 <RadioGroupItem value="prefix" id="prefix" />
@@ -162,7 +162,7 @@ export const LogsSection: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-red-500 text-sm">Correspondence Log Default Sort:</Label>
+            <Label className="text-sm">Correspondence Log Default Sort:</Label>
             <RadioGroup defaultValue="date">
               <div className="flex items-center space-x-1">
                 <RadioGroupItem value="number" id="corr-number" />
@@ -189,7 +189,7 @@ export const LogsSection: React.FC = () => {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-red-500 text-sm">Meeting Minutes Log Default Sort:</Label>
+          <Label className="text-sm">Meeting Minutes Log Default Sort:</Label>
           <RadioGroup defaultValue="number">
             <div className="flex items-center space-x-1">
               <RadioGroupItem value="number" id="meeting-number" />
