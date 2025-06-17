@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, ChevronRight, History } from 'lucide-react';
+import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, ChevronRight, History, FolderOpen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton, SidebarFooter } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -49,6 +49,11 @@ const navigationItems = [{
   icon: Users,
   path: '/team',
   roles: ['manager', 'admin', 'supervisor', 'foreman']
+}, {
+  label: 'Projects',
+  icon: FolderOpen,
+  path: '/projects',
+  roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
 }, {
   label: 'Calendar',
   icon: Calendar,

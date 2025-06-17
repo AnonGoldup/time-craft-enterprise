@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, ChevronDown, ChevronRight } from 'lucide-react';
+import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, ChevronDown, ChevronRight, FolderOpen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 const navigationItems = [{
@@ -40,6 +40,11 @@ const navigationItems = [{
   icon: Users,
   path: '/team',
   roles: ['manager', 'admin', 'supervisor', 'foreman']
+}, {
+  label: 'Projects',
+  icon: FolderOpen,
+  path: '/projects',
+  roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
 }, {
   label: 'Calendar',
   icon: Calendar,
