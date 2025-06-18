@@ -7,6 +7,7 @@ import { AppSidebarFooter } from './SidebarFooter';
 import { useSidebar } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+import { ThemeToggleUnity } from '@/components/ThemeToggleUnity';
 
 export const AppSidebar: React.FC = () => {
   const { isMobile, setOpenMobile } = useSidebar();
@@ -14,7 +15,8 @@ export const AppSidebar: React.FC = () => {
   return (
     <Sidebar className="border-border bg-sidebar">
       {isMobile && (
-        <div className="flex justify-end p-4 border-b border-sidebar-border">
+        <div className="flex justify-between items-center p-4 border-b border-sidebar-border">
+          <ThemeToggleUnity />
           <Button
             variant="ghost"
             size="icon"
@@ -26,9 +28,15 @@ export const AppSidebar: React.FC = () => {
           </Button>
         </div>
       )}
+      {!isMobile && (
+        <div className="flex justify-end p-4 border-b border-sidebar-border">
+          <ThemeToggleUnity />
+        </div>
+      )}
       <AppSidebarHeader />
       <SidebarNavigation />
       <AppSidebarFooter />
     </Sidebar>
   );
 };
+

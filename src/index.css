@@ -105,6 +105,47 @@
     --sidebar-ring: var(--altapro-orange);
   }
 
+  /* Unity Dark Mode Override */
+  .theme-unity.dark {
+    --background: 222 13% 14%;
+    --foreground: 0 0% 96%;
+    
+    --card: 222 13% 16%;
+    --card-foreground: 0 0% 96%;
+    
+    --popover: 222 13% 14%;
+    --popover-foreground: 0 0% 96%;
+    
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 222 13% 18%;
+    --secondary-foreground: 0 0% 96%;
+    
+    --muted: 222 13% 18%;
+    --muted-foreground: 0 0% 65%;
+    
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 222 13% 18%;
+    --input: 222 13% 18%;
+    --ring: 25 95% 53%;
+    
+    /* Unity Dark Sidebar Colors */
+    --sidebar-background: 222 13% 12%;
+    --sidebar-foreground: 0 0% 96%;
+    --sidebar-primary: 25 95% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 13% 16%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 222 13% 16%;
+    --sidebar-ring: 25 95% 53%;
+  }
+
   /* Dark Emerald Theme Overrides */
   .theme-dark-emerald {
     /* Dark Emerald specific colors */
@@ -187,6 +228,15 @@
     color: white;
   }
 
+  /* Unity Dark Mode Enhancements */
+  .theme-unity.dark .enhanced-card {
+    box-shadow: 0 4px 20px rgba(250, 128, 41, 0.08);
+  }
+  
+  .theme-unity.dark .enhanced-card:hover {
+    box-shadow: 0 8px 30px rgba(250, 128, 41, 0.12);
+  }
+
   /* Dark Emerald specific enhancements */
   .theme-dark-emerald .enhanced-card {
     box-shadow: 0 4px 20px rgba(46, 204, 113, 0.1);
@@ -203,3 +253,4 @@
 }
 
 /* ... keep existing code (Unity + AltaPro Sidebar Styles and remaining sections) */
+

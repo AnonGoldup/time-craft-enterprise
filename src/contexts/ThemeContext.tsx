@@ -5,6 +5,7 @@ export interface ColorTheme {
   id: string;
   name: string;
   fontFamily?: string;
+  supportsDarkMode?: boolean;
   colors: {
     primary: string;
     primaryForeground: string;
@@ -29,6 +30,7 @@ const colorThemes: ColorTheme[] = [
     id: 'unity',
     name: 'UNITY',
     fontFamily: 'General Sans',
+    supportsDarkMode: true,
     colors: {
       primary: '22 89% 57%', // #fa8029 orange
       primaryForeground: '0 0% 100%', // white
@@ -239,3 +241,4 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
     </ThemeContext.Provider>
   );
 };
+
