@@ -72,7 +72,6 @@ const TimeEntryTimeInOut = () => {
   };
 
   const copyPreviousDay = () => {
-    // Simulate copying data from previous day
     const previousDayData = {
       project: 'Project Alpha',
       extra: 'Foundation Work',
@@ -92,7 +91,6 @@ const TimeEntryTimeInOut = () => {
       notes: 'Continued work from previous day'
     };
 
-    // Apply the previous day data to current form
     setSelectedProject(previousDayData.project);
     setSelectedExtra(previousDayData.extra);
     setSelectedCostCode(previousDayData.costCode);
@@ -117,7 +115,6 @@ const TimeEntryTimeInOut = () => {
   };
 
   const copyPreviousWeek = () => {
-    // Simulate copying data from previous week (same day)
     const previousWeekData = {
       project: 'Project Beta',
       extra: 'Structural Work',
@@ -137,7 +134,6 @@ const TimeEntryTimeInOut = () => {
       notes: 'Weekly routine work pattern'
     };
 
-    // Apply the previous week data to current form
     setSelectedProject(previousWeekData.project);
     setSelectedExtra(previousWeekData.extra);
     setSelectedCostCode(previousWeekData.costCode);
@@ -162,8 +158,8 @@ const TimeEntryTimeInOut = () => {
   };
 
   const getRowBackgroundClass = (index: number) => {
-    if (index === 0) return 'bg-white dark:bg-slate-900';
-    return index % 2 === 1 ? 'bg-slate-50/80 dark:bg-slate-800/50' : 'bg-blue-50/50 dark:bg-blue-900/20';
+    if (index === 0) return 'bg-card';
+    return index % 2 === 1 ? 'bg-muted/50' : 'bg-accent/20';
   };
 
   return (
@@ -171,8 +167,8 @@ const TimeEntryTimeInOut = () => {
       {/* Compact Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Time In/Out</h1>
-          <p className="text-sm text-slate-600 dark:text-slate-400">Track your start and end times</p>
+          <h1 className="text-2xl font-bold text-foreground">Time In/Out</h1>
+          <p className="text-sm text-muted-foreground">Track your start and end times</p>
         </div>
         
         <div className="flex items-center gap-2">
@@ -194,7 +190,7 @@ const TimeEntryTimeInOut = () => {
             </ContextMenuContent>
           </ContextMenu>
           
-          <Button onClick={addRow} size="sm" className="h-9 px-3 gap-2 bg-blue-600 hover:bg-blue-700">
+          <Button onClick={addRow} size="sm" className="h-9 px-3 gap-2 bg-primary hover:bg-primary/90">
             <Plus className="h-4 w-4" />
             Add Entry
           </Button>
@@ -202,14 +198,14 @@ const TimeEntryTimeInOut = () => {
       </div>
 
       {/* Wider Card Layout */}
-      <Card className="border-slate-200 dark:border-slate-700 shadow-sm">
+      <Card className="border shadow-sm">
         <Tabs defaultValue="time-in-out" className="w-full">
-          <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+          <div className="border-b bg-muted/30">
             <TabsList className="h-12 w-full bg-transparent p-0 rounded-none">
               <TabsTrigger 
                 value="enter-hours" 
                 asChild 
-                className="flex-1 h-12 rounded-none border-b-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-800 font-medium gap-2"
+                className="flex-1 h-12 rounded-none border-b-2 border-transparent hover:bg-muted/50 font-medium gap-2"
               >
                 <Link to="/time-entry/standard" className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
@@ -218,7 +214,7 @@ const TimeEntryTimeInOut = () => {
               </TabsTrigger>
               <TabsTrigger 
                 value="time-in-out" 
-                className="flex-1 h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 font-medium gap-2"
+                className="flex-1 h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-card font-medium gap-2"
               >
                 <Timer className="h-4 w-4" />
                 Time In/Out
@@ -228,16 +224,16 @@ const TimeEntryTimeInOut = () => {
           
           <TabsContent value="time-in-out" className="mt-0 p-2 space-y-4">
             {entries.map((entry, index) => (
-              <div key={entry.id} className={`rounded-lg border border-slate-200 dark:border-slate-700 p-2 space-y-4 ${getRowBackgroundClass(index)}`}>
+              <div key={entry.id} className={`rounded-lg border p-2 space-y-4 ${getRowBackgroundClass(index)}`}>
                 {/* Entry Header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                      <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                      <span className="text-xs font-semibold text-primary">
                         {index + 1}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-slate-900 dark:text-white">
+                    <h3 className="font-semibold text-foreground">
                       Entry {index + 1}
                     </h3>
                   </div>
@@ -247,7 +243,7 @@ const TimeEntryTimeInOut = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => deleteRow(entry.id)}
-                      className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -255,7 +251,7 @@ const TimeEntryTimeInOut = () => {
                 </div>
 
                 {/* Project Details Section */}
-                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
+                <div className="bg-muted/30 rounded-lg p-2 border">
                   <ProjectDetailsRow 
                     selectedProject={selectedProject} 
                     setSelectedProject={setSelectedProject} 
@@ -277,7 +273,7 @@ const TimeEntryTimeInOut = () => {
                 </div>
 
                 {/* Time In/Out Section - Reduced padding */}
-                <div className="bg-white dark:bg-slate-900 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
+                <div className="bg-card rounded-lg p-2 border">
                   <TimeInOutRow 
                     timeInHour={timeInHour} 
                     setTimeInHour={setTimeInHour} 
@@ -308,7 +304,7 @@ const TimeEntryTimeInOut = () => {
                 </div>
 
                 {/* Notes Section - Individual per entry */}
-                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
+                <div className="bg-muted/30 rounded-lg p-2 border">
                   <NotesAndSubmitRow 
                     notes={entry.notes} 
                     setNotes={(notes) => updateEntryNotes(entry.id, notes)} 
