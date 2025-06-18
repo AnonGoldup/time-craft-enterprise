@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
@@ -19,11 +20,9 @@ interface BreadcrumbProps {
 const routeToBreadcrumb: Record<string, BreadcrumbItem[]> = {
   '/': [],
   '/time-entry/standard': [
-    { label: 'Timesheets', href: '/time-entry/standard' },
     { label: 'Standard Hours', current: true }
   ],
   '/time-entry/time-in-out': [
-    { label: 'Timesheets', href: '/time-entry/standard' },
     { label: 'Time In/Out', current: true }
   ],
   '/log': [
@@ -107,3 +106,4 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className }) => {
     </nav>
   );
 };
+
