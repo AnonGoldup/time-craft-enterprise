@@ -44,9 +44,9 @@ const Login = () => {
       }}
     >
       {/* Dark overlay for better contrast */}
-      <div className="absolute inset-0 bg-black/60"></div>
+      <div className="absolute inset-0 bg-black/50"></div>
       
-      <Card className="w-full max-w-md relative z-10 bg-white/95 backdrop-blur-sm border-gray-200 shadow-2xl">
+      <Card className="w-full max-w-md relative z-10 bg-white/85 backdrop-blur-md border-gray-200/50 shadow-2xl">
         <CardHeader className="space-y-4 text-center">
           <div className="mx-auto w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
             <Clock className="h-8 w-8 text-white" />
@@ -67,7 +67,7 @@ const Login = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="border-gray-300 focus:border-orange-500 focus:ring-orange-500/20"
+                className="border-gray-300 focus:border-orange-500 focus:ring-orange-500/20 bg-white/90"
                 placeholder="john.doe@company.com"
                 disabled={loading}
               />
@@ -80,7 +80,7 @@ const Login = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="border-gray-300 focus:border-orange-500 focus:ring-orange-500/20"
+                className="border-gray-300 focus:border-orange-500 focus:ring-orange-500/20 bg-white/90"
                 placeholder="Enter your password"
                 disabled={loading}
               />
@@ -105,7 +105,7 @@ const Login = () => {
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+          <div className="mt-6 p-4 bg-orange-50/80 border border-orange-200/60 rounded-lg backdrop-blur-sm">
             <div className="flex items-start gap-3">
               <AlertCircle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
               <div className="text-sm">
