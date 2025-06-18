@@ -9,56 +9,56 @@ const Reports = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-foreground">
             Reports
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-muted-foreground mt-1">
             View and analyze your time tracking data.
           </p>
         </div>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
           <Download className="h-4 w-4" />
           Export Report
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="bg-card border-border enhanced-card">
+          <CardHeader className="bg-primary rounded-t-xl">
+            <CardTitle className="flex items-center gap-2 text-primary-foreground">
               <BarChart3 className="h-5 w-5" />
               Time Summary
             </CardTitle>
-            <CardDescription>Weekly overview</CardDescription>
+            <CardDescription className="text-primary-foreground/90">Weekly overview</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">42.5h</div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">This week</p>
+            <div className="text-2xl font-bold text-foreground">42.5h</div>
+            <p className="text-sm text-muted-foreground">This week</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="bg-card border-border enhanced-card">
+          <CardHeader className="bg-primary rounded-t-xl">
+            <CardTitle className="flex items-center gap-2 text-primary-foreground">
               <FileText className="h-5 w-5" />
               Projects
             </CardTitle>
-            <CardDescription>Active projects</CardDescription>
+            <CardDescription className="text-primary-foreground/90">Active projects</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8</div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">In progress</p>
+            <div className="text-2xl font-bold text-foreground">8</div>
+            <p className="text-sm text-muted-foreground">In progress</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Efficiency</CardTitle>
-            <CardDescription>This month</CardDescription>
+        <Card className="bg-card border-border enhanced-card">
+          <CardHeader className="bg-primary rounded-t-xl">
+            <CardTitle className="text-primary-foreground">Efficiency</CardTitle>
+            <CardDescription className="text-primary-foreground/90">This month</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">94%</div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">+2% from last month</p>
+            <div className="text-2xl font-bold text-foreground">94%</div>
+            <p className="text-sm text-muted-foreground">+2% from last month</p>
           </CardContent>
         </Card>
       </div>
