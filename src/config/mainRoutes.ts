@@ -1,4 +1,3 @@
-
 import { UserRole } from '@/contexts/AuthContext';
 import type { RouteConfig } from './types';
 
@@ -18,7 +17,7 @@ import Calendar from '@/pages/Calendar';
 import Documents from '@/pages/Documents';
 import CompanySettings from '@/pages/CompanySettings';
 import ExportPayrollData from '@/pages/ExportPayrollData';
-import { Navigate } from 'react-router-dom';
+import { RedirectToStandardTimeEntry } from '@/components/RedirectToStandardTimeEntry';
 
 export const mainRoutes: RouteConfig[] = [
   {
@@ -28,7 +27,7 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: '/time-entry',
-    component: () => <Navigate to="/time-entry/standard" replace />,
+    component: RedirectToStandardTimeEntry,
     requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {
