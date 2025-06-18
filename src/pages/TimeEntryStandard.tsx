@@ -7,8 +7,7 @@ import { Input } from '@/components/ui/input';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
 import { MoreVertical, Plus, Trash2, Clock, Calendar, Building2, Timer, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import ProjectDetailsRow from '@/components/TimeEntry/ProjectDetailsRow';
-import NotesAndSubmitRow from '@/components/TimeEntry/NotesAndSubmitRow';
+import MultiDatePicker from '@/components/TimeEntry/MultiDatePicker';
 
 const TimeEntryStandard = () => {
   const [selectedProject, setSelectedProject] = useState('');
@@ -200,11 +199,10 @@ const TimeEntryStandard = () => {
                         <Calendar className="h-3 w-3 text-red-500" />
                         Date
                       </div>
-                      <Input 
-                        type="date" 
-                        value={selectedDate} 
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        className="h-9 border-slate-300 dark:border-slate-600 text-sm" 
+                      <MultiDatePicker
+                        selectedDates={selectedDates}
+                        onDatesChange={setSelectedDates}
+                        className="w-full"
                       />
                     </div>
 
