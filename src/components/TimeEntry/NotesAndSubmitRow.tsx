@@ -1,12 +1,12 @@
 
 import React from 'react';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Send } from 'lucide-react';
 
 interface NotesAndSubmitRowProps {
   notes: string;
   setNotes: (value: string) => void;
-  totalHours?: number;
   showTotalHours?: boolean;
   timeInHour?: string;
   timeInMinute?: string;
@@ -25,7 +25,6 @@ interface NotesAndSubmitRowProps {
 const NotesAndSubmitRow: React.FC<NotesAndSubmitRowProps> = ({
   notes,
   setNotes,
-  totalHours,
   showTotalHours = false,
   timeInHour,
   timeInMinute,
@@ -40,76 +39,82 @@ const NotesAndSubmitRow: React.FC<NotesAndSubmitRowProps> = ({
   breakOutMinute,
   breakOutPeriod
 }) => {
-  const convertTo24Hour = (hour: string, minute: string, period: string) => {
-    if (!hour || !minute) return null;
-    let h = parseInt(hour);
-    const m = parseInt(minute);
-    
-    if (period === 'PM' && h !== 12) h += 12;
-    if (period === 'AM' && h === 12) h = 0;
-    
-    return h * 60 + m; // Return minutes from midnight
-  };
-
   const calculateTotalHours = () => {
-    if (showTotalHours && timeInHour && timeInMinute && timeInPeriod && timeOutHour && timeOutMinute && timeOutPeriod) {
-      const timeInMinutes = convertTo24Hour(timeInHour, timeInMinute, timeInPeriod);
-      const timeOutMinutes = convertTo24Hour(timeOutHour, timeOutMinute, timeOutPeriod);
-      
-      if (timeInMinutes !== null && timeOutMinutes !== null) {
-        let workMinutes = timeOutMinutes - timeInMinutes;
-        
-        // Calculate break time if provided
-        if (breakInHour && breakInMinute && breakInPeriod && breakOutHour && breakOutMinute && breakOutPeriod) {
-          const breakInMinutes = convertTo24Hour(breakInHour, breakInMinute, breakInPeriod);
-          const breakOutMinutes = convertTo24Hour(breakOutHour, breakOutMinute, breakOutPeriod);
-          
-          if (breakInMinutes !== null && breakOutMinutes !== null) {
-            const breakDuration = breakOutMinutes - breakInMinutes;
-            workMinutes -= breakDuration;
-          }
-        }
-        
-        return Math.max(0, workMinutes / 60); // Convert to hours
-      }
+    if (!timeInHour || !timeOutHour || !timeInMinute || !timeOutMinute || !timeInPeriod || !timeOutPeriod) {
+      return '0.00';
     }
-    
-    return totalHours || 0;
-  };
 
-  const calculatedHours = calculateTotalHours();
+    // Convert to 24-hour format
+    let startHour = parseInt(timeInHour);
+    if (timeInPeriod === 'PM' && startHour !== 12) startHour += 12;
+    if (timeInPeriod === 'AM' && startHour === 12) startHour = 0;
+
+    let endHour = parseInt(timeOutHour);
+    if (timeOutPeriod === 'PM' && endHour !== 12) endHour += 12;
+    if (timeOutPeriod === 'AM' && endHour === 12) endHour = 0;
+
+    const startTime = startHour + parseInt(timeInMinute) / 60;
+    const endTime = endHour + parseInt(timeOutMinute) / 60;
+
+    let totalHours = endTime - startTime;
+
+    // Calculate break time if provided
+    if (breakInHour && breakOutHour && breakInMinute && breakOutMinute && breakInPeriod && breakOutPeriod) {
+      let breakStartHour = parseInt(breakInHour);
+      if (breakInPeriod === 'PM' && breakStartHour !== 12) breakStartHour += 12;
+      if (breakInPeriod === 'AM' && breakStartHour === 12) breakStartHour = 0;
+
+      let breakEndHour = parseInt(breakOutHour);
+      if (breakOutPeriod === 'PM' && breakEndHour !== 12) breakEndHour += 12;
+      if (breakOutPeriod === 'AM' && breakEndHour === 12) breakEndHour = 0;
+
+      const breakStartTime = breakStartHour + parseInt(breakInMinute) / 60;
+      const breakEndTime = breakEndHour + parseInt(breakOutMinute) / 60;
+      const breakDuration = breakEndTime - breakStartTime;
+
+      totalHours -= breakDuration;
+    }
+
+    return Math.max(0, totalHours).toFixed(2);
+  };
 
   return (
-    <div className="flex items-center gap-4 flex-wrap">
-      {/* Total Hours Display - only for Time In/Out */}
-      {showTotalHours && (
-        <>
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded px-4 py-2">
-            <span className="text-sm font-medium text-blue-800 dark:text-blue-300">
-              Total Hours: {calculatedHours.toFixed(1)}
-            </span>
-          </div>
-          <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
-        </>
-      )}
-
-      <div className="flex items-center gap-2 flex-1">
-        <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[45px]">Notes:</span>
-        <Input
-          placeholder={showTotalHours ? "Add any notes here..." : "Add any notes or details about the work performed..."}
+    <div className="space-y-4">
+      {/* Notes Section */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          Notes
+        </label>
+        <Textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          className={`${showTotalHours ? 'flex-1 max-w-md' : 'flex-1 max-w-2xl'} border-slate-300 dark:border-slate-600`}
+          placeholder="Add any notes about this time entry..."
+          className="min-h-[80px] resize-y border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+          rows={3}
         />
       </div>
 
-      <Button variant="outline" className="border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 px-6">
-        Save Draft
-      </Button>
-
-      <Button className="bg-emerald-600 hover:bg-emerald-700 text-white px-8">
-        Submit
-      </Button>
+      {/* Total Hours and Submit Section */}
+      <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-700">
+        {showTotalHours && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              Total Hours:
+            </span>
+            <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+              {calculateTotalHours()}
+            </span>
+          </div>
+        )}
+        
+        <Button 
+          type="submit" 
+          className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+        >
+          <Send className="h-4 w-4" />
+          Submit Entry
+        </Button>
+      </div>
     </div>
   );
 };
