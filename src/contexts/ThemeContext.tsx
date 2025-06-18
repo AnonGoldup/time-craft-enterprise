@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface ColorTheme {
@@ -51,23 +50,23 @@ const colorThemes: ColorTheme[] = [
   },
   {
     id: 'belize-hole',
-    name: 'BELIZE HOLE',
+    name: 'BLUE SKY',
     colors: {
-      primary: '221 83% 53%',
+      primary: '218 41% 43%', // #53628c buttons
       primaryForeground: '0 0% 98%',
-      secondary: '210 40% 95%',
-      secondaryForeground: '222.2 84% 4.9%',
-      accent: '210 40% 90%',
-      accentForeground: '222.2 84% 4.9%',
-      background: '0 0% 100%',
-      foreground: '222.2 84% 4.9%',
-      card: '0 0% 100%',
-      cardForeground: '222.2 84% 4.9%',
-      border: '214.3 31.8% 91.4%',
-      input: '214.3 31.8% 91.4%',
-      ring: '221 83% 53%',
-      muted: '210 40% 95%',
-      mutedForeground: '215.4 16.3% 46.9%'
+      secondary: '0 0% 90%', // #e6e6e6 form background
+      secondaryForeground: '230 66% 34%', // #253464 text color
+      accent: '221 32% 56%', // #7383b0 accent
+      accentForeground: '0 0% 100%',
+      background: '0 0% 100%', // #ffffff background
+      foreground: '230 66% 34%', // #253464 text color
+      card: '0 0% 100%', // #ffffff
+      cardForeground: '230 66% 34%', // #253464 text color
+      border: '0 0% 90%', // #e6e6e6
+      input: '0 0% 90%', // #e6e6e6 form background
+      ring: '218 41% 43%', // #53628c buttons
+      muted: '0 0% 90%', // #e6e6e6
+      mutedForeground: '230 66% 34%' // #253464 text color
     }
   },
   {
@@ -198,8 +197,8 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
         root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #1f2124 0%, #fa8029 100%)');
         break;
       case 'belize-hole':
-        root.style.setProperty('--theme-primary-rgb', '52, 152, 219');
-        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #2980b9 0%, #3498db 100%)');
+        root.style.setProperty('--theme-primary-rgb', '83, 98, 140');
+        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #53628c 0%, #7383b0 100%)');
         break;
       case 'dark-emerald':
         root.style.setProperty('--theme-primary-rgb', '46, 204, 113');
@@ -241,4 +240,3 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
     </ThemeContext.Provider>
   );
 };
-
