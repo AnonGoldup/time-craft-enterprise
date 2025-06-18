@@ -1,4 +1,3 @@
-
 import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, History, FolderOpen, Download } from 'lucide-react';
 import type { MenuItem } from './types';
 
@@ -59,7 +58,7 @@ export const projectManagementModule: MenuItem[] = [
     label: 'Daily Reporting',
     icon: ClipboardList,
     path: '/daily-reporting',
-    roles: ['admin']
+    roles: ['employee', 'admin']
   }
 ];
 
