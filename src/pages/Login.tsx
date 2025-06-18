@@ -62,12 +62,22 @@ const Login = () => {
             <CardTitle className="text-3xl font-bold text-white">
               Welcome Back
             </CardTitle>
-            <p className="text-orange-300 font-medium text-lg">AltaPro Timesheet</p>
-            <p className="text-white/70 text-sm">Sign in to your account to continue</p>
+            <div className="relative">
+              <p className="text-orange-300 font-medium text-lg">AltaPro Timesheet</p>
+              {/* Decorative orange line */}
+              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-transparent via-orange-400 to-transparent"></div>
+              {/* Additional decorative elements */}
+              <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-orange-500/60"></div>
+            </div>
+            <p className="text-white/70 text-sm pt-2">Sign in to your account to continue</p>
           </div>
         </CardHeader>
         
         <CardContent className="space-y-6">
+          {/* Add subtle decorative corner elements */}
+          <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-orange-400/30 rounded-tr-lg"></div>
+          <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-orange-400/30 rounded-bl-lg"></div>
+          
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-white/90 font-medium">Email Address</Label>
