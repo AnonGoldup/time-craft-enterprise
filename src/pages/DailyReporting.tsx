@@ -13,6 +13,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Search, Plus, FileText, Users, Clock, Pen } from 'lucide-react';
+import jsPDF from 'jspdf';
 
 interface DailyReport {
   drNo: number;
@@ -52,6 +53,27 @@ const DailyReporting: React.FC = () => {
 
   const handleEditReport = (drNo: number) => {
     navigate(`/daily-reporting/edit/${drNo}`);
+  };
+
+  const handleDownloadPDF = (report: DailyReport) => {
+    const doc = new jsPDF();
+    
+    // Add header
+    doc.setFontSize(20);
+    doc.text('Daily Report', 20, 30);
+    
+    // Add report details
+    doc.setFontSize(12);
+    doc.text(`DR No: ${report.drNo}`, 20, 50);
+    doc.text(`Date: ${report.date}`, 20, 60);
+    doc.text(`Foreman: ${report.foreman}`, 20, 70);
+    doc.text(`Total Workers: ${report.totalWorkers}`, 20, 80);
+    doc.text(`Total Hours Lost: ${report.totalHoursLost}`, 20, 90);
+    doc.text(`Total Hours: ${report.totalHours}`, 20, 100);
+    doc.text(`Submitted By: ${report.submittedBy}`, 20, 110);
+    
+    // Save the PDF
+    doc.save(`DailyReport_${report.drNo}_${report.date.replace(/\//g, '-')}.pdf`);
   };
 
   return (
@@ -229,7 +251,13 @@ const DailyReporting: React.FC = () => {
                       <Button variant="outline" size="sm" className="h-6 w-6 p-0">
                         📝
                       </Button>
-                      <Button variant="outline" size="sm" className="h-6 w-6 p-0">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="h-6 w-6 p-0"
+                        onClick={() => handleDownloadPDF(report)}
+                        title="Download PDF"
+                      >
                         🖨️
                       </Button>
                       <Button variant="outline" size="sm" className="h-6 w-6 p-0">
