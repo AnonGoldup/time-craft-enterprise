@@ -10,6 +10,21 @@ import { Link } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import MultiDatePicker from '@/components/TimeEntry/MultiDatePicker';
 
+interface BreakTime {
+  id: string;
+  breakInHour: string;
+  breakInMinute: string;
+  breakInPeriod: string;
+  breakOutHour: string;
+  breakOutMinute: string;
+  breakOutPeriod: string;
+}
+
+interface TimeEntry {
+  id: number;
+  breaks: BreakTime[];
+}
+
 const TimeEntryTimeInOut = () => {
   const [selectedProject, setSelectedProject] = useState('');
   const [selectedExtra, setSelectedExtra] = useState('');
@@ -24,14 +39,23 @@ const TimeEntryTimeInOut = () => {
   const [timeOutHour, setTimeOutHour] = useState('');
   const [timeOutMinute, setTimeOutMinute] = useState('');
   const [timeOutPeriod, setTimeOutPeriod] = useState('AM');
-  const [breakInHour, setBreakInHour] = useState('');
-  const [breakInMinute, setBreakInMinute] = useState('');
-  const [breakInPeriod, setBreakInPeriod] = useState('AM');
-  const [breakOutHour, setBreakOutHour] = useState('');
-  const [breakOutMinute, setBreakOutMinute] = useState('');
-  const [breakOutPeriod, setBreakOutPeriod] = useState('AM');
   const [notes, setNotes] = useState('');
-  const [entries, setEntries] = useState([{ id: 1 }]);
+  const [entries, setEntries] = useState<TimeEntry[]>([
+    { 
+      id: 1, 
+      breaks: [
+        {
+          id: '1',
+          breakInHour: '',
+          breakInMinute: '00',
+          breakInPeriod: 'AM',
+          breakOutHour: '',
+          breakOutMinute: '00',
+          breakOutPeriod: 'AM'
+        }
+      ]
+    }
+  ]);
 
   const setQuickTime = (startHour: string, startPeriod: string, endHour: string, endPeriod: string) => {
     setTimeInHour(startHour);
@@ -40,22 +64,71 @@ const TimeEntryTimeInOut = () => {
     setTimeOutHour(endHour);
     setTimeOutMinute('00');
     setTimeOutPeriod(endPeriod);
-    setBreakInHour('12');
-    setBreakInMinute('00');
-    setBreakInPeriod('PM');
-    setBreakOutHour('12');
-    setBreakOutMinute('30');
-    setBreakOutPeriod('PM');
   };
 
   const addRow = () => {
-    setEntries([...entries, { id: entries.length + 1 }]);
+    const newEntry: TimeEntry = {
+      id: entries.length + 1,
+      breaks: [
+        {
+          id: '1',
+          breakInHour: '',
+          breakInMinute: '00',
+          breakInPeriod: 'AM',
+          breakOutHour: '',
+          breakOutMinute: '00',
+          breakOutPeriod: 'AM'
+        }
+      ]
+    };
+    setEntries([...entries, newEntry]);
   };
 
   const deleteRow = (id: number) => {
     if (entries.length > 1) {
       setEntries(entries.filter(entry => entry.id !== id));
     }
+  };
+
+  const addBreak = (entryId: number) => {
+    setEntries(entries.map(entry => {
+      if (entry.id === entryId) {
+        const newBreak: BreakTime = {
+          id: Date.now().toString(),
+          breakInHour: '',
+          breakInMinute: '00',
+          breakInPeriod: 'AM',
+          breakOutHour: '',
+          breakOutMinute: '00',
+          breakOutPeriod: 'AM'
+        };
+        return { ...entry, breaks: [...entry.breaks, newBreak] };
+      }
+      return entry;
+    }));
+  };
+
+  const removeBreak = (entryId: number, breakId: string) => {
+    setEntries(entries.map(entry => {
+      if (entry.id === entryId && entry.breaks.length > 1) {
+        return { ...entry, breaks: entry.breaks.filter(breakTime => breakTime.id !== breakId) };
+      }
+      return entry;
+    }));
+  };
+
+  const updateBreak = (entryId: number, breakId: string, field: keyof Omit<BreakTime, 'id'>, value: string) => {
+    setEntries(entries.map(entry => {
+      if (entry.id === entryId) {
+        return {
+          ...entry,
+          breaks: entry.breaks.map(breakTime =>
+            breakTime.id === breakId ? { ...breakTime, [field]: value } : breakTime
+          )
+        };
+      }
+      return entry;
+    }));
   };
 
   const copyPreviousDay = () => {
@@ -68,6 +141,123 @@ const TimeEntryTimeInOut = () => {
 
   const hours = Array.from({length: 12}, (_, i) => i + 1);
   const minutes = ['00', '15', '30', '45'];
+
+  const renderBreakRow = (
+    entryId: number,
+    breakData: BreakTime,
+    showDelete: boolean = false
+  ) => (
+    <div key={breakData.id} className="flex items-center gap-2">
+      <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[45px]">Break:</span>
+      <div className="flex items-center gap-1">
+        <Select 
+          value={breakData.breakInHour} 
+          onValueChange={(value) => updateBreak(entryId, breakData.id, 'breakInHour', value)}
+        >
+          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+            <SelectValue placeholder="--" />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            {hours.map(hour => (
+              <SelectItem key={hour} value={hour.toString()}>{hour}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <span>:</span>
+        <Select 
+          value={breakData.breakInMinute} 
+          onValueChange={(value) => updateBreak(entryId, breakData.id, 'breakInMinute', value)}
+        >
+          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+            <SelectValue placeholder="--" />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            {minutes.map(minute => (
+              <SelectItem key={minute} value={minute}>{minute}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select 
+          value={breakData.breakInPeriod} 
+          onValueChange={(value) => updateBreak(entryId, breakData.id, 'breakInPeriod', value)}
+        >
+          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            <SelectItem value="AM">AM</SelectItem>
+            <SelectItem value="PM">PM</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <span className="text-slate-400">-</span>
+
+      <div className="flex items-center gap-1">
+        <Select 
+          value={breakData.breakOutHour} 
+          onValueChange={(value) => updateBreak(entryId, breakData.id, 'breakOutHour', value)}
+        >
+          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+            <SelectValue placeholder="--" />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            {hours.map(hour => (
+              <SelectItem key={hour} value={hour.toString()}>{hour}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <span>:</span>
+        <Select 
+          value={breakData.breakOutMinute} 
+          onValueChange={(value) => updateBreak(entryId, breakData.id, 'breakOutMinute', value)}
+        >
+          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+            <SelectValue placeholder="--" />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            {minutes.map(minute => (
+              <SelectItem key={minute} value={minute}>{minute}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select 
+          value={breakData.breakOutPeriod} 
+          onValueChange={(value) => updateBreak(entryId, breakData.id, 'breakOutPeriod', value)}
+        >
+          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            <SelectItem value="AM">AM</SelectItem>
+            <SelectItem value="PM">PM</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {showDelete ? (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => removeBreak(entryId, breakData.id)}
+          className="h-8 w-8 p-0 border-slate-300 dark:border-slate-600 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+          title="Remove break"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      ) : (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => addBreak(entryId)}
+          className="h-8 w-8 p-0 border-slate-300 dark:border-slate-600"
+          title="Add another break"
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+      )}
+    </div>
+  );
 
   return (
     <div className="unity-fade-in max-w-6xl mx-auto space-y-6">
@@ -248,7 +438,8 @@ const TimeEntryTimeInOut = () => {
                 </div>
 
                 {/* Streamlined Time Entry */}
-                <div className="bg-white dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                <div className="bg-white dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-700 space-y-4">
+                  {/* Start and End Time Row */}
                   <div className="flex items-center gap-4 flex-wrap">
                     {/* Start Time */}
                     <div className="flex items-center gap-2">
@@ -326,80 +517,6 @@ const TimeEntryTimeInOut = () => {
                       </div>
                     </div>
 
-                    <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
-
-                    {/* Break Time */}
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-slate-600 dark:text-slate-400">Break:</span>
-                      <div className="flex items-center gap-1">
-                        <Select value={breakInHour} onValueChange={setBreakInHour}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            {hours.map(hour => (
-                              <SelectItem key={hour} value={hour.toString()}>{hour}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <span>:</span>
-                        <Select value={breakInMinute} onValueChange={setBreakInMinute}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            {minutes.map(minute => (
-                              <SelectItem key={minute} value={minute}>{minute}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Select value={breakInPeriod} onValueChange={setBreakInPeriod}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            <SelectItem value="AM">AM</SelectItem>
-                            <SelectItem value="PM">PM</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <span className="text-slate-400">-</span>
-                      <div className="flex items-center gap-1">
-                        <Select value={breakOutHour} onValueChange={setBreakOutHour}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            {hours.map(hour => (
-                              <SelectItem key={hour} value={hour.toString()}>{hour}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <span>:</span>
-                        <Select value={breakOutMinute} onValueChange={setBreakOutMinute}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            {minutes.map(minute => (
-                              <SelectItem key={minute} value={minute}>{minute}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Select value={breakOutPeriod} onValueChange={setBreakOutPeriod}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            <SelectItem value="AM">AM</SelectItem>
-                            <SelectItem value="PM">PM</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
-
                     {/* Quick Fill Buttons */}
                     <div className="flex items-center gap-2 ml-auto">
                       <span className="text-xs text-slate-500">Quick:</span>
@@ -436,6 +553,13 @@ const TimeEntryTimeInOut = () => {
                         9-5
                       </Button>
                     </div>
+                  </div>
+
+                  {/* Break Times Section */}
+                  <div className="space-y-3 border-t border-slate-200 dark:border-slate-700 pt-4">
+                    {entry.breaks.map((breakTime, breakIndex) => (
+                      renderBreakRow(entry.id, breakTime, breakIndex > 0)
+                    ))}
                   </div>
                 </div>
               </div>
