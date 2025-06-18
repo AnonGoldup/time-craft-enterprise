@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -20,8 +21,16 @@ const TimeEntryStandard = () => {
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [standardHours, setStandardHours] = useState('');
   const [overtimeHours, setOvertimeHours] = useState('');
-  const [notes, setNotes] = useState('');
-  const [entries, setEntries] = useState([{ id: 1 }]);
+  const [entries, setEntries] = useState([{
+    id: 1,
+    notes: ''
+  }]);
+
+  const updateEntryNotes = (entryId: number, notes: string) => {
+    setEntries(entries.map(entry => 
+      entry.id === entryId ? { ...entry, notes } : entry
+    ));
+  };
 
   const setQuickHours = (hours: number) => {
     setStandardHours(hours.toString());
@@ -30,7 +39,10 @@ const TimeEntryStandard = () => {
   const totalHours = (parseFloat(standardHours) || 0) + (parseFloat(overtimeHours) || 0);
 
   const addRow = () => {
-    setEntries([...entries, { id: entries.length + 1 }]);
+    setEntries([...entries, {
+      id: entries.length + 1,
+      notes: ''
+    }]);
   };
 
   const deleteRow = (id: number) => {
@@ -53,7 +65,7 @@ const TimeEntryStandard = () => {
   };
 
   return (
-    <div className="unity-fade-in max-w-6xl mx-auto space-y-6">
+    <div className="unity-fade-in max-w-full mx-auto space-y-6 px-4">
       {/* Compact Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -87,7 +99,7 @@ const TimeEntryStandard = () => {
         </div>
       </div>
 
-      {/* Compact Tabs */}
+      {/* Wider Card Layout */}
       <Card className="border-slate-200 dark:border-slate-700 shadow-sm">
         <Tabs defaultValue="enter-hours" className="w-full">
           <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
@@ -112,9 +124,9 @@ const TimeEntryStandard = () => {
             </TabsList>
           </div>
           
-          <TabsContent value="enter-hours" className="mt-0 p-4 space-y-4">
+          <TabsContent value="enter-hours" className="mt-0 p-2 space-y-4">
             {entries.map((entry, index) => (
-              <div key={entry.id} className={`rounded-lg border border-slate-200 dark:border-slate-700 p-4 space-y-4 ${getRowBackgroundClass(index)}`}>
+              <div key={entry.id} className={`rounded-lg border border-slate-200 dark:border-slate-700 p-2 space-y-4 ${getRowBackgroundClass(index)}`}>
                 {/* Entry Header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -140,8 +152,8 @@ const TimeEntryStandard = () => {
                   )}
                 </div>
 
-                {/* Streamlined Project Info Grid */}
-                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
+                {/* Project Details Section */}
+                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
                   <ProjectDetailsRow
                     selectedProject={selectedProject}
                     setSelectedProject={setSelectedProject}
@@ -162,7 +174,7 @@ const TimeEntryStandard = () => {
                   />
                 </div>
 
-                {/* Streamlined Hours Entry - Reduced padding and added placeholders */}
+                {/* Hours Entry Section - Reduced padding */}
                 <div className="bg-white dark:bg-slate-900 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
                   <div className="flex items-center gap-4 flex-wrap">
                     {/* Standard Hours */}
@@ -222,29 +234,17 @@ const TimeEntryStandard = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
 
-            {/* Compact Footer */}
-            <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
-              <div className="flex items-center gap-4 flex-wrap">
-                <Input
-                  placeholder="Notes: Add any details about the work performed..."
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="flex-1 h-9 border-slate-300 dark:border-slate-600 text-sm"
-                />
-                
-                <div className="flex items-center gap-2 ml-auto">
-                  <Button variant="outline" size="sm" className="h-9 px-4 border-slate-300 dark:border-slate-600">
-                    Save Draft
-                  </Button>
-                  <Button size="sm" className="h-9 px-6 bg-emerald-600 hover:bg-emerald-700">
-                    Submit
-                  </Button>
+                {/* Notes Section - Individual per entry */}
+                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
+                  <NotesAndSubmitRow 
+                    notes={entry.notes} 
+                    setNotes={(notes) => updateEntryNotes(entry.id, notes)} 
+                    showTotalHours={false}
+                  />
                 </div>
               </div>
-            </div>
+            ))}
           </TabsContent>
         </Tabs>
       </Card>
