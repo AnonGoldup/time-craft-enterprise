@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -31,12 +30,18 @@ const TimeEntryTimeInOut = () => {
   const [breakOutHour, setBreakOutHour] = useState('');
   const [breakOutMinute, setBreakOutMinute] = useState('');
   const [breakOutPeriod, setBreakOutPeriod] = useState('AM');
-  const [notes, setNotes] = useState('');
   const [entries, setEntries] = useState([{
-    id: 1
+    id: 1,
+    notes: ''
   }]);
 
   const { toast } = useToast();
+
+  const updateEntryNotes = (entryId: number, notes: string) => {
+    setEntries(entries.map(entry => 
+      entry.id === entryId ? { ...entry, notes } : entry
+    ));
+  };
 
   const setQuickTime = (startHour: string, startPeriod: string, endHour: string, endPeriod: string) => {
     setTimeInHour(startHour);
@@ -55,7 +60,8 @@ const TimeEntryTimeInOut = () => {
 
   const addRow = () => {
     setEntries([...entries, {
-      id: entries.length + 1
+      id: entries.length + 1,
+      notes: ''
     }]);
   };
 
@@ -102,7 +108,7 @@ const TimeEntryTimeInOut = () => {
     setBreakOutHour(previousDayData.breakOutHour);
     setBreakOutMinute(previousDayData.breakOutMinute);
     setBreakOutPeriod(previousDayData.breakOutPeriod);
-    setNotes(previousDayData.notes);
+    updateEntryNotes(entries[0].id, previousDayData.notes);
 
     toast({
       title: "Previous Day Copied",
@@ -147,7 +153,7 @@ const TimeEntryTimeInOut = () => {
     setBreakOutHour(previousWeekData.breakOutHour);
     setBreakOutMinute(previousWeekData.breakOutMinute);
     setBreakOutPeriod(previousWeekData.breakOutPeriod);
-    setNotes(previousWeekData.notes);
+    updateEntryNotes(entries[0].id, previousWeekData.notes);
 
     toast({
       title: "Previous Week Copied",
@@ -300,29 +306,29 @@ const TimeEntryTimeInOut = () => {
                     setQuickTime={setQuickTime} 
                   />
                 </div>
+
+                {/* Notes Section - Individual per entry */}
+                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
+                  <NotesAndSubmitRow 
+                    notes={entry.notes} 
+                    setNotes={(notes) => updateEntryNotes(entry.id, notes)} 
+                    showTotalHours={true} 
+                    timeInHour={timeInHour} 
+                    timeInMinute={timeInMinute} 
+                    timeInPeriod={timeInPeriod} 
+                    timeOutHour={timeOutHour} 
+                    timeOutMinute={timeOutMinute} 
+                    timeOutPeriod={timeOutPeriod} 
+                    breakInHour={breakInHour} 
+                    breakInMinute={breakInMinute} 
+                    breakInPeriod={breakInPeriod} 
+                    breakOutHour={breakOutHour} 
+                    breakOutMinute={breakOutMinute} 
+                    breakOutPeriod={breakOutPeriod} 
+                  />
+                </div>
               </div>
             ))}
-
-            {/* Compact Footer */}
-            <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
-              <NotesAndSubmitRow 
-                notes={notes} 
-                setNotes={setNotes} 
-                showTotalHours={true} 
-                timeInHour={timeInHour} 
-                timeInMinute={timeInMinute} 
-                timeInPeriod={timeInPeriod} 
-                timeOutHour={timeOutHour} 
-                timeOutMinute={timeOutMinute} 
-                timeOutPeriod={timeOutPeriod} 
-                breakInHour={breakInHour} 
-                breakInMinute={breakInMinute} 
-                breakInPeriod={breakInPeriod} 
-                breakOutHour={breakOutHour} 
-                breakOutMinute={breakOutMinute} 
-                breakOutPeriod={breakOutPeriod} 
-              />
-            </div>
           </TabsContent>
         </Tabs>
       </Card>

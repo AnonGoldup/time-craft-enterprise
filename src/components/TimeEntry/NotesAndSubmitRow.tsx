@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -78,6 +77,13 @@ const NotesAndSubmitRow: React.FC<NotesAndSubmitRowProps> = ({
     return Math.max(0, totalHours).toFixed(2);
   };
 
+  const calculateLineCount = () => {
+    if (!notes) return 1;
+    const lineBreaks = (notes.match(/\n/g) || []).length;
+    const wrappedLines = Math.ceil(notes.length / 50); // Approximate character wrap
+    return Math.max(1, Math.max(lineBreaks + 1, Math.min(wrappedLines, 4)));
+  };
+
   return (
     <div className="space-y-4">
       {/* Notes Section */}
@@ -89,8 +95,9 @@ const NotesAndSubmitRow: React.FC<NotesAndSubmitRowProps> = ({
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Add any notes about this time entry..."
-          className="min-h-[80px] resize-y border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
-          rows={3}
+          className="resize-y border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+          rows={calculateLineCount()}
+          style={{ minHeight: '40px' }}
         />
       </div>
 
