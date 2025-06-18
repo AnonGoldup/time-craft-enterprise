@@ -22,6 +22,7 @@ const routeLabels: Record<string, string> = {
   '/manager-approval': 'Manager Approval',
   '/daily-reporting': 'Daily Reporting',
   '/reports': 'Reports',
+  '/reports/hours-breakdown': 'Hours Breakdown',
   '/team': 'Team Management',
   '/projects': 'Projects',
   '/calendar': 'Calendar',
