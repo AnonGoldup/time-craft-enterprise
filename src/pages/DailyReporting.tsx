@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Plus, FileText, Users, Clock, Pen } from 'lucide-react';
+import { Search, Plus, FileText, Users, Clock, Pen, FilePdf } from 'lucide-react';
 import jsPDF from 'jspdf';
 
 interface DailyReport {
@@ -258,7 +259,7 @@ const DailyReporting: React.FC = () => {
                         onClick={() => handleDownloadPDF(report)}
                         title="Download PDF"
                       >
-                        🖨️
+                        <FilePdf className="h-3 w-3" />
                       </Button>
                       <Button variant="outline" size="sm" className="h-6 w-6 p-0">
                         📋
