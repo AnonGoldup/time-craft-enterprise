@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 export const CompanyDetailsSection: React.FC = () => {
   return (
     <Card className="bg-card border-border hover:shadow-md transition-all duration-200 enhanced-card">
-      <CardHeader className="enhanced-header rounded-t-xl">
+      <CardHeader className="bg-primary rounded-t-xl">
         <CardTitle className="text-primary-foreground">Company Information</CardTitle>
         <CardDescription className="text-primary-foreground/90">Basic company details and contact information</CardDescription>
       </CardHeader>
