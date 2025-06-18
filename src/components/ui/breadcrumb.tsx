@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
@@ -16,7 +14,7 @@ interface BreadcrumbProps {
   className?: string;
 }
 
-// Route to breadcrumb mapping
+// Route to breadcrumb mapping - only valid routes
 const routeToBreadcrumb: Record<string, BreadcrumbItem[]> = {
   '/': [],
   '/time-entry/standard': [
@@ -106,4 +104,3 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className }) => {
     </nav>
   );
 };
-

@@ -18,7 +18,7 @@ const timesheetModule = [
   {
     label: 'Timesheets',
     icon: Clock,
-    path: '/time-entry',
+    path: '/time-entry/standard',
     roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman'],
     submenu: [
       {
