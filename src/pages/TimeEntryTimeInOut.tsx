@@ -134,9 +134,9 @@ const TimeEntryTimeInOut = () => {
             </TabsList>
           </div>
           
-          <TabsContent value="time-in-out" className="mt-0 p-6 space-y-6">
+          <TabsContent value="time-in-out" className="mt-0 p-4 space-y-4">
             {entries.map((entry, index) => (
-              <div key={entry.id} className={`rounded-lg border border-slate-200 dark:border-slate-700 p-6 space-y-6 ${getRowBackgroundClass(index)}`}>
+              <div key={entry.id} className={`rounded-lg border border-slate-200 dark:border-slate-700 p-4 space-y-4 ${getRowBackgroundClass(index)}`}>
                 {/* Entry Header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -163,7 +163,7 @@ const TimeEntryTimeInOut = () => {
                 </div>
 
                 {/* Project Details Section */}
-                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
                   <ProjectDetailsRow 
                     selectedProject={selectedProject} 
                     setSelectedProject={setSelectedProject} 
@@ -184,8 +184,8 @@ const TimeEntryTimeInOut = () => {
                   />
                 </div>
 
-                {/* Time In/Out Section - Now Wider */}
-                <div className="bg-white dark:bg-slate-900 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
+                {/* Time In/Out Section - Reduced padding */}
+                <div className="bg-white dark:bg-slate-900 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
                   <TimeInOutRow 
                     timeInHour={timeInHour} 
                     setTimeInHour={setTimeInHour} 
@@ -218,7 +218,7 @@ const TimeEntryTimeInOut = () => {
             ))}
 
             {/* Compact Footer */}
-            <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+            <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
               <NotesAndSubmitRow 
                 notes={notes} 
                 setNotes={setNotes} 

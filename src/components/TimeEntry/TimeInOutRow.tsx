@@ -61,8 +61,8 @@ const TimeInOutRow: React.FC<TimeInOutRowProps> = ({
 }) => {
   return (
     <div className="space-y-4">
-      {/* Start/End and Break Times Row */}
-      <div className="flex items-start gap-8 flex-wrap">
+      {/* Start/End and Break Times Row - Reduced padding */}
+      <div className="flex items-start gap-8 flex-wrap p-2">
         {/* Start and End Times */}
         <div className="flex items-center gap-4">
           <TimeSelector

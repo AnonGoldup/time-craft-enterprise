@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -113,7 +112,7 @@ const TimeEntryStandard = () => {
             </TabsList>
           </div>
           
-          <TabsContent value="enter-hours" className="mt-0 p-6 space-y-6">
+          <TabsContent value="enter-hours" className="mt-0 p-4 space-y-4">
             {entries.map((entry, index) => (
               <div key={entry.id} className={`rounded-lg border border-slate-200 dark:border-slate-700 p-4 space-y-4 ${getRowBackgroundClass(index)}`}>
                 {/* Entry Header */}
@@ -142,7 +141,7 @@ const TimeEntryStandard = () => {
                 </div>
 
                 {/* Streamlined Project Info Grid */}
-                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
                   <ProjectDetailsRow
                     selectedProject={selectedProject}
                     setSelectedProject={setSelectedProject}
@@ -163,8 +162,8 @@ const TimeEntryStandard = () => {
                   />
                 </div>
 
-                {/* Streamlined Hours Entry */}
-                <div className="bg-white dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                {/* Streamlined Hours Entry - Reduced padding and added placeholders */}
+                <div className="bg-white dark:bg-slate-900 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
                   <div className="flex items-center gap-4 flex-wrap">
                     {/* Standard Hours */}
                     <div className="flex items-center gap-2">
@@ -175,6 +174,7 @@ const TimeEntryStandard = () => {
                           step="0.1"
                           value={standardHours}
                           onChange={(e) => setStandardHours(e.target.value)}
+                          placeholder="8.0"
                           className="w-16 h-9 text-center border-emerald-300 dark:border-emerald-700 focus:border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
                         />
                       </div>
@@ -190,6 +190,7 @@ const TimeEntryStandard = () => {
                           step="0.1"
                           value={overtimeHours}
                           onChange={(e) => setOvertimeHours(e.target.value)}
+                          placeholder="0.0"
                           className="w-16 h-9 text-center border-amber-300 dark:border-amber-700 focus:border-amber-500 bg-amber-50 dark:bg-amber-900/20"
                         />
                       </div>
@@ -225,7 +226,7 @@ const TimeEntryStandard = () => {
             ))}
 
             {/* Compact Footer */}
-            <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+            <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
               <div className="flex items-center gap-4 flex-wrap">
                 <Input
                   placeholder="Notes: Add any details about the work performed..."
