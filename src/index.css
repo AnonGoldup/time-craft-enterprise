@@ -54,13 +54,13 @@
     --altapro-light: 0 0% 98%;
     
     /* Sidebar Specific Colors - Unity + AltaPro Theme */
-    --sidebar-background: 16 25 50;
-    --sidebar-foreground: var(--altapro-light);
+    --sidebar-background: 0 0% 96%;
+    --sidebar-foreground: var(--altapro-dark);
     --sidebar-primary: var(--altapro-orange);
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 222 13% 20%;
-    --sidebar-accent-foreground: var(--altapro-light);
-    --sidebar-border: 222 13% 20%;
+    --sidebar-accent: 0 0% 92%;
+    --sidebar-accent-foreground: var(--altapro-dark);
+    --sidebar-border: 0 0% 90%;
     --sidebar-ring: var(--altapro-orange);
   }
 
@@ -95,13 +95,13 @@
     --ring: 25 95% 53%;
     
     /* Dark Sidebar Colors */
-    --sidebar-background: 16 25 50;
-    --sidebar-foreground: 0 0% 95%;
+    --sidebar-background: 0 0% 96%;
+    --sidebar-foreground: 222 13% 16%;
     --sidebar-primary: var(--altapro-orange);
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 222 13% 18%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 222 13% 18%;
+    --sidebar-accent: 0 0% 92%;
+    --sidebar-accent-foreground: 222 13% 16%;
+    --sidebar-border: 0 0% 90%;
     --sidebar-ring: var(--altapro-orange);
   }
 
@@ -136,13 +136,13 @@
     --ring: 25 95% 53%;
     
     /* Unity Dark Sidebar Colors */
-    --sidebar-background: 16 25 50;
-    --sidebar-foreground: 0 0% 96%;
+    --sidebar-background: 0 0% 96%;
+    --sidebar-foreground: 222 13% 16%;
     --sidebar-primary: 25 95% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 13% 16%;
-    --sidebar-accent-foreground: 0 0% 96%;
-    --sidebar-border: 222 13% 16%;
+    --sidebar-accent: 0 0% 92%;
+    --sidebar-accent-foreground: 222 13% 16%;
+    --sidebar-border: 0 0% 90%;
     --sidebar-ring: 25 95% 53%;
   }
 
@@ -178,13 +178,13 @@
     --ring: 142 71% 45%;
     
     /* Dark Emerald Sidebar Colors */
-    --sidebar-background: 220 13% 11%;
-    --sidebar-foreground: 0 0% 95%;
+    --sidebar-background: 0 0% 96%;
+    --sidebar-foreground: 222 13% 16%;
     --sidebar-primary: 142 71% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 13% 18%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 220 13% 20%;
+    --sidebar-accent: 0 0% 92%;
+    --sidebar-accent-foreground: 222 13% 16%;
+    --sidebar-border: 0 0% 90%;
     --sidebar-ring: 142 71% 45%;
   }
 }
@@ -224,8 +224,8 @@
   
   .enhanced-header {
     @apply transition-all duration-200;
-    background: linear-gradient(135deg, rgba(16, 25, 50, 1) 0%, hsl(var(--primary)) 100%);
-    color: white;
+    background: linear-gradient(135deg, #f4f4f4 0%, hsl(var(--primary)) 100%);
+    color: var(--altapro-dark);
   }
 
   /* Unity Dark Mode Enhancements */
