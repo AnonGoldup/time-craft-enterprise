@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Employee } from '../services/api';
 
@@ -85,7 +86,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           employeeId: 'JD001',
           email: 'john.doe@company.com',
           fullName: 'John Doe',
-          role: 'employee',
+          role: UserRole.EMPLOYEE,
           department: 'Electrical',
           isActive: true
         });
@@ -99,7 +100,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           employeeId: 'AD001',
           email: 'admin@company.com',
           fullName: 'Admin User',
-          role: 'admin',
+          role: UserRole.ADMIN,
           department: 'Administration',
           isActive: true
         });
