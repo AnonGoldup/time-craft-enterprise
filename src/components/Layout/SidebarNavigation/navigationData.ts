@@ -14,7 +14,7 @@ export const timesheetModule: MenuItem[] = [
   {
     label: 'Timesheets',
     icon: Clock,
-    path: '/time-entry',
+    path: '/time-entry/standard',
     roles: ['employee', 'admin'],
     submenu: [
       {

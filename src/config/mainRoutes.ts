@@ -5,7 +5,6 @@ import type { RouteConfig } from './types';
 // Main pages
 import Index from '@/pages/Index';
 import Log from '@/pages/Log';
-import TimeEntry from '@/pages/TimeEntry';
 import TimeEntryStandard from '@/pages/TimeEntryStandard';
 import TimeEntryTimeInOut from '@/pages/TimeEntryTimeInOut';
 import ManagerApproval from '@/pages/ManagerApproval';
@@ -29,11 +28,6 @@ export const mainRoutes: RouteConfig[] = [
   {
     path: '/log',
     component: Log,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
-  },
-  {
-    path: '/time-entry',
-    component: TimeEntry,
     requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {
