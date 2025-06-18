@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface ColorTheme {
@@ -71,21 +72,21 @@ const colorThemes: ColorTheme[] = [
     id: 'dark-emerald',
     name: 'DARK EMERALD',
     colors: {
-      primary: '142 71% 45%',
-      primaryForeground: '0 0% 98%',
-      secondary: '142 20% 90%',
-      secondaryForeground: '142 71% 15%',
-      accent: '142 30% 85%',
-      accentForeground: '142 71% 15%',
-      background: '0 0% 100%',
-      foreground: '142 71% 15%',
-      card: '0 0% 100%',
-      cardForeground: '142 71% 15%',
-      border: '142 20% 90%',
-      input: '142 20% 90%',
-      ring: '142 71% 45%',
-      muted: '142 20% 95%',
-      mutedForeground: '142 20% 40%'
+      primary: '142 71% 45%', // emerald green
+      primaryForeground: '0 0% 100%', // white
+      secondary: '220 13% 18%', // dark gray for secondary elements
+      secondaryForeground: '0 0% 95%', // light text
+      accent: '142 71% 45%', // emerald green
+      accentForeground: '0 0% 100%', // white
+      background: '222 13% 11%', // very dark background
+      foreground: '0 0% 95%', // light text
+      card: '220 13% 15%', // dark card background
+      cardForeground: '0 0% 95%', // light text
+      border: '220 13% 20%', // dark borders
+      input: '220 13% 18%', // dark input background
+      ring: '142 71% 45%', // emerald green focus ring
+      muted: '220 13% 18%', // muted dark background
+      mutedForeground: '0 0% 60%' // muted light text
     }
   },
   {
@@ -200,7 +201,16 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
         break;
       case 'dark-emerald':
         root.style.setProperty('--theme-primary-rgb', '46, 204, 113');
-        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)');
+        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #1c1c1e 0%, #2ecc71 100%)');
+        // Apply dark mode sidebar colors for Dark Emerald
+        root.style.setProperty('--sidebar-background', '220 13% 11%');
+        root.style.setProperty('--sidebar-foreground', '0 0% 95%');
+        root.style.setProperty('--sidebar-primary', '142 71% 45%');
+        root.style.setProperty('--sidebar-primary-foreground', '0 0% 100%');
+        root.style.setProperty('--sidebar-accent', '220 13% 18%');
+        root.style.setProperty('--sidebar-accent-foreground', '0 0% 95%');
+        root.style.setProperty('--sidebar-border', '220 13% 20%');
+        root.style.setProperty('--sidebar-ring', '142 71% 45%');
         break;
       case 'amethyst':
         root.style.setProperty('--theme-primary-rgb', '155, 89, 182');
