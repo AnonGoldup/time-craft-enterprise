@@ -168,52 +168,55 @@ const BreakTimeSelector: React.FC<BreakTimeSelectorProps> = ({
   );
 
   return (
-    <div className="flex flex-col gap-2">
-      {/* Main break row with + button */}
-      <div className="flex items-center gap-2">
-        {renderBreakRow(
-          {
-            breakInHour,
-            breakInMinute,
-            breakInPeriod,
-            breakOutHour,
-            breakOutMinute,
-            breakOutPeriod
-          },
-          (field, value) => {
-            switch (field) {
-              case 'breakInHour': setBreakInHour(value); break;
-              case 'breakInMinute': setBreakInMinute(value); break;
-              case 'breakInPeriod': setBreakInPeriod(value); break;
-              case 'breakOutHour': setBreakOutHour(value); break;
-              case 'breakOutMinute': setBreakOutMinute(value); break;
-              case 'breakOutPeriod': setBreakOutPeriod(value); break;
-            }
-          }
-        )}
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleAddBreak}
-          className="h-8 w-8 p-0 border-slate-300 dark:border-slate-600"
-          title="Add another break"
-        >
-          <Plus className="h-4 w-4" />
-        </Button>
-      </div>
-
-      {/* Additional break rows - inline with the start field alignment */}
-      {additionalBreaks.map((breakTime) => (
-        <div key={breakTime.id} className="flex items-center gap-2">
+    <div className="flex items-center gap-2">
+      {/* Breaks container - aligned to center of Start-End times */}
+      <div className="flex flex-col gap-2">
+        {/* Main break row with + button */}
+        <div className="flex items-center gap-2">
           {renderBreakRow(
-            breakTime,
-            (field, value) => updateAdditionalBreak(breakTime.id, field as keyof Omit<BreakTime, 'id'>, value),
-            true,
-            () => handleRemoveBreak(breakTime.id)
+            {
+              breakInHour,
+              breakInMinute,
+              breakInPeriod,
+              breakOutHour,
+              breakOutMinute,
+              breakOutPeriod
+            },
+            (field, value) => {
+              switch (field) {
+                case 'breakInHour': setBreakInHour(value); break;
+                case 'breakInMinute': setBreakInMinute(value); break;
+                case 'breakInPeriod': setBreakInPeriod(value); break;
+                case 'breakOutHour': setBreakOutHour(value); break;
+                case 'breakOutMinute': setBreakOutMinute(value); break;
+                case 'breakOutPeriod': setBreakOutPeriod(value); break;
+              }
+            }
           )}
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleAddBreak}
+            className="h-8 w-8 p-0 border-slate-300 dark:border-slate-600"
+            title="Add another break"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
         </div>
-      ))}
+
+        {/* Additional break rows - aligned with the first break */}
+        {additionalBreaks.map((breakTime) => (
+          <div key={breakTime.id} className="flex items-center gap-2">
+            {renderBreakRow(
+              breakTime,
+              (field, value) => updateAdditionalBreak(breakTime.id, field as keyof Omit<BreakTime, 'id'>, value),
+              true,
+              () => handleRemoveBreak(breakTime.id)
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

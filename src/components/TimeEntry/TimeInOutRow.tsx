@@ -61,9 +61,9 @@ const TimeInOutRow: React.FC<TimeInOutRowProps> = ({
 }) => {
   return (
     <div className="space-y-4">
-      {/* Start/End and Break Times Row - Reduced padding */}
-      <div className="flex items-start gap-8 flex-wrap p-2">
-        {/* Start and End Times */}
+      {/* Start/End and Break Times Row - Centered alignment */}
+      <div className="flex items-center gap-8 flex-wrap p-2">
+        {/* Start and End Times - Vertically centered with breaks */}
         <div className="flex items-center gap-4">
           <TimeSelector
             hour={timeInHour}
@@ -88,7 +88,7 @@ const TimeInOutRow: React.FC<TimeInOutRowProps> = ({
           />
         </div>
 
-        {/* Break Times */}
+        {/* Break Times - Will stay centered with Start-End */}
         <BreakTimeSelector
           breakInHour={breakInHour}
           setBreakInHour={setBreakInHour}
