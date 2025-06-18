@@ -1,13 +1,18 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Employee } from '../services/api';
+
+export enum UserRole {
+  EMPLOYEE = 'employee',
+  MANAGER = 'manager',
+  ADMIN = 'admin'
+}
 
 export interface User {
   userId: string;
   employeeId: string;
   email: string;
   fullName: string;
-  role: 'employee' | 'admin';
+  role: UserRole;
   department: string;
   isActive: boolean;
 }

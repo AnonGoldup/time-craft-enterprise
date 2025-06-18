@@ -23,6 +23,10 @@ const HoursBreakdown = () => {
     });
   };
 
+  const handleUnapprovedChange = (checked: boolean | "indeterminate") => {
+    setIncludeUnapproved(checked === true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -96,7 +100,7 @@ const HoursBreakdown = () => {
             <Checkbox
               id="includeUnapproved"
               checked={includeUnapproved}
-              onCheckedChange={setIncludeUnapproved}
+              onCheckedChange={handleUnapprovedChange}
             />
             <Label htmlFor="includeUnapproved" className="text-red-600 font-medium">
               Include Unapproved Time:
