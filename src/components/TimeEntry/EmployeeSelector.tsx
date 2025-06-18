@@ -58,9 +58,11 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        <Users className="h-4 w-4 text-blue-500" />
-        <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[70px]">Employee:</span>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-blue-500" />
+          <span className="text-sm text-slate-600 dark:text-slate-400">Employee</span>
+        </div>
         
         {setSelectedEmployees ? (
           // Multi-select mode

@@ -16,9 +16,11 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
   projects
 }) => {
   return (
-    <div className="flex items-center gap-2">
-      <Building2 className="h-4 w-4 text-blue-500" />
-      <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[60px]">Project:</span>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <Building2 className="h-4 w-4 text-blue-500" />
+        <span className="text-sm text-slate-600 dark:text-slate-400">Project</span>
+      </div>
       <Select value={selectedProject} onValueChange={setSelectedProject}>
         <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
           <SelectValue placeholder="Select project..." />

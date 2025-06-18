@@ -20,11 +20,13 @@ const CostCodeSelector: React.FC<CostCodeSelectorProps> = ({
   useCostCodeInput = false
 }) => {
   return (
-    <div className="flex items-center gap-2">
-      <div className="h-4 w-4 border-2 border-blue-500 rounded flex items-center justify-center">
-        <span className="text-blue-500 text-xs font-bold">C</span>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <div className="h-4 w-4 border-2 border-blue-500 rounded flex items-center justify-center">
+          <span className="text-blue-500 text-xs font-bold">C</span>
+        </div>
+        <span className="text-sm text-slate-600 dark:text-slate-400">Cost Code</span>
       </div>
-      <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[80px]">Cost Code:</span>
       {useCostCodeInput ? (
         <Input 
           placeholder="Select code..." 

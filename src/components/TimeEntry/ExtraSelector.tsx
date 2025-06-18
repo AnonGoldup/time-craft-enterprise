@@ -17,11 +17,13 @@ const ExtraSelector: React.FC<ExtraSelectorProps> = ({
   disabled
 }) => {
   return (
-    <div className="flex items-center gap-2">
-      <div className="h-4 w-4 border-2 border-green-500 rounded flex items-center justify-center">
-        <span className="text-green-500 text-xs font-bold">E</span>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <div className="h-4 w-4 border-2 border-green-500 rounded flex items-center justify-center">
+          <span className="text-green-500 text-xs font-bold">E</span>
+        </div>
+        <span className="text-sm text-slate-600 dark:text-slate-400">Extra</span>
       </div>
-      <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[40px]">Extra:</span>
       <Select value={selectedExtra} onValueChange={setSelectedExtra} disabled={disabled}>
         <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
           <SelectValue placeholder="Select extra..." />

@@ -54,14 +54,12 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-4 flex-wrap">
+      <div className="flex items-start gap-6 flex-wrap">
         <ProjectSelector
           selectedProject={selectedProject}
           setSelectedProject={handleProjectChange}
           projects={projects}
         />
-
-        <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
 
         <ExtraSelector
           selectedExtra={selectedExtra}
@@ -69,8 +67,6 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
           projectExtras={projectExtras}
           disabled={!selectedProject}
         />
-
-        <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
 
         <CostCodeSelector
           selectedCostCode={selectedCostCode}
@@ -80,8 +76,6 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
           useCostCodeInput={useCostCodeInput}
         />
 
-        <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
-
         <DateSelector
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
@@ -89,8 +83,6 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
           setSelectedDates={setSelectedDates}
           useMultiDateSelection={useMultiDateSelection}
         />
-
-        <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
 
         <EmployeeSelector
           selectedEmployee={selectedEmployee}

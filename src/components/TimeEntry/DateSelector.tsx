@@ -20,9 +20,11 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   useMultiDateSelection = false
 }) => {
   return (
-    <div className="flex items-center gap-2">
-      <Calendar className="h-4 w-4 text-blue-500" />
-      <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[40px]">Date:</span>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <Calendar className="h-4 w-4 text-blue-500" />
+        <span className="text-sm text-slate-600 dark:text-slate-400">Date</span>
+      </div>
       {useMultiDateSelection && setSelectedDates ? (
         <MultiDatePicker
           selectedDates={selectedDates}
