@@ -28,15 +28,9 @@ export const AppSidebar: React.FC = () => {
           </Button>
         </div>
       )}
-      {!isMobile && (
-        <div className="flex justify-end p-4 border-b border-sidebar-border">
-          <ThemeToggleUnity />
-        </div>
-      )}
       <AppSidebarHeader />
       <SidebarNavigation />
       <AppSidebarFooter />
     </Sidebar>
   );
 };
-
