@@ -1,14 +1,17 @@
 
 import React from 'react';
 import { SidebarHeader } from '@/components/ui/sidebar';
-import { Clock } from 'lucide-react';
 
 export const AppSidebarHeader: React.FC = () => {
   return (
     <SidebarHeader className="p-4 border-b border-sidebar-border bg-sidebar">
       <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-8 h-8 bg-primary rounded-lg">
-          <Clock className="h-5 w-5 text-primary-foreground" />
+        <div className="flex items-center justify-center w-8 h-8 rounded-lg overflow-hidden">
+          <img 
+            src="/lovable-uploads/fafab221-cf6d-41b5-bc79-9b71d4fa2cb0.png" 
+            alt="AltaPro Logo" 
+            className="w-full h-full object-cover"
+          />
         </div>
         <div>
           <h1 className="text-lg font-bold text-sidebar-foreground group-data-[collapsible=icon]:hidden">
