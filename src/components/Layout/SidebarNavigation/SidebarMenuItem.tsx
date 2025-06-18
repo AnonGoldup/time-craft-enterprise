@@ -3,6 +3,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { SidebarMenuButton, SidebarMenuItem as SidebarMenuItemUI, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ChevronDown } from 'lucide-react';
 import type { SidebarMenuItemProps } from './types';
 
 export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item }) => {
@@ -25,6 +26,7 @@ export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item }) => {
             >
               <item.icon className="h-4 w-4" aria-hidden="true" />
               <span>{item.label}</span>
+              <ChevronDown className="ml-auto h-4 w-4 transition-transform duration-200" />
             </SidebarMenuButton>
           </CollapsibleTrigger>
           <CollapsibleContent>
