@@ -9,7 +9,10 @@ export const navigationItems: MenuItem[] = [
     label: 'Dashboard',
     icon: Home,
     roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
-  },
+  }
+];
+
+export const timesheetModule: MenuItem[] = [
   {
     path: '/time-entry/standard',
     label: 'Timesheets',
@@ -25,10 +28,7 @@ export const navigationItems: MenuItem[] = [
         path: '/time-entry/time-in-out'
       }
     ]
-  }
-];
-
-export const timesheetModule: MenuItem[] = [
+  },
   {
     path: '/log',
     label: 'Time Log',
