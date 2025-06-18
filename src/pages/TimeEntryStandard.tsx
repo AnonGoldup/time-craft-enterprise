@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,7 +12,7 @@ import NotesAndSubmitRow from '@/components/TimeEntry/NotesAndSubmitRow';
 const TimeEntryStandard = () => {
   const [selectedProject, setSelectedProject] = useState('');
   const [selectedExtra, setSelectedExtra] = useState('');
-  the [selectedCostCode, setSelectedCostCode] = useState('');
+  const [selectedCostCode, setSelectedCostCode] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState('');
