@@ -1,9 +1,9 @@
 
 import { UserRole } from '@/contexts/AuthContext';
 import { Home, Clock, Calendar, FileText, Users, BarChart3, Settings, Building2, Download } from 'lucide-react';
-import type { NavigationItem } from './types';
+import type { MenuItem } from './types';
 
-export const navigationItems: NavigationItem[] = [
+export const navigationItems: MenuItem[] = [
   {
     path: '/',
     label: 'Dashboard',
@@ -36,7 +36,7 @@ export const navigationItems: NavigationItem[] = [
   }
 ];
 
-export const timesheetModule: NavigationItem[] = [
+export const timesheetModule: MenuItem[] = [
   {
     path: '/time-entry/standard',
     label: 'Standard Hours',
@@ -57,7 +57,7 @@ export const timesheetModule: NavigationItem[] = [
   }
 ];
 
-export const projectManagementModule: NavigationItem[] = [
+export const projectManagementModule: MenuItem[] = [
   {
     path: '/projects',
     label: 'Projects',
@@ -78,7 +78,7 @@ export const projectManagementModule: NavigationItem[] = [
   }
 ];
 
-export const administratorModule: NavigationItem[] = [
+export const administratorModule: MenuItem[] = [
   {
     path: '/reports',
     label: 'Reports',
