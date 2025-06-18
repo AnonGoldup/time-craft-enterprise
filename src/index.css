@@ -53,13 +53,13 @@
     --altapro-darker: 222 13% 14%;
     --altapro-light: 0 0% 98%;
     
-    /* Sidebar Specific Colors - Unity + AltaPro Theme */
-    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - correct HSL conversion */
-    --sidebar-foreground: var(--altapro-dark);
+    /* Sidebar Specific Colors - Light Grey Theme */
+    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - light grey */
+    --sidebar-foreground: 222 13% 16%; /* dark text on light background */
     --sidebar-primary: var(--altapro-orange);
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 92%;
-    --sidebar-accent-foreground: var(--altapro-dark);
+    --sidebar-accent-foreground: 222 13% 16%;
     --sidebar-border: 0 0% 90%;
     --sidebar-ring: var(--altapro-orange);
   }
@@ -94,9 +94,9 @@
     --input: 222 13% 20%;
     --ring: 25 95% 53%;
     
-    /* Dark Sidebar Colors */
-    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - correct HSL conversion */
-    --sidebar-foreground: 222 13% 16%;
+    /* Keep Sidebar Light Grey Even in Dark Mode */
+    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - force light grey */
+    --sidebar-foreground: 222 13% 16%; /* dark text on light sidebar */
     --sidebar-primary: var(--altapro-orange);
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 92%;
@@ -135,9 +135,9 @@
     --input: 222 13% 18%;
     --ring: 25 95% 53%;
     
-    /* Unity Dark Sidebar Colors */
-    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - correct HSL conversion */
-    --sidebar-foreground: 222 13% 16%;
+    /* Force Light Grey Sidebar in Unity Dark Mode */
+    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - always light grey */
+    --sidebar-foreground: 222 13% 16%; /* dark text on light sidebar */
     --sidebar-primary: 25 95% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 92%;
@@ -177,9 +177,9 @@
     --input: 220 13% 18%;
     --ring: 142 71% 45%;
     
-    /* Dark Emerald Sidebar Colors */
-    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - correct HSL conversion */
-    --sidebar-foreground: 222 13% 16%;
+    /* Force Light Grey Sidebar in Dark Emerald */
+    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - always light grey */
+    --sidebar-foreground: 222 13% 16%; /* dark text on light sidebar */
     --sidebar-primary: 142 71% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 92%;
