@@ -54,7 +54,7 @@
     --altapro-light: 0 0% 98%;
     
     /* Sidebar Specific Colors - Unity + AltaPro Theme */
-    --sidebar-background: var(--altapro-dark);
+    --sidebar-background: 16 25 50;
     --sidebar-foreground: var(--altapro-light);
     --sidebar-primary: var(--altapro-orange);
     --sidebar-primary-foreground: 0 0% 98%;
@@ -95,7 +95,7 @@
     --ring: 25 95% 53%;
     
     /* Dark Sidebar Colors */
-    --sidebar-background: var(--altapro-darker);
+    --sidebar-background: 16 25 50;
     --sidebar-foreground: 0 0% 95%;
     --sidebar-primary: var(--altapro-orange);
     --sidebar-primary-foreground: 0 0% 98%;
@@ -136,7 +136,7 @@
     --ring: 25 95% 53%;
     
     /* Unity Dark Sidebar Colors */
-    --sidebar-background: 222 13% 12%;
+    --sidebar-background: 16 25 50;
     --sidebar-foreground: 0 0% 96%;
     --sidebar-primary: 25 95% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -224,7 +224,7 @@
   
   .enhanced-header {
     @apply transition-all duration-200;
-    background: linear-gradient(135deg, hsl(var(--sidebar-background)) 0%, hsl(var(--primary)) 100%);
+    background: linear-gradient(135deg, rgba(16, 25, 50, 1) 0%, hsl(var(--primary)) 100%);
     color: white;
   }
 
@@ -253,4 +253,3 @@
 }
 
 /* ... keep existing code (Unity + AltaPro Sidebar Styles and remaining sections) */
-
