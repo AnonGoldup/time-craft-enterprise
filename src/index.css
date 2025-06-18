@@ -54,7 +54,7 @@
     --altapro-light: 0 0% 98%;
     
     /* Sidebar Specific Colors - Unity + AltaPro Theme */
-    --sidebar-background: 0 0% 96%; /* #f4f4f4 - correct HSL */
+    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - correct HSL conversion */
     --sidebar-foreground: var(--altapro-dark);
     --sidebar-primary: var(--altapro-orange);
     --sidebar-primary-foreground: 0 0% 98%;
@@ -95,7 +95,7 @@
     --ring: 25 95% 53%;
     
     /* Dark Sidebar Colors */
-    --sidebar-background: 0 0% 96%; /* #f4f4f4 - correct HSL */
+    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - correct HSL conversion */
     --sidebar-foreground: 222 13% 16%;
     --sidebar-primary: var(--altapro-orange);
     --sidebar-primary-foreground: 0 0% 98%;
@@ -136,7 +136,7 @@
     --ring: 25 95% 53%;
     
     /* Unity Dark Sidebar Colors */
-    --sidebar-background: 0 0% 96%; /* #f4f4f4 - correct HSL */
+    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - correct HSL conversion */
     --sidebar-foreground: 222 13% 16%;
     --sidebar-primary: 25 95% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -178,7 +178,7 @@
     --ring: 142 71% 45%;
     
     /* Dark Emerald Sidebar Colors */
-    --sidebar-background: 0 0% 96%; /* #f4f4f4 - correct HSL */
+    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - correct HSL conversion */
     --sidebar-foreground: 222 13% 16%;
     --sidebar-primary: 142 71% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
