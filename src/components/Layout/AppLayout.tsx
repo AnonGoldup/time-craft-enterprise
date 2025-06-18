@@ -17,9 +17,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         <AppSidebar />
         <SidebarInset>
           <TopBar />
-          <main className="flex-1 p-6 bg-background">
+          <main className="flex-1 p-8 bg-background">
             <div className="max-w-7xl mx-auto">
-              <div className="unity-fade-in">
+              <div className="unity-fade-in space-y-8">
                 {children}
               </div>
             </div>
