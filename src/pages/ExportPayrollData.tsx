@@ -50,16 +50,16 @@ const ExportPayrollData = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Download className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+        <Download className="h-8 w-8 text-primary" />
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Export / Lock Payroll Data</h1>
-          <p className="text-gray-600 dark:text-gray-400">Export payroll data and manage payroll locks</p>
+          <h1 className="text-3xl font-bold text-foreground">Export / Lock Payroll Data</h1>
+          <p className="text-muted-foreground">Export payroll data and manage payroll locks</p>
         </div>
       </div>
 
-      <Alert>
+      <Alert className="border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive">
         <AlertTriangle className="h-4 w-4" />
-        <AlertDescription className="text-red-600 font-medium">
+        <AlertDescription className="font-medium">
           WARNING! This Project's Payroll is Not Set as Live
         </AlertDescription>
       </Alert>
