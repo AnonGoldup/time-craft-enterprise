@@ -43,7 +43,7 @@ const TimeEntryTimeInOut = () => {
     setTimeInMinute('00');
     setTimeInPeriod(startPeriod);
     setTimeOutHour(endHour);
-    setTimeOutMinute('00');
+    setTimeOutMinute('30'); // Set to 30 minutes to account for break
     setTimeOutPeriod(endPeriod);
     setBreakInHour('12');
     setBreakInMinute('00');
