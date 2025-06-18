@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
-import { MoreVertical, Plus, Trash2, Clock, Calendar } from 'lucide-react';
+import { MoreVertical, Plus, Trash2, Clock, Calendar, Building2, Timer, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProjectDetailsRow from '@/components/TimeEntry/ProjectDetailsRow';
 import HoursEntryRow from '@/components/TimeEntry/HoursEntryRow';
@@ -53,161 +54,198 @@ const TimeEntryStandard = () => {
   };
 
   return (
-    <div className="unity-fade-in max-w-6xl mx-auto">
-      {/* Enhanced Header Section */}
-      <div className="mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Standard Hours Entry
-            </h1>
-            <p className="text-slate-600 dark:text-slate-400 text-base">
-              Enter your daily work hours and project details
-            </p>
-          </div>
+    <div className="unity-fade-in max-w-6xl mx-auto space-y-6">
+      {/* Compact Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Enter Hours</h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Log your daily work hours</p>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <ContextMenu>
+            <ContextMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-9 px-3">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </ContextMenuTrigger>
+            <ContextMenuContent className="w-48">
+              <ContextMenuItem onClick={copyPreviousDay} className="gap-2">
+                <Calendar className="h-4 w-4" />
+                Copy previous day
+              </ContextMenuItem>
+              <ContextMenuItem onClick={copyPreviousWeek} className="gap-2">
+                <Calendar className="h-4 w-4" />
+                Copy previous week
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
           
-          <div className="flex items-center gap-3">
-            <ContextMenu>
-              <ContextMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-10 px-4 gap-2 border-slate-300 dark:border-slate-600">
-                  <MoreVertical className="h-4 w-4" />
-                  <span className="hidden sm:inline">Actions</span>
-                </Button>
-              </ContextMenuTrigger>
-              <ContextMenuContent className="w-56">
-                <ContextMenuItem onClick={copyPreviousDay} className="gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Copy previous day
-                </ContextMenuItem>
-                <ContextMenuItem onClick={copyPreviousWeek} className="gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Copy previous week
-                </ContextMenuItem>
-              </ContextMenuContent>
-            </ContextMenu>
-            
-            <Button 
-              onClick={addRow} 
-              size="sm" 
-              className="h-10 px-4 gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
-            >
-              <Plus className="h-4 w-4" />
-              Add Entry
-            </Button>
-          </div>
+          <Button onClick={addRow} size="sm" className="h-9 px-3 gap-2 bg-blue-600 hover:bg-blue-700">
+            <Plus className="h-4 w-4" />
+            Add Entry
+          </Button>
         </div>
       </div>
 
-      {/* Enhanced Card Layout */}
-      <Card className="border-slate-200 dark:border-slate-700 shadow-lg bg-white dark:bg-slate-900">
-        <CardContent className="p-0">
-          <Tabs defaultValue="enter-hours" className="w-full">
-            {/* Enhanced Tab List */}
-            <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
-              <TabsList className="h-14 w-full bg-transparent p-0 rounded-none">
-                <TabsTrigger 
-                  value="enter-hours" 
-                  className="flex-1 h-14 rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 font-medium gap-2"
-                >
-                  <Clock className="h-4 w-4" />
-                  Enter Hours
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="time-in-out" 
-                  asChild 
-                  className="flex-1 h-14 rounded-none border-b-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-800 font-medium gap-2"
-                >
-                  <Link to="/time-entry/time-in-out" className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    Time In/Out
-                  </Link>
-                </TabsTrigger>
-              </TabsList>
-            </div>
-            
-            <TabsContent value="enter-hours" className="mt-0 p-8 space-y-8">
-              {entries.map((entry, index) => (
-                <div 
-                  key={entry.id} 
-                  className={`rounded-lg border border-slate-200 dark:border-slate-700 p-6 space-y-6 transition-all hover:shadow-md ${getRowBackgroundClass(index)}`}
-                >
-                  {/* Enhanced Entry Header */}
-                  <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                          {index + 1}
-                        </span>
-                      </div>
-                      <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                        Time Entry {index + 1}
-                      </h3>
+      {/* Compact Tabs */}
+      <Card className="border-slate-200 dark:border-slate-700 shadow-sm">
+        <Tabs defaultValue="enter-hours" className="w-full">
+          <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+            <TabsList className="h-12 w-full bg-transparent p-0 rounded-none">
+              <TabsTrigger 
+                value="enter-hours" 
+                className="flex-1 h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 font-medium gap-2"
+              >
+                <Clock className="h-4 w-4" />
+                Enter Hours
+              </TabsTrigger>
+              <TabsTrigger 
+                value="time-in-out" 
+                asChild 
+                className="flex-1 h-12 rounded-none border-b-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-800 font-medium gap-2"
+              >
+                <Link to="/time-entry/time-in-out" className="flex items-center gap-2">
+                  <Timer className="h-4 w-4" />
+                  Time In/Out
+                </Link>
+              </TabsTrigger>
+            </TabsList>
+          </div>
+          
+          <TabsContent value="enter-hours" className="mt-0 p-6 space-y-6">
+            {entries.map((entry, index) => (
+              <div key={entry.id} className={`rounded-lg border border-slate-200 dark:border-slate-700 p-4 space-y-4 ${getRowBackgroundClass(index)}`}>
+                {/* Entry Header */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                      <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+                        {index + 1}
+                      </span>
                     </div>
-                    
-                    {entries.length > 1 && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => deleteRow(entry.id)}
-                        className="h-9 w-9 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 border-red-200 dark:border-red-800"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
+                    <h3 className="font-semibold text-slate-900 dark:text-white">
+                      Entry {index + 1}
+                    </h3>
                   </div>
+                  
+                  {entries.length > 1 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => deleteRow(entry.id)}
+                      className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
 
-                  {/* Project Details Section */}
-                  <div className="space-y-4">
-                    <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                      Project Details
-                    </h4>
-                    <ProjectDetailsRow
-                      selectedProject={selectedProject}
-                      setSelectedProject={setSelectedProject}
-                      selectedExtra={selectedExtra}
-                      setSelectedExtra={setSelectedExtra}
-                      selectedCostCode={selectedCostCode}
-                      setSelectedCostCode={setSelectedCostCode}
-                      selectedDate={selectedDate}
-                      setSelectedDate={setSelectedDate}
-                      selectedDates={selectedDates}
-                      setSelectedDates={setSelectedDates}
-                      selectedEmployee={selectedEmployee}
-                      setSelectedEmployee={setSelectedEmployee}
-                      selectedEmployees={selectedEmployees}
-                      setSelectedEmployees={setSelectedEmployees}
-                      useCostCodeInput={false}
-                      useMultiDateSelection={true}
-                    />
-                  </div>
+                {/* Streamlined Project Info Grid */}
+                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                  <ProjectDetailsRow
+                    selectedProject={selectedProject}
+                    setSelectedProject={setSelectedProject}
+                    selectedExtra={selectedExtra}
+                    setSelectedExtra={setSelectedExtra}
+                    selectedCostCode={selectedCostCode}
+                    setSelectedCostCode={setSelectedCostCode}
+                    selectedDate={selectedDate}
+                    setSelectedDate={setSelectedDate}
+                    selectedDates={selectedDates}
+                    setSelectedDates={setSelectedDates}
+                    selectedEmployee={selectedEmployee}
+                    setSelectedEmployee={setSelectedEmployee}
+                    selectedEmployees={selectedEmployees}
+                    setSelectedEmployees={setSelectedEmployees}
+                    useCostCodeInput={false}
+                    useMultiDateSelection={true}
+                  />
+                </div>
 
-                  {/* Hours Entry Section */}
-                  <div className="space-y-4">
-                    <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                      Hours & Time
-                    </h4>
-                    <HoursEntryRow
-                      standardHours={standardHours}
-                      setStandardHours={setStandardHours}
-                      overtimeHours={overtimeHours}
-                      setOvertimeHours={setOvertimeHours}
-                      totalHours={totalHours}
-                      setQuickHours={setQuickHours}
-                    />
+                {/* Streamlined Hours Entry */}
+                <div className="bg-white dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                  <div className="flex items-center gap-4 flex-wrap">
+                    {/* Standard Hours */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400 min-w-[24px]">ST:</span>
+                      <div className="relative">
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={standardHours}
+                          onChange={(e) => setStandardHours(e.target.value)}
+                          className="w-16 h-9 text-center border-emerald-300 dark:border-emerald-700 focus:border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
+                        />
+                      </div>
+                      <span className="text-xs text-slate-500">hrs</span>
+                    </div>
+
+                    {/* Overtime Hours */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-amber-700 dark:text-amber-400 min-w-[24px]">OT:</span>
+                      <div className="relative">
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={overtimeHours}
+                          onChange={(e) => setOvertimeHours(e.target.value)}
+                          className="w-16 h-9 text-center border-amber-300 dark:border-amber-700 focus:border-amber-500 bg-amber-50 dark:bg-amber-900/20"
+                        />
+                      </div>
+                      <span className="text-xs text-slate-500">hrs</span>
+                    </div>
+
+                    {/* Total */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-blue-700 dark:text-blue-400">Total:</span>
+                      <div className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-800">
+                        <span className="text-sm font-semibold text-blue-800 dark:text-blue-300">{totalHours.toFixed(1)}h</span>
+                      </div>
+                    </div>
+
+                    {/* Quick Fill Buttons */}
+                    <div className="flex items-center gap-2 ml-auto">
+                      <span className="text-xs text-slate-500">Quick:</span>
+                      {[4, 6, 8, 10, 12].map((hours) => (
+                        <Button
+                          key={hours}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setQuickHours(hours)}
+                          className="h-7 px-2 text-xs border-slate-300 dark:border-slate-600 hover:bg-blue-50 hover:border-blue-300"
+                        >
+                          {hours}h
+                        </Button>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              ))}
-
-              {/* Enhanced Notes and Submit Section */}
-              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 p-6">
-                <NotesAndSubmitRow
-                  notes={notes}
-                  setNotes={setNotes}
-                />
               </div>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
+            ))}
+
+            {/* Compact Footer */}
+            <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+              <div className="flex items-center gap-4 flex-wrap">
+                <Input
+                  placeholder="Notes: Add any details about the work performed..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="flex-1 h-9 border-slate-300 dark:border-slate-600 text-sm"
+                />
+                
+                <div className="flex items-center gap-2 ml-auto">
+                  <Button variant="outline" size="sm" className="h-9 px-4 border-slate-300 dark:border-slate-600">
+                    Save Draft
+                  </Button>
+                  <Button size="sm" className="h-9 px-6 bg-emerald-600 hover:bg-emerald-700">
+                    Submit
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </Card>
     </div>
   );

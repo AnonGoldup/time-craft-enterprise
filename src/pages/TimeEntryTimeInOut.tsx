@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
-import { MoreVertical, Plus, Trash2 } from 'lucide-react';
+import { MoreVertical, Plus, Trash2, Clock, Calendar, Timer } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProjectDetailsRow from '@/components/TimeEntry/ProjectDetailsRow';
 import TimeInOutRow from '@/components/TimeEntry/TimeInOutRow';
@@ -71,66 +71,100 @@ const TimeEntryTimeInOut = () => {
   };
 
   const getRowBackgroundClass = (index: number) => {
-    if (index === 0) return '';
-    return index % 2 === 1 ? 'bg-slate-50/50 dark:bg-slate-800/30' : 'bg-blue-50/30 dark:bg-blue-900/10';
+    if (index === 0) return 'bg-white dark:bg-slate-900';
+    return index % 2 === 1 ? 'bg-slate-50/80 dark:bg-slate-800/50' : 'bg-blue-50/50 dark:bg-blue-900/20';
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="unity-fade-in max-w-6xl mx-auto space-y-6">
+      {/* Compact Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-            Time Entry
-          </h1>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Time In/Out</h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Track your start and end times</p>
         </div>
+        
         <div className="flex items-center gap-2">
           <ContextMenu>
             <ContextMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+              <Button variant="outline" size="sm" className="h-9 px-3">
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </ContextMenuTrigger>
             <ContextMenuContent className="w-48">
-              <ContextMenuItem onClick={copyPreviousDay}>
+              <ContextMenuItem onClick={copyPreviousDay} className="gap-2">
+                <Calendar className="h-4 w-4" />
                 Copy previous day
               </ContextMenuItem>
-              <ContextMenuItem onClick={copyPreviousWeek}>
+              <ContextMenuItem onClick={copyPreviousWeek} className="gap-2">
+                <Calendar className="h-4 w-4" />
                 Copy previous week
               </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
-          <Button onClick={addRow} size="sm" className="h-8 gap-1">
+          
+          <Button onClick={addRow} size="sm" className="h-9 px-3 gap-2 bg-blue-600 hover:bg-blue-700">
             <Plus className="h-4 w-4" />
-            Add Row
+            Add Entry
           </Button>
         </div>
       </div>
 
-      <Card className="border-slate-200 dark:border-slate-700">
-        <CardContent className="p-6 bg-inherit">
-          <Tabs defaultValue="time-in-out" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-800">
-              <TabsTrigger value="enter-hours" asChild>
-                <Link to="/time-entry/standard" className="text-slate-600 dark:text-slate-400">Enter Hours</Link>
+      {/* Compact Tabs */}
+      <Card className="border-slate-200 dark:border-slate-700 shadow-sm">
+        <Tabs defaultValue="time-in-out" className="w-full">
+          <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+            <TabsList className="h-12 w-full bg-transparent p-0 rounded-none">
+              <TabsTrigger 
+                value="enter-hours" 
+                asChild 
+                className="flex-1 h-12 rounded-none border-b-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-800 font-medium gap-2"
+              >
+                <Link to="/time-entry/standard" className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Enter Hours
+                </Link>
               </TabsTrigger>
-              <TabsTrigger value="time-in-out" className="text-blue-600 dark:text-blue-400">Time In/Out</TabsTrigger>
+              <TabsTrigger 
+                value="time-in-out" 
+                className="flex-1 h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 font-medium gap-2"
+              >
+                <Timer className="h-4 w-4" />
+                Time In/Out
+              </TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="time-in-out" className="space-y-6 mt-6">
-              {entries.map((entry, index) => (
-                <div key={entry.id} className={`space-y-6 pb-6 border-b border-slate-200 dark:border-slate-700 last:border-b-0 rounded-lg p-4 ${getRowBackgroundClass(index)}`}>
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-medium text-slate-900 dark:text-white">
+          </div>
+          
+          <TabsContent value="time-in-out" className="mt-0 p-6 space-y-6">
+            {entries.map((entry, index) => (
+              <div key={entry.id} className={`rounded-lg border border-slate-200 dark:border-slate-700 p-4 space-y-4 ${getRowBackgroundClass(index)}`}>
+                {/* Entry Header */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                      <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+                        {index + 1}
+                      </span>
+                    </div>
+                    <h3 className="font-semibold text-slate-900 dark:text-white">
                       Entry {index + 1}
                     </h3>
-                    {entries.length > 1 && (
-                      <Button variant="outline" size="sm" onClick={() => deleteRow(entry.id)} className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
                   </div>
+                  
+                  {entries.length > 1 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => deleteRow(entry.id)}
+                      className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
 
-                  {/* Project Details Row with multi-select employees and multi-date selection, using dropdown for cost codes */}
+                {/* Project Details Section */}
+                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
                   <ProjectDetailsRow 
                     selectedProject={selectedProject} 
                     setSelectedProject={setSelectedProject} 
@@ -149,8 +183,10 @@ const TimeEntryTimeInOut = () => {
                     useCostCodeInput={false}
                     useMultiDateSelection={true}
                   />
+                </div>
 
-                  {/* Time In/Out Row */}
+                {/* Time In/Out Section */}
+                <div className="bg-white dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
                   <TimeInOutRow 
                     timeInHour={timeInHour} 
                     setTimeInHour={setTimeInHour} 
@@ -179,9 +215,11 @@ const TimeEntryTimeInOut = () => {
                     setQuickTime={setQuickTime} 
                   />
                 </div>
-              ))}
+              </div>
+            ))}
 
-              {/* Notes and Submit Row */}
+            {/* Compact Footer */}
+            <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
               <NotesAndSubmitRow 
                 notes={notes} 
                 setNotes={setNotes} 
@@ -199,9 +237,9 @@ const TimeEntryTimeInOut = () => {
                 breakOutMinute={breakOutMinute} 
                 breakOutPeriod={breakOutPeriod} 
               />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
+            </div>
+          </TabsContent>
+        </Tabs>
       </Card>
     </div>
   );
