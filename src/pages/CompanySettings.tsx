@@ -88,8 +88,8 @@ const CompanySettings = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Company Settings</h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
+        <h1 className="text-3xl font-bold text-foreground">Company Settings</h1>
+        <p className="mt-2 text-muted-foreground">
           Manage your company configuration, users, and system settings
         </p>
       </div>
@@ -100,10 +100,10 @@ const CompanySettings = () => {
             <Card className={`h-full transition-all duration-200 hover:shadow-lg hover:scale-105 ${card.color}`}>
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-white dark:bg-slate-700 shadow-sm">
-                    <card.icon className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+                  <div className="p-2 rounded-lg bg-background shadow-sm">
+                    <card.icon className="h-6 w-6 text-foreground" />
                   </div>
-                  <CardTitle className="text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <CardTitle className="text-lg group-hover:text-primary transition-colors">
                     {card.title}
                   </CardTitle>
                 </div>
