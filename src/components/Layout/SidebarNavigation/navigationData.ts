@@ -1,141 +1,100 @@
 
-import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, History, FolderOpen, UserCheck, Download, Timer } from 'lucide-react';
-import type { MenuItem } from './types';
+import { UserRole } from '@/contexts/AuthContext';
+import { Home, Clock, Calendar, FileText, Users, BarChart3, Settings, Building2, Download } from 'lucide-react';
+import type { NavigationItem } from './types';
 
-export const navigationItems: MenuItem[] = [
+export const navigationItems: NavigationItem[] = [
   {
+    path: '/',
     label: 'Dashboard',
     icon: Home,
-    path: '/',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
-  }
-];
-
-export const timesheetModule: MenuItem[] = [
+    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+  },
   {
+    path: '/time-entry/standard',
     label: 'Timesheets',
     icon: Clock,
-    path: '/time-entry/standard',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman'],
-    submenu: [
-      {
-        label: 'Standard Hours',
-        path: '/time-entry/standard'
-      },
-      {
-        label: 'Time In/Out',
-        path: '/time-entry/time-in-out'
-      }
-    ]
+    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {
-    label: 'Time Log',
-    icon: History,
     path: '/log',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
+    label: 'Time Log',
+    icon: FileText,
+    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {
+    path: '/calendar',
     label: 'Calendar',
     icon: Calendar,
-    path: '/calendar',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
+    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {
+    path: '/documents',
     label: 'Documents',
     icon: FileText,
-    path: '/documents',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
-  },
-  {
-    label: 'User Settings',
-    icon: Settings,
-    path: '/settings',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
+    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   }
 ];
 
-export const projectManagementModule: MenuItem[] = [
+export const timesheetModule: NavigationItem[] = [
   {
-    label: 'Projects',
-    icon: FolderOpen,
-    path: '/projects',
-    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
+    path: '/time-entry/standard',
+    label: 'Standard Hours',
+    icon: Clock,
+    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {
-    label: 'Daily Reporting',
-    icon: ClipboardList,
-    path: '/daily-reporting',
-    roles: ['manager', 'admin', 'supervisor', 'foreman']
-  }
-];
-
-export const administratorModule: MenuItem[] = [
+    path: '/time-entry/time-in-out',
+    label: 'Time In/Out',
+    icon: Clock,
+    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+  },
   {
-    label: 'Manager Approval',
-    icon: CheckCircle,
     path: '/manager-approval',
-    roles: ['manager', 'admin', 'supervisor', 'foreman']
+    label: 'Manager Approval',
+    icon: Users,
+    roles: [UserRole.MANAGER, UserRole.ADMIN]
+  }
+];
+
+export const projectManagementModule: NavigationItem[] = [
+  {
+    path: '/projects',
+    label: 'Projects',
+    icon: Building2,
+    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {
+    path: '/daily-reporting',
+    label: 'Daily Reporting',
+    icon: FileText,
+    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+  },
+  {
+    path: '/team',
     label: 'Team Management',
     icon: Users,
-    path: '/team',
-    roles: ['manager', 'admin', 'supervisor', 'foreman']
-  },
+    roles: [UserRole.MANAGER, UserRole.ADMIN]
+  }
+];
+
+export const administratorModule: NavigationItem[] = [
   {
-    label: 'User Log',
-    icon: UserCheck,
-    path: '/user-log',
-    roles: ['admin']
-  },
-  {
-    label: 'Export Payroll',
-    icon: Download,
-    path: '/export-payroll',
-    roles: ['admin']
-  },
-  {
-    label: 'Time Settings',
-    icon: Timer,
-    path: '/time-settings',
-    roles: ['admin']
-  },
-  {
+    path: '/reports',
     label: 'Reports',
     icon: BarChart3,
-    path: '/reports',
-    roles: ['manager', 'admin', 'supervisor', 'foreman'],
-    submenu: [
-      {
-        label: 'Hours Breakdown-Excel',
-        path: '/reports/hours-breakdown'
-      },
-      {
-        label: 'Labor Percent Complete',
-        path: '/reports/labor-percent'
-      },
-      {
-        label: 'Audit Labor Hours',
-        path: '/reports/audit-labor'
-      },
-      {
-        label: 'Weekly Timesheets (Total)',
-        path: '/reports/weekly-total'
-      },
-      {
-        label: 'Weekly Timesheets (by Project)',
-        path: '/reports/weekly-project'
-      },
-      {
-        label: 'Employee Timecards',
-        path: '/reports/employee-timecards'
-      }
-    ]
+    roles: [UserRole.MANAGER, UserRole.ADMIN]
   },
   {
+    path: '/company-settings',
     label: 'Company Settings',
     icon: Settings,
-    path: '/company-settings',
-    roles: ['admin']
+    roles: [UserRole.ADMIN]
+  },
+  {
+    path: '/export-payroll',
+    label: 'Export Payroll',
+    icon: Download,
+    roles: [UserRole.ADMIN]
   }
 ];

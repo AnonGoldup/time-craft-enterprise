@@ -18,11 +18,17 @@ import Calendar from '@/pages/Calendar';
 import Documents from '@/pages/Documents';
 import CompanySettings from '@/pages/CompanySettings';
 import ExportPayrollData from '@/pages/ExportPayrollData';
+import { Navigate } from 'react-router-dom';
 
 export const mainRoutes: RouteConfig[] = [
   {
     path: '/',
     component: Index,
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+  },
+  {
+    path: '/time-entry',
+    component: () => <Navigate to="/time-entry/standard" replace />,
     requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {
