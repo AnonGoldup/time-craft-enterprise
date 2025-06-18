@@ -40,14 +40,14 @@ const Login = () => {
     <div 
       className="min-h-screen flex items-center justify-center p-4 relative"
       style={{
-        backgroundImage: `url('/lovable-uploads/d61b0987-224f-4d63-8c28-c97f6128419e.png')`,
+        backgroundImage: `url('/lovable-uploads/3b70c40d-0d98-4719-ae02-28487d83bac3.png')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
       }}
     >
       {/* Enhanced dark overlay for better contrast */}
-      <div className="absolute inset-0 bg-black/50"></div>
+      <div className="absolute inset-0 bg-black/60"></div>
       
       <Card className="w-full max-w-md relative z-10 bg-white/10 backdrop-blur-2xl border-white/10 shadow-2xl">
         <CardHeader className="space-y-6 text-center pb-8">
