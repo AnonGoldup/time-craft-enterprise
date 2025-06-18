@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu } from '@/components/ui/sidebar';
 import { SidebarMenuItem } from './SidebarMenuItem';
 import type { SidebarNavigationGroupProps } from './types';
 
@@ -8,19 +7,15 @@ export const SidebarNavigationGroup: React.FC<SidebarNavigationGroupProps> = ({ 
   if (items.length === 0) return null;
 
   return (
-    <SidebarGroup>
+    <div className="space-y-2">
       {title && (
-        <SidebarGroupLabel className="text-sidebar-foreground/60 text-xs font-medium px-2">
+        <div className="text-xs font-medium text-sidebar-foreground/40 px-3 py-1">
           {title}
-        </SidebarGroupLabel>
+        </div>
       )}
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.path} item={item} />
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+      {items.map((item) => (
+        <SidebarMenuItem key={item.path} item={item} />
+      ))}
+    </div>
   );
 };

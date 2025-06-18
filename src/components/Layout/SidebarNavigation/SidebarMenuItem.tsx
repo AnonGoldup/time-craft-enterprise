@@ -1,68 +1,78 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { SidebarMenuButton, SidebarMenuItem as SidebarMenuItemUI, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from '@/components/ui/sidebar';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { cn } from '@/lib/utils';
 import type { SidebarMenuItemProps } from './types';
 
 export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item }) => {
   const location = useLocation();
+  const [isExpanded, setIsExpanded] = useState(true);
   
   const isActive = location.pathname === item.path;
   const hasSubmenu = item.submenu && item.submenu.length > 0;
   const isSubmenuItemActive = hasSubmenu && item.submenu.some(sub => location.pathname === sub.path);
+  
+  const toggleExpanded = () => {
+    setIsExpanded(prev => !prev);
+  };
 
   if (hasSubmenu) {
     return (
-      <Collapsible key={item.path} defaultOpen={isActive || isSubmenuItemActive}>
-        <SidebarMenuItemUI>
-          <CollapsibleTrigger asChild>
-            <SidebarMenuButton
-              isActive={isActive || isSubmenuItemActive}
-              className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:bg-sidebar-accent focus:text-sidebar-accent-foreground focus:outline-none focus:ring-2 focus:ring-sidebar-ring transition-colors"
-              aria-expanded={isActive || isSubmenuItemActive}
-              aria-label={`${item.label} menu`}
-            >
-              <item.icon className="h-4 w-4" aria-hidden="true" />
-              <span>{item.label}</span>
-              <ChevronDown className="ml-auto h-4 w-4 transition-transform duration-200" />
-            </SidebarMenuButton>
-          </CollapsibleTrigger>
+      <div key={item.path}>
+        <button
+          onClick={toggleExpanded}
+          className={cn(
+            "flex items-center justify-between w-full gap-3 px-3 py-2 rounded-lg transition-colors duration-200",
+            isActive || isSubmenuItemActive
+              ? "bg-accent text-accent-foreground border border-accent/20"
+              : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          )}
+        >
+          <div className="flex items-center gap-3">
+            <item.icon className="h-5 w-5" />
+            <span className="font-medium">{item.label}</span>
+          </div>
+          <ChevronDown className={cn("h-4 w-4 transition-transform", isExpanded ? "rotate-180" : "")} />
+        </button>
+        <Collapsible open={isExpanded}>
           <CollapsibleContent>
-            <SidebarMenuSub>
+            <div className="ml-6 mt-1 space-y-1">
               {item.submenu.map((subItem) => (
-                <SidebarMenuSubItem key={subItem.path}>
-                  <SidebarMenuSubButton
-                    asChild
-                    isActive={location.pathname === subItem.path}
-                    className="focus:outline-none focus:ring-2 focus:ring-sidebar-ring transition-colors"
-                  >
-                    <Link to={subItem.path} aria-label={subItem.label}>
-                      <span>{subItem.label}</span>
-                    </Link>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
+                <Link
+                  key={subItem.path}
+                  to={subItem.path}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 text-sm",
+                    location.pathname === subItem.path
+                      ? "bg-accent text-accent-foreground border border-accent/20"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  )}
+                >
+                  <span className="font-medium">{subItem.label}</span>
+                </Link>
               ))}
-            </SidebarMenuSub>
+            </div>
           </CollapsibleContent>
-        </SidebarMenuItemUI>
-      </Collapsible>
+        </Collapsible>
+      </div>
     );
   }
-
+  
   return (
-    <SidebarMenuItemUI key={item.path}>
-      <SidebarMenuButton
-        asChild
-        isActive={isActive}
-        className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:bg-sidebar-accent focus:text-sidebar-accent-foreground focus:outline-none focus:ring-2 focus:ring-sidebar-ring transition-colors"
-      >
-        <Link to={item.path} aria-label={item.label}>
-          <item.icon className="h-4 w-4" aria-hidden="true" />
-          <span>{item.label}</span>
-        </Link>
-      </SidebarMenuButton>
-    </SidebarMenuItemUI>
+    <Link
+      key={item.path}
+      to={item.path}
+      className={cn(
+        "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200",
+        isActive
+          ? "bg-accent text-accent-foreground border border-accent/20"
+          : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+      )}
+    >
+      <item.icon className="h-5 w-5" />
+      <span className="font-medium">{item.label}</span>
+    </Link>
   );
 };

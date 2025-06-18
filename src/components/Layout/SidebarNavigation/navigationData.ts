@@ -1,4 +1,5 @@
-import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, History, FolderOpen, Download } from 'lucide-react';
+
+import { Clock, CheckCircle, BarChart3, Users, Calendar, FileText, Settings, Home, ClipboardList, History, FolderOpen, UserCheck, Download, Timer } from 'lucide-react';
 import type { MenuItem } from './types';
 
 export const navigationItems: MenuItem[] = [
@@ -6,7 +7,7 @@ export const navigationItems: MenuItem[] = [
     label: 'Dashboard',
     icon: Home,
     path: '/',
-    roles: ['employee', 'admin']
+    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
   }
 ];
 
@@ -15,7 +16,7 @@ export const timesheetModule: MenuItem[] = [
     label: 'Timesheets',
     icon: Clock,
     path: '/time-entry/standard',
-    roles: ['employee', 'admin'],
+    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman'],
     submenu: [
       {
         label: 'Standard Hours',
@@ -31,19 +32,25 @@ export const timesheetModule: MenuItem[] = [
     label: 'Time Log',
     icon: History,
     path: '/log',
-    roles: ['employee', 'admin']
+    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
   },
   {
     label: 'Calendar',
     icon: Calendar,
     path: '/calendar',
-    roles: ['employee', 'admin']
+    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
   },
   {
     label: 'Documents',
     icon: FileText,
     path: '/documents',
-    roles: ['employee', 'admin']
+    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
+  },
+  {
+    label: 'User Settings',
+    icon: Settings,
+    path: '/settings',
+    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
   }
 ];
 
@@ -52,13 +59,13 @@ export const projectManagementModule: MenuItem[] = [
     label: 'Projects',
     icon: FolderOpen,
     path: '/projects',
-    roles: ['employee', 'admin']
+    roles: ['employee', 'manager', 'admin', 'supervisor', 'foreman']
   },
   {
     label: 'Daily Reporting',
     icon: ClipboardList,
     path: '/daily-reporting',
-    roles: ['employee', 'admin']
+    roles: ['manager', 'admin', 'supervisor', 'foreman']
   }
 ];
 
@@ -67,12 +74,18 @@ export const administratorModule: MenuItem[] = [
     label: 'Manager Approval',
     icon: CheckCircle,
     path: '/manager-approval',
-    roles: ['admin']
+    roles: ['manager', 'admin', 'supervisor', 'foreman']
   },
   {
     label: 'Team Management',
     icon: Users,
     path: '/team',
+    roles: ['manager', 'admin', 'supervisor', 'foreman']
+  },
+  {
+    label: 'User Log',
+    icon: UserCheck,
+    path: '/user-log',
     roles: ['admin']
   },
   {
@@ -82,10 +95,16 @@ export const administratorModule: MenuItem[] = [
     roles: ['admin']
   },
   {
+    label: 'Time Settings',
+    icon: Timer,
+    path: '/time-settings',
+    roles: ['admin']
+  },
+  {
     label: 'Reports',
     icon: BarChart3,
     path: '/reports',
-    roles: ['admin'],
+    roles: ['manager', 'admin', 'supervisor', 'foreman'],
     submenu: [
       {
         label: 'Hours Breakdown-Excel',
@@ -117,12 +136,6 @@ export const administratorModule: MenuItem[] = [
     label: 'Company Settings',
     icon: Settings,
     path: '/company-settings',
-    roles: ['admin']
-  },
-  {
-    label: 'Settings',
-    icon: Settings,
-    path: '/settings',
     roles: ['admin']
   }
 ];
