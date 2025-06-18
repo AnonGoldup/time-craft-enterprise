@@ -14,8 +14,21 @@ export const navigationItems: MenuItem[] = [
     path: '/time-entry/standard',
     label: 'Timesheets',
     icon: Clock,
-    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
-  },
+    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN],
+    submenu: [
+      {
+        label: 'Standard Hours',
+        path: '/time-entry/standard'
+      },
+      {
+        label: 'Time In/Out',
+        path: '/time-entry/time-in-out'
+      }
+    ]
+  }
+];
+
+export const timesheetModule: MenuItem[] = [
   {
     path: '/log',
     label: 'Time Log',
@@ -32,21 +45,6 @@ export const navigationItems: MenuItem[] = [
     path: '/documents',
     label: 'Documents',
     icon: FileText,
-    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
-  }
-];
-
-export const timesheetModule: MenuItem[] = [
-  {
-    path: '/time-entry/standard',
-    label: 'Standard Hours',
-    icon: Clock,
-    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
-  },
-  {
-    path: '/time-entry/time-in-out',
-    label: 'Time In/Out',
-    icon: Clock,
     roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {
