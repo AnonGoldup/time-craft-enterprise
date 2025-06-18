@@ -31,10 +31,10 @@ const DailyReporting: React.FC = () => {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">DR Log</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">Daily Report Management</p>
+          <h1 className="text-4xl font-bold text-foreground">DR Log</h1>
+          <p className="text-lg text-muted-foreground">Daily Report Management</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white h-10 px-4">
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground h-10 px-4">
           <Plus className="h-4 w-4 mr-2" />
           Create New DR
         </Button>
@@ -49,7 +49,7 @@ const DailyReporting: React.FC = () => {
       <div className="space-y-0">
         <NavigationTabs />
         
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-b-lg p-6 space-y-6">
+        <div className="bg-card border border-border rounded-b-lg p-6 space-y-6">
           {/* Search and Filters */}
           <SearchFilters
             searchTerm={searchTerm}

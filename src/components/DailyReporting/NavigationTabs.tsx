@@ -3,18 +3,18 @@ import React from 'react';
 
 const NavigationTabs: React.FC = () => {
   return (
-    <div className="bg-orange-500 text-white px-6 py-4 rounded-t-lg">
+    <div className="bg-primary text-primary-foreground px-6 py-4 rounded-t-lg">
       <div className="flex space-x-8">
-        <span className="font-medium cursor-pointer hover:text-orange-100 transition-colors">
+        <span className="font-medium cursor-pointer hover:opacity-80 transition-opacity">
           DR Log
         </span>
-        <span className="cursor-pointer opacity-75 hover:opacity-100 hover:text-orange-100 transition-all">
+        <span className="cursor-pointer opacity-75 hover:opacity-100 transition-opacity">
           Labor Unit Productivity
         </span>
-        <span className="cursor-pointer opacity-75 hover:opacity-100 hover:text-orange-100 transition-all">
+        <span className="cursor-pointer opacity-75 hover:opacity-100 transition-opacity">
           Equipment Usage Summary
         </span>
-        <span className="cursor-pointer opacity-75 hover:opacity-100 hover:text-orange-100 transition-all">
+        <span className="cursor-pointer opacity-75 hover:opacity-100 transition-opacity">
           Hours Lost Summary
         </span>
       </div>

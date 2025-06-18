@@ -63,22 +63,22 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ reports, onEditReport }) =>
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow className="bg-blue-700 hover:bg-blue-700">
-              <TableHead className="text-white font-bold">ACTION</TableHead>
-              <TableHead className="text-white font-bold">DR No</TableHead>
-              <TableHead className="text-white font-bold">Date</TableHead>
-              <TableHead className="text-white font-bold">Foreman</TableHead>
-              <TableHead className="text-white font-bold">Total Workers</TableHead>
-              <TableHead className="text-white font-bold">Total Hours Lost</TableHead>
-              <TableHead className="text-white font-bold">Total Hours</TableHead>
-              <TableHead className="text-white font-bold">Submitted By</TableHead>
+            <TableRow className="bg-primary hover:bg-primary">
+              <TableHead className="text-primary-foreground font-bold">ACTION</TableHead>
+              <TableHead className="text-primary-foreground font-bold">DR No</TableHead>
+              <TableHead className="text-primary-foreground font-bold">Date</TableHead>
+              <TableHead className="text-primary-foreground font-bold">Foreman</TableHead>
+              <TableHead className="text-primary-foreground font-bold">Total Workers</TableHead>
+              <TableHead className="text-primary-foreground font-bold">Total Hours Lost</TableHead>
+              <TableHead className="text-primary-foreground font-bold">Total Hours</TableHead>
+              <TableHead className="text-primary-foreground font-bold">Submitted By</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {reports.map((report, index) => (
               <TableRow 
                 key={report.drNo} 
-                className={index % 2 === 0 ? "bg-gray-50 dark:bg-gray-800/50" : "bg-white dark:bg-gray-900"}
+                className={index % 2 === 0 ? "bg-muted/50" : "bg-card"}
               >
                 <TableCell>
                   <div className="flex space-x-1">
