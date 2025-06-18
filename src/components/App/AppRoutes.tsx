@@ -3,7 +3,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { AppLayout } from '@/components/Layout/AppLayoutEnhanced';
-import { mainRoutes, settingsRoutes, catchAllRoute } from '@/config/routes';
+import { mainRoutes, settingsRoutes, reportRoutes, catchAllRoute } from '@/config/routes';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -25,6 +25,21 @@ export const AppRoutes: React.FC = () => {
 
       {/* Settings Routes */}
       {settingsRoutes.map((route) => (
+        <Route
+          key={route.path}
+          path={route.path}
+          element={
+            <ProtectedRoute requiredRoles={route.requiredRoles}>
+              <AppLayout>
+                <route.component />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+      ))}
+
+      {/* Report Routes */}
+      {reportRoutes.map((route) => (
         <Route
           key={route.path}
           path={route.path}
