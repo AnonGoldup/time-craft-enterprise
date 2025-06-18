@@ -7,10 +7,10 @@ import { Label } from '@/components/ui/label';
 
 export const CompanyDetailsSection: React.FC = () => {
   return (
-    <Card className="bg-white rounded-xl shadow-sm border border-border hover:shadow-md transition-all duration-200">
-      <CardHeader className="bg-gradient-to-r from-primary to-accent text-white rounded-t-xl">
-        <CardTitle className="text-white">Company Information</CardTitle>
-        <CardDescription className="text-white/90">Basic company details and contact information</CardDescription>
+    <Card className="bg-card border-border hover:shadow-md transition-all duration-200 enhanced-card">
+      <CardHeader className="enhanced-header rounded-t-xl">
+        <CardTitle className="text-primary-foreground">Company Information</CardTitle>
+        <CardDescription className="text-primary-foreground/90">Basic company details and contact information</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
         {/* Company Details Section */}
@@ -20,7 +20,7 @@ export const CompanyDetailsSection: React.FC = () => {
             <Input 
               id="companyName" 
               defaultValue="AltaPro Electric Ltd" 
-              className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200" 
+              className="enhanced-input" 
             />
           </div>
           <div className="space-y-2">
@@ -28,7 +28,7 @@ export const CompanyDetailsSection: React.FC = () => {
             <Input 
               id="addressLine1" 
               defaultValue="13415 149 Street" 
-              className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200" 
+              className="enhanced-input" 
             />
           </div>
         </div>
@@ -39,7 +39,7 @@ export const CompanyDetailsSection: React.FC = () => {
             <Input 
               id="addressLine2" 
               placeholder="Suite, unit, etc." 
-              className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200" 
+              className="enhanced-input" 
             />
           </div>
           <div className="space-y-2">
@@ -47,7 +47,7 @@ export const CompanyDetailsSection: React.FC = () => {
             <Input 
               id="county" 
               defaultValue="AB" 
-              className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200" 
+              className="enhanced-input" 
             />
           </div>
         </div>
@@ -58,7 +58,7 @@ export const CompanyDetailsSection: React.FC = () => {
             <Input 
               id="city" 
               defaultValue="Edmonton" 
-              className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200" 
+              className="enhanced-input" 
             />
           </div>
           <div className="space-y-2">
@@ -66,7 +66,7 @@ export const CompanyDetailsSection: React.FC = () => {
             <Input 
               id="stateProvince" 
               defaultValue="AB" 
-              className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200" 
+              className="enhanced-input" 
             />
           </div>
           <div className="space-y-2">
@@ -74,7 +74,7 @@ export const CompanyDetailsSection: React.FC = () => {
             <Input 
               id="postalCode" 
               defaultValue="T5L2T3" 
-              className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200" 
+              className="enhanced-input" 
             />
           </div>
         </div>
@@ -85,7 +85,7 @@ export const CompanyDetailsSection: React.FC = () => {
             <Input 
               id="country" 
               defaultValue="Canada" 
-              className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200" 
+              className="enhanced-input" 
             />
           </div>
           <div className="space-y-2">
@@ -93,7 +93,7 @@ export const CompanyDetailsSection: React.FC = () => {
             <Input 
               id="phone" 
               defaultValue="780-444-6510" 
-              className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200" 
+              className="enhanced-input" 
             />
           </div>
           <div className="space-y-2">
@@ -101,7 +101,7 @@ export const CompanyDetailsSection: React.FC = () => {
             <Input 
               id="fax" 
               defaultValue="780-483-4073" 
-              className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200" 
+              className="enhanced-input" 
             />
           </div>
         </div>
@@ -109,12 +109,12 @@ export const CompanyDetailsSection: React.FC = () => {
         <div className="flex justify-end gap-3 pt-6 border-t border-border">
           <Button 
             variant="outline" 
-            className="px-6 py-2 text-sm font-medium border border-input rounded-lg hover:bg-muted transition-colors duration-200"
+            className="px-6 py-2 text-sm font-medium border-border hover:bg-muted transition-colors duration-200"
           >
             Cancel
           </Button>
           <Button 
-            className="px-6 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors duration-200"
+            className="px-6 py-2 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
           >
             Save Changes
           </Button>
