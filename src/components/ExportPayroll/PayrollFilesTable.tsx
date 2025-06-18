@@ -27,31 +27,31 @@ export const PayrollFilesTable: React.FC<PayrollFilesTableProps> = ({
   onSelectAll
 }) => {
   return (
-    <Card>
+    <Card className="bg-card border-border">
       <CardHeader>
-        <CardTitle>Current Payroll Export Files</CardTitle>
-        <CardDescription>Manage existing payroll export files</CardDescription>
+        <CardTitle className="text-card-foreground">Current Payroll Export Files</CardTitle>
+        <CardDescription className="text-muted-foreground">Manage existing payroll export files</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow className="bg-blue-600 hover:bg-blue-600">
-              <TableHead className="text-white">
+            <TableRow className="bg-primary hover:bg-primary border-b border-border">
+              <TableHead className="text-primary-foreground">
                 <Checkbox 
                   checked={selectedFiles.length === payrollFiles.length}
                   onCheckedChange={onSelectAll}
                 />
               </TableHead>
-              <TableHead className="text-white">ACTION</TableHead>
-              <TableHead className="text-white">Export File No</TableHead>
-              <TableHead className="text-white">Starting Date</TableHead>
-              <TableHead className="text-white">Ending Date</TableHead>
-              <TableHead className="text-white text-right">Amount</TableHead>
+              <TableHead className="text-primary-foreground">ACTION</TableHead>
+              <TableHead className="text-primary-foreground">Export File No</TableHead>
+              <TableHead className="text-primary-foreground">Starting Date</TableHead>
+              <TableHead className="text-primary-foreground">Ending Date</TableHead>
+              <TableHead className="text-primary-foreground text-right">Amount</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {payrollFiles.map((file, index) => (
-              <TableRow key={file.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+              <TableRow key={file.id} className={index % 2 === 0 ? 'bg-card hover:bg-muted/50' : 'bg-muted/30 hover:bg-muted/50'}>
                 <TableCell>
                   <Checkbox 
                     checked={selectedFiles.includes(file.id)}
@@ -60,18 +60,18 @@ export const PayrollFilesTable: React.FC<PayrollFilesTableProps> = ({
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-1">
-                    <Button size="sm" variant="outline" className="h-6 w-6 p-0">
+                    <Button size="sm" variant="outline" className="h-6 w-6 p-0 border-border hover:bg-accent hover:text-accent-foreground">
                       <Download className="h-3 w-3" />
                     </Button>
-                    <Button size="sm" variant="outline" className="h-6 w-6 p-0">
+                    <Button size="sm" variant="outline" className="h-6 w-6 p-0 border-border hover:bg-accent hover:text-accent-foreground">
                       📄
                     </Button>
                   </div>
                 </TableCell>
-                <TableCell>{file.id}</TableCell>
-                <TableCell>{file.startDate}</TableCell>
-                <TableCell>{file.endDate}</TableCell>
-                <TableCell className="text-right">{file.amount}</TableCell>
+                <TableCell className="text-foreground">{file.id}</TableCell>
+                <TableCell className="text-foreground">{file.startDate}</TableCell>
+                <TableCell className="text-foreground">{file.endDate}</TableCell>
+                <TableCell className="text-right text-foreground">{file.amount}</TableCell>
               </TableRow>
             ))}
           </TableBody>
