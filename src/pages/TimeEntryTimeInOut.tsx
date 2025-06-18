@@ -147,7 +147,7 @@ const TimeEntryTimeInOut = () => {
     breakData: BreakTime,
     showDelete: boolean = false
   ) => (
-    <div key={breakData.id} className="flex items-center gap-2">
+    <div key={breakData.id} className="flex items-center gap-2 ml-4">
       <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[45px]">Break:</span>
       <div className="flex items-center gap-1">
         <Select 
@@ -437,51 +437,60 @@ const TimeEntryTimeInOut = () => {
                   </div>
                 </div>
 
-                {/* Streamlined Time Entry */}
+                {/* Time Entry Section with New Layout */}
                 <div className="bg-white dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-700 space-y-4">
-                  {/* Start and End Time Row */}
-                  <div className="flex items-center gap-4 flex-wrap">
-                    {/* Start Time */}
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[40px]">Start:</span>
-                      <div className="flex items-center gap-1">
-                        <Select value={timeInHour} onValueChange={setTimeInHour}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            {hours.map(hour => (
-                              <SelectItem key={hour} value={hour.toString()}>{hour}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <span>:</span>
-                        <Select value={timeInMinute} onValueChange={setTimeInMinute}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            {minutes.map(minute => (
-                              <SelectItem key={minute} value={minute}>{minute}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Select value={timeInPeriod} onValueChange={setTimeInPeriod}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            <SelectItem value="AM">AM</SelectItem>
-                            <SelectItem value="PM">PM</SelectItem>
-                          </SelectContent>
-                        </Select>
+                  {/* Main Time Row */}
+                  <div className="flex items-start gap-4 flex-wrap">
+                    {/* Left Side - Start Time and Breaks */}
+                    <div className="space-y-3">
+                      {/* Start Time */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[40px]">Start:</span>
+                        <div className="flex items-center gap-1">
+                          <Select value={timeInHour} onValueChange={setTimeInHour}>
+                            <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+                              <SelectValue placeholder="--" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                              {hours.map(hour => (
+                                <SelectItem key={hour} value={hour.toString()}>{hour}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <span>:</span>
+                          <Select value={timeInMinute} onValueChange={setTimeInMinute}>
+                            <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+                              <SelectValue placeholder="--" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                              {minutes.map(minute => (
+                                <SelectItem key={minute} value={minute}>{minute}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Select value={timeInPeriod} onValueChange={setTimeInPeriod}>
+                            <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                              <SelectItem value="AM">AM</SelectItem>
+                              <SelectItem value="PM">PM</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
+
+                      {/* Break Times */}
+                      {entry.breaks.map((breakTime, breakIndex) => (
+                        renderBreakRow(entry.id, breakTime, breakIndex > 0)
+                      ))}
                     </div>
 
-                    <span className="text-slate-400">-</span>
+                    {/* Center Divider */}
+                    <span className="text-slate-400 mt-2">-</span>
 
-                    {/* End Time */}
-                    <div className="flex items-center gap-2">
+                    {/* Right Side - End Time */}
+                    <div className="flex items-center gap-2 mt-0">
                       <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[40px]">End:</span>
                       <div className="flex items-center gap-1">
                         <Select value={timeOutHour} onValueChange={setTimeOutHour}>
@@ -518,7 +527,7 @@ const TimeEntryTimeInOut = () => {
                     </div>
 
                     {/* Quick Fill Buttons */}
-                    <div className="flex items-center gap-2 ml-auto">
+                    <div className="flex items-center gap-2 ml-auto mt-0">
                       <span className="text-xs text-slate-500">Quick:</span>
                       <Button
                         variant="outline"
@@ -553,13 +562,6 @@ const TimeEntryTimeInOut = () => {
                         9-5
                       </Button>
                     </div>
-                  </div>
-
-                  {/* Break Times Section */}
-                  <div className="space-y-3 border-t border-slate-200 dark:border-slate-700 pt-4">
-                    {entry.breaks.map((breakTime, breakIndex) => (
-                      renderBreakRow(entry.id, breakTime, breakIndex > 0)
-                    ))}
                   </div>
                 </div>
               </div>
