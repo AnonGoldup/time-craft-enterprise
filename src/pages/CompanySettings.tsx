@@ -97,19 +97,19 @@ const CompanySettings = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {settingsCards.map((card) => (
           <Link key={card.path} to={card.path} className="group">
-            <Card className={`h-full transition-all duration-200 hover:shadow-lg hover:scale-105 ${card.color}`}>
+            <Card className="h-full transition-all duration-200 hover:shadow-lg hover:scale-105 bg-card border-border hover:border-primary/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-background shadow-sm">
+                  <div className="p-2 rounded-lg bg-muted shadow-sm border border-border">
                     <card.icon className="h-6 w-6 text-foreground" />
                   </div>
-                  <CardTitle className="text-lg group-hover:text-primary transition-colors">
+                  <CardTitle className="text-lg text-card-foreground group-hover:text-primary transition-colors">
                     {card.title}
                   </CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-sm">
+                <CardDescription className="text-sm text-muted-foreground">
                   {card.description}
                 </CardDescription>
               </CardContent>
