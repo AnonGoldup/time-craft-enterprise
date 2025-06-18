@@ -183,32 +183,6 @@ const Index = () => {
           </CardContent>
         </Card>
       </div>
-
-      {/* Weekly Summary */}
-      <Card className="bg-card border-border">
-        <CardHeader className="pb-6">
-          <CardTitle className="text-xl text-foreground">Weekly Summary</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Your time distribution for this week
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center space-y-2">
-              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">40.5h</p>
-              <p className="text-sm text-muted-foreground">Total Hours</p>
-            </div>
-            <div className="text-center space-y-2">
-              <p className="text-3xl font-bold text-green-600 dark:text-green-400">95%</p>
-              <p className="text-sm text-muted-foreground">Efficiency</p>
-            </div>
-            <div className="text-center space-y-2">
-              <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">3</p>
-              <p className="text-sm text-muted-foreground">Projects</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
