@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -76,7 +75,7 @@ const TimeEntryTimeInOut = () => {
   };
 
   return (
-    <div className="unity-fade-in max-w-6xl mx-auto space-y-6">
+    <div className="unity-fade-in max-w-full mx-auto space-y-6 px-4">
       {/* Compact Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -110,7 +109,7 @@ const TimeEntryTimeInOut = () => {
         </div>
       </div>
 
-      {/* Compact Tabs */}
+      {/* Wider Card Layout */}
       <Card className="border-slate-200 dark:border-slate-700 shadow-sm">
         <Tabs defaultValue="time-in-out" className="w-full">
           <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
@@ -137,7 +136,7 @@ const TimeEntryTimeInOut = () => {
           
           <TabsContent value="time-in-out" className="mt-0 p-6 space-y-6">
             {entries.map((entry, index) => (
-              <div key={entry.id} className={`rounded-lg border border-slate-200 dark:border-slate-700 p-4 space-y-4 ${getRowBackgroundClass(index)}`}>
+              <div key={entry.id} className={`rounded-lg border border-slate-200 dark:border-slate-700 p-6 space-y-6 ${getRowBackgroundClass(index)}`}>
                 {/* Entry Header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -185,8 +184,8 @@ const TimeEntryTimeInOut = () => {
                   />
                 </div>
 
-                {/* Time In/Out Section */}
-                <div className="bg-white dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                {/* Time In/Out Section - Now Wider */}
+                <div className="bg-white dark:bg-slate-900 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
                   <TimeInOutRow 
                     timeInHour={timeInHour} 
                     setTimeInHour={setTimeInHour} 

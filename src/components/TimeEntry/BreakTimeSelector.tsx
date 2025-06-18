@@ -90,7 +90,7 @@ const BreakTimeSelector: React.FC<BreakTimeSelectorProps> = ({
           <SelectTrigger className="w-16 border-slate-300 dark:border-slate-600">
             <SelectValue placeholder="--" />
           </SelectTrigger>
-          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 z-50">
             {hours.map(hour => (
               <SelectItem key={hour} value={hour.toString()}>{hour}</SelectItem>
             ))}
@@ -101,7 +101,7 @@ const BreakTimeSelector: React.FC<BreakTimeSelectorProps> = ({
           <SelectTrigger className="w-16 border-slate-300 dark:border-slate-600">
             <SelectValue placeholder="--" />
           </SelectTrigger>
-          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 z-50">
             {minutes.map(minute => (
               <SelectItem key={minute} value={minute}>{minute}</SelectItem>
             ))}
@@ -111,7 +111,7 @@ const BreakTimeSelector: React.FC<BreakTimeSelectorProps> = ({
           <SelectTrigger className="w-16 border-slate-300 dark:border-slate-600">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 z-50">
             <SelectItem value="AM">AM</SelectItem>
             <SelectItem value="PM">PM</SelectItem>
           </SelectContent>
@@ -125,7 +125,7 @@ const BreakTimeSelector: React.FC<BreakTimeSelectorProps> = ({
           <SelectTrigger className="w-16 border-slate-300 dark:border-slate-600">
             <SelectValue placeholder="--" />
           </SelectTrigger>
-          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 z-50">
             {hours.map(hour => (
               <SelectItem key={hour} value={hour.toString()}>{hour}</SelectItem>
             ))}
@@ -136,7 +136,7 @@ const BreakTimeSelector: React.FC<BreakTimeSelectorProps> = ({
           <SelectTrigger className="w-16 border-slate-300 dark:border-slate-600">
             <SelectValue placeholder="--" />
           </SelectTrigger>
-          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 z-50">
             {minutes.map(minute => (
               <SelectItem key={minute} value={minute}>{minute}</SelectItem>
             ))}
@@ -146,7 +146,7 @@ const BreakTimeSelector: React.FC<BreakTimeSelectorProps> = ({
           <SelectTrigger className="w-16 border-slate-300 dark:border-slate-600">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 z-50">
             <SelectItem value="AM">AM</SelectItem>
             <SelectItem value="PM">PM</SelectItem>
           </SelectContent>
@@ -168,8 +168,8 @@ const BreakTimeSelector: React.FC<BreakTimeSelectorProps> = ({
   );
 
   return (
-    <div className="space-y-3">
-      {/* Main break row */}
+    <div className="flex flex-col gap-2">
+      {/* Main break row with + button */}
       <div className="flex items-center gap-2">
         {renderBreakRow(
           {
@@ -203,9 +203,9 @@ const BreakTimeSelector: React.FC<BreakTimeSelectorProps> = ({
         </Button>
       </div>
 
-      {/* Additional break rows */}
+      {/* Additional break rows - inline with the start field alignment */}
       {additionalBreaks.map((breakTime) => (
-        <div key={breakTime.id} className="flex items-center gap-2 ml-4">
+        <div key={breakTime.id} className="flex items-center gap-2">
           {renderBreakRow(
             breakTime,
             (field, value) => updateAdditionalBreak(breakTime.id, field as keyof Omit<BreakTime, 'id'>, value),

@@ -60,49 +60,55 @@ const TimeInOutRow: React.FC<TimeInOutRowProps> = ({
   setQuickTime
 }) => {
   return (
-    <div className="flex items-center gap-4 flex-wrap">
-      <TimeSelector
-        hour={timeInHour}
-        setHour={setTimeInHour}
-        minute={timeInMinute}
-        setMinute={setTimeInMinute}
-        period={timeInPeriod}
-        setPeriod={setTimeInPeriod}
-        label="Start"
-      />
+    <div className="space-y-4">
+      {/* Start/End and Break Times Row */}
+      <div className="flex items-start gap-8 flex-wrap">
+        {/* Start and End Times */}
+        <div className="flex items-center gap-4">
+          <TimeSelector
+            hour={timeInHour}
+            setHour={setTimeInHour}
+            minute={timeInMinute}
+            setMinute={setTimeInMinute}
+            period={timeInPeriod}
+            setPeriod={setTimeInPeriod}
+            label="Start"
+          />
 
-      <span className="text-slate-400">-</span>
+          <span className="text-slate-400">-</span>
 
-      <TimeSelector
-        hour={timeOutHour}
-        setHour={setTimeOutHour}
-        minute={timeOutMinute}
-        setMinute={setTimeOutMinute}
-        period={timeOutPeriod}
-        setPeriod={setTimeOutPeriod}
-        label="End"
-      />
+          <TimeSelector
+            hour={timeOutHour}
+            setHour={setTimeOutHour}
+            minute={timeOutMinute}
+            setMinute={setTimeOutMinute}
+            period={timeOutPeriod}
+            setPeriod={setTimeOutPeriod}
+            label="End"
+          />
+        </div>
 
-      <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
+        {/* Break Times */}
+        <BreakTimeSelector
+          breakInHour={breakInHour}
+          setBreakInHour={setBreakInHour}
+          breakInMinute={breakInMinute}
+          setBreakInMinute={setBreakInMinute}
+          breakInPeriod={breakInPeriod}
+          setBreakInPeriod={setBreakInPeriod}
+          breakOutHour={breakOutHour}
+          setBreakOutHour={setBreakOutHour}
+          breakOutMinute={breakOutMinute}
+          setBreakOutMinute={setBreakOutMinute}
+          breakOutPeriod={breakOutPeriod}
+          setBreakOutPeriod={setBreakOutPeriod}
+        />
+      </div>
 
-      <BreakTimeSelector
-        breakInHour={breakInHour}
-        setBreakInHour={setBreakInHour}
-        breakInMinute={breakInMinute}
-        setBreakInMinute={setBreakInMinute}
-        breakInPeriod={breakInPeriod}
-        setBreakInPeriod={setBreakInPeriod}
-        breakOutHour={breakOutHour}
-        setBreakOutHour={setBreakOutHour}
-        breakOutMinute={breakOutMinute}
-        setBreakOutMinute={setBreakOutMinute}
-        breakOutPeriod={breakOutPeriod}
-        setBreakOutPeriod={setBreakOutPeriod}
-      />
-
-      <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
-
-      <QuickTimeButtons setQuickTime={setQuickTime} />
+      {/* Quick Time Buttons */}
+      <div className="flex justify-start">
+        <QuickTimeButtons setQuickTime={setQuickTime} />
+      </div>
     </div>
   );
 };
