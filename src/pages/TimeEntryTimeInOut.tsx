@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
 import { MoreVertical, Plus, Trash2, Clock, Calendar, Timer } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 import ProjectDetailsRow from '@/components/TimeEntry/ProjectDetailsRow';
 import TimeInOutRow from '@/components/TimeEntry/TimeInOutRow';
 import NotesAndSubmitRow from '@/components/TimeEntry/NotesAndSubmitRow';
@@ -34,6 +36,8 @@ const TimeEntryTimeInOut = () => {
     id: 1
   }]);
 
+  const { toast } = useToast();
+
   const setQuickTime = (startHour: string, startPeriod: string, endHour: string, endPeriod: string) => {
     setTimeInHour(startHour);
     setTimeInMinute('00');
@@ -62,11 +66,93 @@ const TimeEntryTimeInOut = () => {
   };
 
   const copyPreviousDay = () => {
-    console.log('Copy previous day');
+    // Simulate copying data from previous day
+    const previousDayData = {
+      project: 'Project Alpha',
+      extra: 'Foundation Work',
+      costCode: 'CC-001',
+      timeInHour: '8',
+      timeInMinute: '00',
+      timeInPeriod: 'AM',
+      timeOutHour: '5',
+      timeOutMinute: '00',
+      timeOutPeriod: 'PM',
+      breakInHour: '12',
+      breakInMinute: '00',
+      breakInPeriod: 'PM',
+      breakOutHour: '12',
+      breakOutMinute: '30',
+      breakOutPeriod: 'PM',
+      notes: 'Continued work from previous day'
+    };
+
+    // Apply the previous day data to current form
+    setSelectedProject(previousDayData.project);
+    setSelectedExtra(previousDayData.extra);
+    setSelectedCostCode(previousDayData.costCode);
+    setTimeInHour(previousDayData.timeInHour);
+    setTimeInMinute(previousDayData.timeInMinute);
+    setTimeInPeriod(previousDayData.timeInPeriod);
+    setTimeOutHour(previousDayData.timeOutHour);
+    setTimeOutMinute(previousDayData.timeOutMinute);
+    setTimeOutPeriod(previousDayData.timeOutPeriod);
+    setBreakInHour(previousDayData.breakInHour);
+    setBreakInMinute(previousDayData.breakInMinute);
+    setBreakInPeriod(previousDayData.breakInPeriod);
+    setBreakOutHour(previousDayData.breakOutHour);
+    setBreakOutMinute(previousDayData.breakOutMinute);
+    setBreakOutPeriod(previousDayData.breakOutPeriod);
+    setNotes(previousDayData.notes);
+
+    toast({
+      title: "Previous Day Copied",
+      description: "Time entry data from previous day has been copied to the current form.",
+    });
   };
 
   const copyPreviousWeek = () => {
-    console.log('Copy previous week');
+    // Simulate copying data from previous week (same day)
+    const previousWeekData = {
+      project: 'Project Beta',
+      extra: 'Structural Work',
+      costCode: 'CC-002',
+      timeInHour: '7',
+      timeInMinute: '30',
+      timeInPeriod: 'AM',
+      timeOutHour: '4',
+      timeOutMinute: '30',
+      timeOutPeriod: 'PM',
+      breakInHour: '12',
+      breakInMinute: '00',
+      breakInPeriod: 'PM',
+      breakOutHour: '1',
+      breakOutMinute: '00',
+      breakOutPeriod: 'PM',
+      notes: 'Weekly routine work pattern'
+    };
+
+    // Apply the previous week data to current form
+    setSelectedProject(previousWeekData.project);
+    setSelectedExtra(previousWeekData.extra);
+    setSelectedCostCode(previousWeekData.costCode);
+    setTimeInHour(previousWeekData.timeInHour);
+    setTimeInMinute(previousWeekData.timeInMinute);
+    setTimeInPeriod(previousWeekData.timeInPeriod);
+    setTimeOutHour(previousWeekData.timeOutHour);
+    setTimeOutMinute(previousWeekData.timeOutMinute);
+    setTimeOutPeriod(previousWeekData.timeOutPeriod);
+    setBreakInHour(previousWeekData.breakInHour);
+    setBreakInMinute(previousWeekData.breakInMinute);
+    setBreakInPeriod(previousWeekData.breakInPeriod);
+    setBreakOutHour(previousWeekData.breakOutHour);
+    setBreakOutMinute(previousWeekData.breakOutMinute);
+    setBreakOutPeriod(previousWeekData.breakOutPeriod);
+    setNotes(previousWeekData.notes);
+
+    toast({
+      title: "Previous Week Copied",
+      description: "Time entry data from previous week has been copied to the current form.",
+    });
   };
 
   const getRowBackgroundClass = (index: number) => {
@@ -134,9 +220,9 @@ const TimeEntryTimeInOut = () => {
             </TabsList>
           </div>
           
-          <TabsContent value="time-in-out" className="mt-0 p-4 space-y-4">
+          <TabsContent value="time-in-out" className="mt-0 p-2 space-y-4">
             {entries.map((entry, index) => (
-              <div key={entry.id} className={`rounded-lg border border-slate-200 dark:border-slate-700 p-4 space-y-4 ${getRowBackgroundClass(index)}`}>
+              <div key={entry.id} className={`rounded-lg border border-slate-200 dark:border-slate-700 p-2 space-y-4 ${getRowBackgroundClass(index)}`}>
                 {/* Entry Header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -163,7 +249,7 @@ const TimeEntryTimeInOut = () => {
                 </div>
 
                 {/* Project Details Section */}
-                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
+                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
                   <ProjectDetailsRow 
                     selectedProject={selectedProject} 
                     setSelectedProject={setSelectedProject} 
@@ -185,7 +271,7 @@ const TimeEntryTimeInOut = () => {
                 </div>
 
                 {/* Time In/Out Section - Reduced padding */}
-                <div className="bg-white dark:bg-slate-900 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
+                <div className="bg-white dark:bg-slate-900 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
                   <TimeInOutRow 
                     timeInHour={timeInHour} 
                     setTimeInHour={setTimeInHour} 
@@ -218,7 +304,7 @@ const TimeEntryTimeInOut = () => {
             ))}
 
             {/* Compact Footer */}
-            <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
+            <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
               <NotesAndSubmitRow 
                 notes={notes} 
                 setNotes={setNotes} 
