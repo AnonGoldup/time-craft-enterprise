@@ -4,7 +4,7 @@ import { SidebarHeader } from '@/components/ui/sidebar';
 
 export const AppSidebarHeader: React.FC = () => {
   return (
-    <SidebarHeader className="p-4 border-b border-sidebar-border bg-sidebar">
+    <SidebarHeader className="sticky top-0 z-10 p-4 border-b border-sidebar-border bg-sidebar">
       <div className="flex items-center gap-3">
         <div className="flex items-center justify-center w-8 h-8 rounded-lg overflow-hidden">
           <img 
