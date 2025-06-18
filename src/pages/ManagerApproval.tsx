@@ -115,8 +115,8 @@ const ManagerApproval = () => {
   return (
     <div className="space-y-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">Timesheet Approval Dashboard</h1>
-        <p className="text-slate-600 dark:text-slate-400">Review and approve employee timesheet entries</p>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Timesheet Approval Dashboard</h1>
+        <p className="text-muted-foreground">Review and approve employee timesheet entries</p>
       </div>
 
       <MetricsCards

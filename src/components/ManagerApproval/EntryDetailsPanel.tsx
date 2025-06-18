@@ -38,21 +38,21 @@ export const EntryDetailsPanel: React.FC<EntryDetailsPanelProps> = ({
   setRejectReason
 }) => {
   return (
-    <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+    <Card className="bg-card border-border">
       <CardHeader>
-        <CardTitle className="text-slate-800 dark:text-white">Entry Details</CardTitle>
+        <CardTitle className="text-card-foreground">Entry Details</CardTitle>
       </CardHeader>
       <CardContent>
         {selectedEntry ? (
           <div className="space-y-6">
             <div>
-              <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Employee</p>
-              <p className="text-white">{selectedEntry.employeeName}</p>
+              <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Employee</p>
+              <p className="text-foreground">{selectedEntry.employeeName}</p>
             </div>
 
             <div>
-              <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Date</p>
-              <p className="text-white">{new Date(selectedEntry.date).toLocaleDateString('en-US', { 
+              <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Date</p>
+              <p className="text-foreground">{new Date(selectedEntry.date).toLocaleDateString('en-US', { 
                 weekday: 'long', 
                 year: 'numeric', 
                 month: 'long', 
@@ -61,74 +61,74 @@ export const EntryDetailsPanel: React.FC<EntryDetailsPanelProps> = ({
             </div>
 
             <div>
-              <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Project</p>
-              <p className="text-white">{selectedEntry.projectCode} - {selectedEntry.project}</p>
+              <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Project</p>
+              <p className="text-foreground">{selectedEntry.projectCode} - {selectedEntry.project}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 p-4 bg-white/5 rounded-lg">
+            <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
               <div className="text-center">
-                <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Standard Hours</p>
-                <p className="text-2xl font-bold text-white">{selectedEntry.standardHours}</p>
+                <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Standard Hours</p>
+                <p className="text-2xl font-bold text-foreground">{selectedEntry.standardHours}</p>
               </div>
               <div className="text-center">
-                <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Overtime Hours</p>
-                <p className="text-2xl font-bold text-orange-400">{selectedEntry.overtimeHours}</p>
+                <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Overtime Hours</p>
+                <p className="text-2xl font-bold text-primary">{selectedEntry.overtimeHours}</p>
               </div>
             </div>
 
             <div>
-              <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Notes</p>
-              <p className="text-white text-sm">{selectedEntry.notes}</p>
+              <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Notes</p>
+              <p className="text-foreground text-sm">{selectedEntry.notes}</p>
             </div>
 
             <div>
-              <p className="text-gray-400 text-xs">
+              <p className="text-muted-foreground text-xs">
                 Submitted by {selectedEntry.submittedBy} on {selectedEntry.submittedDate}
               </p>
             </div>
 
             {selectedEntry.status === 'pending' && (
-              <div className="space-y-3 pt-4 border-t border-white/10">
+              <div className="space-y-3 pt-4 border-t border-border">
                 <textarea
                   placeholder="Add approval comments..."
-                  className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full p-3 bg-input border border-border rounded-lg text-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-ring"
                   rows={3}
                 />
                 <div className="grid grid-cols-1 gap-2">
                   <Button 
                     onClick={() => onApprove(selectedEntry.id)}
-                    className="bg-green-500 hover:bg-green-600"
+                    className="bg-green-600 hover:bg-green-700 text-white"
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Approve Entry
                   </Button>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="outline" className="border-red-400 text-red-400 hover:bg-red-400 hover:text-white">
+                      <Button variant="outline" className="border-red-400 text-red-600 hover:bg-red-400 hover:text-white">
                         <XCircle className="h-4 w-4 mr-2" />
                         Reject Entry
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="bg-slate-900 border-white/20">
+                    <DialogContent className="bg-popover border-border">
                       <DialogHeader>
-                        <DialogTitle className="text-white">Reject Timesheet Entry</DialogTitle>
+                        <DialogTitle className="text-popover-foreground">Reject Timesheet Entry</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
-                        <p className="text-gray-400">
+                        <p className="text-muted-foreground">
                           Please provide a reason for rejecting this timesheet entry.
                         </p>
                         <textarea
                           value={rejectReason}
                           onChange={(e) => setRejectReason(e.target.value)}
                           placeholder="Enter rejection reason..."
-                          className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-red-400"
+                          className="w-full p-3 bg-input border border-border rounded-lg text-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-ring"
                           rows={3}
                         />
                         <div className="flex justify-end gap-2">
                           <Button variant="outline">Cancel</Button>
                           <Button
                             onClick={() => onReject(selectedEntry.id, rejectReason)}
-                            className="bg-red-500 hover:bg-red-600"
+                            className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                           >
                             Confirm Rejection
                           </Button>
@@ -139,7 +139,7 @@ export const EntryDetailsPanel: React.FC<EntryDetailsPanelProps> = ({
                   <Button 
                     onClick={() => onRequestChanges(selectedEntry.id)}
                     variant="outline" 
-                    className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black"
+                    className="border-yellow-400 text-yellow-600 hover:bg-yellow-400 hover:text-black"
                   >
                     <Edit className="h-4 w-4 mr-2" />
                     Request Changes
@@ -150,8 +150,8 @@ export const EntryDetailsPanel: React.FC<EntryDetailsPanelProps> = ({
           </div>
         ) : (
           <div className="text-center py-12">
-            <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-400">Select a timesheet entry to view details</p>
+            <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground">Select a timesheet entry to view details</p>
           </div>
         )}
       </CardContent>

@@ -26,25 +26,25 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   setSelectedEmployee
 }) => {
   return (
-    <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 mb-6">
+    <Card className="bg-card border-border mb-6">
       <CardContent className="p-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search by project..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                className="pl-10 pr-4 py-2 bg-input border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
             
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="px-4 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <option value="pending">Pending</option>
               <option value="all">All</option>
@@ -55,7 +55,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
             <select
               value={selectedWeek}
               onChange={(e) => setSelectedWeek(e.target.value)}
-              className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="px-4 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <option value="Week Jun 03 - Jun 09">Week Jun 03 - Jun 09</option>
               <option value="Week May 27 - Jun 02">Week May 27 - Jun 02</option>
@@ -65,7 +65,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
             <select
               value={selectedEmployee}
               onChange={(e) => setSelectedEmployee(e.target.value)}
-              className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="px-4 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <option value="All Employees">All Employees</option>
               <option value="JS001">John Smith (JS001)</option>
@@ -75,11 +75,11 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="border-blue-300 dark:border-blue-600 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20">
+            <Button variant="outline" className="border-primary/20 text-primary hover:bg-primary/10">
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
-            <Button variant="outline" className="border-purple-300 dark:border-purple-600 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20">
+            <Button variant="outline" className="border-primary/20 text-primary hover:bg-primary/10">
               Bulk Select
             </Button>
           </div>
