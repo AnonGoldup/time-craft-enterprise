@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,18 +14,18 @@ const TimeEntryStandard = () => {
   const [selectedProject, setSelectedProject] = useState('');
   const [selectedExtra, setSelectedExtra] = useState('');
   const [selectedCostCode, setSelectedCostCode] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState('2024-01-15');
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState('');
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
-  const [standardHours, setStandardHours] = useState('');
-  const [overtimeHours, setOvertimeHours] = useState('');
+  const [standardHours, setStandardHours] = useState('8.0');
+  const [overtimeHours, setOvertimeHours] = useState('0.0');
   const [notes, setNotes] = useState('');
   const [entries, setEntries] = useState([{ id: 1 }]);
 
   const setQuickHours = (hours: number) => {
     setStandardHours(hours.toString());
-    setOvertimeHours('');
+    setOvertimeHours('0.0');
   };
 
   const totalHours = (parseFloat(standardHours) || 0) + (parseFloat(overtimeHours) || 0);
@@ -144,8 +145,14 @@ const TimeEntryStandard = () => {
                         <Building2 className="h-3 w-3 text-blue-500" />
                         Project
                       </div>
-                      <select className="w-full h-9 px-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm">
-                        <option>Select project...</option>
+                      <select 
+                        className="w-full h-9 px-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm"
+                        value={selectedProject}
+                        onChange={(e) => setSelectedProject(e.target.value)}
+                      >
+                        <option value="">Select project...</option>
+                        <option value="proj1">Project 1</option>
+                        <option value="proj2">Project 2</option>
                       </select>
                     </div>
 
@@ -157,8 +164,14 @@ const TimeEntryStandard = () => {
                         </div>
                         Extra
                       </div>
-                      <select className="w-full h-9 px-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm">
-                        <option>Select extra...</option>
+                      <select 
+                        className="w-full h-9 px-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm"
+                        value={selectedExtra}
+                        onChange={(e) => setSelectedExtra(e.target.value)}
+                      >
+                        <option value="">Select extra...</option>
+                        <option value="extra1">Extra 1</option>
+                        <option value="extra2">Extra 2</option>
                       </select>
                     </div>
 
@@ -170,8 +183,14 @@ const TimeEntryStandard = () => {
                         </div>
                         Cost Code
                       </div>
-                      <select className="w-full h-9 px-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm">
-                        <option>Select code...</option>
+                      <select 
+                        className="w-full h-9 px-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm"
+                        value={selectedCostCode}
+                        onChange={(e) => setSelectedCostCode(e.target.value)}
+                      >
+                        <option value="">Select code...</option>
+                        <option value="code1">Code 1</option>
+                        <option value="code2">Code 2</option>
                       </select>
                     </div>
 
@@ -183,7 +202,8 @@ const TimeEntryStandard = () => {
                       </div>
                       <Input 
                         type="date" 
-                        value="2024-01-15" 
+                        value={selectedDate} 
+                        onChange={(e) => setSelectedDate(e.target.value)}
                         className="h-9 border-slate-300 dark:border-slate-600 text-sm" 
                       />
                     </div>
@@ -194,8 +214,14 @@ const TimeEntryStandard = () => {
                         <User className="h-3 w-3 text-cyan-500" />
                         Employee
                       </div>
-                      <select className="w-full h-9 px-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm">
-                        <option>Select employees...</option>
+                      <select 
+                        className="w-full h-9 px-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm"
+                        value={selectedEmployee}
+                        onChange={(e) => setSelectedEmployee(e.target.value)}
+                      >
+                        <option value="">Select employees...</option>
+                        <option value="emp1">Employee 1</option>
+                        <option value="emp2">Employee 2</option>
                       </select>
                     </div>
                   </div>
@@ -211,7 +237,8 @@ const TimeEntryStandard = () => {
                         <Input
                           type="number"
                           step="0.1"
-                          value="8.0"
+                          value={standardHours}
+                          onChange={(e) => setStandardHours(e.target.value)}
                           className="w-16 h-9 text-center border-emerald-300 dark:border-emerald-700 focus:border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
                         />
                       </div>
@@ -225,7 +252,8 @@ const TimeEntryStandard = () => {
                         <Input
                           type="number"
                           step="0.1"
-                          value="0.0"
+                          value={overtimeHours}
+                          onChange={(e) => setOvertimeHours(e.target.value)}
                           className="w-16 h-9 text-center border-amber-300 dark:border-amber-700 focus:border-amber-500 bg-amber-50 dark:bg-amber-900/20"
                         />
                       </div>
@@ -236,7 +264,7 @@ const TimeEntryStandard = () => {
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-blue-700 dark:text-blue-400">Total:</span>
                       <div className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-800">
-                        <span className="text-sm font-semibold text-blue-800 dark:text-blue-300">8.0h</span>
+                        <span className="text-sm font-semibold text-blue-800 dark:text-blue-300">{totalHours.toFixed(1)}h</span>
                       </div>
                     </div>
 
