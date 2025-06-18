@@ -1,9 +1,7 @@
-
 import React from 'react';
 import TimeSelector from './TimeSelector';
 import BreakTimeSelector from './BreakTimeSelector';
 import QuickTimeButtons from './QuickTimeButtons';
-
 interface TimeInOutRowProps {
   timeInHour: string;
   setTimeInHour: (value: string) => void;
@@ -31,7 +29,6 @@ interface TimeInOutRowProps {
   setBreakOutPeriod: (value: string) => void;
   setQuickTime: (startHour: string, startPeriod: string, endHour: string, endPeriod: string) => void;
 }
-
 const TimeInOutRow: React.FC<TimeInOutRowProps> = ({
   timeInHour,
   setTimeInHour,
@@ -59,58 +56,26 @@ const TimeInOutRow: React.FC<TimeInOutRowProps> = ({
   setBreakOutPeriod,
   setQuickTime
 }) => {
-  return (
-    <div className="space-y-4">
+  return <div className="space-y-4">
       {/* Start/End and Break Times Row - Centered alignment */}
-      <div className="flex items-center gap-8 flex-wrap p-2">
+      <div className="flex items-center gap-8 flex-wrap p-2 px-0 py-0">
         {/* Start and End Times - Vertically centered with breaks */}
         <div className="flex items-center gap-4">
-          <TimeSelector
-            hour={timeInHour}
-            setHour={setTimeInHour}
-            minute={timeInMinute}
-            setMinute={setTimeInMinute}
-            period={timeInPeriod}
-            setPeriod={setTimeInPeriod}
-            label="Start"
-          />
+          <TimeSelector hour={timeInHour} setHour={setTimeInHour} minute={timeInMinute} setMinute={setTimeInMinute} period={timeInPeriod} setPeriod={setTimeInPeriod} label="Start" />
 
           <span className="text-slate-400">-</span>
 
-          <TimeSelector
-            hour={timeOutHour}
-            setHour={setTimeOutHour}
-            minute={timeOutMinute}
-            setMinute={setTimeOutMinute}
-            period={timeOutPeriod}
-            setPeriod={setTimeOutPeriod}
-            label="End"
-          />
+          <TimeSelector hour={timeOutHour} setHour={setTimeOutHour} minute={timeOutMinute} setMinute={setTimeOutMinute} period={timeOutPeriod} setPeriod={setTimeOutPeriod} label="End" />
         </div>
 
         {/* Break Times - Will stay centered with Start-End */}
-        <BreakTimeSelector
-          breakInHour={breakInHour}
-          setBreakInHour={setBreakInHour}
-          breakInMinute={breakInMinute}
-          setBreakInMinute={setBreakInMinute}
-          breakInPeriod={breakInPeriod}
-          setBreakInPeriod={setBreakInPeriod}
-          breakOutHour={breakOutHour}
-          setBreakOutHour={setBreakOutHour}
-          breakOutMinute={breakOutMinute}
-          setBreakOutMinute={setBreakOutMinute}
-          breakOutPeriod={breakOutPeriod}
-          setBreakOutPeriod={setBreakOutPeriod}
-        />
+        <BreakTimeSelector breakInHour={breakInHour} setBreakInHour={setBreakInHour} breakInMinute={breakInMinute} setBreakInMinute={setBreakInMinute} breakInPeriod={breakInPeriod} setBreakInPeriod={setBreakInPeriod} breakOutHour={breakOutHour} setBreakOutHour={setBreakOutHour} breakOutMinute={breakOutMinute} setBreakOutMinute={setBreakOutMinute} breakOutPeriod={breakOutPeriod} setBreakOutPeriod={setBreakOutPeriod} />
       </div>
 
       {/* Quick Time Buttons */}
       <div className="flex justify-start">
         <QuickTimeButtons setQuickTime={setQuickTime} />
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TimeInOutRow;
