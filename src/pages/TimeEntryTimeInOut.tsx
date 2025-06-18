@@ -10,6 +10,16 @@ import { Link } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import MultiDatePicker from '@/components/TimeEntry/MultiDatePicker';
 
+interface BreakTime {
+  id: string;
+  breakInHour: string;
+  breakInMinute: string;
+  breakInPeriod: string;
+  breakOutHour: string;
+  breakOutMinute: string;
+  breakOutPeriod: string;
+}
+
 const TimeEntryTimeInOut = () => {
   const [selectedProject, setSelectedProject] = useState('');
   const [selectedExtra, setSelectedExtra] = useState('');
@@ -30,6 +40,7 @@ const TimeEntryTimeInOut = () => {
   const [breakOutHour, setBreakOutHour] = useState('');
   const [breakOutMinute, setBreakOutMinute] = useState('');
   const [breakOutPeriod, setBreakOutPeriod] = useState('AM');
+  const [additionalBreaks, setAdditionalBreaks] = useState<BreakTime[]>([]);
   const [notes, setNotes] = useState('');
   const [entries, setEntries] = useState([{ id: 1 }]);
 
@@ -58,6 +69,29 @@ const TimeEntryTimeInOut = () => {
     }
   };
 
+  const addBreak = () => {
+    const newBreak: BreakTime = {
+      id: Date.now().toString(),
+      breakInHour: '',
+      breakInMinute: '00',
+      breakInPeriod: 'AM',
+      breakOutHour: '',
+      breakOutMinute: '00',
+      breakOutPeriod: 'AM'
+    };
+    setAdditionalBreaks([...additionalBreaks, newBreak]);
+  };
+
+  const removeBreak = (breakId: string) => {
+    setAdditionalBreaks(additionalBreaks.filter(breakTime => breakTime.id !== breakId));
+  };
+
+  const updateBreak = (breakId: string, field: keyof Omit<BreakTime, 'id'>, value: string) => {
+    setAdditionalBreaks(additionalBreaks.map(breakTime => 
+      breakTime.id === breakId ? { ...breakTime, [field]: value } : breakTime
+    ));
+  };
+
   const copyPreviousDay = () => {
     console.log('Copy previous day');
   };
@@ -68,6 +102,99 @@ const TimeEntryTimeInOut = () => {
 
   const hours = Array.from({length: 12}, (_, i) => i + 1);
   const minutes = ['00', '15', '30', '45'];
+
+  const renderBreakSelector = (
+    breakData: {
+      breakInHour: string;
+      breakInMinute: string;
+      breakInPeriod: string;
+      breakOutHour: string;
+      breakOutMinute: string;
+      breakOutPeriod: string;
+    },
+    onUpdate: (field: string, value: string) => void,
+    showDelete: boolean = false,
+    onDelete?: () => void
+  ) => (
+    <div className="flex items-center gap-2">
+      <span className="text-sm text-slate-600 dark:text-slate-400">Break:</span>
+      <div className="flex items-center gap-1">
+        <Select value={breakData.breakInHour} onValueChange={(value) => onUpdate('breakInHour', value)}>
+          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+            <SelectValue placeholder="--" />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            {hours.map(hour => (
+              <SelectItem key={hour} value={hour.toString()}>{hour}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <span>:</span>
+        <Select value={breakData.breakInMinute} onValueChange={(value) => onUpdate('breakInMinute', value)}>
+          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+            <SelectValue placeholder="--" />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            {minutes.map(minute => (
+              <SelectItem key={minute} value={minute}>{minute}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={breakData.breakInPeriod} onValueChange={(value) => onUpdate('breakInPeriod', value)}>
+          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            <SelectItem value="AM">AM</SelectItem>
+            <SelectItem value="PM">PM</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <span className="text-slate-400">-</span>
+      <div className="flex items-center gap-1">
+        <Select value={breakData.breakOutHour} onValueChange={(value) => onUpdate('breakOutHour', value)}>
+          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+            <SelectValue placeholder="--" />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            {hours.map(hour => (
+              <SelectItem key={hour} value={hour.toString()}>{hour}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <span>:</span>
+        <Select value={breakData.breakOutMinute} onValueChange={(value) => onUpdate('breakOutMinute', value)}>
+          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+            <SelectValue placeholder="--" />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            {minutes.map(minute => (
+              <SelectItem key={minute} value={minute}>{minute}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={breakData.breakOutPeriod} onValueChange={(value) => onUpdate('breakOutPeriod', value)}>
+          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            <SelectItem value="AM">AM</SelectItem>
+            <SelectItem value="PM">PM</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      {showDelete && onDelete && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onDelete}
+          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      )}
+    </div>
+  );
 
   return (
     <div className="unity-fade-in max-w-6xl mx-auto space-y-6">
@@ -160,7 +287,6 @@ const TimeEntryTimeInOut = () => {
                 {/* Streamlined Project Info Grid */}
                 <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
                   <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    {/* Project */}
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
                         <Building2 className="h-3 w-3 text-blue-500" />
@@ -177,7 +303,6 @@ const TimeEntryTimeInOut = () => {
                       </select>
                     </div>
 
-                    {/* Extra */}
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
                         <div className="w-3 h-3 border border-green-500 rounded-sm flex items-center justify-center">
@@ -196,7 +321,6 @@ const TimeEntryTimeInOut = () => {
                       </select>
                     </div>
 
-                    {/* Cost Code */}
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
                         <div className="w-3 h-3 border border-purple-500 rounded-sm flex items-center justify-center">
@@ -215,7 +339,6 @@ const TimeEntryTimeInOut = () => {
                       </select>
                     </div>
 
-                    {/* Date */}
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
                         <Calendar className="h-3 w-3 text-red-500" />
@@ -228,7 +351,6 @@ const TimeEntryTimeInOut = () => {
                       />
                     </div>
 
-                    {/* Employee */}
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
                         <User className="h-3 w-3 text-cyan-500" />
@@ -248,7 +370,7 @@ const TimeEntryTimeInOut = () => {
                 </div>
 
                 {/* Streamlined Time Entry */}
-                <div className="bg-white dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                <div className="bg-white dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-700 space-y-3">
                   <div className="flex items-center gap-4 flex-wrap">
                     {/* Start Time */}
                     <div className="flex items-center gap-2">
@@ -326,80 +448,6 @@ const TimeEntryTimeInOut = () => {
                       </div>
                     </div>
 
-                    <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
-
-                    {/* Break Time */}
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-slate-600 dark:text-slate-400">Break:</span>
-                      <div className="flex items-center gap-1">
-                        <Select value={breakInHour} onValueChange={setBreakInHour}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            {hours.map(hour => (
-                              <SelectItem key={hour} value={hour.toString()}>{hour}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <span>:</span>
-                        <Select value={breakInMinute} onValueChange={setBreakInMinute}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            {minutes.map(minute => (
-                              <SelectItem key={minute} value={minute}>{minute}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Select value={breakInPeriod} onValueChange={setBreakInPeriod}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            <SelectItem value="AM">AM</SelectItem>
-                            <SelectItem value="PM">PM</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <span className="text-slate-400">-</span>
-                      <div className="flex items-center gap-1">
-                        <Select value={breakOutHour} onValueChange={setBreakOutHour}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            {hours.map(hour => (
-                              <SelectItem key={hour} value={hour.toString()}>{hour}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <span>:</span>
-                        <Select value={breakOutMinute} onValueChange={setBreakOutMinute}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            {minutes.map(minute => (
-                              <SelectItem key={minute} value={minute}>{minute}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Select value={breakOutPeriod} onValueChange={setBreakOutPeriod}>
-                          <SelectTrigger className="w-16 h-9 border-slate-300 dark:border-slate-600">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            <SelectItem value="AM">AM</SelectItem>
-                            <SelectItem value="PM">PM</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
-
                     {/* Quick Fill Buttons */}
                     <div className="flex items-center gap-2 ml-auto">
                       <span className="text-xs text-slate-500">Quick:</span>
@@ -437,6 +485,51 @@ const TimeEntryTimeInOut = () => {
                       </Button>
                     </div>
                   </div>
+
+                  {/* Primary Break with Add Button */}
+                  <div className="flex items-center gap-2">
+                    {renderBreakSelector(
+                      {
+                        breakInHour,
+                        breakInMinute,
+                        breakInPeriod,
+                        breakOutHour,
+                        breakOutMinute,
+                        breakOutPeriod
+                      },
+                      (field, value) => {
+                        switch (field) {
+                          case 'breakInHour': setBreakInHour(value); break;
+                          case 'breakInMinute': setBreakInMinute(value); break;
+                          case 'breakInPeriod': setBreakInPeriod(value); break;
+                          case 'breakOutHour': setBreakOutHour(value); break;
+                          case 'breakOutMinute': setBreakOutMinute(value); break;
+                          case 'breakOutPeriod': setBreakOutPeriod(value); break;
+                        }
+                      }
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={addBreak}
+                      className="h-8 w-8 p-0 border-slate-300 dark:border-slate-600"
+                      title="Add another break"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  {/* Additional Breaks */}
+                  {additionalBreaks.map((breakTime) => (
+                    <div key={breakTime.id} className="ml-4">
+                      {renderBreakSelector(
+                        breakTime,
+                        (field, value) => updateBreak(breakTime.id, field as keyof Omit<BreakTime, 'id'>, value),
+                        true,
+                        () => removeBreak(breakTime.id)
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
