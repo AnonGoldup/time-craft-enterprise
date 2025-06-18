@@ -26,7 +26,7 @@ export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item }) => {
           className={cn(
             "flex items-center justify-between w-full gap-3 px-3 py-2 rounded-lg transition-colors duration-200",
             isActive || isSubmenuItemActive
-              ? "bg-accent text-accent-foreground border border-accent/20"
+              ? "bg-accent/60 text-accent-foreground border border-accent/10 px-2 py-1.5"
               : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           )}
         >
@@ -46,7 +46,7 @@ export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item }) => {
                   className={cn(
                     "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 text-sm",
                     location.pathname === subItem.path
-                      ? "bg-accent text-accent-foreground border border-accent/20"
+                      ? "bg-accent/60 text-accent-foreground border border-accent/10 px-2 py-1.5"
                       : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   )}
                 >
@@ -67,7 +67,7 @@ export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item }) => {
       className={cn(
         "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200",
         isActive
-          ? "bg-accent text-accent-foreground border border-accent/20"
+          ? "bg-accent/60 text-accent-foreground border border-accent/10 px-2 py-1.5"
           : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
       )}
     >
