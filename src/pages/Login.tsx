@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Clock, LogIn, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { LogIn, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
@@ -47,53 +47,57 @@ const Login = () => {
       }}
     >
       {/* Enhanced dark overlay for better contrast */}
-      <div className="absolute inset-0 bg-black/60"></div>
+      <div className="absolute inset-0 bg-black/50"></div>
       
-      <Card className="w-full max-w-md relative z-10 bg-white/15 backdrop-blur-xl border-white/20 shadow-2xl">
-        <CardHeader className="space-y-4 text-center pb-8">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-            <Clock className="h-8 w-8 text-white" />
+      <Card className="w-full max-w-md relative z-10 bg-white/10 backdrop-blur-2xl border-white/10 shadow-2xl">
+        <CardHeader className="space-y-6 text-center pb-8">
+          <div className="mx-auto w-20 h-20 rounded-full overflow-hidden shadow-lg bg-white/5 flex items-center justify-center p-1">
+            <img 
+              src="/lovable-uploads/899b2930-d56c-4420-8ddd-44246b9b46f0.png" 
+              alt="AltaPro Logo" 
+              className="w-full h-full object-contain"
+            />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <CardTitle className="text-3xl font-bold text-white">
               Welcome Back
             </CardTitle>
-            <p className="text-orange-300 font-medium text-lg">AltaTimesheet</p>
-            <p className="text-white/80 text-sm">Sign in to your account</p>
+            <p className="text-orange-300 font-medium text-lg">AltaPro Timesheet</p>
+            <p className="text-white/70 text-sm">Sign in to your account to continue</p>
           </div>
         </CardHeader>
         
         <CardContent className="space-y-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white font-medium">Email</Label>
+              <Label htmlFor="email" className="text-white/90 font-medium">Email Address</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/10 border-white/20 focus:border-orange-400 focus:ring-orange-400/20 text-white placeholder:text-white/60 backdrop-blur-sm"
+                className="bg-white/5 border-white/10 focus:border-orange-400/50 focus:ring-orange-400/20 text-white placeholder:text-white/50 backdrop-blur-sm h-12"
                 placeholder="john.doe@company.com"
                 disabled={loading}
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white font-medium">Password</Label>
+              <Label htmlFor="password" className="text-white/90 font-medium">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white/10 border-white/20 focus:border-orange-400 focus:ring-orange-400/20 text-white placeholder:text-white/60 backdrop-blur-sm pr-10"
+                  className="bg-white/5 border-white/10 focus:border-orange-400/50 focus:ring-orange-400/20 text-white placeholder:text-white/50 backdrop-blur-sm h-12 pr-12"
                   placeholder="Enter your password"
                   disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white/80 transition-colors p-1"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -108,13 +112,13 @@ const Login = () => {
                   onCheckedChange={(checked) => setRememberMe(checked as boolean)}
                   className="border-white/20 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                 />
-                <Label htmlFor="remember" className="text-white/80 text-sm cursor-pointer">
+                <Label htmlFor="remember" className="text-white/70 text-sm cursor-pointer">
                   Remember Me
                 </Label>
               </div>
               <button
                 type="button"
-                className="text-orange-300 hover:text-orange-200 text-sm font-medium transition-colors"
+                className="text-orange-300 hover:text-orange-200 text-sm font-medium transition-colors underline-offset-4 hover:underline"
               >
                 Forgot Password?
               </button>
@@ -122,7 +126,7 @@ const Login = () => {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 h-12"
+              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 h-12 text-base"
               disabled={loading}
             >
               {loading ? (
@@ -139,23 +143,23 @@ const Login = () => {
             </Button>
           </form>
 
-          <div className="text-center">
-            <p className="text-white/80 text-sm">
-              Need an account?{' '}
-              <button className="text-orange-300 hover:text-orange-200 font-medium transition-colors">
+          <div className="text-center pt-4">
+            <p className="text-white/70 text-sm">
+              Don't have an account?{' '}
+              <button className="text-orange-300 hover:text-orange-200 font-medium transition-colors underline-offset-4 hover:underline">
                 Sign Up
               </button>
             </p>
           </div>
 
-          <div className="p-4 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm">
+          <div className="p-4 bg-white/5 border border-white/10 rounded-lg backdrop-blur-sm">
             <div className="flex items-start gap-3">
               <AlertCircle className="h-5 w-5 text-orange-400 mt-0.5 flex-shrink-0" />
               <div className="text-sm">
                 <p className="text-orange-300 font-medium mb-2">Demo Credentials:</p>
-                <div className="space-y-1 text-white/80">
-                  <p><strong>Employee:</strong> john.doe@company.com / password</p>
-                  <p><strong>Admin:</strong> admin@company.com / password</p>
+                <div className="space-y-1 text-white/70">
+                  <p><strong className="text-white/90">Employee:</strong> john.doe@company.com / password</p>
+                  <p><strong className="text-white/90">Admin:</strong> admin@company.com / password</p>
                 </div>
               </div>
             </div>
