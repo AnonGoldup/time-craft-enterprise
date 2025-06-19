@@ -9,6 +9,9 @@ import TimeEntryEditForm from '@/components/TimeEntry/TimeEntryEditForm';
 import LogFilters from '@/components/TimeEntry/LogFilters';
 import LogSummaryCards from '@/components/TimeEntry/LogSummaryCards';
 import LogTable from '@/components/TimeEntry/LogTable';
+import { useTimesheetData } from '@/hooks/useTimesheetData';
+import { mockApiService } from '@/services/mockApiService';
+import { Project } from '@/services/api';
 
 interface TimeEntry {
   entryID: number;
@@ -30,92 +33,48 @@ interface TimeEntry {
   entryType: 'Standard' | 'TimeInOut';
 }
 
-interface Project {
-  projectID: number;
-  projectCode: string;
-  projectDescription: string;
-}
-
 const Log = () => {
   const { user } = useAuth();
   const [selectedEmployee, setSelectedEmployee] = useState(user?.employeeId.toString() || '');
   const [selectedProject, setSelectedProject] = useState('all');
   const [currentWeek, setCurrentWeek] = useState(new Date());
-  const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
 
-  // Enhanced data loading with error handling
-  useEffect(() => {
-    loadData();
-  }, [selectedEmployee, selectedProject, currentWeek]);
+  const weekEndingDate = format(endOfWeek(currentWeek, { weekStartsOn: 1 }), 'yyyy-MM-dd');
+  const { entries, loading, error, updateEntry, deleteEntry, refresh } = useTimesheetData(
+    selectedEmployee, 
+    weekEndingDate
+  );
 
-  const loadData = async () => {
-    try {
-      setError(null);
-      await Promise.all([loadProjects(), loadTimeEntries()]);
-    } catch (err) {
-      setError('Failed to load data. Please try again.');
-      console.error('Data loading error:', err);
-    }
-  };
+  // Transform timesheet entries to display format
+  const timeEntries: TimeEntry[] = entries.map(entry => ({
+    entryID: entry.entryID!,
+    dateWorked: entry.dateWorked,
+    projectCode: `PROJ${entry.projectID.toString().padStart(3, '0')}`,
+    projectDescription: projects.find(p => p.projectID === entry.projectID)?.projectDescription || 'Unknown Project',
+    extraValue: entry.extraID ? `Extra ${entry.extraID}` : undefined,
+    costCode: `CC-${entry.costCodeID.toString().padStart(3, '0')}`,
+    standardHours: entry.payID === 1 ? entry.hours : undefined,
+    overtimeHours: entry.payID === 2 ? entry.hours : undefined,
+    total: entry.hours,
+    location: 'Site A', // Mock data
+    comments: entry.notes,
+    status: entry.status,
+    entryType: entry.entryType as 'Standard' | 'TimeInOut'
+  }));
+
+  useEffect(() => {
+    loadProjects();
+  }, []);
 
   const loadProjects = async () => {
-    // Mock projects data with better error simulation
-    const mockProjects: Project[] = [
-      { projectID: 1, projectCode: "PROJ001", projectDescription: "Office Building Renovation" },
-      { projectID: 2, projectCode: "PROJ002", projectDescription: "Shopping Mall Construction" },
-      { projectID: 3, projectCode: "PROJ003", projectDescription: "Residential Complex" }
-    ];
-    setProjects(mockProjects);
-  };
-
-  const loadTimeEntries = async () => {
-    setLoading(true);
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      const mockEntries: TimeEntry[] = [
-        {
-          entryID: 1,
-          dateWorked: format(currentWeek, 'yyyy-MM-dd'),
-          projectCode: "PROJ001",
-          projectDescription: "Office Building Renovation",
-          extraValue: "Phase 1",
-          costCode: "LAB-001-001",
-          timeIn: "08:00",
-          timeOut: "17:00",
-          breaks: 0.5,
-          total: 8.0,
-          location: "Site A",
-          comments: "Foundation work completed",
-          status: "Draft",
-          entryType: "TimeInOut"
-        },
-        {
-          entryID: 2,
-          dateWorked: format(addWeeks(currentWeek, 0), 'yyyy-MM-dd'),
-          projectCode: "PROJ002",
-          projectDescription: "Shopping Mall Construction",
-          costCode: "EQP-001-001",
-          standardHours: 8,
-          overtimeHours: 2,
-          total: 10.0,
-          status: "Submitted",
-          entryType: "Standard"
-        }
-      ];
-      setTimeEntries(mockEntries);
+      const response = await mockApiService.projects.getAll();
+      setProjects(response.data);
     } catch (error) {
-      toast.error("Failed to load time entries", {
-        description: "Please check your connection and try again."
-      });
-    } finally {
-      setLoading(false);
+      console.error('Failed to load projects:', error);
     }
   };
 
@@ -140,12 +99,17 @@ const Log = () => {
     setIsEditFormOpen(true);
   };
 
-  const handleSaveEntry = (updatedEntry: TimeEntry) => {
-    setTimeEntries(entries => 
-      entries.map(entry => 
-        entry.entryID === updatedEntry.entryID ? updatedEntry : entry
-      )
-    );
+  const handleSaveEntry = async (updatedEntry: TimeEntry) => {
+    try {
+      await updateEntry(updatedEntry.entryID, {
+        dateWorked: updatedEntry.dateWorked,
+        hours: updatedEntry.total,
+        notes: updatedEntry.comments
+      });
+      await refresh();
+    } catch (error) {
+      console.error('Failed to save entry:', error);
+    }
   };
 
   const handleDeleteEntry = async (entryID: number) => {
@@ -158,14 +122,9 @@ const Log = () => {
     }
     
     try {
-      setTimeEntries(entries => entries.filter(e => e.entryID !== entryID));
-      toast.success("Entry deleted successfully", {
-        description: "The time entry has been removed."
-      });
+      await deleteEntry(entryID);
     } catch (error) {
-      toast.error("Failed to delete entry", {
-        description: "Please try again later."
-      });
+      console.error('Failed to delete entry:', error);
     }
   };
 
@@ -175,7 +134,7 @@ const Log = () => {
         <div className="text-center py-12">
           <p className="text-destructive text-lg font-medium">Error Loading Data</p>
           <p className="text-muted-foreground mt-2">{error}</p>
-          <Button onClick={loadData} className="mt-4">
+          <Button onClick={refresh} className="mt-4">
             Try Again
           </Button>
         </div>

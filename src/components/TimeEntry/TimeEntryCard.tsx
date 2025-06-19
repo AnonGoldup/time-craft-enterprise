@@ -1,21 +1,18 @@
 
 import React from 'react';
-import EntryCardHeader from './EntryCardHeader';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Trash2 } from 'lucide-react';
 import ProjectDetailsRow from './ProjectDetailsRow';
 import StandardHoursEntry from './StandardHoursEntry';
 import NotesAndSubmitRow from './NotesAndSubmitRow';
 
-interface TimeEntry {
-  id: number;
-  notes: string;
-}
-
 interface TimeEntryCardProps {
-  entry: TimeEntry;
+  entry: { id: number; notes: string };
   index: number;
   canDelete: boolean;
   onDelete: (id: number) => void;
-  updateEntryNotes: (entryId: number, notes: string) => void;
+  updateEntryNotes: (id: number, notes: string) => void;
   selectedProject: string;
   setSelectedProject: (value: string) => void;
   selectedExtra: string;
@@ -69,43 +66,66 @@ const TimeEntryCard: React.FC<TimeEntryCardProps> = ({
   };
 
   return (
-    <div className={`rounded-lg border p-2 space-y-4 ${getRowBackgroundClass(index)}`}>
+    <Card className={`border p-2 space-y-4 ${getRowBackgroundClass(index)}`}>
       {/* Entry Header */}
-      <EntryCardHeader
-        entryNumber={index + 1}
-        canDelete={canDelete}
-        onDelete={() => onDelete(entry.id)}
-      />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+            <span className="text-xs font-semibold text-primary">
+              {index + 1}
+            </span>
+          </div>
+          <h3 className="font-semibold text-foreground">
+            Entry {index + 1}
+          </h3>
+        </div>
+        
+        {canDelete && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onDelete(entry.id)}
+            className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
 
       {/* Project Details Section */}
       <div className="bg-muted/30 rounded-lg p-2 border">
-        <ProjectDetailsRow
-          selectedProject={selectedProject}
-          setSelectedProject={setSelectedProject}
-          selectedExtra={selectedExtra}
-          setSelectedExtra={setSelectedExtra}
-          selectedCostCode={selectedCostCode}
-          setSelectedCostCode={setSelectedCostCode}
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
+        <ProjectDetailsRow 
+          selectedProject={selectedProject} 
+          setSelectedProject={setSelectedProject} 
+          selectedExtra={selectedExtra} 
+          setSelectedExtra={setSelectedExtra} 
+          selectedCostCode={selectedCostCode} 
+          setSelectedCostCode={setSelectedCostCode} 
+          selectedDate={selectedDate} 
+          setSelectedDate={setSelectedDate} 
           selectedDates={selectedDates}
           setSelectedDates={setSelectedDates}
-          selectedEmployee={selectedEmployee}
-          setSelectedEmployee={setSelectedEmployee}
-          selectedEmployees={selectedEmployees}
-          setSelectedEmployees={setSelectedEmployees}
+          selectedEmployee={selectedEmployee} 
+          setSelectedEmployee={setSelectedEmployee} 
+          selectedEmployees={selectedEmployees} 
+          setSelectedEmployees={setSelectedEmployees} 
           useCostCodeInput={false}
-          useMultiDateSelection={true}
+          useMultiDateSelection={false}
         />
       </div>
 
       {/* Hours Entry Section */}
-      <StandardHoursEntry
-        standardHours={standardHours}
-        setStandardHours={setStandardHours}
-        overtimeHours={overtimeHours}
-        setOvertimeHours={setOvertimeHours}
+      <StandardHoursEntry 
+        standardHours={standardHours} 
+        setStandardHours={setStandardHours} 
+        overtimeHours={overtimeHours} 
+        setOvertimeHours={setOvertimeHours} 
         setQuickHours={setQuickHours}
+        selectedProject={selectedProject}
+        selectedExtra={selectedExtra}
+        selectedCostCode={selectedCostCode}
+        selectedDate={selectedDate}
+        notes={entry.notes}
       />
 
       {/* Notes Section */}
@@ -116,7 +136,7 @@ const TimeEntryCard: React.FC<TimeEntryCardProps> = ({
           showTotalHours={false}
         />
       </div>
-    </div>
+    </Card>
   );
 };
 

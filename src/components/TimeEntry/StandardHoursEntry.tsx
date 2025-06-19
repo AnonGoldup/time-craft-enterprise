@@ -2,6 +2,9 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useTimesheetData } from '@/hooks/useTimesheetData';
+import { useAuth } from '@/contexts/AuthContext';
+import { format } from 'date-fns';
 
 interface StandardHoursEntryProps {
   standardHours: string;
@@ -9,6 +12,11 @@ interface StandardHoursEntryProps {
   overtimeHours: string;
   setOvertimeHours: (hours: string) => void;
   setQuickHours: (hours: number) => void;
+  selectedProject?: string;
+  selectedExtra?: string;
+  selectedCostCode?: string;
+  selectedDate?: string;
+  notes?: string;
 }
 
 const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
@@ -16,8 +24,16 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
   setStandardHours,
   overtimeHours,
   setOvertimeHours,
-  setQuickHours
+  setQuickHours,
+  selectedProject,
+  selectedExtra,
+  selectedCostCode,
+  selectedDate,
+  notes = ''
 }) => {
+  const { user } = useAuth();
+  const { createEntry } = useTimesheetData(user?.employeeId || '');
+  
   const totalHours = (parseFloat(standardHours) || 0) + (parseFloat(overtimeHours) || 0);
 
   const handleStandardHoursChange = (value: string) => {
@@ -32,6 +48,55 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
     if (value === '' || (!isNaN(numValue) && numValue >= 0)) {
       setOvertimeHours(value);
     }
+  };
+
+  const handleSubmitEntry = async () => {
+    if (!selectedProject || !selectedCostCode || !selectedDate || !user) {
+      return;
+    }
+
+    const standardHrs = parseFloat(standardHours) || 0;
+    const overtimeHrs = parseFloat(overtimeHours) || 0;
+
+    // Create standard hours entry
+    if (standardHrs > 0) {
+      await createEntry({
+        employeeID: user.employeeId,
+        dateWorked: selectedDate,
+        projectID: parseInt(selectedProject),
+        extraID: selectedExtra ? parseInt(selectedExtra) : undefined,
+        costCodeID: parseInt(selectedCostCode),
+        payID: 1, // Standard time
+        hours: standardHrs,
+        unionID: 1, // Default union
+        entryType: 'Standard',
+        notes: notes,
+        status: 'Draft',
+        createdBy: user.employeeId
+      });
+    }
+
+    // Create overtime hours entry
+    if (overtimeHrs > 0) {
+      await createEntry({
+        employeeID: user.employeeId,
+        dateWorked: selectedDate,
+        projectID: parseInt(selectedProject),
+        extraID: selectedExtra ? parseInt(selectedExtra) : undefined,
+        costCodeID: parseInt(selectedCostCode),
+        payID: 2, // Overtime
+        hours: overtimeHrs,
+        unionID: 1, // Default union
+        entryType: 'Standard',
+        notes: notes,
+        status: 'Draft',
+        createdBy: user.employeeId
+      });
+    }
+
+    // Reset form
+    setStandardHours('');
+    setOvertimeHours('');
   };
 
   return (
@@ -102,6 +167,8 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
         {/* Submit Entry Button - positioned to the right */}
         <div className="ml-auto">
           <Button 
+            onClick={handleSubmitEntry}
+            disabled={!selectedProject || !selectedCostCode || !selectedDate || totalHours === 0}
             className="bg-primary text-primary-foreground hover:bg-primary/90"
             size="sm"
           >
