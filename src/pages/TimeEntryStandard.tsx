@@ -173,12 +173,14 @@ const TimeEntryStandard = () => {
                   />
                 </div>
 
-                {/* Hours Entry Section - Reduced padding */}
+                {/* Hours Entry Section - Improved styling */}
                 <div className="bg-card rounded-lg p-2 border">
                   <div className="flex items-center gap-4 flex-wrap">
                     {/* Standard Hours */}
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-green-600 dark:text-green-400 min-w-[24px]">ST:</span>
+                      <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded flex items-center justify-center">
+                        <span className="text-sm font-bold text-green-700 dark:text-green-300">ST</span>
+                      </div>
                       <div className="relative">
                         <Input
                           type="number"
@@ -194,7 +196,9 @@ const TimeEntryStandard = () => {
 
                     {/* Overtime Hours */}
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-amber-600 dark:text-amber-400 min-w-[24px]">OT:</span>
+                      <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded flex items-center justify-center">
+                        <span className="text-sm font-bold text-amber-700 dark:text-amber-300">OT</span>
+                      </div>
                       <div className="relative">
                         <Input
                           type="number"
