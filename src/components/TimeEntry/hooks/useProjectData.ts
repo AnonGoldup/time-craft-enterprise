@@ -74,7 +74,7 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
         }
       ];
 
-      console.log('useProjectData - Loading projects:', mockProjects);
+      console.log('useProjectData - Setting projects:', mockProjects.length);
       setProjects(mockProjects);
       setEmployees(mockEmployees);
     } catch (error) {
@@ -97,6 +97,7 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
         { extraID: 3, projectID: parseInt(projectId), extraValue: "Phase 3", description: "Finishing Work", isActive: true }
       ];
       
+      console.log('useProjectData - Setting project extras:', mockExtras.length);
       setProjectExtras(mockExtras);
     } catch (error) {
       console.error('Failed to load project extras:', error);
@@ -114,12 +115,20 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
         { costCodeID: 3, costCode: "MAT-001-001", costCodeForSAGE: "MAT001001", description: "Material Handling", isActive: true }
       ];
       
+      console.log('useProjectData - Setting cost codes:', mockCostCodes.length);
       setCostCodes(mockCostCodes);
     } catch (error) {
       console.error('Failed to load cost codes:', error);
       setCostCodes([]);
     }
   };
+
+  console.log('useProjectData - Returning state:', {
+    projectsCount: projects.length,
+    projectExtrasCount: projectExtras.length,
+    costCodesCount: costCodes.length,
+    loading
+  });
 
   return {
     projects,

@@ -71,7 +71,8 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
     );
   }
 
-  console.log('ProjectDetailsRow - projects available:', projects.length);
+  console.log('ProjectDetailsRow - projects available:', projects?.length || 0);
+  console.log('ProjectDetailsRow - selectedProject:', selectedProject);
 
   return (
     <div className="space-y-4">
@@ -79,20 +80,20 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
         <ProjectSelector
           selectedProject={selectedProject}
           setSelectedProject={handleProjectChange}
-          projects={projects}
+          projects={projects || []}
         />
 
         <ExtraSelector
           selectedExtra={selectedExtra}
           setSelectedExtra={handleExtraChange}
-          projectExtras={projectExtras}
+          projectExtras={projectExtras || []}
           disabled={!selectedProject}
         />
 
         <CostCodeSelector
           selectedCostCode={selectedCostCode}
           setSelectedCostCode={handleCostCodeChange}
-          costCodes={costCodes}
+          costCodes={costCodes || []}
           disabled={!selectedProject}
           useCostCodeInput={useCostCodeInput}
         />
