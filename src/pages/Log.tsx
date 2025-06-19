@@ -28,7 +28,7 @@ interface LogTimeEntry {
   total: number;
   location?: string;
   comments?: string;
-  status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected' | 'Exported';
+  status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected';
   entryType: 'Standard' | 'TimeInOut';
 }
 
@@ -60,7 +60,7 @@ const Log = () => {
     total: entry.hours,
     location: 'Site A', // Mock data
     comments: entry.notes,
-    status: entry.status,
+    status: entry.status === 'Exported' ? 'Approved' : entry.status as 'Draft' | 'Submitted' | 'Approved' | 'Rejected',
     entryType: entry.entryType as 'Standard' | 'TimeInOut'
   }));
 

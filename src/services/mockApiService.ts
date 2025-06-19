@@ -1,3 +1,4 @@
+
 import { 
   mockEmployees, 
   mockProjects, 
@@ -169,7 +170,7 @@ export const mockApiService = {
       const newEntry: TimesheetEntry = {
         ...entry,
         entryID: Math.max(...entries.map(e => e.entryID || 0), 0) + 1,
-        createdDate: new Date().toISOString(),
+        createdDate: entry.createdDate || new Date().toISOString(),
         modifiedDate: null,
         exportedDate: null
       };
@@ -196,6 +197,7 @@ export const mockApiService = {
       const updatedEntry: TimesheetEntry = {
         ...entries[entryIndex],
         ...updates,
+        entryID: entries[entryIndex].entryID!, // Ensure entryID is present
         modifiedDate: new Date().toISOString()
       };
       
