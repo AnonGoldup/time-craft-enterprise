@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
 import MultiDatePicker from './MultiDatePicker';
 import ProjectDetailsRow from './ProjectDetailsRow';
+import { useProjectData } from './hooks/useProjectData';
 
 interface StandardHoursEntryProps {
   standardHours: string;
@@ -47,6 +48,7 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
 }) => {
   const { user } = useAuth();
   const { createEntry } = useTimesheetData(user?.employeeId || '');
+  const { employees } = useProjectData(selectedProject, selectedExtra);
   
   const totalHours = (parseFloat(standardHours) || 0) + (parseFloat(overtimeHours) || 0);
 
@@ -168,7 +170,7 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
           selectedDates={selectedDates}
           setSelectedDates={setSelectedDates}
           selectedEmployee={selectedEmployee}
-          setSelectedEmployee={setSelectedEmployee}
+          setSelectedEmployee={setSelectedEmployee || (() => {})}
           selectedEmployees={selectedEmployees}
           setSelectedEmployees={setSelectedEmployees}
           useMultiDateSelection={true}

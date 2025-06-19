@@ -22,7 +22,7 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   setSelectedEmployee,
   selectedEmployees = [],
   setSelectedEmployees,
-  employees = [] // Ensure employees is always an array
+  employees = []
 }) => {
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false);
 
@@ -56,21 +56,6 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
       .map(emp => emp.fullName || emp.firstName + ' ' + emp.lastName);
   };
 
-  // If no employees are loaded, show a simple message
-  if (!safeEmployees.length) {
-    return (
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-blue-500" />
-          <span className="text-sm text-slate-600 dark:text-slate-400">Employee</span>
-        </div>
-        <div className="w-48 p-2 text-sm text-muted-foreground border rounded">
-          Loading employees...
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-2">
       <div className="flex flex-col gap-2">
@@ -79,7 +64,11 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
           <span className="text-sm text-slate-600 dark:text-slate-400">Employee</span>
         </div>
         
-        {setSelectedEmployees ? (
+        {safeEmployees.length === 0 ? (
+          <div className="w-48 p-2 text-sm text-muted-foreground border rounded">
+            Loading employees...
+          </div>
+        ) : setSelectedEmployees ? (
           // Multi-select mode
           <Popover open={employeePopoverOpen} onOpenChange={setEmployeePopoverOpen}>
             <PopoverTrigger asChild>
