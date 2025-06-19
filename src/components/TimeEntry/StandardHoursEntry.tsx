@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { useTimesheetData } from '@/hooks/useTimesheetData';
 import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
-import MultiDatePicker from './MultiDatePicker';
 import ProjectDetailsRow from './ProjectDetailsRow';
 
 interface StandardHoursEntryProps {
@@ -173,8 +172,8 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
 
   return (
     <div className="bg-card rounded-lg p-4 border space-y-4">
-      {/* Project Details Row with Date Picker integrated */}
-      <div className="flex items-start gap-6 flex-wrap">
+      {/* Project Details Section - Same as Time In/Out */}
+      <div className="bg-muted/30 rounded-lg p-2 border">
         <ProjectDetailsRow
           selectedProject={selectedProject}
           setSelectedProject={setSelectedProject}
@@ -190,6 +189,7 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
           setSelectedEmployee={setSelectedEmployee}
           selectedEmployees={selectedEmployees}
           setSelectedEmployees={setSelectedEmployees}
+          useCostCodeInput={false}
           useMultiDateSelection={true}
         />
       </div>
