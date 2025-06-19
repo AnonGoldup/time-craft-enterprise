@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTimesheetData } from '@/hooks/useTimesheetData';
 import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
+import MultiDatePicker from './MultiDatePicker';
 
 interface StandardHoursEntryProps {
   standardHours: string;
@@ -33,6 +34,7 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
 }) => {
   const { user } = useAuth();
   const { createEntry } = useTimesheetData(user?.employeeId || '');
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   
   const totalHours = (parseFloat(standardHours) || 0) + (parseFloat(overtimeHours) || 0);
 
@@ -51,80 +53,103 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
   };
 
   const handleSubmitEntry = async () => {
-    if (!selectedProject || !selectedCostCode || !selectedDate || !user) {
+    if (!selectedProject || !selectedCostCode || !user) {
+      return;
+    }
+
+    // Use selected dates from multi-picker, or fall back to single date
+    const datesToSubmit = selectedDates.length > 0 
+      ? selectedDates.map(date => format(date, 'yyyy-MM-dd'))
+      : selectedDate ? [selectedDate] : [];
+
+    if (datesToSubmit.length === 0) {
       return;
     }
 
     const standardHrs = parseFloat(standardHours) || 0;
     const overtimeHrs = parseFloat(overtimeHours) || 0;
 
-    // Create standard hours entry
-    if (standardHrs > 0) {
-      await createEntry({
-        employeeID: user.employeeId,
-        dateWorked: selectedDate,
-        projectID: parseInt(selectedProject),
-        extraID: selectedExtra ? parseInt(selectedExtra) : 0,
-        costCodeID: parseInt(selectedCostCode),
-        payID: 1, // Standard time
-        hours: standardHrs,
-        unionID: 1, // Default union
-        entryType: 'Standard',
-        notes: notes,
-        status: 'Draft',
-        createdBy: user.employeeId,
-        createdDate: new Date().toISOString(),
-        modifiedBy: '',
-        modifiedDate: '',
-        exportedDate: '',
-        startTime: '',
-        endTime: '',
-        breakInTime: '',
-        breakOutTime: '',
-        timeIn: '',
-        timeOut: '',
-        breakIn: '',
-        breakOut: ''
-      });
-    }
+    // Submit entries for each selected date
+    for (const dateWorked of datesToSubmit) {
+      // Create standard hours entry
+      if (standardHrs > 0) {
+        await createEntry({
+          employeeID: user.employeeId,
+          dateWorked: dateWorked,
+          projectID: parseInt(selectedProject),
+          extraID: selectedExtra ? parseInt(selectedExtra) : 0,
+          costCodeID: parseInt(selectedCostCode),
+          payID: 1, // Standard time
+          hours: standardHrs,
+          unionID: 1, // Default union
+          entryType: 'Standard',
+          notes: notes,
+          status: 'Draft',
+          createdBy: user.employeeId,
+          createdDate: new Date().toISOString(),
+          modifiedBy: '',
+          modifiedDate: '',
+          exportedDate: '',
+          startTime: '',
+          endTime: '',
+          breakInTime: '',
+          breakOutTime: '',
+          timeIn: '',
+          timeOut: '',
+          breakIn: '',
+          breakOut: ''
+        });
+      }
 
-    // Create overtime hours entry
-    if (overtimeHrs > 0) {
-      await createEntry({
-        employeeID: user.employeeId,
-        dateWorked: selectedDate,
-        projectID: parseInt(selectedProject),
-        extraID: selectedExtra ? parseInt(selectedExtra) : 0,
-        costCodeID: parseInt(selectedCostCode),
-        payID: 2, // Overtime
-        hours: overtimeHrs,
-        unionID: 1, // Default union
-        entryType: 'Standard',
-        notes: notes,
-        status: 'Draft',
-        createdBy: user.employeeId,
-        createdDate: new Date().toISOString(),
-        modifiedBy: '',
-        modifiedDate: '',
-        exportedDate: '',
-        startTime: '',
-        endTime: '',
-        breakInTime: '',
-        breakOutTime: '',
-        timeIn: '',
-        timeOut: '',
-        breakIn: '',
-        breakOut: ''
-      });
+      // Create overtime hours entry
+      if (overtimeHrs > 0) {
+        await createEntry({
+          employeeID: user.employeeId,
+          dateWorked: dateWorked,
+          projectID: parseInt(selectedProject),
+          extraID: selectedExtra ? parseInt(selectedExtra) : 0,
+          costCodeID: parseInt(selectedCostCode),
+          payID: 2, // Overtime
+          hours: overtimeHrs,
+          unionID: 1, // Default union
+          entryType: 'Standard',
+          notes: notes,
+          status: 'Draft',
+          createdBy: user.employeeId,
+          createdDate: new Date().toISOString(),
+          modifiedBy: '',
+          modifiedDate: '',
+          exportedDate: '',
+          startTime: '',
+          endTime: '',
+          breakInTime: '',
+          breakOutTime: '',
+          timeIn: '',
+          timeOut: '',
+          breakIn: '',
+          breakOut: ''
+        });
+      }
     }
 
     // Reset form
     setStandardHours('');
     setOvertimeHours('');
+    setSelectedDates([]);
   };
 
   return (
-    <div className="bg-card rounded-lg p-2 border">
+    <div className="bg-card rounded-lg p-4 border space-y-4">
+      {/* Multi-Date Picker */}
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-medium">Select Dates:</span>
+        <MultiDatePicker
+          selectedDates={selectedDates}
+          onDatesChange={setSelectedDates}
+        />
+      </div>
+
+      {/* Hours Entry Row */}
       <div className="flex items-center gap-4 flex-wrap">
         {/* Standard Hours */}
         <div className="flex items-center gap-2">
@@ -192,7 +217,7 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
         <div className="ml-auto">
           <Button 
             onClick={handleSubmitEntry}
-            disabled={!selectedProject || !selectedCostCode || !selectedDate || totalHours === 0}
+            disabled={!selectedProject || !selectedCostCode || (selectedDates.length === 0 && !selectedDate) || totalHours === 0}
             className="bg-primary text-primary-foreground hover:bg-primary/90"
             size="sm"
           >
