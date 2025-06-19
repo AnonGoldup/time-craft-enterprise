@@ -32,6 +32,13 @@ const DefaultThemeInitializer = ({ children }: { children: React.ReactNode }) =>
     if (!savedTheme) {
       localStorage.setItem('color-theme', 'default');
     }
+
+    // Apply saved font
+    const savedFont = localStorage.getItem('selected-font');
+    if (savedFont) {
+      document.documentElement.style.setProperty('--theme-font-family', savedFont);
+      document.body.style.fontFamily = savedFont;
+    }
   }, []);
 
   return <>{children}</>;

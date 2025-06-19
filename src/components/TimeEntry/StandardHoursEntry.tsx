@@ -20,20 +20,35 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
 }) => {
   const totalHours = (parseFloat(standardHours) || 0) + (parseFloat(overtimeHours) || 0);
 
+  const handleStandardHoursChange = (value: string) => {
+    const numValue = parseFloat(value);
+    if (value === '' || (!isNaN(numValue) && numValue >= 0)) {
+      setStandardHours(value);
+    }
+  };
+
+  const handleOvertimeHoursChange = (value: string) => {
+    const numValue = parseFloat(value);
+    if (value === '' || (!isNaN(numValue) && numValue >= 0)) {
+      setOvertimeHours(value);
+    }
+  };
+
   return (
     <div className="bg-card rounded-lg p-2 border">
       <div className="flex items-center gap-4 flex-wrap">
         {/* Standard Hours */}
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 status-success border border-border rounded flex items-center justify-center">
-            <span className="text-sm font-bold">ST</span>
+          <div className="w-8 h-8 bg-green-500/20 border border-green-500/30 rounded flex items-center justify-center">
+            <span className="text-sm font-bold text-green-700">ST</span>
           </div>
           <div className="relative">
             <Input
               type="number"
               step="0.1"
+              min="0"
               value={standardHours}
-              onChange={(e) => setStandardHours(e.target.value)}
+              onChange={(e) => handleStandardHoursChange(e.target.value)}
               placeholder="8.0"
               className="w-16 h-9 text-center border-border focus:border-ring bg-muted/30"
             />
@@ -43,15 +58,16 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
 
         {/* Overtime Hours */}
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 status-warning border border-border rounded flex items-center justify-center">
-            <span className="text-sm font-bold">OT</span>
+          <div className="w-8 h-8 bg-amber-500/20 border border-amber-500/30 rounded flex items-center justify-center">
+            <span className="text-sm font-bold text-amber-700">OT</span>
           </div>
           <div className="relative">
             <Input
               type="number"
               step="0.1"
+              min="0"
               value={overtimeHours}
-              onChange={(e) => setOvertimeHours(e.target.value)}
+              onChange={(e) => handleOvertimeHoursChange(e.target.value)}
               placeholder="0.0"
               className="w-16 h-9 text-center border-border focus:border-ring bg-muted/30"
             />
@@ -68,7 +84,7 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
         </div>
 
         {/* Quick Fill Buttons */}
-        <div className="flex items-center gap-2 ml-auto">
+        <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">Quick:</span>
           {[4, 6, 8, 10, 12].map((hours) => (
             <Button
@@ -81,6 +97,16 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
               {hours}h
             </Button>
           ))}
+        </div>
+
+        {/* Submit Entry Button - positioned to the right */}
+        <div className="ml-auto">
+          <Button 
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+            size="sm"
+          >
+            Submit Entry
+          </Button>
         </div>
       </div>
     </div>
