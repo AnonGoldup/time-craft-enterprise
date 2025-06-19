@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 
 // API base configuration
@@ -103,7 +104,7 @@ export interface ProjectExtra {
 
 // Timesheet Entry interfaces
 export interface TimesheetEntry {
-  entryID?: number;
+  entryID: number; // Make required instead of optional
   employeeID: string;
   dateWorked: string;
   projectID: number;
@@ -141,7 +142,7 @@ export interface TimesheetSubmission {
   submittedOn: string;
   totalStandardHours: number;
   totalOvertimeHours: number;
-  submissionStatus: 'Pending' | 'Approved' | 'Rejected';
+  submissionStatus: 'Pending' | 'Approved' | 'Rejected'; // Include 'Rejected'
   notes?: string;
 }
 
