@@ -3,7 +3,6 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
-import ProjectDetailsRow from './ProjectDetailsRow';
 import StandardHoursEntry from './StandardHoursEntry';
 import NotesAndSubmitRow from './NotesAndSubmitRow';
 
@@ -90,28 +89,6 @@ const TimeEntryCard: React.FC<TimeEntryCardProps> = ({
             <Trash2 className="h-4 w-4" />
           </Button>
         )}
-      </div>
-
-      {/* Project Details Section */}
-      <div className="bg-muted/30 rounded-lg p-2 border">
-        <ProjectDetailsRow 
-          selectedProject={selectedProject} 
-          setSelectedProject={setSelectedProject} 
-          selectedExtra={selectedExtra} 
-          setSelectedExtra={setSelectedExtra} 
-          selectedCostCode={selectedCostCode} 
-          setSelectedCostCode={setSelectedCostCode} 
-          selectedDate={selectedDate} 
-          setSelectedDate={setSelectedDate} 
-          selectedDates={selectedDates}
-          setSelectedDates={setSelectedDates}
-          selectedEmployee={selectedEmployee} 
-          setSelectedEmployee={setSelectedEmployee} 
-          selectedEmployees={selectedEmployees} 
-          setSelectedEmployees={setSelectedEmployees} 
-          useCostCodeInput={false}
-          useMultiDateSelection={false}
-        />
       </div>
 
       {/* Hours Entry Section */}
