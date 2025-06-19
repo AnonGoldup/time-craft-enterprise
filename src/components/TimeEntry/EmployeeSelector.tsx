@@ -28,9 +28,11 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false);
   const { employees: hookEmployees, loading } = useEmployeeData();
   
-  // Use provided employees or fall back to hook data
-  const employees = propEmployees || hookEmployees;
+  // Use provided employees or fall back to hook data, ensure it's always an array
+  const employees = propEmployees || hookEmployees || [];
   const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
+
+  console.log('EmployeeSelector - employees:', employees.length, 'loading:', loading);
 
   const handleEmployeeSelect = (employeeId: string) => {
     if (setSelectedEmployees) {
