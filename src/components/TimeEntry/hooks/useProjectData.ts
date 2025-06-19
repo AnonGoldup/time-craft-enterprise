@@ -74,6 +74,7 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
         }
       ];
 
+      console.log('useProjectData - Loading projects:', mockProjects);
       setProjects(mockProjects);
       setEmployees(mockEmployees);
     } catch (error) {
@@ -88,6 +89,7 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
 
   const loadProjectExtras = async (projectId: string) => {
     try {
+      console.log('Loading extras for project:', projectId);
       // Mock data for project extras
       const mockExtras: ProjectExtra[] = [
         { extraID: 1, projectID: parseInt(projectId), extraValue: "Phase 1", description: "Foundation Work", isActive: true },
@@ -104,6 +106,7 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
 
   const loadCostCodes = async (projectId: string) => {
     try {
+      console.log('Loading cost codes for project:', projectId);
       // Mock data for cost codes
       const mockCostCodes: CostCode[] = [
         { costCodeID: 1, costCode: "LAB-001-001", costCodeForSAGE: "LAB001001", description: "General Labor", isActive: true },

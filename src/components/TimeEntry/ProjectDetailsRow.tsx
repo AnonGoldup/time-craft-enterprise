@@ -47,19 +47,19 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   const { projects, projectExtras, costCodes, loading } = useProjectData(selectedProject, selectedExtra);
 
   const handleProjectChange = (value: string) => {
-    console.log('Project changed:', value);
+    console.log('Project changed to:', value);
     setSelectedProject(value);
     setSelectedExtra('');
     setSelectedCostCode('');
   };
 
   const handleExtraChange = (value: string) => {
-    console.log('Extra changed:', value);
+    console.log('Extra changed to:', value);
     setSelectedExtra(value);
   };
 
   const handleCostCodeChange = (value: string) => {
-    console.log('Cost code changed:', value);
+    console.log('Cost code changed to:', value);
     setSelectedCostCode(value);
   };
 
@@ -70,6 +70,8 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
       </div>
     );
   }
+
+  console.log('ProjectDetailsRow - projects available:', projects.length);
 
   return (
     <div className="space-y-4">
