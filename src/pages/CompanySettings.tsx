@@ -11,77 +11,77 @@ const CompanySettings = () => {
       description: 'Configure basic company information and settings',
       icon: Building2,
       path: '/settings/company-setup',
-      color: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+      color: 'bg-primary/10 border-primary/20'
     },
     {
       title: 'Division Management',
       description: 'Add and manage company divisions',
       icon: FolderPlus,
       path: '/settings/add-division',
-      color: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+      color: 'bg-green-500/10 border-green-500/20'
     },
     {
       title: 'Occupancy Types',
       description: 'Define and manage occupancy classifications',
       icon: Settings2,
       path: '/settings/add-occupancy-type',
-      color: 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800'
+      color: 'bg-purple-500/10 border-purple-500/20'
     },
     {
       title: 'Project Management',
       description: 'Create and configure new projects',
       icon: FolderPlus,
       path: '/settings/add-project',
-      color: 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800'
+      color: 'bg-orange-500/10 border-orange-500/20'
     },
     {
       title: 'System Configuration',
       description: 'Add and manage system types',
       icon: Settings2,
       path: '/settings/add-system',
-      color: 'bg-cyan-50 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-800'
+      color: 'bg-cyan-500/10 border-cyan-500/20'
     },
     {
       title: 'Phase Management',
       description: 'Define project phases and workflows',
       icon: Activity,
       path: '/settings/add-phase',
-      color: 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800'
+      color: 'bg-indigo-500/10 border-indigo-500/20'
     },
     {
       title: 'User Management',
       description: 'Add and manage system users',
       icon: UserPlus,
       path: '/settings/add-user',
-      color: 'bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-800'
+      color: 'bg-rose-500/10 border-rose-500/20'
     },
     {
       title: 'User Activity Log',
       description: 'View user activity and audit trails',
       icon: FileText,
       path: '/settings/user-log',
-      color: 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800'
+      color: 'bg-yellow-500/10 border-yellow-500/20'
     },
     {
       title: 'Active Users',
       description: 'Monitor currently logged in users',
       icon: Users,
       path: '/settings/users-logged-on',
-      color: 'bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800'
+      color: 'bg-teal-500/10 border-teal-500/20'
     },
     {
       title: 'Employee Management',
       description: 'Add and manage employees',
       icon: UserCheck,
       path: '/settings/add-employee',
-      color: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800'
+      color: 'bg-emerald-500/10 border-emerald-500/20'
     },
     {
       title: 'Employee Activity Log',
       description: 'Track employee activity and changes',
       icon: FileText,
       path: '/settings/employee-log',
-      color: 'bg-slate-50 dark:bg-slate-900/20 border-slate-200 dark:border-slate-800'
+      color: 'bg-slate-500/10 border-slate-500/20'
     }
   ];
 

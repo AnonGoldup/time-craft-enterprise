@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface ColorTheme {
@@ -74,6 +75,7 @@ const colorThemes: ColorTheme[] = [
   {
     id: 'belize-hole',
     name: 'BLUE SKY',
+    fontFamily: 'General Sans',
     colors: {
       primary: '218 41% 43%', // #53628c buttons
       primaryForeground: '0 0% 98%',
@@ -95,6 +97,7 @@ const colorThemes: ColorTheme[] = [
   {
     id: 'dark-emerald',
     name: 'DARK EMERALD',
+    fontFamily: 'General Sans',
     colors: {
       primary: '142 71% 45%', // emerald green
       primaryForeground: '0 0% 100%', // white
@@ -116,6 +119,7 @@ const colorThemes: ColorTheme[] = [
   {
     id: 'amethyst',
     name: 'AMETHYST',
+    fontFamily: 'General Sans',
     colors: {
       primary: '271 81% 56%',
       primaryForeground: '0 0% 98%',
@@ -137,6 +141,7 @@ const colorThemes: ColorTheme[] = [
   {
     id: 'alizarin',
     name: 'ALIZARIN',
+    fontFamily: 'General Sans',
     colors: {
       primary: '0 84% 60%',
       primaryForeground: '0 0% 98%',
@@ -213,11 +218,23 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
     body.className = body.className.replace(/theme-\w+/g, '');
     body.classList.add(`theme-${theme.id}`);
 
+    // Reset sidebar colors to default light grey for all themes except Dark Emerald
+    if (theme.id !== 'dark-emerald') {
+      root.style.setProperty('--sidebar-background', '0 0% 95.7%'); // #f4f4f4 - light grey
+      root.style.setProperty('--sidebar-foreground', '222 13% 16%'); // dark text on light background
+      root.style.setProperty('--sidebar-primary', theme.colors.primary);
+      root.style.setProperty('--sidebar-primary-foreground', theme.colors.primaryForeground);
+      root.style.setProperty('--sidebar-accent', '0 0% 92%');
+      root.style.setProperty('--sidebar-accent-foreground', '222 13% 16%');
+      root.style.setProperty('--sidebar-border', '0 0% 90%');
+      root.style.setProperty('--sidebar-ring', theme.colors.primary);
+    }
+
     // Apply additional theme-specific CSS variables for enhanced styling
     switch (theme.id) {
       case 'default':
         root.style.setProperty('--theme-primary-rgb', '15, 23, 42');
-        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)');
+        root.style.setProperty('--theme-gradient', 'none');
         root.style.setProperty('--status-success', '120 60% 50%');
         root.style.setProperty('--status-warning', '43 74% 66%');
         root.style.setProperty('--status-info', '210 40% 60%');
@@ -229,7 +246,7 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
         break;
       case 'unity':
         root.style.setProperty('--theme-primary-rgb', '250, 128, 41');
-        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #1f2124 0%, #fa8029 100%)');
+        root.style.setProperty('--theme-gradient', 'none');
         root.style.setProperty('--status-success', '120 60% 50%');
         root.style.setProperty('--status-warning', '43 74% 66%');
         root.style.setProperty('--status-info', '22 89% 57%');
@@ -241,12 +258,12 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
         break;
       case 'belize-hole':
         root.style.setProperty('--theme-primary-rgb', '83, 98, 140');
-        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #53628c 0%, #7383b0 100%)');
+        root.style.setProperty('--theme-gradient', 'none');
         break;
       case 'dark-emerald':
         root.style.setProperty('--theme-primary-rgb', '46, 204, 113');
-        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #1c1c1e 0%, #2ecc71 100%)');
-        // Apply dark mode sidebar colors for Dark Emerald
+        root.style.setProperty('--theme-gradient', 'none');
+        // Apply dark mode sidebar colors for Dark Emerald only
         root.style.setProperty('--sidebar-background', '220 13% 11%');
         root.style.setProperty('--sidebar-foreground', '0 0% 95%');
         root.style.setProperty('--sidebar-primary', '142 71% 45%');
@@ -258,11 +275,11 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
         break;
       case 'amethyst':
         root.style.setProperty('--theme-primary-rgb', '155, 89, 182');
-        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%)');
+        root.style.setProperty('--theme-gradient', 'none');
         break;
       case 'alizarin':
         root.style.setProperty('--theme-primary-rgb', '231, 76, 60');
-        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #c0392b 0%, #e74c3c 100%)');
+        root.style.setProperty('--theme-gradient', 'none');
         break;
     }
   };

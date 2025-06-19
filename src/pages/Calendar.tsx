@@ -23,9 +23,9 @@ const Calendar = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 bg-card border-border enhanced-card">
-          <CardHeader className="enhanced-header rounded-t-xl">
-            <CardTitle className="flex items-center gap-2 text-primary-foreground">
+        <Card className="lg:col-span-2 bg-card border-border">
+          <CardHeader className="bg-primary text-primary-foreground rounded-t-xl">
+            <CardTitle className="flex items-center gap-2">
               <CalendarIcon className="h-5 w-5" />
               Calendar View
             </CardTitle>
@@ -38,9 +38,9 @@ const Calendar = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-border enhanced-card">
-          <CardHeader className="enhanced-header rounded-t-xl">
-            <CardTitle className="text-primary-foreground">Upcoming Events</CardTitle>
+        <Card className="bg-card border-border">
+          <CardHeader className="bg-primary text-primary-foreground rounded-t-xl">
+            <CardTitle>Upcoming Events</CardTitle>
             <CardDescription className="text-primary-foreground/90">Next 7 days</CardDescription>
           </CardHeader>
           <CardContent>
