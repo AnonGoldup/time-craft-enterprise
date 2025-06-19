@@ -168,10 +168,22 @@ export const mockApiService = {
       
       const newEntry: TimesheetEntry = {
         ...entry,
-        entryID: Math.max(...entries.map(e => e.entryID || 0), 0) + 1,
+        entryID: Math.max(...entries.map(e => e.entryID), 0) + 1,
+        extraID: entry.extraID || 0, // Ensure extraID is always present
+        entryType: entry.entryType || 'Standard',
+        notes: entry.notes || '',
         createdDate: entry.createdDate || new Date().toISOString(),
-        modifiedDate: null,
-        exportedDate: null
+        modifiedBy: entry.modifiedBy || '',
+        modifiedDate: entry.modifiedDate || '',
+        exportedDate: entry.exportedDate || '',
+        startTime: entry.startTime || '',
+        endTime: entry.endTime || '',
+        breakInTime: entry.breakInTime || '',
+        breakOutTime: entry.breakOutTime || '',
+        timeIn: entry.timeIn || '',
+        timeOut: entry.timeOut || '',
+        breakIn: entry.breakIn || '',
+        breakOut: entry.breakOut || ''
       };
       
       const updatedEntries = [...entries, newEntry];
@@ -196,7 +208,7 @@ export const mockApiService = {
       const updatedEntry: TimesheetEntry = {
         ...entries[entryIndex],
         ...updates,
-        entryID: entryId, // Ensure entryID is present and correct
+        entryID: entryId,
         modifiedDate: new Date().toISOString()
       };
       

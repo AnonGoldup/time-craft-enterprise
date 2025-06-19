@@ -104,31 +104,31 @@ export interface ProjectExtra {
 
 // Timesheet Entry interfaces
 export interface TimesheetEntry {
-  entryID: number; // Make required instead of optional
+  entryID: number;
   employeeID: string;
   dateWorked: string;
   projectID: number;
-  extraID?: number;
+  extraID: number; // Make required to match mock data structure
   costCodeID: number;
   payID: number;
   hours: number;
   unionID: number;
-  entryType?: string;
-  notes?: string;
+  entryType: string;
+  notes: string;
   status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected' | 'Exported';
   createdBy: string;
-  createdDate?: string;
-  modifiedBy?: string;
-  modifiedDate?: string;
-  exportedDate?: string;
-  startTime?: string;
-  endTime?: string;
-  breakInTime?: string;
-  breakOutTime?: string;
-  timeIn?: string;
-  timeOut?: string;
-  breakIn?: string;
-  breakOut?: string;
+  createdDate: string;
+  modifiedBy: string;
+  modifiedDate: string;
+  exportedDate: string;
+  startTime: string;
+  endTime: string;
+  breakInTime: string;
+  breakOutTime: string;
+  timeIn: string;
+  timeOut: string;
+  breakIn: string;
+  breakOut: string;
 }
 
 // Timesheet Submission interfaces
@@ -142,7 +142,7 @@ export interface TimesheetSubmission {
   submittedOn: string;
   totalStandardHours: number;
   totalOvertimeHours: number;
-  submissionStatus: 'Pending' | 'Approved' | 'Rejected'; // Include 'Rejected'
+  submissionStatus: 'Pending' | 'Approved' | 'Rejected';
   notes?: string;
 }
 
