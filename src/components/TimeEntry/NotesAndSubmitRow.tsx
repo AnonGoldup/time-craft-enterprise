@@ -114,13 +114,15 @@ const NotesAndSubmitRow: React.FC<NotesAndSubmitRowProps> = ({
           </div>
         )}
         
-        <Button 
-          type="submit" 
-          className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
-        >
-          <Send className="h-4 w-4" />
-          Submit Entry
-        </Button>
+        <div className="ml-auto">
+          <Button 
+            type="submit" 
+            className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+          >
+            <Send className="h-4 w-4" />
+            Submit Entry
+          </Button>
+        </div>
       </div>
     </div>
   );
