@@ -179,7 +179,7 @@ const TimeEntryStandard = () => {
                     {/* Standard Hours */}
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded flex items-center justify-center">
-                        <span className="text-sm font-bold text-green-700 dark:text-green-300">ST</span>
+                        <span className="text-sm font-bold text-green-800 dark:text-green-200">ST</span>
                       </div>
                       <div className="relative">
                         <Input
@@ -197,7 +197,7 @@ const TimeEntryStandard = () => {
                     {/* Overtime Hours */}
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded flex items-center justify-center">
-                        <span className="text-sm font-bold text-amber-700 dark:text-amber-300">OT</span>
+                        <span className="text-sm font-bold text-amber-800 dark:text-amber-200">OT</span>
                       </div>
                       <div className="relative">
                         <Input
