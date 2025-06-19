@@ -64,7 +64,7 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
         employeeID: user.employeeId,
         dateWorked: selectedDate,
         projectID: parseInt(selectedProject),
-        extraID: selectedExtra ? parseInt(selectedExtra) : undefined,
+        extraID: selectedExtra ? parseInt(selectedExtra) : 0,
         costCodeID: parseInt(selectedCostCode),
         payID: 1, // Standard time
         hours: standardHrs,
@@ -73,7 +73,18 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
         notes: notes,
         status: 'Draft',
         createdBy: user.employeeId,
-        createdDate: new Date().toISOString()
+        createdDate: new Date().toISOString(),
+        modifiedBy: '',
+        modifiedDate: '',
+        exportedDate: '',
+        startTime: '',
+        endTime: '',
+        breakInTime: '',
+        breakOutTime: '',
+        timeIn: '',
+        timeOut: '',
+        breakIn: '',
+        breakOut: ''
       });
     }
 
@@ -83,7 +94,7 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
         employeeID: user.employeeId,
         dateWorked: selectedDate,
         projectID: parseInt(selectedProject),
-        extraID: selectedExtra ? parseInt(selectedExtra) : undefined,
+        extraID: selectedExtra ? parseInt(selectedExtra) : 0,
         costCodeID: parseInt(selectedCostCode),
         payID: 2, // Overtime
         hours: overtimeHrs,
@@ -92,7 +103,18 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
         notes: notes,
         status: 'Draft',
         createdBy: user.employeeId,
-        createdDate: new Date().toISOString()
+        createdDate: new Date().toISOString(),
+        modifiedBy: '',
+        modifiedDate: '',
+        exportedDate: '',
+        startTime: '',
+        endTime: '',
+        breakInTime: '',
+        breakOutTime: '',
+        timeIn: '',
+        timeOut: '',
+        breakIn: '',
+        breakOut: ''
       });
     }
 

@@ -253,21 +253,32 @@ const EnhancedTimeEntryForm = () => {
     try {
       setLoading(true);
       
-      // Convert form data to API format
+      // Convert form data to API format with all required fields
       const apiEntries: Omit<TimesheetEntry, 'entryID'>[] = validatedEntries.map(entry => ({
         employeeID: user.employeeId,
         dateWorked: entry.date,
         projectID: parseInt(entry.projectID),
-        extraID: entry.extraID ? parseInt(entry.extraID) : undefined,
+        extraID: entry.extraID ? parseInt(entry.extraID) : 0,
         costCodeID: parseInt(entry.costCodeID),
         payID: 1, // Standard hours
         hours: parseFloat(entry.standardHours) || 0,
         unionID: 1,
-        entryType: 'Regular',
-        notes: entry.notes || undefined,
+        entryType: 'Standard',
+        notes: entry.notes || '',
         status: 'Draft',
         createdBy: user.employeeId,
-        createdDate: new Date().toISOString()
+        createdDate: new Date().toISOString(),
+        modifiedBy: '',
+        modifiedDate: '',
+        exportedDate: '',
+        startTime: '',
+        endTime: '',
+        breakInTime: '',
+        breakOutTime: '',
+        timeIn: '',
+        timeOut: '',
+        breakIn: '',
+        breakOut: ''
       }));
 
       // Add overtime entries if applicable
@@ -277,16 +288,27 @@ const EnhancedTimeEntryForm = () => {
           employeeID: user.employeeId,
           dateWorked: entry.date,
           projectID: parseInt(entry.projectID),
-          extraID: entry.extraID ? parseInt(entry.extraID) : undefined,
+          extraID: entry.extraID ? parseInt(entry.extraID) : 0,
           costCodeID: parseInt(entry.costCodeID),
           payID: 2, // Overtime hours
           hours: parseFloat(entry.overtimeHours),
           unionID: 1,
-          entryType: 'Regular',
-          notes: entry.notes || undefined,
+          entryType: 'Standard',
+          notes: entry.notes || '',
           status: 'Draft',
           createdBy: user.employeeId,
-          createdDate: new Date().toISOString()
+          createdDate: new Date().toISOString(),
+          modifiedBy: '',
+          modifiedDate: '',
+          exportedDate: '',
+          startTime: '',
+          endTime: '',
+          breakInTime: '',
+          breakOutTime: '',
+          timeIn: '',
+          timeOut: '',
+          breakIn: '',
+          breakOut: ''
         }));
 
       // Submit all entries
