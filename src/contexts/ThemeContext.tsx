@@ -26,6 +26,29 @@ export interface ColorTheme {
 
 const colorThemes: ColorTheme[] = [
   {
+    id: 'default',
+    name: 'DEFAULT',
+    fontFamily: 'General Sans',
+    supportsDarkMode: true,
+    colors: {
+      primary: '210 40% 15%', // neutral dark blue #0f172a
+      primaryForeground: '0 0% 100%', // white
+      secondary: '210 40% 98%', // very light gray
+      secondaryForeground: '0 0% 0%', // black
+      accent: '210 40% 95%', // light gray
+      accentForeground: '0 0% 0%', // black
+      background: '0 0% 100%', // white
+      foreground: '0 0% 0%', // black
+      card: '0 0% 100%', // white
+      cardForeground: '0 0% 0%', // black
+      border: '210 20% 90%', // light gray
+      input: '210 20% 95%', // very light gray
+      ring: '210 40% 15%', // neutral dark blue
+      muted: '210 20% 95%', // very light gray
+      mutedForeground: '0 0% 40%' // dark gray
+    }
+  },
+  {
     id: 'unity',
     name: 'UNITY',
     fontFamily: 'General Sans',
@@ -155,9 +178,9 @@ interface ThemeProviderProps {
 }
 
 export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  // Default to Unity theme
+  // Default to Default theme
   const [currentTheme, setCurrentTheme] = useState<ColorTheme>(
-    colorThemes.find(t => t.id === 'unity') || colorThemes[0]
+    colorThemes.find(t => t.id === 'default') || colorThemes[0]
   );
 
   const setTheme = (themeId: string) => {
@@ -192,9 +215,29 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
 
     // Apply additional theme-specific CSS variables for enhanced styling
     switch (theme.id) {
+      case 'default':
+        root.style.setProperty('--theme-primary-rgb', '15, 23, 42');
+        root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)');
+        root.style.setProperty('--status-success', '120 60% 50%');
+        root.style.setProperty('--status-warning', '43 74% 66%');
+        root.style.setProperty('--status-info', '210 40% 60%');
+        root.style.setProperty('--chart-1', '210 40% 50%');
+        root.style.setProperty('--chart-2', '210 40% 40%');
+        root.style.setProperty('--chart-3', '210 40% 30%');
+        root.style.setProperty('--chart-4', '210 40% 60%');
+        root.style.setProperty('--chart-5', '210 40% 70%');
+        break;
       case 'unity':
         root.style.setProperty('--theme-primary-rgb', '250, 128, 41');
         root.style.setProperty('--theme-gradient', 'linear-gradient(135deg, #1f2124 0%, #fa8029 100%)');
+        root.style.setProperty('--status-success', '120 60% 50%');
+        root.style.setProperty('--status-warning', '43 74% 66%');
+        root.style.setProperty('--status-info', '22 89% 57%');
+        root.style.setProperty('--chart-1', '22 89% 57%');
+        root.style.setProperty('--chart-2', '22 89% 47%');
+        root.style.setProperty('--chart-3', '22 89% 37%');
+        root.style.setProperty('--chart-4', '22 89% 67%');
+        root.style.setProperty('--chart-5', '22 89% 77%');
         break;
       case 'belize-hole':
         root.style.setProperty('--theme-primary-rgb', '83, 98, 140');
@@ -229,8 +272,8 @@ export const ColorThemeProvider: React.FC<ThemeProviderProps> = ({ children }) =
     if (savedTheme) {
       setTheme(savedTheme);
     } else {
-      // Default to Unity theme if no saved theme
-      setTheme('unity');
+      // Default to Default theme if no saved theme
+      setTheme('default');
     }
   }, []);
 

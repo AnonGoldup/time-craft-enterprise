@@ -25,8 +25,8 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
       <div className="flex items-center gap-4 flex-wrap">
         {/* Standard Hours */}
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded flex items-center justify-center">
-            <span className="text-sm font-bold text-green-800 dark:text-green-200">ST</span>
+          <div className="w-8 h-8 status-success border border-border rounded flex items-center justify-center">
+            <span className="text-sm font-bold">ST</span>
           </div>
           <div className="relative">
             <Input
@@ -35,7 +35,7 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
               value={standardHours}
               onChange={(e) => setStandardHours(e.target.value)}
               placeholder="8.0"
-              className="w-16 h-9 text-center border-green-300 dark:border-green-700 focus:border-green-500 bg-green-50/50 dark:bg-green-900/20"
+              className="w-16 h-9 text-center border-border focus:border-ring bg-muted/30"
             />
           </div>
           <span className="text-xs text-muted-foreground">hrs</span>
@@ -43,8 +43,8 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
 
         {/* Overtime Hours */}
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded flex items-center justify-center">
-            <span className="text-sm font-bold text-amber-800 dark:text-amber-200">OT</span>
+          <div className="w-8 h-8 status-warning border border-border rounded flex items-center justify-center">
+            <span className="text-sm font-bold">OT</span>
           </div>
           <div className="relative">
             <Input
@@ -53,7 +53,7 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
               value={overtimeHours}
               onChange={(e) => setOvertimeHours(e.target.value)}
               placeholder="0.0"
-              className="w-16 h-9 text-center border-amber-300 dark:border-amber-700 focus:border-amber-500 bg-amber-50/50 dark:bg-amber-900/20"
+              className="w-16 h-9 text-center border-border focus:border-ring bg-muted/30"
             />
           </div>
           <span className="text-xs text-muted-foreground">hrs</span>

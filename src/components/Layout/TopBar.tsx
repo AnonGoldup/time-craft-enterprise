@@ -63,8 +63,8 @@ export const TopBar: React.FC = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-2 text-foreground hover:bg-accent">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <User className="h-4 w-4 text-white" />
+                  <div className="w-8 h-8 avatar-default rounded-full flex items-center justify-center">
+                    <User className="h-4 w-4" />
                   </div>
                   <span className="hidden sm:block">{user?.fullName}</span>
                 </Button>

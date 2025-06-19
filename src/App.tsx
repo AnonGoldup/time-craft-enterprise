@@ -21,16 +21,16 @@ const queryClient = new QueryClient({
   },
 });
 
-// Unity Theme Initializer Component
-const UnityThemeInitializer = ({ children }: { children: React.ReactNode }) => {
+// Default Theme Initializer Component
+const DefaultThemeInitializer = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
-    // Apply Unity theme class to body
-    document.body.classList.add('theme-unity');
+    // Apply Default theme class to body
+    document.body.classList.add('theme-default');
     
-    // Set Unity theme as default in ColorThemeProvider
+    // Set Default theme as default in ColorThemeProvider
     const savedTheme = localStorage.getItem('color-theme');
     if (!savedTheme) {
-      localStorage.setItem('color-theme', 'unity');
+      localStorage.setItem('color-theme', 'default');
     }
   }, []);
 
@@ -42,7 +42,7 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
         <ColorThemeProvider>
-          <UnityThemeInitializer>
+          <DefaultThemeInitializer>
             <AuthProvider>
               <TooltipProvider>
                 <Toaster />
@@ -54,7 +54,7 @@ const App = () => (
                 </BrowserRouter>
               </TooltipProvider>
             </AuthProvider>
-          </UnityThemeInitializer>
+          </DefaultThemeInitializer>
         </ColorThemeProvider>
       </ThemeProvider>
     </QueryClientProvider>
