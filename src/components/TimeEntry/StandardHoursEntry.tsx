@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +18,12 @@ interface StandardHoursEntryProps {
   selectedExtra?: string;
   selectedCostCode?: string;
   selectedDate?: string;
+  selectedDates?: Date[];
+  setSelectedDates?: (dates: Date[]) => void;
+  selectedEmployee?: string;
+  setSelectedEmployee?: (value: string) => void;
+  selectedEmployees?: string[];
+  setSelectedEmployees?: (value: string[]) => void;
   notes?: string;
 }
 
@@ -30,11 +37,16 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
   selectedExtra,
   selectedCostCode,
   selectedDate,
+  selectedDates = [],
+  setSelectedDates,
+  selectedEmployee = '',
+  setSelectedEmployee,
+  selectedEmployees = [],
+  setSelectedEmployees,
   notes = ''
 }) => {
   const { user } = useAuth();
   const { createEntry } = useTimesheetData(user?.employeeId || '');
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   
   const totalHours = (parseFloat(standardHours) || 0) + (parseFloat(overtimeHours) || 0);
 
@@ -135,7 +147,9 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
     // Reset form
     setStandardHours('');
     setOvertimeHours('');
-    setSelectedDates([]);
+    if (setSelectedDates) {
+      setSelectedDates([]);
+    }
   };
 
   return (
@@ -153,10 +167,10 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
           setSelectedDate={() => {}}
           selectedDates={selectedDates}
           setSelectedDates={setSelectedDates}
-          selectedEmployee={''}
-          setSelectedEmployee={() => {}}
-          selectedEmployees={[]}
-          setSelectedEmployees={() => {}}
+          selectedEmployee={selectedEmployee}
+          setSelectedEmployee={setSelectedEmployee}
+          selectedEmployees={selectedEmployees}
+          setSelectedEmployees={setSelectedEmployees}
           useMultiDateSelection={true}
         />
       </div>

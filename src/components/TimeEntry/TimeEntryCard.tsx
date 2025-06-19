@@ -102,6 +102,12 @@ const TimeEntryCard: React.FC<TimeEntryCardProps> = ({
         selectedExtra={selectedExtra}
         selectedCostCode={selectedCostCode}
         selectedDate={selectedDate}
+        selectedDates={selectedDates}
+        setSelectedDates={setSelectedDates}
+        selectedEmployee={selectedEmployee}
+        setSelectedEmployee={setSelectedEmployee}
+        selectedEmployees={selectedEmployees}
+        setSelectedEmployees={setSelectedEmployees}
         notes={entry.notes}
       />
 
