@@ -197,7 +197,7 @@ export const mockApiService = {
       const updatedEntry: TimesheetEntry = {
         ...entries[entryIndex],
         ...updates,
-        entryID: entries[entryIndex].entryID!, // Ensure entryID is present
+        entryID: entryId, // Ensure entryID is present and correct
         modifiedDate: new Date().toISOString()
       };
       
@@ -328,7 +328,7 @@ export const mockApiService = {
       const submissions = getMockData('timesheetSubmissions', mockTimesheetSubmissions);
       const approvals = getMockData('timesheetApprovals', mockTimesheetApprovals);
       
-      // Update submission status
+      // Update submission status to 'Rejected'
       const submissionIndex = submissions.findIndex(sub => sub.submissionID === submissionId);
       if (submissionIndex !== -1) {
         submissions[submissionIndex].submissionStatus = 'Rejected';
@@ -361,7 +361,7 @@ export const mockApiService = {
       const submissions = getMockData('timesheetSubmissions', mockTimesheetSubmissions);
       const approvals = getMockData('timesheetApprovals', mockTimesheetApprovals);
       
-      // Update submission status
+      // Update submission status back to 'Pending'
       const submissionIndex = submissions.findIndex(sub => sub.submissionID === submissionId);
       if (submissionIndex !== -1) {
         submissions[submissionIndex].submissionStatus = 'Pending';
