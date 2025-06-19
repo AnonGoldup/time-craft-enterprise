@@ -109,17 +109,25 @@ export interface TimesheetEntry {
   projectID: number;
   extraID?: number;
   costCodeID: number;
-  payID: number; // 1=Standard, 2=Overtime
+  payID: number;
   hours: number;
   unionID: number;
-  entryType: string;
+  entryType?: string;
   notes?: string;
   status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected' | 'Exported';
   createdBy: string;
-  createdDate?: string;
+  createdDate: string;
   modifiedBy?: string;
   modifiedDate?: string;
   exportedDate?: string;
+  startTime?: string;
+  endTime?: string;
+  breakInTime?: string;
+  breakOutTime?: string;
+  timeIn?: string;
+  timeOut?: string;
+  breakIn?: string;
+  breakOut?: string;
 }
 
 // Timesheet Submission interfaces
@@ -127,13 +135,13 @@ export interface TimesheetSubmission {
   submissionID?: number;
   employeeID: string;
   weekEndingDate: string;
-  submissionType: 'Self' | 'OnBehalf' | 'System';
+  submissionType: string;
   submittedBy: string;
   submittedFor: string;
-  submittedOn?: string;
+  submittedOn: string;
   totalStandardHours: number;
   totalOvertimeHours: number;
-  submissionStatus: 'Pending' | 'Approved' | 'Rejected' | 'Recalled';
+  submissionStatus: 'Pending' | 'Approved' | 'Rejected';
   notes?: string;
 }
 

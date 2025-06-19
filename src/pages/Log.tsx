@@ -11,7 +11,7 @@ import LogSummaryCards from '@/components/TimeEntry/LogSummaryCards';
 import LogTable from '@/components/TimeEntry/LogTable';
 import { useTimesheetData } from '@/hooks/useTimesheetData';
 import { mockApiService } from '@/services/mockApiService';
-import { Project } from '@/services/api';
+import { Project, TimesheetEntry } from '@/services/api';
 
 interface TimeEntry {
   entryID: number;
