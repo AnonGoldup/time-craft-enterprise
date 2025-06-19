@@ -22,11 +22,11 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   setSelectedEmployee,
   selectedEmployees = [],
   setSelectedEmployees,
-  employees
+  employees = [] // Ensure employees is always an array
 }) => {
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false);
 
-  // Ensure arrays are always properly defined
+  // Ensure arrays are always properly defined and valid
   const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
   const safeEmployees = Array.isArray(employees) ? employees : [];
 
@@ -53,8 +53,23 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   const getSelectedEmployeeNames = () => {
     return safeEmployees
       .filter(emp => safeSelectedEmployees.includes(emp.employeeID))
-      .map(emp => emp.fullName);
+      .map(emp => emp.fullName || emp.firstName + ' ' + emp.lastName);
   };
+
+  // If no employees are loaded, show a simple message
+  if (!safeEmployees.length) {
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-blue-500" />
+          <span className="text-sm text-slate-600 dark:text-slate-400">Employee</span>
+        </div>
+        <div className="w-48 p-2 text-sm text-muted-foreground border rounded">
+          Loading employees...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">
@@ -82,7 +97,7 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-48 p-0">
+            <PopoverContent className="w-48 p-0 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 z-50">
               <Command>
                 <CommandInput placeholder="Search employees..." />
                 <CommandEmpty>No employee found.</CommandEmpty>
@@ -90,7 +105,7 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
                   {safeEmployees.map((employee) => (
                     <CommandItem
                       key={employee.employeeID}
-                      value={employee.fullName}
+                      value={employee.fullName || employee.firstName + ' ' + employee.lastName}
                       onSelect={() => handleEmployeeSelect(employee.employeeID)}
                     >
                       <Check
@@ -99,7 +114,7 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
                           safeSelectedEmployees.includes(employee.employeeID) ? "opacity-100" : "opacity-0"
                         )}
                       />
-                      {employee.fullName}
+                      {employee.fullName || employee.firstName + ' ' + employee.lastName}
                       <span className="ml-auto text-xs text-slate-500">
                         {employee.class}
                       </span>
@@ -115,10 +130,10 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
             <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
               <SelectValue placeholder="Select employee..." />
             </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 z-50">
               {safeEmployees.map((employee) => (
                 <SelectItem key={employee.employeeID} value={employee.employeeID}>
-                  {employee.fullName} - {employee.class}
+                  {employee.fullName || employee.firstName + ' ' + employee.lastName} - {employee.class}
                 </SelectItem>
               ))}
             </SelectContent>
