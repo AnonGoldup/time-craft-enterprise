@@ -29,7 +29,7 @@ interface TimeEntry {
   total: number;
   location?: string;
   comments?: string;
-  status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected';
+  status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected' | 'Exported';
   entryType: 'Standard' | 'TimeInOut';
 }
 

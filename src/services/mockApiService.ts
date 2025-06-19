@@ -1,4 +1,3 @@
-
 import { 
   mockEmployees, 
   mockProjects, 
@@ -169,7 +168,7 @@ export const mockApiService = {
       
       const newEntry: TimesheetEntry = {
         ...entry,
-        entryID: Math.max(...entries.map(e => e.entryID), 0) + 1,
+        entryID: Math.max(...entries.map(e => e.entryID || 0), 0) + 1,
         createdDate: new Date().toISOString(),
         modifiedDate: null,
         exportedDate: null
@@ -255,7 +254,7 @@ export const mockApiService = {
       
       const newSubmission: TimesheetSubmission = {
         submissionID: Math.max(...submissions.map(s => s.submissionID || 0), 0) + 1,
-        employeeID,
+        employeeID: employeeId,
         weekEndingDate: weekEnding,
         submissionType: 'Self',
         submittedBy: employeeId,
@@ -363,7 +362,7 @@ export const mockApiService = {
       // Update submission status
       const submissionIndex = submissions.findIndex(sub => sub.submissionID === submissionId);
       if (submissionIndex !== -1) {
-        submissions[submissionIndex].submissionStatus = 'Recalled';
+        submissions[submissionIndex].submissionStatus = 'Pending';
         setMockData('timesheetSubmissions', submissions);
       }
       
