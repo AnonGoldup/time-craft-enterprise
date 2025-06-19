@@ -6,6 +6,7 @@ import { useTimesheetData } from '@/hooks/useTimesheetData';
 import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
 import MultiDatePicker from './MultiDatePicker';
+import ProjectDetailsRow from './ProjectDetailsRow';
 
 interface StandardHoursEntryProps {
   standardHours: string;
@@ -140,7 +141,28 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
 
   return (
     <div className="bg-card rounded-lg p-4 border space-y-4">
-      {/* Hours Entry Row */}
+      {/* Project Details Row with Date Picker integrated */}
+      <div className="flex items-start gap-6 flex-wrap">
+        <ProjectDetailsRow
+          selectedProject={selectedProject || ''}
+          setSelectedProject={() => {}}
+          selectedExtra={selectedExtra || ''}
+          setSelectedExtra={() => {}}
+          selectedCostCode={selectedCostCode || ''}
+          setSelectedCostCode={() => {}}
+          selectedDate={selectedDate || ''}
+          setSelectedDate={() => {}}
+          selectedDates={selectedDates}
+          setSelectedDates={setSelectedDates}
+          selectedEmployee={''}
+          setSelectedEmployee={() => {}}
+          selectedEmployees={[]}
+          setSelectedEmployees={() => {}}
+          useMultiDateSelection={true}
+        />
+      </div>
+
+      {/* Hours Entry and Submit Row */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-4 flex-wrap">
           {/* Standard Hours */}
@@ -215,15 +237,6 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
         >
           Submit Entry
         </Button>
-      </div>
-
-      {/* Multi-Date Picker - moved to separate section */}
-      <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium">Select Dates:</span>
-        <MultiDatePicker
-          selectedDates={selectedDates}
-          onDatesChange={setSelectedDates}
-        />
       </div>
     </div>
   );
