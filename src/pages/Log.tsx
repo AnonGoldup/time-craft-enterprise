@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,7 +12,7 @@ import { useTimesheetData } from '@/hooks/useTimesheetData';
 import { mockApiService } from '@/services/mockApiService';
 import { Project, TimesheetEntry } from '@/services/api';
 
-interface TimeEntry {
+interface LogTimeEntry {
   entryID: number;
   dateWorked: string;
   projectCode: string;
@@ -39,7 +38,7 @@ const Log = () => {
   const [selectedProject, setSelectedProject] = useState('all');
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [projects, setProjects] = useState<Project[]>([]);
-  const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
+  const [editingEntry, setEditingEntry] = useState<LogTimeEntry | null>(null);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
 
   const weekEndingDate = format(endOfWeek(currentWeek, { weekStartsOn: 1 }), 'yyyy-MM-dd');
@@ -49,7 +48,7 @@ const Log = () => {
   );
 
   // Transform timesheet entries to display format
-  const timeEntries: TimeEntry[] = entries.map(entry => ({
+  const timeEntries: LogTimeEntry[] = entries.map(entry => ({
     entryID: entry.entryID!,
     dateWorked: entry.dateWorked,
     projectCode: `PROJ${entry.projectID.toString().padStart(3, '0')}`,
@@ -88,7 +87,7 @@ const Log = () => {
     return timeEntries.reduce((sum, entry) => sum + entry.total, 0);
   };
 
-  const handleEditEntry = (entry: TimeEntry) => {
+  const handleEditEntry = (entry: LogTimeEntry) => {
     if (entry.status !== 'Draft') {
       toast.error("Only draft entries can be edited", {
         description: "Submitted entries cannot be modified."
@@ -99,7 +98,7 @@ const Log = () => {
     setIsEditFormOpen(true);
   };
 
-  const handleSaveEntry = async (updatedEntry: TimeEntry) => {
+  const handleSaveEntry = async (updatedEntry: LogTimeEntry) => {
     try {
       await updateEntry(updatedEntry.entryID, {
         dateWorked: updatedEntry.dateWorked,

@@ -116,7 +116,7 @@ export interface TimesheetEntry {
   notes?: string;
   status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected' | 'Exported';
   createdBy: string;
-  createdDate: string;
+  createdDate?: string;
   modifiedBy?: string;
   modifiedDate?: string;
   exportedDate?: string;

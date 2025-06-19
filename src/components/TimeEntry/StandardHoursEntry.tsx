@@ -72,7 +72,8 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
         entryType: 'Standard',
         notes: notes,
         status: 'Draft',
-        createdBy: user.employeeId
+        createdBy: user.employeeId,
+        createdDate: new Date().toISOString()
       });
     }
 
@@ -90,7 +91,8 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
         entryType: 'Standard',
         notes: notes,
         status: 'Draft',
-        createdBy: user.employeeId
+        createdBy: user.employeeId,
+        createdDate: new Date().toISOString()
       });
     }
 

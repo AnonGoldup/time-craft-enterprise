@@ -266,7 +266,8 @@ const EnhancedTimeEntryForm = () => {
         entryType: 'Regular',
         notes: entry.notes || undefined,
         status: 'Draft',
-        createdBy: user.employeeId
+        createdBy: user.employeeId,
+        createdDate: new Date().toISOString()
       }));
 
       // Add overtime entries if applicable
@@ -284,7 +285,8 @@ const EnhancedTimeEntryForm = () => {
           entryType: 'Regular',
           notes: entry.notes || undefined,
           status: 'Draft',
-          createdBy: user.employeeId
+          createdBy: user.employeeId,
+          createdDate: new Date().toISOString()
         }));
 
       // Submit all entries

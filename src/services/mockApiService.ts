@@ -193,7 +193,7 @@ export const mockApiService = {
         throw new Error(`Timesheet entry with ID ${entryId} not found`);
       }
       
-      const updatedEntry = {
+      const updatedEntry: TimesheetEntry = {
         ...entries[entryIndex],
         ...updates,
         modifiedDate: new Date().toISOString()
