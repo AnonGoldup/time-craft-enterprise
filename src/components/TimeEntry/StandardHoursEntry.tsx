@@ -7,7 +7,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
 import MultiDatePicker from './MultiDatePicker';
 import ProjectDetailsRow from './ProjectDetailsRow';
-import { useProjectData } from './hooks/useProjectData';
 
 interface StandardHoursEntryProps {
   standardHours: string;
@@ -48,7 +47,6 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
 }) => {
   const { user } = useAuth();
   const { createEntry } = useTimesheetData(user?.employeeId || '');
-  const { employees } = useProjectData(selectedProject, selectedExtra);
   
   const totalHours = (parseFloat(standardHours) || 0) + (parseFloat(overtimeHours) || 0);
 
@@ -83,66 +81,73 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
     const standardHrs = parseFloat(standardHours) || 0;
     const overtimeHrs = parseFloat(overtimeHours) || 0;
 
-    // Submit entries for each selected date
-    for (const dateWorked of datesToSubmit) {
-      // Create standard hours entry
-      if (standardHrs > 0) {
-        await createEntry({
-          employeeID: user.employeeId,
-          dateWorked: dateWorked,
-          projectID: parseInt(selectedProject),
-          extraID: selectedExtra ? parseInt(selectedExtra) : 0,
-          costCodeID: parseInt(selectedCostCode),
-          payID: 1, // Standard time
-          hours: standardHrs,
-          unionID: 1, // Default union
-          entryType: 'Standard',
-          notes: notes,
-          status: 'Draft',
-          createdBy: user.employeeId,
-          createdDate: new Date().toISOString(),
-          modifiedBy: '',
-          modifiedDate: '',
-          exportedDate: '',
-          startTime: '',
-          endTime: '',
-          breakInTime: '',
-          breakOutTime: '',
-          timeIn: '',
-          timeOut: '',
-          breakIn: '',
-          breakOut: ''
-        });
-      }
+    // Determine which employees to submit for
+    const employeesToSubmit = selectedEmployees && selectedEmployees.length > 0 
+      ? selectedEmployees 
+      : [user.employeeId]; // Default to current user if no employees selected
 
-      // Create overtime hours entry
-      if (overtimeHrs > 0) {
-        await createEntry({
-          employeeID: user.employeeId,
-          dateWorked: dateWorked,
-          projectID: parseInt(selectedProject),
-          extraID: selectedExtra ? parseInt(selectedExtra) : 0,
-          costCodeID: parseInt(selectedCostCode),
-          payID: 2, // Overtime
-          hours: overtimeHrs,
-          unionID: 1, // Default union
-          entryType: 'Standard',
-          notes: notes,
-          status: 'Draft',
-          createdBy: user.employeeId,
-          createdDate: new Date().toISOString(),
-          modifiedBy: '',
-          modifiedDate: '',
-          exportedDate: '',
-          startTime: '',
-          endTime: '',
-          breakInTime: '',
-          breakOutTime: '',
-          timeIn: '',
-          timeOut: '',
-          breakIn: '',
-          breakOut: ''
-        });
+    // Submit entries for each selected employee and date
+    for (const employeeId of employeesToSubmit) {
+      for (const dateWorked of datesToSubmit) {
+        // Create standard hours entry
+        if (standardHrs > 0) {
+          await createEntry({
+            employeeID: employeeId,
+            dateWorked: dateWorked,
+            projectID: parseInt(selectedProject),
+            extraID: selectedExtra ? parseInt(selectedExtra) : 0,
+            costCodeID: parseInt(selectedCostCode),
+            payID: 1, // Standard time
+            hours: standardHrs,
+            unionID: 1, // Default union
+            entryType: 'Standard',
+            notes: notes,
+            status: 'Draft',
+            createdBy: user.employeeId,
+            createdDate: new Date().toISOString(),
+            modifiedBy: '',
+            modifiedDate: '',
+            exportedDate: '',
+            startTime: '',
+            endTime: '',
+            breakInTime: '',
+            breakOutTime: '',
+            timeIn: '',
+            timeOut: '',
+            breakIn: '',
+            breakOut: ''
+          });
+        }
+
+        // Create overtime hours entry
+        if (overtimeHrs > 0) {
+          await createEntry({
+            employeeID: employeeId,
+            dateWorked: dateWorked,
+            projectID: parseInt(selectedProject),
+            extraID: selectedExtra ? parseInt(selectedExtra) : 0,
+            costCodeID: parseInt(selectedCostCode),
+            payID: 2, // Overtime
+            hours: overtimeHrs,
+            unionID: 1, // Default union
+            entryType: 'Standard',
+            notes: notes,
+            status: 'Draft',
+            createdBy: user.employeeId,
+            createdDate: new Date().toISOString(),
+            modifiedBy: '',
+            modifiedDate: '',
+            exportedDate: '',
+            startTime: '',
+            endTime: '',
+            breakInTime: '',
+            breakOutTime: '',
+            timeIn: '',
+            timeOut: '',
+            breakIn: '',
+            breakOut: ''
+          });
+        }
       }
     }
 
@@ -240,6 +245,17 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
             </Button>
           ))}
         </div>
+      </div>
+
+      {/* Submit Button */}
+      <div className="flex justify-end">
+        <Button 
+          onClick={handleSubmitEntry}
+          disabled={!selectedProject || !selectedCostCode || totalHours === 0}
+          className="bg-primary hover:bg-primary/90"
+        >
+          Submit Entry
+        </Button>
       </div>
     </div>
   );
