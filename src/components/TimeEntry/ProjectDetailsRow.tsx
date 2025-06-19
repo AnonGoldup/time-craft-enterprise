@@ -44,13 +44,32 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   useCostCodeInput = false,
   useMultiDateSelection = false
 }) => {
-  const { projects, employees, projectExtras, costCodes } = useProjectData(selectedProject, selectedExtra);
+  const { projects, projectExtras, costCodes, loading } = useProjectData(selectedProject, selectedExtra);
 
   const handleProjectChange = (value: string) => {
+    console.log('Project changed:', value);
     setSelectedProject(value);
     setSelectedExtra('');
     setSelectedCostCode('');
   };
+
+  const handleExtraChange = (value: string) => {
+    console.log('Extra changed:', value);
+    setSelectedExtra(value);
+  };
+
+  const handleCostCodeChange = (value: string) => {
+    console.log('Cost code changed:', value);
+    setSelectedCostCode(value);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center gap-6 flex-wrap">
+        <div className="text-sm text-muted-foreground">Loading project data...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -63,14 +82,14 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
 
         <ExtraSelector
           selectedExtra={selectedExtra}
-          setSelectedExtra={setSelectedExtra}
+          setSelectedExtra={handleExtraChange}
           projectExtras={projectExtras}
           disabled={!selectedProject}
         />
 
         <CostCodeSelector
           selectedCostCode={selectedCostCode}
-          setSelectedCostCode={setSelectedCostCode}
+          setSelectedCostCode={handleCostCodeChange}
           costCodes={costCodes}
           disabled={!selectedProject}
           useCostCodeInput={useCostCodeInput}
@@ -89,7 +108,6 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
           setSelectedEmployee={setSelectedEmployee}
           selectedEmployees={selectedEmployees}
           setSelectedEmployees={setSelectedEmployees}
-          employees={employees}
         />
       </div>
     </div>

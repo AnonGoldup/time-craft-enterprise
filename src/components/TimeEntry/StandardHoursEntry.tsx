@@ -15,9 +15,13 @@ interface StandardHoursEntryProps {
   setOvertimeHours: (hours: string) => void;
   setQuickHours: (hours: number) => void;
   selectedProject?: string;
+  setSelectedProject?: (value: string) => void;
   selectedExtra?: string;
+  setSelectedExtra?: (value: string) => void;
   selectedCostCode?: string;
+  setSelectedCostCode?: (value: string) => void;
   selectedDate?: string;
+  setSelectedDate?: (value: string) => void;
   selectedDates?: Date[];
   setSelectedDates?: (dates: Date[]) => void;
   selectedEmployee?: string;
@@ -33,10 +37,14 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
   overtimeHours,
   setOvertimeHours,
   setQuickHours,
-  selectedProject,
-  selectedExtra,
-  selectedCostCode,
-  selectedDate,
+  selectedProject = '',
+  setSelectedProject = () => {},
+  selectedExtra = '',
+  setSelectedExtra = () => {},
+  selectedCostCode = '',
+  setSelectedCostCode = () => {},
+  selectedDate = '',
+  setSelectedDate = () => {},
   selectedDates = [],
   setSelectedDates,
   selectedEmployee = '',
@@ -66,6 +74,7 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
 
   const handleSubmitEntry = async () => {
     if (!selectedProject || !selectedCostCode || !user) {
+      console.log('Missing required fields:', { selectedProject, selectedCostCode, user: !!user });
       return;
     }
 
@@ -75,6 +84,7 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
       : selectedDate ? [selectedDate] : [];
 
     if (datesToSubmit.length === 0) {
+      console.log('No dates selected');
       return;
     }
 
@@ -85,6 +95,8 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
     const employeesToSubmit = selectedEmployees && selectedEmployees.length > 0 
       ? selectedEmployees 
       : [user.employeeId]; // Default to current user if no employees selected
+
+    console.log('Submitting entries for:', { employeesToSubmit, datesToSubmit, standardHrs, overtimeHrs });
 
     // Submit entries for each selected employee and date
     for (const employeeId of employeesToSubmit) {
@@ -164,18 +176,18 @@ const StandardHoursEntry: React.FC<StandardHoursEntryProps> = ({
       {/* Project Details Row with Date Picker integrated */}
       <div className="flex items-start gap-6 flex-wrap">
         <ProjectDetailsRow
-          selectedProject={selectedProject || ''}
-          setSelectedProject={() => {}}
-          selectedExtra={selectedExtra || ''}
-          setSelectedExtra={() => {}}
-          selectedCostCode={selectedCostCode || ''}
-          setSelectedCostCode={() => {}}
-          selectedDate={selectedDate || ''}
-          setSelectedDate={() => {}}
+          selectedProject={selectedProject}
+          setSelectedProject={setSelectedProject}
+          selectedExtra={selectedExtra}
+          setSelectedExtra={setSelectedExtra}
+          selectedCostCode={selectedCostCode}
+          setSelectedCostCode={setSelectedCostCode}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
           selectedDates={selectedDates}
           setSelectedDates={setSelectedDates}
           selectedEmployee={selectedEmployee}
-          setSelectedEmployee={setSelectedEmployee || (() => {})}
+          setSelectedEmployee={setSelectedEmployee}
           selectedEmployees={selectedEmployees}
           setSelectedEmployees={setSelectedEmployees}
           useMultiDateSelection={true}
