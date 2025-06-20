@@ -7,6 +7,7 @@ interface NotesAndSubmitRowProps {
   notes: string;
   setNotes: (value: string) => void;
   showTotalHours?: boolean;
+  totalHours?: number;
   timeInHour?: string;
   timeInMinute?: string;
   timeInPeriod?: string;
@@ -25,6 +26,7 @@ const NotesAndSubmitRow: React.FC<NotesAndSubmitRowProps> = ({
   notes,
   setNotes,
   showTotalHours = false,
+  totalHours,
   timeInHour,
   timeInMinute,
   timeInPeriod,
@@ -77,6 +79,15 @@ const NotesAndSubmitRow: React.FC<NotesAndSubmitRowProps> = ({
     return Math.max(0, totalHours).toFixed(2);
   };
 
+  const getDisplayTotalHours = () => {
+    // If totalHours is provided (from Standard Hours), use it
+    if (totalHours !== undefined) {
+      return totalHours.toFixed(2);
+    }
+    // Otherwise calculate from time values (for Time In/Out)
+    return calculateTotalHours();
+  };
+
   const calculateLineCount = () => {
     if (!notes) return 1;
     const lineBreaks = (notes.match(/\n/g) || []).length;
@@ -109,7 +120,7 @@ const NotesAndSubmitRow: React.FC<NotesAndSubmitRowProps> = ({
               Total Hours:
             </span>
             <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
-              {calculateTotalHours()}
+              {getDisplayTotalHours()}
             </span>
           </div>
         )}
