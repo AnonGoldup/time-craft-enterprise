@@ -1,134 +1,119 @@
-
 import { useState, useEffect } from 'react';
-import { Project, Employee, ProjectExtra, CostCode } from '@/services/api';
+import { projectApi, employeeApi, Project, Employee, ProjectExtra, CostCode } from '@/services/api';
 
-export const useProjectData = (selectedProject?: string, selectedExtra?: string) => {
+export const useProjectData = (selectedProject: string, selectedExtra: string) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [projectExtras, setProjectExtras] = useState<ProjectExtra[]>([]);
   const [costCodes, setCostCodes] = useState<CostCode[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Load initial data
   useEffect(() => {
-    loadInitialData();
+    loadProjects();
+    loadEmployees();
   }, []);
 
+  // Load project extras and cost codes when project changes
   useEffect(() => {
     if (selectedProject) {
       loadProjectExtras(selectedProject);
       loadCostCodes(selectedProject);
+    } else {
+      setProjectExtras([]);
+      setCostCodes([]);
     }
   }, [selectedProject]);
 
-  const loadInitialData = async () => {
+  // Load cost codes when extra changes
+  useEffect(() => {
+    if (selectedProject && selectedExtra) {
+      loadCostCodes(selectedProject, selectedExtra);
+    }
+  }, [selectedProject, selectedExtra]);
+
+  const loadProjects = async () => {
     try {
       setLoading(true);
-      
-      // Mock data for projects
-      const mockProjects: Project[] = [
-        { projectID: 1, projectCode: "PROJ001", projectDescription: "Office Building Renovation", status: "In progress", isActive: true, createdDate: "", modifiedDate: "" },
-        { projectID: 2, projectCode: "PROJ002", projectDescription: "Shopping Mall Construction", status: "In progress", isActive: true, createdDate: "", modifiedDate: "" },
-        { projectID: 3, projectCode: "PROJ003", projectDescription: "Residential Complex", status: "In progress", isActive: true, createdDate: "", modifiedDate: "" }
-      ];
-
-      // Mock data for employees
-      const mockEmployees: Employee[] = [
-        { 
-          employeeID: "EMP001", 
-          firstName: "John", 
-          lastName: "Doe", 
-          fullName: "John Doe", 
-          email: "john.doe@company.com", 
-          class: "Foreman", 
-          department: "Construction", 
-          unionID: 1, 
-          activeEmp: true, 
-          createdDate: "", 
-          modifiedDate: "" 
-        },
-        { 
-          employeeID: "EMP002", 
-          firstName: "Jane", 
-          lastName: "Smith", 
-          fullName: "Jane Smith", 
-          email: "jane.smith@company.com", 
-          class: "Supervisor", 
-          department: "Construction", 
-          unionID: 1, 
-          activeEmp: true, 
-          createdDate: "", 
-          modifiedDate: "" 
-        },
-        { 
-          employeeID: "EMP003", 
-          firstName: "Mike", 
-          lastName: "Johnson", 
-          fullName: "Mike Johnson", 
-          email: "mike.johnson@company.com", 
-          class: "Laborer", 
-          department: "Construction", 
-          unionID: 1, 
-          activeEmp: true, 
-          createdDate: "", 
-          modifiedDate: "" 
-        }
-      ];
-
-      console.log('useProjectData - Setting projects:', mockProjects.length);
-      setProjects(mockProjects);
-      setEmployees(mockEmployees);
+      const response = await projectApi.getAll();
+      // Map SQL PascalCase to component's camelCase
+      const mappedProjects = response.data.map((p: any) => ({
+        projectID: p.ProjectID,
+        projectCode: p.ProjectCode,
+        projectDescription: p.ProjectDescription,
+        status: p.Status,
+        isActive: p.IsActive,
+        createdDate: p.CreatedDate,
+        modifiedDate: p.ModifiedDate
+      }));
+      setProjects(mappedProjects);
     } catch (error) {
-      console.error('Failed to load initial data:', error);
-      // Set empty arrays to prevent undefined errors
+      console.error('Failed to load projects:', error);
       setProjects([]);
-      setEmployees([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const loadProjectExtras = async (projectId: string) => {
+  const loadEmployees = async () => {
     try {
-      console.log('Loading extras for project:', projectId);
-      // Mock data for project extras
-      const mockExtras: ProjectExtra[] = [
-        { extraID: 1, projectID: parseInt(projectId), extraValue: "Phase 1", description: "Foundation Work", isActive: true },
-        { extraID: 2, projectID: parseInt(projectId), extraValue: "Phase 2", description: "Structural Work", isActive: true },
-        { extraID: 3, projectID: parseInt(projectId), extraValue: "Phase 3", description: "Finishing Work", isActive: true }
-      ];
-      
-      console.log('useProjectData - Setting project extras:', mockExtras.length);
-      setProjectExtras(mockExtras);
+      const response = await employeeApi.getAll();
+      // Map SQL PascalCase to component's camelCase
+      const mappedEmployees = response.data.map((e: any) => ({
+        employeeID: e.EmployeeID,
+        firstName: e.FirstName,
+        lastName: e.LastName,
+        fullName: e.FullName,
+        email: e.Email,
+        class: e.Class,
+        department: e.Department,
+        activeEmp: e.ActiveEmp,
+        createdDate: e.CreatedDate,
+        modifiedDate: e.ModifiedDate
+      }));
+      setEmployees(mappedEmployees);
+    } catch (error) {
+      console.error('Failed to load employees:', error);
+      setEmployees([]);
+    }
+  };
+
+  const loadProjectExtras = async (projectCode: string) => {
+    try {
+      const response = await projectApi.getExtras(projectCode);
+      // Map the response if needed
+      const extras = response.data.map((e: any) => ({
+        extraID: e.ExtraID,
+        projectID: e.ProjectID,
+        extraValue: e.ExtraValue,
+        description: e.Description,
+        isActive: e.IsActive
+      }));
+      setProjectExtras(extras);
     } catch (error) {
       console.error('Failed to load project extras:', error);
       setProjectExtras([]);
     }
   };
 
-  const loadCostCodes = async (projectId: string) => {
+  const loadCostCodes = async (projectCode: string, extraValue?: string) => {
     try {
-      console.log('Loading cost codes for project:', projectId);
-      // Mock data for cost codes
-      const mockCostCodes: CostCode[] = [
-        { costCodeID: 1, costCode: "LAB-001-001", costCodeForSAGE: "LAB001001", description: "General Labor", isActive: true },
-        { costCodeID: 2, costCode: "EQP-001-001", costCodeForSAGE: "EQP001001", description: "Equipment Operation", isActive: true },
-        { costCodeID: 3, costCode: "MAT-001-001", costCodeForSAGE: "MAT001001", description: "Material Handling", isActive: true }
-      ];
-      
-      console.log('useProjectData - Setting cost codes:', mockCostCodes.length);
-      setCostCodes(mockCostCodes);
+      const response = await projectApi.getCostCodes(projectCode, extraValue);
+      // Map the response if needed
+      const codes = response.data.map((c: any) => ({
+        costCodeID: c.CostCodeID,
+        costCode: c.CostCode,
+        description: c.Description,
+        costCodeForSAGE: c.CostCodeForSAGE,
+        displayValue: c.DisplayValue || `${c.CostCode} - ${c.Description}`,
+        isActive: c.IsActive
+      }));
+      setCostCodes(codes);
     } catch (error) {
       console.error('Failed to load cost codes:', error);
       setCostCodes([]);
     }
   };
-
-  console.log('useProjectData - Returning state:', {
-    projectsCount: projects.length,
-    projectExtrasCount: projectExtras.length,
-    costCodesCount: costCodes.length,
-    loading
-  });
 
   return {
     projects,

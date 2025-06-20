@@ -1,71 +1,126 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ColorThemeProvider } from "@/contexts/ThemeContext";
-import { ErrorBoundary } from "@/components/ui/error-boundary";
-import { Suspense, useEffect } from "react";
-import { LoadingState } from "@/components/ui/loading";
-import { AppRoutes } from "@/components/App/AppRoutes";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { AppLayout } from "@/components/Layout/AppLayout";
+import Index from "./pages/Index";
+import TimeEntry from "./pages/TimeEntry";
+import TimeEntryStandard from "./pages/TimeEntryStandard";
+import TimeEntryTimeInOut from "./pages/TimeEntryTimeInOut";
+import ManagerApproval from "./pages/ManagerApproval";
+import DailyReporting from "./pages/DailyReporting";
+import Reports from "./pages/Reports";
+import TeamManagement from "./pages/TeamManagement";
+import Calendar from "./pages/Calendar";
+import Documents from "./pages/Documents";
+import Settings from "./pages/Settings";
+import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      retry: 3,
-    },
-  },
-});
-
-// Default Theme Initializer Component
-const DefaultThemeInitializer = ({ children }: { children: React.ReactNode }) => {
-  useEffect(() => {
-    // Apply Default theme class to body
-    document.body.classList.add('theme-default');
-    
-    // Set Default theme as default in ColorThemeProvider
-    const savedTheme = localStorage.getItem('color-theme');
-    if (!savedTheme) {
-      localStorage.setItem('color-theme', 'default');
-    }
-
-    // Apply saved font
-    const savedFont = localStorage.getItem('selected-font');
-    if (savedFont) {
-      document.documentElement.style.setProperty('--theme-font-family', savedFont);
-      document.body.style.fontFamily = savedFont;
-    }
-  }, []);
-
-  return <>{children}</>;
-};
+const queryClient = new QueryClient();
 
 const App = () => (
-  <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-        <ColorThemeProvider>
-          <DefaultThemeInitializer>
-            <AuthProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <Suspense fallback={<LoadingState message="Loading application..." />}>
-                    <AppRoutes />
-                  </Suspense>
-                </BrowserRouter>
-              </TooltipProvider>
-            </AuthProvider>
-          </DefaultThemeInitializer>
-        </ColorThemeProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <Index />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/time-entry" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <TimeEntry />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/time-entry/standard" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <TimeEntryStandard />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/time-entry/time-in-out" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <TimeEntryTimeInOut />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/manager-approval" element={
+                <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                  <AppLayout>
+                    <ManagerApproval />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/daily-reporting" element={
+                <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                  <AppLayout>
+                    <DailyReporting />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/reports" element={
+                <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                  <AppLayout>
+                    <Reports />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/team" element={
+                <ProtectedRoute requiredRoles={['manager', 'admin', 'supervisor', 'foreman']}>
+                  <AppLayout>
+                    <TeamManagement />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/calendar" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <Calendar />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/documents" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <Documents />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute requiredRoles={['admin']}>
+                  <AppLayout>
+                    <Settings />
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+              
+              {/* Public route - no ProtectedRoute wrapper */}
+              <Route path="/login" element={<Login />} />
+              
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  </QueryClientProvider>
 );
 
 export default App;
