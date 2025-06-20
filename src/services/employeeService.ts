@@ -5,7 +5,7 @@ import { Employee, ApiResponse } from './api';
 export class EmployeeService {
   private baseUrl: string;
 
-  constructor(baseUrl: string = process.env.VITE_API_URL || 'http://localhost:3001/api') {
+  constructor(baseUrl: string = import.meta.env.VITE_API_URL || 'http://localhost:3001/api') {
     this.baseUrl = baseUrl;
   }
 
