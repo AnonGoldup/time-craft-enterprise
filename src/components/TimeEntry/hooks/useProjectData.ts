@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { projectApi, employeeApi, Project, Employee, ProjectExtra, CostCode } from '@/services/api';
 
@@ -18,8 +17,8 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
   // Load project extras and cost codes when project changes
   useEffect(() => {
     if (selectedProject) {
-      loadProjectExtras(parseInt(selectedProject));
-      loadCostCodes(parseInt(selectedProject));
+      loadProjectExtras(selectedProject);
+      loadCostCodes(selectedProject);
     } else {
       setProjectExtras([]);
       setCostCodes([]);
@@ -29,22 +28,28 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
   // Load cost codes when extra changes
   useEffect(() => {
     if (selectedProject && selectedExtra) {
-      loadCostCodes(parseInt(selectedProject), parseInt(selectedExtra));
+      loadCostCodes(selectedProject, selectedExtra);
     }
   }, [selectedProject, selectedExtra]);
 
   const loadProjects = async () => {
     try {
       setLoading(true);
-      const response = await projectApi.getActive();
-      setProjects(Array.isArray(response.data.data) ? response.data.data : []);
+      const response = await projectApi.getAll();
+      // Map SQL PascalCase to component's camelCase
+      const mappedProjects = response.data.map((p: any) => ({
+        projectID: p.ProjectID,
+        projectCode: p.ProjectCode,
+        projectDescription: p.ProjectDescription,
+        status: p.Status,
+        isActive: p.IsActive,
+        createdDate: p.CreatedDate,
+        modifiedDate: p.ModifiedDate
+      }));
+      setProjects(mappedProjects);
     } catch (error) {
       console.error('Failed to load projects:', error);
-      // Fallback to mock data
-      setProjects([
-        { projectID: 1, projectCode: "PROJ001", projectDescription: "Office Building Renovation", status: "Active", isActive: true, createdDate: "", modifiedDate: "" },
-        { projectID: 2, projectCode: "PROJ002", projectDescription: "Shopping Mall Construction", status: "Active", isActive: true, createdDate: "", modifiedDate: "" }
-      ]);
+      setProjects([]);
     } finally {
       setLoading(false);
     }
@@ -52,48 +57,61 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
 
   const loadEmployees = async () => {
     try {
-      const response = await employeeApi.getActive();
-      const employeeData = Array.isArray(response.data.data) ? response.data.data : [];
-      setEmployees(employeeData);
+      const response = await employeeApi.getAll();
+      // Map SQL PascalCase to component's camelCase
+      const mappedEmployees = response.data.map((e: any) => ({
+        employeeID: e.EmployeeID,
+        firstName: e.FirstName,
+        lastName: e.LastName,
+        fullName: e.FullName,
+        email: e.Email,
+        class: e.Class,
+        department: e.Department,
+        activeEmp: e.ActiveEmp,
+        createdDate: e.CreatedDate,
+        modifiedDate: e.ModifiedDate
+      }));
+      setEmployees(mappedEmployees);
     } catch (error) {
       console.error('Failed to load employees:', error);
-      // Fallback to mock data
-      const fallbackEmployees = [
-        { employeeID: "EMP001", firstName: "John", lastName: "Doe", fullName: "John Doe", email: "john.doe@company.com", class: "Foreman", department: "Construction", unionID: 1, activeEmp: true, createdDate: "", modifiedDate: "" },
-        { employeeID: "EMP002", firstName: "Jane", lastName: "Smith", fullName: "Jane Smith", email: "jane.smith@company.com", class: "Supervisor", department: "Construction", unionID: 1, activeEmp: true, createdDate: "", modifiedDate: "" },
-        { employeeID: "EMP003", firstName: "Mike", lastName: "Johnson", fullName: "Mike Johnson", email: "mike.johnson@company.com", class: "Worker", department: "Construction", unionID: 1, activeEmp: true, createdDate: "", modifiedDate: "" }
-      ];
-      setEmployees(fallbackEmployees);
+      setEmployees([]);
     }
   };
 
-  const loadProjectExtras = async (projectId: number) => {
+  const loadProjectExtras = async (projectCode: string) => {
     try {
-      const response = await projectApi.getExtras(projectId);
-      setProjectExtras(Array.isArray(response.data.data) ? response.data.data : []);
+      const response = await projectApi.getExtras(projectCode);
+      // Map the response if needed
+      const extras = response.data.map((e: any) => ({
+        extraID: e.ExtraID,
+        projectID: e.ProjectID,
+        extraValue: e.ExtraValue,
+        description: e.Description,
+        isActive: e.IsActive
+      }));
+      setProjectExtras(extras);
     } catch (error) {
       console.error('Failed to load project extras:', error);
-      // Fallback to mock data
-      setProjectExtras([
-        { extraID: 1, projectID: projectId, extraValue: "Phase 1", description: "Foundation Work", isActive: true },
-        { extraID: 2, projectID: projectId, extraValue: "Phase 2", description: "Structural Work", isActive: true },
-        { extraID: 3, projectID: projectId, extraValue: "Phase 3", description: "Finishing Work", isActive: true }
-      ]);
+      setProjectExtras([]);
     }
   };
 
-  const loadCostCodes = async (projectId: number, extraId?: number) => {
+  const loadCostCodes = async (projectCode: string, extraValue?: string) => {
     try {
-      const response = await projectApi.getCostCodes(projectId, extraId);
-      setCostCodes(Array.isArray(response.data.data) ? response.data.data : []);
+      const response = await projectApi.getCostCodes(projectCode, extraValue);
+      // Map the response if needed
+      const codes = response.data.map((c: any) => ({
+        costCodeID: c.CostCodeID,
+        costCode: c.CostCode,
+        description: c.Description,
+        costCodeForSAGE: c.CostCodeForSAGE,
+        displayValue: c.DisplayValue || `${c.CostCode} - ${c.Description}`,
+        isActive: c.IsActive
+      }));
+      setCostCodes(codes);
     } catch (error) {
       console.error('Failed to load cost codes:', error);
-      // Fallback to mock data
-      setCostCodes([
-        { costCodeID: 1, costCode: "LAB-001-001", costCodeForSAGE: "LAB001001", description: "General Labor", isActive: true },
-        { costCodeID: 2, costCode: "EQP-001-001", costCodeForSAGE: "EQP001001", description: "Equipment Operation", isActive: true },
-        { costCodeID: 3, costCode: "MAT-001-001", costCodeForSAGE: "MAT001001", description: "Material Handling", isActive: true }
-      ]);
+      setCostCodes([]);
     }
   };
 

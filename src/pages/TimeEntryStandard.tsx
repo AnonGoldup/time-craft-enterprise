@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
 import { ChevronLeft, MoreVertical, Plus, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import ProjectDetailsRow from '@/components/TimeEntry/ProjectDetailsRow';
+import { ProjectDetailsRow } from '@/components/TimeEntry/ProjectDetailsRow';
 import HoursEntryRow from '@/components/TimeEntry/HoursEntryRow';
 import NotesAndSubmitRow from '@/components/TimeEntry/NotesAndSubmitRow';
 

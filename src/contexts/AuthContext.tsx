@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Employee } from '../services/api';
 
@@ -41,76 +40,59 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Check for existing token on mount
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
+    const token = localStorage.getItem('token'); // Changed from 'authToken'
+    const userStr = localStorage.getItem('user'); // Get stored user data
+    
+    if (token && userStr) {
       try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.exp * 1000 > Date.now()) {
-          setUser({
-            userId: payload.userId,
-            employeeId: payload.employeeId,
-            email: payload.email,
-            fullName: payload.fullName,
-            role: payload.role,
-            department: payload.department,
-            isActive: payload.isActive
-          });
-        } else {
-          localStorage.removeItem('authToken');
+        const userData = JSON.parse(userStr);
+        
+        // Map backend user structure to AuthContext User type
+        // Map Class field to role
+        let role: User['role'] = 'employee';
+        if (userData.class) {
+          const classUpper = userData.class.toUpperCase();
+          if (classUpper === 'ADMIN') {
+            role = 'admin';
+          } else if (classUpper === 'PM' || classUpper === 'MANAGER') {
+            role = 'manager';
+          } else if (classUpper === 'FMAN' || classUpper === 'FOREMAN' || classUpper.includes('FOREMAN')) {
+            role = 'foreman';
+          } else if (classUpper === 'SUPERVISOR' || classUpper === 'SUPER') {
+            role = 'supervisor';
+          }
         }
+        
+        setUser({
+          userId: userData.employeeId,
+          employeeId: userData.employeeId,
+          email: userData.email,
+          fullName: userData.fullName,
+          role: role,
+          department: userData.department || '',
+          isActive: true
+        });
       } catch (error) {
-        localStorage.removeItem('authToken');
+        console.error('Error parsing stored user data:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
       }
     }
     setLoading(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<void> => {
-    try {
-      setLoading(true);
-      
-      // Mock authentication - replace with actual API call
-      if (email === 'john.doe@company.com' && password === 'password') {
-        const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiZW1wbG95ZWVJZCI6IkpEMDAxIiwiZW1haWwiOiJqb2huLmRvZUBjb21wYW55LmNvbSIsImZ1bGxOYW1lIjoiSm9obiBEb2UiLCJyb2xlIjoiZW1wbG95ZWUiLCJkZXBhcnRtZW50IjoiQ29uc3RydWN0aW9uIiwiaXNBY3RpdmUiOnRydWUsImlhdCI6MTY0MDk5NTIwMCwiZXhwIjoyNjQwOTk4ODAwfQ.mockSignature';
-        
-        localStorage.setItem('authToken', mockToken);
-        
-        setUser({
-          userId: '1',
-          employeeId: 'JD001',
-          email: 'john.doe@company.com',
-          fullName: 'John Doe',
-          role: 'employee',
-          department: 'Construction',
-          isActive: true
-        });
-      } else if (email === 'manager@company.com' && password === 'password') {
-        const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyIiwiZW1wbG95ZWVJZCI6Ik1HMDAxIiwiZW1haWwiOiJtYW5hZ2VyQGNvbXBhbnkuY29tIiwiZnVsbE5hbWUiOiJNaWtlIE1hbmFnZXIiLCJyb2xlIjoibWFuYWdlciIsImRlcGFydG1lbnQiOiJDb25zdHJ1Y3Rpb24iLCJpc0FjdGl2ZSI6dHJ1ZSwiaWF0IjoxNjQwOTk1MjAwLCJleHAiOjI2NDA5OTg4MDB9.mockSignature';
-        
-        localStorage.setItem('authToken', mockToken);
-        
-        setUser({
-          userId: '2',
-          employeeId: 'MG001',
-          email: 'manager@company.com',
-          fullName: 'Mike Manager',
-          role: 'manager',
-          department: 'Construction',
-          isActive: true
-        });
-      } else {
-        throw new Error('Invalid credentials');
-      }
-    } catch (error) {
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+    // This function is not used - authentication is handled by Login.tsx
+    // which directly calls the API and stores the token
+    throw new Error('Please use the Login page for authentication');
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
+    // Redirect to login page
+    window.location.href = '/login';
   };
 
   const hasRole = (roles: string[]): boolean => {

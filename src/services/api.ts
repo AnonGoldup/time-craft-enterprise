@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ export interface TimesheetEntry {
 
 // API Services
 export const authApi = {
-  login: (credentials: { email: string; password: string }) => 
+  login: (credentials: { employeeId: string; email: string }) => 
     api.post('/auth/login', credentials),
   logout: () => api.post('/auth/logout'),
   refresh: () => api.post('/auth/refresh'),
