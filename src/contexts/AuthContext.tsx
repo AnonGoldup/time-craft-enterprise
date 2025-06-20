@@ -1,12 +1,21 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Employee } from '../services/api';
+
+export enum UserRole {
+  EMPLOYEE = 'employee',
+  MANAGER = 'manager',
+  ADMIN = 'admin',
+  SUPERVISOR = 'supervisor',
+  FOREMAN = 'foreman'
+}
 
 export interface User {
   userId: string;
   employeeId: string;
   email: string;
   fullName: string;
-  role: 'employee' | 'manager' | 'admin' | 'supervisor' | 'foreman';
+  role: UserRole;
   department: string;
   isActive: boolean;
 }
@@ -40,26 +49,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Check for existing token on mount
   useEffect(() => {
-    const token = localStorage.getItem('token'); // Changed from 'authToken'
-    const userStr = localStorage.getItem('user'); // Get stored user data
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
     
     if (token && userStr) {
       try {
         const userData = JSON.parse(userStr);
         
         // Map backend user structure to AuthContext User type
-        // Map Class field to role
-        let role: User['role'] = 'employee';
+        let role: UserRole = UserRole.EMPLOYEE;
         if (userData.class) {
           const classUpper = userData.class.toUpperCase();
           if (classUpper === 'ADMIN') {
-            role = 'admin';
+            role = UserRole.ADMIN;
           } else if (classUpper === 'PM' || classUpper === 'MANAGER') {
-            role = 'manager';
+            role = UserRole.MANAGER;
           } else if (classUpper === 'FMAN' || classUpper === 'FOREMAN' || classUpper.includes('FOREMAN')) {
-            role = 'foreman';
+            role = UserRole.FOREMAN;
           } else if (classUpper === 'SUPERVISOR' || classUpper === 'SUPER') {
-            role = 'supervisor';
+            role = UserRole.SUPERVISOR;
           }
         }
         
@@ -82,8 +90,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (email: string, password: string): Promise<void> => {
-    // This function is not used - authentication is handled by Login.tsx
-    // which directly calls the API and stores the token
     throw new Error('Please use the Login page for authentication');
   };
 
@@ -91,7 +97,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
-    // Redirect to login page
     window.location.href = '/login';
   };
 
@@ -101,7 +106,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const isManager = (): boolean => {
-    return hasRole(['manager', 'admin', 'supervisor', 'foreman']);
+    return hasRole([UserRole.MANAGER, UserRole.ADMIN, UserRole.SUPERVISOR, UserRole.FOREMAN]);
   };
 
   const value = {

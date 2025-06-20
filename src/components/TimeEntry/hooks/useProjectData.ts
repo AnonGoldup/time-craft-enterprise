@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { projectApi, employeeApi, Project, Employee, ProjectExtra, CostCode } from '@/services/api';
 
@@ -37,7 +38,7 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
       setLoading(true);
       const response = await projectApi.getAll();
       // Map SQL PascalCase to component's camelCase
-      const mappedProjects = response.data.map((p: any) => ({
+      const mappedProjects = response.data.data.map((p: any) => ({
         projectID: p.ProjectID,
         projectCode: p.ProjectCode,
         projectDescription: p.ProjectDescription,
@@ -59,7 +60,7 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
     try {
       const response = await employeeApi.getAll();
       // Map SQL PascalCase to component's camelCase
-      const mappedEmployees = response.data.map((e: any) => ({
+      const mappedEmployees = response.data.data.map((e: any) => ({
         employeeID: e.EmployeeID,
         firstName: e.FirstName,
         lastName: e.LastName,
@@ -80,9 +81,10 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
 
   const loadProjectExtras = async (projectCode: string) => {
     try {
-      const response = await projectApi.getExtras(projectCode);
+      const projectId = parseInt(projectCode);
+      const response = await projectApi.getExtras(projectId);
       // Map the response if needed
-      const extras = response.data.map((e: any) => ({
+      const extras = response.data.data.map((e: any) => ({
         extraID: e.ExtraID,
         projectID: e.ProjectID,
         extraValue: e.ExtraValue,
@@ -98,9 +100,10 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
 
   const loadCostCodes = async (projectCode: string, extraValue?: string) => {
     try {
-      const response = await projectApi.getCostCodes(projectCode, extraValue);
+      const projectId = parseInt(projectCode);
+      const response = await projectApi.getCostCodes(projectId, extraValue);
       // Map the response if needed
-      const codes = response.data.map((c: any) => ({
+      const codes = response.data.data.map((c: any) => ({
         costCodeID: c.CostCodeID,
         costCode: c.CostCode,
         description: c.Description,

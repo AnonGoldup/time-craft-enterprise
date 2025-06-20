@@ -1,16 +1,18 @@
+
 import React, { createContext, useContext, useReducer } from 'react';
+import { TimesheetEntry } from '../services/api';
 
 interface TimesheetState {
-  entries: TimeEntry[];
+  entries: TimesheetEntry[];
   currentWeek: Date;
   isLoading: boolean;
   error: string | null;
 }
 
 type TimesheetAction = 
-  | { type: 'SET_ENTRIES'; payload: TimeEntry[] }
-  | { type: 'UPDATE_ENTRY'; payload: { index: number; entry: TimeEntry } }
-  | { type: 'ADD_ENTRY'; payload: TimeEntry }
+  | { type: 'SET_ENTRIES'; payload: TimesheetEntry[] }
+  | { type: 'UPDATE_ENTRY'; payload: { index: number; entry: TimesheetEntry } }
+  | { type: 'ADD_ENTRY'; payload: TimesheetEntry }
   | { type: 'DELETE_ENTRY'; payload: number }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null };
