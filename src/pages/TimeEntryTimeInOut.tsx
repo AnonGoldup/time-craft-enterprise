@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -250,57 +251,61 @@ const TimeEntryTimeInOut = () => {
                   )}
                 </div>
 
-                {/* Project Details Section */}
-                <div className="bg-muted/30 rounded-lg p-2 border">
-                  <ProjectDetailsRow 
-                    selectedProject={selectedProject} 
-                    setSelectedProject={setSelectedProject} 
-                    selectedExtra={selectedExtra} 
-                    setSelectedExtra={setSelectedExtra} 
-                    selectedCostCode={selectedCostCode} 
-                    setSelectedCostCode={setSelectedCostCode} 
-                    selectedDate={selectedDate} 
-                    setSelectedDate={setSelectedDate} 
-                    selectedDates={selectedDates}
-                    setSelectedDates={setSelectedDates}
-                    selectedEmployee={selectedEmployee} 
-                    setSelectedEmployee={setSelectedEmployee} 
-                    selectedEmployees={selectedEmployees} 
-                    setSelectedEmployees={setSelectedEmployees} 
-                    useCostCodeInput={false}
-                    useMultiDateSelection={true}
-                  />
-                </div>
+                {/* Combined Project Details and Time In/Out Section */}
+                <div className="bg-muted/30 rounded-lg p-3 border space-y-4">
+                  {/* Project Details Row */}
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-foreground">Project & Time Details</h4>
+                    <ProjectDetailsRow 
+                      selectedProject={selectedProject} 
+                      setSelectedProject={setSelectedProject} 
+                      selectedExtra={selectedExtra} 
+                      setSelectedExtra={setSelectedExtra} 
+                      selectedCostCode={selectedCostCode} 
+                      setSelectedCostCode={setSelectedCostCode} 
+                      selectedDate={selectedDate} 
+                      setSelectedDate={setSelectedDate} 
+                      selectedDates={selectedDates}
+                      setSelectedDates={setSelectedDates}
+                      selectedEmployee={selectedEmployee} 
+                      setSelectedEmployee={setSelectedEmployee} 
+                      selectedEmployees={selectedEmployees} 
+                      setSelectedEmployees={setSelectedEmployees} 
+                      useCostCodeInput={false}
+                      useMultiDateSelection={true}
+                    />
+                  </div>
 
-                {/* Time In/Out Section - Reduced padding */}
-                <div className="bg-card rounded-lg p-2 border">
-                  <TimeInOutRow 
-                    timeInHour={timeInHour} 
-                    setTimeInHour={setTimeInHour} 
-                    timeInMinute={timeInMinute} 
-                    setTimeInMinute={setTimeInMinute} 
-                    timeInPeriod={timeInPeriod} 
-                    setTimeInPeriod={setTimeInPeriod} 
-                    timeOutHour={timeOutHour} 
-                    setTimeOutHour={setTimeOutHour} 
-                    timeOutMinute={timeOutMinute} 
-                    setTimeOutMinute={setTimeOutMinute} 
-                    timeOutPeriod={timeOutPeriod} 
-                    setTimeOutPeriod={setTimeOutPeriod} 
-                    breakInHour={breakInHour} 
-                    setBreakInHour={setBreakInHour} 
-                    breakInMinute={breakInMinute} 
-                    setBreakInMinute={setBreakInMinute} 
-                    breakInPeriod={breakInPeriod} 
-                    setBreakInPeriod={setBreakInPeriod} 
-                    breakOutHour={breakOutHour} 
-                    setBreakOutHour={setBreakOutHour} 
-                    breakOutMinute={breakOutMinute} 
-                    setBreakOutMinute={setBreakOutMinute} 
-                    breakOutPeriod={breakOutPeriod} 
-                    setBreakOutPeriod={setBreakOutPeriod} 
-                    setQuickTime={setQuickTime} 
-                  />
+                  {/* Time In/Out Row */}
+                  <div className="border-t pt-3">
+                    <TimeInOutRow 
+                      timeInHour={timeInHour} 
+                      setTimeInHour={setTimeInHour} 
+                      timeInMinute={timeInMinute} 
+                      setTimeInMinute={setTimeInMinute} 
+                      timeInPeriod={timeInPeriod} 
+                      setTimeInPeriod={setTimeInPeriod} 
+                      timeOutHour={timeOutHour} 
+                      setTimeOutHour={setTimeOutHour} 
+                      timeOutMinute={timeOutMinute} 
+                      setTimeOutMinute={setTimeOutMinute} 
+                      timeOutPeriod={timeOutPeriod} 
+                      setTimeOutPeriod={setTimeOutPeriod} 
+                      breakInHour={breakInHour} 
+                      setBreakInHour={setBreakInHour} 
+                      breakInMinute={breakInMinute} 
+                      setBreakInMinute={setBreakInMinute} 
+                      breakInPeriod={breakInPeriod} 
+                      setBreakInPeriod={setBreakInPeriod} 
+                      breakOutHour={breakOutHour} 
+                      setBreakOutHour={setBreakOutHour} 
+                      breakOutMinute={breakOutMinute} 
+                      setBreakOutMinute={setBreakOutMinute} 
+                      breakOutPeriod={breakOutPeriod} 
+                      setBreakOutPeriod={setBreakOutPeriod} 
+                      setQuickTime={setQuickTime} 
+                    />
+                  </div>
                 </div>
 
                 {/* Notes Section - Individual per entry */}
