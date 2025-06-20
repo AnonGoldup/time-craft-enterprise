@@ -5,9 +5,7 @@ import { Employee } from '../services/api';
 export enum UserRole {
   EMPLOYEE = 'employee',
   MANAGER = 'manager',
-  ADMIN = 'admin',
-  SUPERVISOR = 'supervisor',
-  FOREMAN = 'foreman'
+  ADMIN = 'admin'
 }
 
 export interface User {
@@ -49,55 +47,76 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Check for existing token on mount
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userStr = localStorage.getItem('user');
-    
-    if (token && userStr) {
+    const token = localStorage.getItem('authToken');
+    if (token) {
       try {
-        const userData = JSON.parse(userStr);
-        
-        // Map backend user structure to AuthContext User type
-        let role: UserRole = UserRole.EMPLOYEE;
-        if (userData.class) {
-          const classUpper = userData.class.toUpperCase();
-          if (classUpper === 'ADMIN') {
-            role = UserRole.ADMIN;
-          } else if (classUpper === 'PM' || classUpper === 'MANAGER') {
-            role = UserRole.MANAGER;
-          } else if (classUpper === 'FMAN' || classUpper === 'FOREMAN' || classUpper.includes('FOREMAN')) {
-            role = UserRole.FOREMAN;
-          } else if (classUpper === 'SUPERVISOR' || classUpper === 'SUPER') {
-            role = UserRole.SUPERVISOR;
-          }
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp * 1000 > Date.now()) {
+          setUser({
+            userId: payload.userId,
+            employeeId: payload.employeeId,
+            email: payload.email,
+            fullName: payload.fullName,
+            role: payload.role,
+            department: payload.department,
+            isActive: payload.isActive
+          });
+        } else {
+          localStorage.removeItem('authToken');
         }
-        
-        setUser({
-          userId: userData.employeeId,
-          employeeId: userData.employeeId,
-          email: userData.email,
-          fullName: userData.fullName,
-          role: role,
-          department: userData.department || '',
-          isActive: true
-        });
       } catch (error) {
-        console.error('Error parsing stored user data:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        localStorage.removeItem('authToken');
       }
     }
     setLoading(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<void> => {
-    throw new Error('Please use the Login page for authentication');
+    try {
+      setLoading(true);
+      
+      // Mock authentication - replace with actual API call
+      if (email === 'john.doe@company.com' && password === 'password') {
+        const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiZW1wbG95ZWVJZCI6IkpEMDAxIiwiZW1haWwiOiJqb2huLmRvZUBjb21wYW55LmNvbSIsImZ1bGxOYW1lIjoiSm9obiBEb2UiLCJyb2xlIjoiZW1wbG95ZWUiLCJkZXBhcnRtZW50IjoiRWxlY3RyaWNhbCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NDA5OTUyMDAsImV4cCI6MjY0MDk5ODgwMH0.mockSignature';
+        
+        localStorage.setItem('authToken', mockToken);
+        
+        setUser({
+          userId: '1',
+          employeeId: 'JD001',
+          email: 'john.doe@company.com',
+          fullName: 'John Doe',
+          role: UserRole.EMPLOYEE,
+          department: 'Electrical',
+          isActive: true
+        });
+      } else if (email === 'admin@company.com' && password === 'password') {
+        const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzIiwiZW1wbG95ZWVJZCI6IkFEMDAxIiwiZW1haWwiOiJhZG1pbkBjb21wYW55LmNvbSIsImZ1bGxOYW1lIjoiQWRtaW4gVXNlciIsInJvbGUiOiJhZG1pbiIsImRlcGFydG1lbnQiOiJBZG1pbmlzdHJhdGlvbiIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NDA5OTUyMDAsImV4cCI6MjY0MDk5ODgwMH0.mockSignature';
+        
+        localStorage.setItem('authToken', mockToken);
+        
+        setUser({
+          userId: '3',
+          employeeId: 'AD001',
+          email: 'admin@company.com',
+          fullName: 'Admin User',
+          role: UserRole.ADMIN,
+          department: 'Administration',
+          isActive: true
+        });
+      } else {
+        throw new Error('Invalid credentials');
+      }
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('authToken');
     setUser(null);
-    window.location.href = '/login';
   };
 
   const hasRole = (roles: string[]): boolean => {
@@ -106,7 +125,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const isManager = (): boolean => {
-    return hasRole([UserRole.MANAGER, UserRole.ADMIN, UserRole.SUPERVISOR, UserRole.FOREMAN]);
+    return hasRole(['admin']);
   };
 
   const value = {

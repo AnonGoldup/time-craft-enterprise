@@ -8,14 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Employee } from '@/services/api';
-import { useEmployeeData } from '@/hooks/useEmployeeData';
 
 interface EmployeeSelectorProps {
   selectedEmployee: string;
   setSelectedEmployee: (value: string) => void;
   selectedEmployees?: string[];
   setSelectedEmployees?: (value: string[]) => void;
-  employees?: Employee[];
+  employees: Employee[];
 }
 
 const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
@@ -23,20 +22,15 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   setSelectedEmployee,
   selectedEmployees = [],
   setSelectedEmployees,
-  employees: propEmployees
+  employees
 }) => {
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false);
-  const { employees: hookEmployees, loading, error } = useEmployeeData();
-  
-  // Use provided employees or fall back to hook data, ensure it's always an array
-  const employees = Array.isArray(propEmployees) ? propEmployees : 
-                   Array.isArray(hookEmployees) ? hookEmployees : [];
-  const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
 
-  console.log('EmployeeSelector - employees:', employees.length, 'loading:', loading, 'error:', error);
+  // Ensure arrays are always properly defined
+  const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
+  const safeEmployees = Array.isArray(employees) ? employees : [];
 
   const handleEmployeeSelect = (employeeId: string) => {
-    console.log('Selecting employee:', employeeId);
     if (setSelectedEmployees) {
       // Multi-select mode
       const newSelection = safeSelectedEmployees.includes(employeeId)
@@ -44,7 +38,7 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
         : [...safeSelectedEmployees, employeeId];
       setSelectedEmployees(newSelection);
     } else {
-      // Single select mode
+      // Single select mode (fallback)
       setSelectedEmployee(employeeId);
       setEmployeePopoverOpen(false);
     }
@@ -57,37 +51,10 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   };
 
   const getSelectedEmployeeNames = () => {
-    return employees
+    return safeEmployees
       .filter(emp => safeSelectedEmployees.includes(emp.employeeID))
-      .map(emp => emp.fullName || `${emp.firstName} ${emp.lastName}`);
+      .map(emp => emp.fullName);
   };
-
-  const getDisplayText = () => {
-    if (setSelectedEmployees) {
-      // Multi-select mode
-      if (safeSelectedEmployees.length === 0) return "Select employees...";
-      if (safeSelectedEmployees.length === 1) return getSelectedEmployeeNames()[0];
-      return `${safeSelectedEmployees.length} employees selected`;
-    } else {
-      // Single select mode
-      const employee = employees.find(emp => emp.employeeID === selectedEmployee);
-      return employee ? (employee.fullName || `${employee.firstName} ${employee.lastName}`) : "Select employee...";
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-blue-500" />
-          <span className="text-sm text-slate-600 dark:text-slate-400">Employee</span>
-        </div>
-        <div className="w-48 p-2 text-sm text-muted-foreground border rounded">
-          Loading employees...
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-2">
@@ -97,44 +64,61 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
           <span className="text-sm text-slate-600 dark:text-slate-400">Employee</span>
         </div>
         
-        {employees.length === 0 ? (
-          <div className="w-48 p-2 text-sm text-muted-foreground border rounded">
-            No employees found
-          </div>
-        ) : setSelectedEmployees ? (
-          // Multi-select mode - use simpler Select for now to avoid Command issues
-          <Select value={safeSelectedEmployees[0] || ''} onValueChange={handleEmployeeSelect}>
-            <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
-              <SelectValue placeholder={getDisplayText()} />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 z-[9999]">
-              {employees.map((employee) => (
-                <SelectItem key={employee.employeeID} value={employee.employeeID}>
-                  <div className="flex flex-col">
-                    <span>{employee.fullName || `${employee.firstName} ${employee.lastName}`}</span>
-                    <span className="text-xs text-slate-500">
-                      {employee.class} - {employee.department}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        {setSelectedEmployees ? (
+          // Multi-select mode
+          <Popover open={employeePopoverOpen} onOpenChange={setEmployeePopoverOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={employeePopoverOpen}
+                className="w-48 justify-between border-slate-300 dark:border-slate-600"
+              >
+                {safeSelectedEmployees.length === 0
+                  ? "Select employees..."
+                  : safeSelectedEmployees.length === 1
+                  ? getSelectedEmployeeNames()[0]
+                  : `${safeSelectedEmployees.length} employees selected`}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-48 p-0">
+              <Command>
+                <CommandInput placeholder="Search employees..." />
+                <CommandEmpty>No employee found.</CommandEmpty>
+                <CommandGroup className="max-h-64 overflow-auto">
+                  {safeEmployees.map((employee) => (
+                    <CommandItem
+                      key={employee.employeeID}
+                      value={employee.fullName}
+                      onSelect={() => handleEmployeeSelect(employee.employeeID)}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          safeSelectedEmployees.includes(employee.employeeID) ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      {employee.fullName}
+                      <span className="ml-auto text-xs text-slate-500">
+                        {employee.class}
+                      </span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </Command>
+            </PopoverContent>
+          </Popover>
         ) : (
-          // Single select mode
+          // Single select mode (fallback)
           <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
             <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
               <SelectValue placeholder="Select employee..." />
             </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 z-[9999]">
-              {employees.map((employee) => (
+            <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+              {safeEmployees.map((employee) => (
                 <SelectItem key={employee.employeeID} value={employee.employeeID}>
-                  <div className="flex flex-col">
-                    <span>{employee.fullName || `${employee.firstName} ${employee.lastName}`}</span>
-                    <span className="text-xs text-slate-500">
-                      {employee.class} - {employee.department}
-                    </span>
-                  </div>
+                  {employee.fullName} - {employee.class}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -144,7 +128,7 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
 
       {/* Selected employees badges (for multi-select) */}
       {setSelectedEmployees && safeSelectedEmployees.length > 0 && (
-        <div className="flex flex-wrap gap-1 max-w-64">
+        <div className="flex flex-wrap gap-1">
           {getSelectedEmployeeNames().map((name, index) => (
             <Badge
               key={safeSelectedEmployees[index]}

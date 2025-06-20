@@ -14,7 +14,7 @@ const apiClient = axios.create({
 
 // Request interceptor to add auth token
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('authToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -26,7 +26,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
+      localStorage.removeItem('authToken');
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -157,17 +157,6 @@ export interface TimesheetApproval {
   approvalNotes?: string;
 }
 
-// Authentication interfaces
-export interface LoginRequest {
-  employeeId: string;
-  email: string;
-}
-
-export interface LoginResponse {
-  token: string;
-  user: Employee;
-}
-
 // API service functions
 export const employeeApi = {
   getAll: () => apiClient.get<ApiResponse<Employee[]>>('/employees'),
@@ -215,11 +204,6 @@ export const timesheetApi = {
 export const costCodeApi = {
   getAll: () => apiClient.get<ApiResponse<CostCode[]>>('/costcodes'),
   getActive: () => apiClient.get<ApiResponse<CostCode[]>>('/costcodes/active'),
-};
-
-export const authApi = {
-  login: (credentials: LoginRequest) => 
-    apiClient.post<ApiResponse<LoginResponse>>('/auth/login', credentials),
 };
 
 export default apiClient;

@@ -44,35 +44,13 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   useCostCodeInput = false,
   useMultiDateSelection = false
 }) => {
-  const { projects, projectExtras, costCodes, loading } = useProjectData(selectedProject, selectedExtra);
+  const { projects, employees, projectExtras, costCodes } = useProjectData(selectedProject, selectedExtra);
 
   const handleProjectChange = (value: string) => {
-    console.log('Project changed to:', value);
     setSelectedProject(value);
     setSelectedExtra('');
     setSelectedCostCode('');
   };
-
-  const handleExtraChange = (value: string) => {
-    console.log('Extra changed to:', value);
-    setSelectedExtra(value);
-  };
-
-  const handleCostCodeChange = (value: string) => {
-    console.log('Cost code changed to:', value);
-    setSelectedCostCode(value);
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center gap-6 flex-wrap">
-        <div className="text-sm text-muted-foreground">Loading project data...</div>
-      </div>
-    );
-  }
-
-  console.log('ProjectDetailsRow - projects available:', projects?.length || 0);
-  console.log('ProjectDetailsRow - selectedProject:', selectedProject);
 
   return (
     <div className="space-y-4">
@@ -80,20 +58,20 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
         <ProjectSelector
           selectedProject={selectedProject}
           setSelectedProject={handleProjectChange}
-          projects={projects || []}
+          projects={projects}
         />
 
         <ExtraSelector
           selectedExtra={selectedExtra}
-          setSelectedExtra={handleExtraChange}
-          projectExtras={projectExtras || []}
+          setSelectedExtra={setSelectedExtra}
+          projectExtras={projectExtras}
           disabled={!selectedProject}
         />
 
         <CostCodeSelector
           selectedCostCode={selectedCostCode}
-          setSelectedCostCode={handleCostCodeChange}
-          costCodes={costCodes || []}
+          setSelectedCostCode={setSelectedCostCode}
+          costCodes={costCodes}
           disabled={!selectedProject}
           useCostCodeInput={useCostCodeInput}
         />
@@ -111,6 +89,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
           setSelectedEmployee={setSelectedEmployee}
           selectedEmployees={selectedEmployees}
           setSelectedEmployees={setSelectedEmployees}
+          employees={employees}
         />
       </div>
     </div>
