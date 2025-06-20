@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -108,10 +109,11 @@ export const ColorSection: React.FC = () => {
   const { currentTheme, setTheme, themes } = useColorTheme();
   const { toast } = useToast();
   const [selectedFont, setSelectedFont] = useState(() => {
-    return localStorage.getItem('selected-font') || 'Inter';
+    return localStorage.getItem('selected-font') || 'Arial';
   });
 
   const availableFonts = [
+    { value: 'Arial', label: 'Arial' },
     { value: 'Inter', label: 'Inter' },
     { value: 'Roboto', label: 'Roboto' },
     { value: 'Open Sans', label: 'Open Sans' },
@@ -120,8 +122,7 @@ export const ColorSection: React.FC = () => {
     { value: 'Poppins', label: 'Poppins' },
     { value: 'Source Sans Pro', label: 'Source Sans Pro' },
     { value: 'Nunito', label: 'Nunito' },
-    { value: 'PT Sans', label: 'PT Sans' },
-    { value: 'Arial', label: 'Arial' }
+    { value: 'PT Sans', label: 'PT Sans' }
   ];
 
   const handleThemeChange = (themeId: string) => {
