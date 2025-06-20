@@ -68,6 +68,7 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
         email: e.Email,
         class: e.Class,
         department: e.Department,
+        unionID: e.UnionID || 0, // Add missing unionID property with default value
         activeEmp: e.ActiveEmp,
         createdDate: e.CreatedDate,
         modifiedDate: e.ModifiedDate
@@ -101,7 +102,9 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
   const loadCostCodes = async (projectCode: string, extraValue?: string) => {
     try {
       const projectId = parseInt(projectCode);
-      const response = await projectApi.getCostCodes(projectId, extraValue);
+      // Convert extraValue to number if provided, otherwise pass undefined
+      const extraId = extraValue ? parseInt(extraValue) : undefined;
+      const response = await projectApi.getCostCodes(projectId, extraId);
       // Map the response if needed
       const codes = response.data.data.map((c: any) => ({
         costCodeID: c.CostCodeID,
