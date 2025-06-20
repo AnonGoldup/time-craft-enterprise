@@ -123,7 +123,7 @@ const TimeEntryStandard = () => {
                 </div>
 
                 {/* Combined Project Details and Hours Entry Section */}
-                <div className="bg-muted/30 rounded-lg p-3 border space-y-4">
+                <div className="bg-muted/30 rounded-lg p-2 border space-y-3">
                   {/* Project Details Row */}
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium text-foreground">Project & Hours Details</h4>
@@ -148,7 +148,7 @@ const TimeEntryStandard = () => {
                   </div>
 
                   {/* Hours Entry Row */}
-                  <div className="border-t pt-3">
+                  <div className="border-t pt-2">
                     <HoursEntryRow 
                       standardHours={standardHours}
                       setStandardHours={setStandardHours}
@@ -165,8 +165,7 @@ const TimeEntryStandard = () => {
                   <NotesAndSubmitRow 
                     notes={entry.notes} 
                     setNotes={(notes) => updateEntryNotes(entry.id, notes)} 
-                    showTotalHours={true} 
-                    totalHours={totalHours}
+                    showTotalHours={false}
                   />
                 </div>
               </div>
