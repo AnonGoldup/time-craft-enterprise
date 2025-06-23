@@ -22,13 +22,13 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   setSelectedEmployee,
   selectedEmployees = [],
   setSelectedEmployees,
-  employees
+  employees = [] // Provide default empty array
 }) => {
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false);
 
-  // Ensure arrays are always properly defined
+  // Ensure arrays are always properly defined and not null/undefined
   const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
-  const safeEmployees = Array.isArray(employees) ? employees : [];
+  const safeEmployees = Array.isArray(employees) && employees ? employees : [];
 
   const handleEmployeeSelect = (employeeId: string) => {
     if (setSelectedEmployees) {
@@ -55,6 +55,21 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
       .filter(emp => safeSelectedEmployees.includes(emp.employeeID))
       .map(emp => emp.fullName);
   };
+
+  // Don't render if employees are still loading or empty
+  if (!safeEmployees || safeEmployees.length === 0) {
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-blue-500" />
+          <span className="text-sm text-slate-600 dark:text-slate-400">Employee</span>
+        </div>
+        <div className="w-48 p-2 border rounded text-sm text-muted-foreground">
+          Loading employees...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">

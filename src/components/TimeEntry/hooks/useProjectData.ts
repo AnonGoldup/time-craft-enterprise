@@ -12,8 +12,21 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
 
   // Load initial data
   useEffect(() => {
-    loadProjects();
-    loadEmployees();
+    const loadInitialData = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([
+          loadProjects(),
+          loadEmployees()
+        ]);
+      } catch (error) {
+        console.error('Failed to load initial data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInitialData();
   }, []);
 
   // Load project extras and cost codes when project changes
@@ -36,40 +49,41 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
 
   const loadProjects = async () => {
     try {
-      setLoading(true);
       const response = await mockApiService.projects.getActive();
-      setProjects(response.data);
+      setProjects(response.data || []);
     } catch (error) {
       console.error('Failed to load projects:', error);
-    } finally {
-      setLoading(false);
+      setProjects([]);
     }
   };
 
   const loadEmployees = async () => {
     try {
       const response = await mockApiService.employees.getActive();
-      setEmployees(response.data);
+      setEmployees(response.data || []);
     } catch (error) {
       console.error('Failed to load employees:', error);
+      setEmployees([]);
     }
   };
 
   const loadProjectExtras = async (projectId: number) => {
     try {
       const response = await mockApiService.projects.getExtras(projectId);
-      setProjectExtras(response.data);
+      setProjectExtras(response.data || []);
     } catch (error) {
       console.error('Failed to load project extras:', error);
+      setProjectExtras([]);
     }
   };
 
   const loadCostCodes = async (projectId: number, extraId?: number) => {
     try {
       const response = await mockApiService.projects.getCostCodes(projectId, extraId);
-      setCostCodes(response.data);
+      setCostCodes(response.data || []);
     } catch (error) {
       console.error('Failed to load cost codes:', error);
+      setCostCodes([]);
     }
   };
 
