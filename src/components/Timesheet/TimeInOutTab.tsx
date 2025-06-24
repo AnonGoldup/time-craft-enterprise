@@ -863,7 +863,7 @@ const calculateTimeInOut = (
   };
 };
 
-export default function MultiEmployeeTimeEntryForm() {
+export const TimeInOutTab: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [entries, setEntries] = useState<TimeEntry[]>([
     {
