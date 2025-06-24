@@ -142,6 +142,7 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
                     }
                   }}
                   placeholder="Select employee..."
+                  maxSelected={1}
                   disabled={false}
                 />
               </div>
@@ -155,6 +156,7 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
                     }
                   }}
                   placeholder="Select date..."
+                  maxDates={1}
                 />
               </div>
             </div>
