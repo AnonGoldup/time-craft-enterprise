@@ -132,7 +132,7 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
             {/* Employee & Date Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <Label>Employee *</Label>
+                <Label>Employee(s) *</Label>
                 <MultiEmployeeSelector
                   employees={employees.filter(emp => emp.isActive !== false)}
                   selectedEmployees={employees.filter(emp => emp.employeeId === entry.employeeId)}
@@ -141,8 +141,8 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
                       handleInputChange(index, 'employeeId', selected[0].employeeId);
                     }
                   }}
-                  placeholder="Select employee..."
-                  maxSelected={1}
+                  placeholder="Select employees..."
+                  groupByClass={true}
                   disabled={false}
                 />
               </div>
