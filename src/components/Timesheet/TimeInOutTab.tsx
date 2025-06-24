@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Clock, User, Calendar, Building, Hash, AlertTriangle, Plus, Trash2 } from 'lucide-react';
-import MultiDatePicker from '@/components/TimeEntry/MultiDatePicker';
+import { MultiDatePicker } from '@/components/TimeEntry/MultiDatePicker';
 import { TabContentProps, TimeEntryData } from './types';
 import { mockEmployees, projects, extras, costCodes } from './mockEmployees';
 
@@ -151,7 +152,9 @@ export const TimeInOutTab: React.FC<TabContentProps> = ({
             </div>
             <MultiDatePicker
               selectedDates={selectedDates}
-              onDatesChange={setSelectedDates}
+              onDateChange={setSelectedDates}
+              placeholder="Select dates for time entry..."
+              maxDates={10}
             />
             <p className="text-sm text-blue-600 mt-2">
               Selected dates will use the same time settings and project information below.
