@@ -9,6 +9,6 @@ export const reportRoutes: RouteConfig[] = [
   {
     path: '/reports/hours-breakdown',
     component: HoursBreakdown,
-    requiredRoles: [UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.ADMIN]
   }
 ];

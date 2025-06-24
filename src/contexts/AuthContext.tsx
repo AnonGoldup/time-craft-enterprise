@@ -4,7 +4,6 @@ import { Employee } from '../services/api';
 
 export enum UserRole {
   EMPLOYEE = 'employee',
-  MANAGER = 'manager',
   ADMIN = 'admin'
 }
 

@@ -55,7 +55,6 @@ const AddUser = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="admin">Administrator</SelectItem>
-                  <SelectItem value="manager">Manager</SelectItem>
                   <SelectItem value="supervisor">Supervisor</SelectItem>
                   <SelectItem value="foreman">Foreman</SelectItem>
                   <SelectItem value="employee">Employee</SelectItem>
