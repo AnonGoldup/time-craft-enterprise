@@ -39,23 +39,22 @@ export const bulkTimeEntrySchema = z.object({
 export type BulkTimeEntryFormValues = z.infer<typeof bulkTimeEntrySchema>
 
 // Type guard to check if an employee has required fields
-const hasRequiredFields = (emp: Partial<Employee>): emp is Employee => {
+const hasRequiredFields = (emp: any): emp is Employee => {
   return typeof emp.employeeId === 'string' && 
          emp.employeeId.length > 0 &&
          typeof emp.fullName === 'string' && 
-         emp.fullName.length > 0 &&
-         emp.isActive !== false;
+         emp.fullName.length > 0;
 };
 
-// Utility function to filter and validate employees
-export const validateEmployees = (employees: Array<Partial<Employee>>): Employee[] => {
+// Utility function to filter and validate employees - returns proper Employee type
+export const validateEmployees = (employees: any[]): Employee[] => {
   return employees
     .filter(hasRequiredFields)
     .map((emp): Employee => ({
       employeeId: emp.employeeId,
       fullName: emp.fullName,
-      email: emp.email || undefined,
-      class: emp.class || undefined,
+      email: emp.email,
+      class: emp.class,
       isActive: emp.isActive !== false
     }));
 }
