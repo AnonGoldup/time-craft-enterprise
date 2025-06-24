@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -105,8 +106,9 @@ export const TimeInOutTab: React.FC<TabContentProps> = ({
   };
 
   return (
-    <CardContent className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Clock className="w-5 h-5 text-blue-600" />
           <h3 className="text-lg font-semibold">Time In/Out Entry</h3>
@@ -144,7 +146,7 @@ export const TimeInOutTab: React.FC<TabContentProps> = ({
       <form onSubmit={onSubmit} className="space-y-6">
         {/* Multi-Date Picker */}
         {useMultiDateSelection && (
-          <div className="mb-6 p-4 border rounded-lg bg-blue-50">
+          <div className="p-4 border rounded-lg bg-blue-50/50">
             <div className="flex items-center space-x-2 mb-3">
               <Calendar className="w-4 h-4 text-blue-600" />
               <Label className="font-medium">Select Multiple Dates</Label>
@@ -159,251 +161,265 @@ export const TimeInOutTab: React.FC<TabContentProps> = ({
           </div>
         )}
 
-        {/* Show only first entry for multi-date mode, or all entries for regular mode */}
-        {(useMultiDateSelection ? [entries[0]] : entries).map((entry, index) => (
-          <div key={index} className="border rounded-lg p-4 relative">
-            {!useMultiDateSelection && entries.length > 1 && (
-              <div className="absolute top-2 right-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeEntry(index)}
-                  className="h-6 w-6 p-0 text-red-600 hover:text-red-700"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            )}
-            
-            {!useMultiDateSelection && (
-              <div className="mb-4">
-                <Badge variant="outline">Entry {index + 1}</Badge>
-              </div>
-            )}
-
-            {/* Employee & Date Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <Label className="flex items-center space-x-1">
-                  <User className="w-4 h-4" />
-                  <span>Employee *</span>
-                </Label>
-                <Select 
-                  value={entry.employeeId} 
-                  onValueChange={(value) => handleInputChange(index, 'employeeId', value)}
-                  disabled={!managerMode}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockEmployees.map(emp => (
-                      <SelectItem key={emp.id} value={emp.id}>
-                        {emp.name} - {emp.class}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              {!useMultiDateSelection && (
-                <div>
-                  <Label className="flex items-center space-x-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>Date Worked *</span>
-                  </Label>
-                  <Input
-                    type="date"
-                    value={entry.dateWorked}
-                    max={new Date().toISOString().split('T')[0]}
-                    onChange={(e) => handleInputChange(index, 'dateWorked', e.target.value)}
-                  />
+        {/* Entries */}
+        <div className="space-y-4">
+          {(useMultiDateSelection ? [entries[0]] : entries).map((entry, index) => (
+            <div key={index} className="border rounded-lg bg-card">
+              {/* Entry Header */}
+              <div className="p-4 border-b bg-muted/50 rounded-t-lg">
+                <div className="flex items-center justify-between">
+                  {!useMultiDateSelection && entries.length > 1 && (
+                    <Badge variant="outline">Entry {index + 1}</Badge>
+                  )}
+                  <div className="flex-1" />
+                  {!useMultiDateSelection && entries.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeEntry(index)}
+                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  )}
                 </div>
-              )}
-            </div>
+              </div>
 
-            {/* Time Fields */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-              <div>
-                <Label>Time In *</Label>
-                <Input
-                  type="time"
-                  value={entry.timeIn}
-                  onChange={(e) => {
-                    handleInputChange(index, 'timeIn', e.target.value);
-                    setTimeout(() => calculateTimeInOut(), 100);
-                  }}
-                  className="font-mono text-center"
-                />
-              </div>
-              <div>
-                <Label>Time Out *</Label>
-                <Input
-                  type="time"
-                  value={entry.timeOut}
-                  onChange={(e) => {
-                    handleInputChange(index, 'timeOut', e.target.value);
-                    setTimeout(() => calculateTimeInOut(), 100);
-                  }}
-                  className="font-mono text-center"
-                />
-              </div>
-              <div>
-                <Label>Break Start</Label>
-                <Input
-                  type="time"
-                  value={entry.breakStart}
-                  onChange={(e) => {
-                    handleInputChange(index, 'breakStart', e.target.value);
-                    setTimeout(() => calculateTimeInOut(), 100);
-                  }}
-                  className="font-mono text-center"
-                />
-              </div>
-              <div>
-                <Label>Break End</Label>
-                <Input
-                  type="time"
-                  value={entry.breakEnd}
-                  onChange={(e) => {
-                    handleInputChange(index, 'breakEnd', e.target.value);
-                    setTimeout(() => calculateTimeInOut(), 100);
-                  }}
-                  className="font-mono text-center"
-                />
-              </div>
-            </div>
-
-            {/* Cross Midnight Warning */}
-            {crossesMidnight && (
-              <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg border-l-4 border-l-amber-500">
-                <div className="flex items-start space-x-3">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
-                  <div>
-                    <div className="font-semibold text-amber-900 mb-2">⚠️ Cross-Midnight Shift Detected</div>
-                    <p className="text-amber-800 text-sm mb-3">This shift crosses midnight and will be split into two entries:</p>
+              <div className="p-6 space-y-6">
+                {/* Employee & Date Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="flex items-center space-x-2 text-sm font-medium">
+                      <User className="w-4 h-4" />
+                      <span>Employee *</span>
+                    </Label>
+                    <Select 
+                      value={entry.employeeId} 
+                      onValueChange={(value) => handleInputChange(index, 'employeeId', value)}
+                      disabled={!managerMode}
+                    >
+                      <SelectTrigger className="h-10">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {mockEmployees.map(emp => (
+                          <SelectItem key={emp.id} value={emp.id}>
+                            {emp.name} - {emp.class}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {!useMultiDateSelection && (
                     <div className="space-y-2">
-                      <div className="flex justify-between bg-white p-2 rounded border text-sm">
-                        <span>{formData?.dateWorked}: {formData?.timeIn} - 11:59 PM</span>
-                        <span className="font-medium">2.00 hours</span>
-                      </div>
-                      <div className="flex justify-between bg-white p-2 rounded border text-sm">
-                        <span>Next day: 12:00 AM - {formData?.timeOut}</span>
-                        <span className="font-medium">6.00 hours</span>
-                      </div>
+                      <Label className="flex items-center space-x-2 text-sm font-medium">
+                        <Calendar className="w-4 h-4" />
+                        <span>Date Worked *</span>
+                      </Label>
+                      <Input
+                        type="date"
+                        value={entry.dateWorked}
+                        max={new Date().toISOString().split('T')[0]}
+                        onChange={(e) => handleInputChange(index, 'dateWorked', e.target.value)}
+                        className="h-10"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Time Fields Section */}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Time Details</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Time In *</Label>
+                      <Input
+                        type="time"
+                        value={entry.timeIn}
+                        onChange={(e) => {
+                          handleInputChange(index, 'timeIn', e.target.value);
+                          setTimeout(() => calculateTimeInOut(), 100);
+                        }}
+                        className="font-mono text-center h-10"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Time Out *</Label>
+                      <Input
+                        type="time"
+                        value={entry.timeOut}
+                        onChange={(e) => {
+                          handleInputChange(index, 'timeOut', e.target.value);
+                          setTimeout(() => calculateTimeInOut(), 100);
+                        }}
+                        className="font-mono text-center h-10"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Break Start</Label>
+                      <Input
+                        type="time"
+                        value={entry.breakStart}
+                        onChange={(e) => {
+                          handleInputChange(index, 'breakStart', e.target.value);
+                          setTimeout(() => calculateTimeInOut(), 100);
+                        }}
+                        className="font-mono text-center h-10"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Break End</Label>
+                      <Input
+                        type="time"
+                        value={entry.breakEnd}
+                        onChange={(e) => {
+                          handleInputChange(index, 'breakEnd', e.target.value);
+                          setTimeout(() => calculateTimeInOut(), 100);
+                        }}
+                        className="font-mono text-center h-10"
+                      />
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
 
-            {/* Calculated Hours */}
-            <div className="bg-muted p-4 rounded-lg">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div className="bg-card p-4 rounded-lg border">
-                  <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Standard</div>
-                  <div className="text-2xl font-bold">{formData?.standardHours.toFixed(2)}</div>
+                {/* Cross Midnight Warning */}
+                {crossesMidnight && (
+                  <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg">
+                    <div className="flex items-start space-x-3">
+                      <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1">
+                        <div className="font-semibold text-amber-900 mb-2">Cross-Midnight Shift Detected</div>
+                        <p className="text-amber-800 text-sm mb-3">This shift crosses midnight and will be split into two entries:</p>
+                        <div className="space-y-2">
+                          <div className="flex justify-between bg-white p-3 rounded border text-sm">
+                            <span>{formData?.dateWorked}: {formData?.timeIn} - 11:59 PM</span>
+                            <span className="font-medium">2.00 hours</span>
+                          </div>
+                          <div className="flex justify-between bg-white p-3 rounded border text-sm">
+                            <span>Next day: 12:00 AM - {formData?.timeOut}</span>
+                            <span className="font-medium">6.00 hours</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Calculated Hours Display */}
+                <div className="bg-muted/30 p-6 rounded-lg">
+                  <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-4">Calculated Hours</h4>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="bg-card p-4 rounded-lg border text-center">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wide mb-2">Standard</div>
+                      <div className="text-2xl font-bold text-green-600">{formData?.standardHours.toFixed(2)}</div>
+                    </div>
+                    <div className="bg-card p-4 rounded-lg border text-center">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wide mb-2">Overtime</div>
+                      <div className="text-2xl font-bold text-orange-600">{formData?.overtimeHours.toFixed(2)}</div>
+                    </div>
+                    <div className="bg-card p-4 rounded-lg border text-center">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wide mb-2">Total</div>
+                      <div className="text-2xl font-bold text-blue-600">{(formData?.standardHours + formData?.overtimeHours).toFixed(2)}</div>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-card p-4 rounded-lg border">
-                  <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Overtime</div>
-                  <div className="text-2xl font-bold text-orange-600">{formData?.overtimeHours.toFixed(2)}</div>
+
+                {/* Project Information Section */}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Project Information</h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="flex items-center space-x-2 text-sm font-medium">
+                        <Building className="w-4 h-4" />
+                        <span>Project *</span>
+                      </Label>
+                      <Select 
+                        value={entry.projectCode} 
+                        onValueChange={(value) => handleInputChange(index, 'projectCode', value)}
+                      >
+                        <SelectTrigger className="h-10">
+                          <SelectValue placeholder="Select Project" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {projects.map(project => (
+                            <SelectItem key={project.code} value={project.code}>
+                              {project.code} - {project.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Extra</Label>
+                      <Select 
+                        value={entry.extraValue} 
+                        onValueChange={(value) => handleInputChange(index, 'extraValue', value)}
+                      >
+                        <SelectTrigger className="h-10">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {extras.map(extra => (
+                            <SelectItem key={extra.extraID} value={extra.extraValue}>
+                              {extra.extraValue} - {extra.description}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="flex items-center space-x-2 text-sm font-medium">
+                      <Hash className="w-4 h-4" />
+                      <span>Cost Code *</span>
+                    </Label>
+                    <Select 
+                      value={entry.costCode} 
+                      onValueChange={(value) => handleInputChange(index, 'costCode', value)}
+                    >
+                      <SelectTrigger className="h-10">
+                        <SelectValue placeholder="Select Cost Code" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {costCodes.map(code => (
+                          <SelectItem key={code.costCodeID} value={code.costCode}>
+                            {code.costCode} - {code.description}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-                <div className="bg-card p-4 rounded-lg border">
-                  <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total</div>
-                  <div className="text-2xl font-bold text-blue-600">{(formData?.standardHours + formData?.overtimeHours).toFixed(2)}</div>
+
+                {/* Notes Section */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Notes</Label>
+                  <Textarea
+                    rows={3}
+                    placeholder="Enter any additional notes..."
+                    value={entry.notes}
+                    onChange={(e) => handleInputChange(index, 'notes', e.target.value)}
+                    className="resize-none"
+                  />
                 </div>
               </div>
             </div>
+          ))}
+        </div>
 
-            {/* Project Information */}
-            <div className="border-t pt-6">
-              <h4 className="text-sm font-medium mb-4">Project Information</h4>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <Label className="flex items-center space-x-1">
-                    <Building className="w-4 h-4" />
-                    <span>Project *</span>
-                  </Label>
-                  <Select 
-                    value={entry.projectCode} 
-                    onValueChange={(value) => handleInputChange(index, 'projectCode', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Project" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {projects.map(project => (
-                        <SelectItem key={project.code} value={project.code}>
-                          {project.code} - {project.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Extra</Label>
-                  <Select 
-                    value={entry.extraValue} 
-                    onValueChange={(value) => handleInputChange(index, 'extraValue', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {extras.map(extra => (
-                        <SelectItem key={extra.extraID} value={extra.extraValue}>
-                          {extra.extraValue} - {extra.description}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <Label className="flex items-center space-x-1">
-                  <Hash className="w-4 h-4" />
-                  <span>Cost Code *</span>
-                </Label>
-                <Select 
-                  value={entry.costCode} 
-                  onValueChange={(value) => handleInputChange(index, 'costCode', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Cost Code" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {costCodes.map(code => (
-                      <SelectItem key={code.costCodeID} value={code.costCode}>
-                        {code.costCode} - {code.description}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Notes */}
-            <div>
-              <Label>Notes</Label>
-              <Textarea
-                rows={3}
-                placeholder="Enter any additional notes..."
-                value={entry.notes}
-                onChange={(e) => handleInputChange(index, 'notes', e.target.value)}
-              />
-            </div>
-          </div>
-        ))}
-
-        <Button type="submit" className="w-full">
-          Submit {useMultiDateSelection && selectedDates.length > 0 
-            ? `${selectedDates.length} Time Entries` 
-            : entries.length === 1 ? 'Time Entry' : `${entries.length} Time Entries`
-          }
-        </Button>
+        {/* Submit Button */}
+        <div className="pt-4">
+          <Button type="submit" className="w-full h-11 text-base font-medium">
+            Submit {useMultiDateSelection && selectedDates.length > 0 
+              ? `${selectedDates.length} Time Entries` 
+              : entries.length === 1 ? 'Time Entry' : `${entries.length} Time Entries`
+            }
+          </Button>
+        </div>
       </form>
-    </CardContent>
+    </div>
   );
 };
