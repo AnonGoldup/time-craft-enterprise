@@ -98,11 +98,11 @@ export function EnhancedTimeEntryForm({
 }: EnhancedTimeEntryFormProps) {
   const [isLoading, setIsLoading] = React.useState(false)
   
-  // Convert mock data to match interface
+  // Convert mock data to match interface with all required properties
   const employees: Employee[] = mockEmployees.map(emp => ({
     employeeId: emp.id,
     fullName: emp.name,
-    email: `${emp.id.toLowerCase()}@company.com`, // Generate email from ID
+    email: `${emp.id.toLowerCase()}@company.com`,
     class: emp.class,
     isActive: true
   }))

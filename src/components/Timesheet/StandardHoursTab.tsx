@@ -7,10 +7,20 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Clock, User, Calendar, Building, Hash, Plus, Trash2 } from 'lucide-react';
+import { Clock, Building, Hash, Plus, Trash2 } from 'lucide-react';
 import { MultiDatePicker } from '@/components/TimeEntry/MultiDatePicker';
+import { MultiEmployeeSelector } from '@/components/TimeEntry/MultiEmployeeSelector';
 import { TabContentProps, TimeEntryData } from './types';
 import { mockEmployees, projects, extras, costCodes } from './mockEmployees';
+
+// Employee interface matching the Multi-Employee Selector
+interface Employee {
+  employeeId: string
+  fullName: string
+  email?: string
+  class?: string
+  isActive?: boolean
+}
 
 export const StandardHoursTab: React.FC<TabContentProps> = ({
   entries,
@@ -22,6 +32,20 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
   onSubmit,
   managerMode
 }) => {
+  // Convert mock employees to proper format
+  const employees: Employee[] = mockEmployees.map(emp => ({
+    employeeId: emp.id,
+    fullName: emp.name,
+    email: `${emp.id.toLowerCase()}@company.com`,
+    class: emp.class,
+    isActive: true
+  }))
+
+  const [selectedEmployees, setSelectedEmployees] = useState<Employee[]>(() => {
+    const currentUser = employees.find(emp => emp.employeeId === 'JSMITH');
+    return currentUser ? [currentUser] : [];
+  });
+
   const addNewEntry = () => {
     const newEntry: TimeEntryData = {
       employeeId: 'JSMITH',
@@ -68,6 +92,11 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
     setEntries(newEntries);
   };
 
+  // Calculate total entries for display
+  const totalEntries = useMultiDateSelection ? 
+    selectedEmployees.length * selectedDates.length : 
+    entries.length;
+
   return (
     <CardContent className="p-6">
       <div className="flex items-center justify-between mb-6">
@@ -75,10 +104,7 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
           <Clock className="w-5 h-5 text-blue-600" />
           <h3 className="text-lg font-semibold">Standard Hours Entry</h3>
           <Badge variant="secondary">
-            {useMultiDateSelection && selectedDates.length > 0 
-              ? `${selectedDates.length} dates selected`
-              : `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`
-            }
+            {totalEntries} {totalEntries === 1 ? 'entry' : 'entries'} will be created
           </Badge>
         </div>
         <div className="flex items-center space-x-2">
@@ -88,7 +114,7 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
             size="sm"
             onClick={() => setUseMultiDateSelection(!useMultiDateSelection)}
           >
-            Multi-Date
+            Multi-Date Mode
           </Button>
           {!useMultiDateSelection && (
             <Button
@@ -106,22 +132,42 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
       </div>
 
       <form onSubmit={onSubmit} className="space-y-6">
-        {/* Multi-Date Picker */}
+        {/* Multi-Date and Multi-Employee Selection */}
         {useMultiDateSelection && (
-          <div className="mb-6 p-4 border rounded-lg bg-blue-50">
-            <div className="flex items-center space-x-2 mb-3">
-              <Calendar className="w-4 h-4 text-blue-600" />
-              <Label className="font-medium">Select Multiple Dates</Label>
+          <div className="space-y-4 p-4 border rounded-lg bg-blue-50">
+            {/* Employee Selection */}
+            <div>
+              <Label className="font-medium mb-2 block">Select Employees</Label>
+              <MultiEmployeeSelector
+                employees={employees.filter(emp => emp.isActive !== false)}
+                selectedEmployees={selectedEmployees}
+                onEmployeeChange={setSelectedEmployees}
+                placeholder={managerMode ? "Select employees..." : "Select employee..."}
+                maxSelected={managerMode ? undefined : 1}
+                groupByClass={managerMode}
+                disabled={!managerMode}
+              />
+              <p className="text-sm text-blue-600 mt-1">
+                {managerMode 
+                  ? "Select employees to create entries for"
+                  : "Your employee account"
+                }
+              </p>
             </div>
-            <MultiDatePicker
-              selectedDates={selectedDates}
-              onDateChange={setSelectedDates}
-              placeholder="Select dates for time entry..."
-              maxDates={10}
-            />
-            <p className="text-sm text-blue-600 mt-2">
-              Selected dates will use the same hours and project information below.
-            </p>
+
+            {/* Date Selection */}
+            <div>
+              <Label className="font-medium mb-2 block">Select Dates</Label>
+              <MultiDatePicker
+                selectedDates={selectedDates}
+                onDateChange={setSelectedDates}
+                placeholder="Select dates for time entry..."
+                maxDates={10}
+              />
+              <p className="text-sm text-blue-600 mt-1">
+                Selected dates will use the same hours and project information below.
+              </p>
+            </div>
           </div>
         )}
 
@@ -148,45 +194,39 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
               </div>
             )}
 
-            {/* Employee & Date Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <Label className="flex items-center space-x-1">
-                  <User className="w-4 h-4" />
-                  <span>Employee *</span>
-                </Label>
-                <Select 
-                  value={entry.employeeId} 
-                  onValueChange={(value) => handleInputChange(index, 'employeeId', value)}
-                  disabled={!managerMode}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockEmployees.map(emp => (
-                      <SelectItem key={emp.id} value={emp.id}>
-                        {emp.name} - {emp.class}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              {!useMultiDateSelection && (
+            {/* Employee & Date Row for single-entry mode */}
+            {!useMultiDateSelection && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <Label className="flex items-center space-x-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>Date Worked *</span>
-                  </Label>
-                  <Input
-                    type="date"
-                    value={entry.dateWorked}
-                    max={new Date().toISOString().split('T')[0]}
-                    onChange={(e) => handleInputChange(index, 'dateWorked', e.target.value)}
+                  <Label>Employee *</Label>
+                  <MultiEmployeeSelector
+                    employees={employees.filter(emp => emp.isActive !== false)}
+                    selectedEmployees={employees.filter(emp => emp.employeeId === entry.employeeId)}
+                    onEmployeeChange={(selected) => {
+                      if (selected.length > 0) {
+                        handleInputChange(index, 'employeeId', selected[0].employeeId);
+                      }
+                    }}
+                    placeholder="Select employee..."
+                    maxSelected={1}
+                    disabled={!managerMode}
                   />
                 </div>
-              )}
-            </div>
+                <div>
+                  <Label>Date Worked *</Label>
+                  <MultiDatePicker
+                    selectedDates={entry.dateWorked ? [new Date(entry.dateWorked)] : []}
+                    onDateChange={(dates) => {
+                      if (dates.length > 0) {
+                        handleInputChange(index, 'dateWorked', dates[0].toISOString().split('T')[0]);
+                      }
+                    }}
+                    placeholder="Select date..."
+                    maxDates={1}
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Hours Input */}
             <div className="mb-4">
@@ -306,10 +346,7 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
         ))}
 
         <Button type="submit" className="w-full">
-          Submit {useMultiDateSelection && selectedDates.length > 0 
-            ? `${selectedDates.length} Time Entries` 
-            : entries.length === 1 ? 'Time Entry' : `${entries.length} Time Entries`
-          }
+          Submit {totalEntries} Time {totalEntries === 1 ? 'Entry' : 'Entries'}
         </Button>
       </form>
     </CardContent>
