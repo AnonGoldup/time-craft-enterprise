@@ -131,13 +131,6 @@ export function EnhancedTimeEntryForm({
   
   const validCurrentUser = isValidEmployee(currentUser) ? currentUser : null;
   const isAdmin = userRole === 'ADMIN';
-  
-  // Set default employees based on props or current user
-  const getDefaultEmployees = () => {
-    if (defaultEmployees) return defaultEmployees;
-    if (validCurrentUser) return [validCurrentUser];
-    return [];
-  };
 
   // Filter employees to ensure they have required properties and convert to proper Employee type
   const validEmployees = React.useMemo((): Employee[] => {
@@ -158,6 +151,20 @@ export function EnhancedTimeEntryForm({
       }));
   }, [employees]);
   
+  // Set default employees based on props or current user - ensure proper typing
+  const getDefaultEmployees = React.useCallback((): Employee[] => {
+    if (defaultEmployees) {
+      // Filter defaultEmployees to ensure they match our valid employees
+      return defaultEmployees.filter(defaultEmp => 
+        validEmployees.some(validEmp => validEmp.employeeId === defaultEmp.employeeId)
+      );
+    }
+    if (validCurrentUser && validEmployees.some(emp => emp.employeeId === validCurrentUser.employeeId)) {
+      return [validCurrentUser];
+    }
+    return [];
+  }, [defaultEmployees, validCurrentUser, validEmployees]);
+
   const form = useForm<TimeEntryFormValues>({
     resolver: zodResolver(timeEntrySchema),
     defaultValues: {
