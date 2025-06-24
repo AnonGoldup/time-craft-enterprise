@@ -28,31 +28,25 @@ export const useTimeEntryData = (): TimeEntryData => {
       projectID: 1, 
       projectCode: 'PROJ001', 
       projectDescription: 'Sample Project 1',
-      status: 'Active',
-      startDate: '2024-01-01',
-      endDate: '2024-12-31',
-      budget: 100000
+      status: 'Active'
     },
     { 
       projectID: 2, 
       projectCode: 'PROJ002', 
       projectDescription: 'Sample Project 2',
-      status: 'Active',
-      startDate: '2024-01-01',
-      endDate: '2024-12-31',
-      budget: 150000
+      status: 'Active'
     }
   ]);
   
   const [projectExtras, setProjectExtras] = useState<{ [key: string]: ProjectExtra[] }>({});
   const [costCodes] = useState<{ [key: string]: CostCode[] }>({
     '1': [
-      { costCodeID: 1, costCode: 'LABOR', description: 'Labor Costs', projectID: 1 },
-      { costCodeID: 2, costCode: 'MATERIAL', description: 'Material Costs', projectID: 1 }
+      { costCodeID: 1, costCode: 'LABOR', description: 'Labor Costs' },
+      { costCodeID: 2, costCode: 'MATERIAL', description: 'Material Costs' }
     ],
     '2': [
-      { costCodeID: 3, costCode: 'LABOR', description: 'Labor Costs', projectID: 2 },
-      { costCodeID: 4, costCode: 'EQUIPMENT', description: 'Equipment Costs', projectID: 2 }
+      { costCodeID: 3, costCode: 'LABOR', description: 'Labor Costs' },
+      { costCodeID: 4, costCode: 'EQUIPMENT', description: 'Equipment Costs' }
     ]
   });
 
@@ -63,7 +57,8 @@ export const useTimeEntryData = (): TimeEntryData => {
         extraID: 1, 
         projectID: projectId, 
         extraValue: `Extra-${projectId}`,
-        description: `Extra for Project ${projectId}` 
+        description: `Extra for Project ${projectId}`,
+        isActive: true
       }
     ];
     setProjectExtras(prev => ({
