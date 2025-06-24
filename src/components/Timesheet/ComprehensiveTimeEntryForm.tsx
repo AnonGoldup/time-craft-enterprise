@@ -12,6 +12,9 @@ import { Clock, User, Calendar, Building, Hash, AlertTriangle, Users, FileText, 
 import { useProjectCostCodes } from '@/hooks/useProjectCostCodes';
 import { BulkEntryTab } from './BulkEntryTab';
 import { MyTimesheetsTab } from './MyTimesheetsTab';
+import MultiDatePicker from '@/components/TimeEntry/MultiDatePicker';
+import EmployeeSelector from '@/components/TimeEntry/EmployeeSelector';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 interface TimeEntryData {
@@ -31,16 +34,22 @@ interface TimeEntryData {
 
 interface ComprehensiveTimeEntryFormProps {
   onSubmit: (data: TimeEntryData | TimeEntryData[]) => void;
-  managerMode?: boolean;
 }
 
 export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProps> = ({
-  onSubmit,
-  managerMode = false
+  onSubmit
 }) => {
+  const { user, hasRole, UserRole } = useAuth();
+  const isManager = hasRole([UserRole.MANAGER, UserRole.ADMIN]);
+  
   const [activeTab, setActiveTab] = useState('standard');
+  const [selectedDates, setSelectedDates] = useState<Date[]>([new Date()]);
+  const [selectedEmployees, setSelectedEmployees] = useState<string[]>(
+    isManager ? [] : [user?.employeeId || 'JSMITH']
+  );
+  
   const [entries, setEntries] = useState<TimeEntryData[]>([{
-    employeeId: 'JSMITH',
+    employeeId: user?.employeeId || 'JSMITH',
     dateWorked: new Date().toISOString().split('T')[0],
     projectCode: '',
     extraValue: 'Default',
@@ -58,6 +67,16 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
   const [hoursWarning, setHoursWarning] = useState(false);
 
   const { extras, costCodes, selectedExtra, setSelectedExtra } = useProjectCostCodes(entries[0]?.projectCode || '');
+
+  // Mock employees data - in real app this would come from API
+  const mockEmployees = [
+    { employeeID: 'JSMITH', fullName: 'John Smith', class: 'Foreman' },
+    { employeeID: 'MJONES', fullName: 'Mary Jones', class: 'Journeyman' },
+    { employeeID: 'BWILSON', fullName: 'Bob Wilson', class: 'Apprentice' }
+  ];
+
+  // Calculate total entries that will be created
+  const totalEntriesToCreate = selectedDates.length * (isManager ? selectedEmployees.length : 1);
 
   // Validation and calculations for the first entry (for backward compatibility)
   const formData = entries[0];
@@ -119,7 +138,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
 
   const addNewEntry = () => {
     const newEntry: TimeEntryData = {
-      employeeId: 'JSMITH',
+      employeeId: user?.employeeId || 'JSMITH',
       dateWorked: new Date().toISOString().split('T')[0],
       projectCode: '',
       extraValue: 'Default',
@@ -150,12 +169,34 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     setEntries(newEntries);
   };
 
+  const generateEntriesFromSelections = () => {
+    const generatedEntries: TimeEntryData[] = [];
+    const baseEntry = entries[0];
+    
+    const employeesToProcess = isManager ? selectedEmployees : [user?.employeeId || 'JSMITH'];
+    
+    selectedDates.forEach(date => {
+      employeesToProcess.forEach(employeeId => {
+        generatedEntries.push({
+          ...baseEntry,
+          employeeId,
+          dateWorked: date.toISOString().split('T')[0]
+        });
+      });
+    });
+    
+    return generatedEntries;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Generate all entries from selections
+    const allEntries = generateEntriesFromSelections();
+    
     // Validation for all entries
-    for (let i = 0; i < entries.length; i++) {
-      const entry = entries[i];
+    for (let i = 0; i < allEntries.length; i++) {
+      const entry = allEntries[i];
       if (!entry.projectCode) {
         toast.error(`Please select a project for entry ${i + 1}`);
         return;
@@ -177,8 +218,8 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
       }
     }
 
-    onSubmit(entries.length === 1 ? entries[0] : entries);
-    toast.success(`${entries.length} time ${entries.length === 1 ? 'entry' : 'entries'} submitted successfully!`);
+    onSubmit(allEntries.length === 1 ? allEntries[0] : allEntries);
+    toast.success(`${allEntries.length} time ${allEntries.length === 1 ? 'entry' : 'entries'} submitted successfully!`);
   };
 
   const handleBulkSubmit = (entries: any[]) => {
@@ -206,210 +247,181 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
               <div className="flex items-center space-x-2">
                 <Clock className="w-5 h-5 text-blue-600" />
                 <h3 className="text-lg font-semibold">Standard Hours Entry</h3>
-                <Badge variant="secondary">{entries.length} {entries.length === 1 ? 'entry' : 'entries'}</Badge>
+                <Badge variant="secondary">
+                  {totalEntriesToCreate} {totalEntriesToCreate === 1 ? 'entry' : 'entries'} will be created
+                </Badge>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addNewEntry}
-                className="flex items-center space-x-1"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Entry</span>
-              </Button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {entries.map((entry, index) => (
-                <div key={index} className="border rounded-lg p-4 relative">
-                  {entries.length > 1 && (
-                    <div className="absolute top-2 right-2">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeEntry(index)}
-                        className="h-6 w-6 p-0 text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+              <div className="border rounded-lg p-4">
+                {/* Employee Selection - Dynamic based on role */}
+                <div className="mb-4">
+                  <Label className="flex items-center space-x-1">
+                    <User className="w-4 h-4" />
+                    <span>Employee{isManager ? 's' : ''} *</span>
+                  </Label>
+                  {isManager ? (
+                    <EmployeeSelector
+                      selectedEmployee=""
+                      setSelectedEmployee={() => {}}
+                      selectedEmployees={selectedEmployees}
+                      setSelectedEmployees={setSelectedEmployees}
+                      employees={mockEmployees}
+                    />
+                  ) : (
+                    <Input
+                      value={user?.fullName || 'John Smith'}
+                      disabled
+                      className="bg-gray-50"
+                    />
                   )}
-                  
-                  <div className="mb-4">
-                    <Badge variant="outline">Entry {index + 1}</Badge>
-                  </div>
+                </div>
 
-                  {/* Employee & Date Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <Label className="flex items-center space-x-1">
-                        <User className="w-4 h-4" />
-                        <span>Employee *</span>
-                      </Label>
-                      <Select 
-                        value={entry.employeeId} 
-                        onValueChange={(value) => handleInputChange(index, 'employeeId', value)}
-                        disabled={!managerMode}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="JSMITH">John Smith - Foreman</SelectItem>
-                          <SelectItem value="MJONES">Mary Jones - Journeyman</SelectItem>
-                          <SelectItem value="BWILSON">Bob Wilson - Apprentice</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label className="flex items-center space-x-1">
-                        <Calendar className="w-4 h-4" />
-                        <span>Date Worked *</span>
-                      </Label>
-                      <Input
-                        type="date"
-                        value={entry.dateWorked}
-                        max={new Date().toISOString().split('T')[0]}
-                        onChange={(e) => handleInputChange(index, 'dateWorked', e.target.value)}
-                      />
-                    </div>
-                  </div>
+                {/* Date Selection - Multi-date for all users */}
+                <div className="mb-4">
+                  <Label className="flex items-center space-x-1">
+                    <Calendar className="w-4 h-4" />
+                    <span>Date{selectedDates.length > 1 ? 's' : ''} Worked *</span>
+                  </Label>
+                  <MultiDatePicker
+                    selectedDates={selectedDates}
+                    onDatesChange={setSelectedDates}
+                  />
+                </div>
 
-                  {/* Project & Extra Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <Label className="flex items-center space-x-1">
-                        <Building className="w-4 h-4" />
-                        <span>Project *</span>
-                      </Label>
-                      <Select 
-                        value={entry.projectCode} 
-                        onValueChange={(value) => handleInputChange(index, 'projectCode', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Project" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="21-0066">21-0066 - Edmonton EXPO SOLAR IPD</SelectItem>
-                          <SelectItem value="22-0006">22-0006 - AltaPro Service Department</SelectItem>
-                          <SelectItem value="23-0004">23-0004 - Office and Shop OH</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label>Extra</Label>
-                      <Select 
-                        value={entry.extraValue} 
-                        onValueChange={(value) => handleInputChange(index, 'extraValue', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {extras.map(extra => (
-                            <SelectItem key={extra.extraID} value={extra.extraValue}>
-                              {extra.extraValue} - {extra.description}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {/* Cost Code */}
-                  <div className="mb-4">
+                {/* Project & Extra Row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
                     <Label className="flex items-center space-x-1">
-                      <Hash className="w-4 h-4" />
-                      <span>Cost Code *</span>
+                      <Building className="w-4 h-4" />
+                      <span>Project *</span>
                     </Label>
                     <Select 
-                      value={entry.costCode} 
-                      onValueChange={(value) => handleInputChange(index, 'costCode', value)}
+                      value={formData?.projectCode} 
+                      onValueChange={(value) => handleInputChange(0, 'projectCode', value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Cost Code" />
+                        <SelectValue placeholder="Select Project" />
                       </SelectTrigger>
                       <SelectContent>
-                        {costCodes.map(code => (
-                          <SelectItem key={code.costCodeID} value={code.costCode}>
-                            {code.costCode} - {code.description}
+                        <SelectItem value="21-0066">21-0066 - Edmonton EXPO SOLAR IPD</SelectItem>
+                        <SelectItem value="22-0006">22-0006 - AltaPro Service Department</SelectItem>
+                        <SelectItem value="23-0004">23-0004 - Office and Shop OH</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Extra</Label>
+                    <Select 
+                      value={formData?.extraValue} 
+                      onValueChange={(value) => handleInputChange(0, 'extraValue', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {extras.map(extra => (
+                          <SelectItem key={extra.extraID} value={extra.extraValue}>
+                            {extra.extraValue} - {extra.description}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
 
-                  {/* Hours Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <Label>Standard Hours (PayID 1)</Label>
-                      <Input
-                        type="number"
-                        step="0.25"
-                        min="0"
-                        max="16"
-                        value={entry.standardHours}
-                        onChange={(e) => handleInputChange(index, 'standardHours', parseFloat(e.target.value) || 0)}
-                      />
-                    </div>
-                    <div>
-                      <Label>Overtime Hours (PayID 2)</Label>
-                      <Input
-                        type="number"
-                        step="0.25"
-                        min="0"
-                        max="16"
-                        value={entry.overtimeHours}
-                        onChange={(e) => handleInputChange(index, 'overtimeHours', parseFloat(e.target.value) || 0)}
-                      />
-                    </div>
-                  </div>
+                {/* Cost Code */}
+                <div className="mb-4">
+                  <Label className="flex items-center space-x-1">
+                    <Hash className="w-4 h-4" />
+                    <span>Cost Code *</span>
+                  </Label>
+                  <Select 
+                    value={formData?.costCode} 
+                    onValueChange={(value) => handleInputChange(0, 'costCode', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Cost Code" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {costCodes.map(code => (
+                        <SelectItem key={code.costCodeID} value={code.costCode}>
+                          {code.costCode} - {code.description}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                  {/* Hours Display */}
-                  <div className="bg-muted p-4 rounded-lg mb-4">
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div className="bg-card p-4 rounded-lg border">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Standard</div>
-                        <div className="text-2xl font-bold">{entry.standardHours.toFixed(2)}</div>
-                      </div>
-                      <div className="bg-card p-4 rounded-lg border">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Overtime</div>
-                        <div className="text-2xl font-bold text-orange-600">{entry.overtimeHours.toFixed(2)}</div>
-                      </div>
-                      <div className="bg-card p-4 rounded-lg border">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total</div>
-                        <div className="text-2xl font-bold text-blue-600">{(entry.standardHours + entry.overtimeHours).toFixed(2)}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Hours Warning */}
-                  {(entry.standardHours + entry.overtimeHours) > 16 && (
-                    <div className="bg-red-50 border border-red-200 p-4 rounded-lg flex items-center space-x-3 mb-4">
-                      <AlertTriangle className="w-5 h-5 text-red-600" />
-                      <span className="text-red-700">
-                        Total hours cannot exceed 16 per day (current: {(entry.standardHours + entry.overtimeHours).toFixed(2)})
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Notes */}
+                {/* Hours Row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <Label>Notes</Label>
-                    <Textarea
-                      rows={3}
-                      placeholder="Enter any additional notes..."
-                      value={entry.notes}
-                      onChange={(e) => handleInputChange(index, 'notes', e.target.value)}
+                    <Label>Standard Hours (PayID 1)</Label>
+                    <Input
+                      type="number"
+                      step="0.25"
+                      min="0"
+                      max="16"
+                      value={formData?.standardHours}
+                      onChange={(e) => handleInputChange(0, 'standardHours', parseFloat(e.target.value) || 0)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Overtime Hours (PayID 2)</Label>
+                    <Input
+                      type="number"
+                      step="0.25"
+                      min="0"
+                      max="16"
+                      value={formData?.overtimeHours}
+                      onChange={(e) => handleInputChange(0, 'overtimeHours', parseFloat(e.target.value) || 0)}
                     />
                   </div>
                 </div>
-              ))}
+
+                {/* Hours Display */}
+                <div className="bg-muted p-4 rounded-lg mb-4">
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div className="bg-card p-4 rounded-lg border">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Standard</div>
+                      <div className="text-2xl font-bold">{formData?.standardHours.toFixed(2)}</div>
+                    </div>
+                    <div className="bg-card p-4 rounded-lg border">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Overtime</div>
+                      <div className="text-2xl font-bold text-orange-600">{formData?.overtimeHours.toFixed(2)}</div>
+                    </div>
+                    <div className="bg-card p-4 rounded-lg border">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total</div>
+                      <div className="text-2xl font-bold text-blue-600">{(formData?.standardHours + formData?.overtimeHours).toFixed(2)}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Hours Warning */}
+                {(formData?.standardHours + formData?.overtimeHours) > 16 && (
+                  <div className="bg-red-50 border border-red-200 p-4 rounded-lg flex items-center space-x-3 mb-4">
+                    <AlertTriangle className="w-5 h-5 text-red-600" />
+                    <span className="text-red-700">
+                      Total hours cannot exceed 16 per day (current: {(formData?.standardHours + formData?.overtimeHours).toFixed(2)})
+                    </span>
+                  </div>
+                )}
+
+                {/* Notes */}
+                <div>
+                  <Label>Notes</Label>
+                  <Textarea
+                    rows={3}
+                    placeholder="Enter any additional notes..."
+                    value={formData?.notes}
+                    onChange={(e) => handleInputChange(0, 'notes', e.target.value)}
+                  />
+                </div>
+              </div>
 
               <Button type="submit" className="w-full">
-                Submit {entries.length === 1 ? 'Time Entry' : `${entries.length} Time Entries`}
+                Submit {totalEntriesToCreate === 1 ? 'Time Entry' : `${totalEntriesToCreate} Time Entries`}
               </Button>
             </form>
           </CardContent>
@@ -422,244 +434,215 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
               <div className="flex items-center space-x-2">
                 <Clock className="w-5 h-5 text-blue-600" />
                 <h3 className="text-lg font-semibold">Time In/Out Entry</h3>
-                <Badge variant="secondary">{entries.length} {entries.length === 1 ? 'entry' : 'entries'}</Badge>
+                <Badge variant="secondary">
+                  {totalEntriesToCreate} {totalEntriesToCreate === 1 ? 'entry' : 'entries'} will be created
+                </Badge>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addNewEntry}
-                className="flex items-center space-x-1"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Entry</span>
-              </Button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {entries.map((entry, index) => (
-                <div key={index} className="border rounded-lg p-4 relative">
-                  {entries.length > 1 && (
-                    <div className="absolute top-2 right-2">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeEntry(index)}
-                        className="h-6 w-6 p-0 text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+              <div className="border rounded-lg p-4">
+                {/* Employee Selection - Dynamic based on role */}
+                <div className="mb-4">
+                  <Label className="flex items-center space-x-1">
+                    <User className="w-4 h-4" />
+                    <span>Employee{isManager ? 's' : ''} *</span>
+                  </Label>
+                  {isManager ? (
+                    <EmployeeSelector
+                      selectedEmployee=""
+                      setSelectedEmployee={() => {}}
+                      selectedEmployees={selectedEmployees}
+                      setSelectedEmployees={setSelectedEmployees}
+                      employees={mockEmployees}
+                    />
+                  ) : (
+                    <Input
+                      value={user?.fullName || 'John Smith'}
+                      disabled
+                      className="bg-gray-50"
+                    />
                   )}
-                  
-                  <div className="mb-4">
-                    <Badge variant="outline">Entry {index + 1}</Badge>
-                  </div>
+                </div>
 
-                  {/* Employee & Date Row */}
+                {/* Date Selection - Multi-date for all users */}
+                <div className="mb-4">
+                  <Label className="flex items-center space-x-1">
+                    <Calendar className="w-4 h-4" />
+                    <span>Date{selectedDates.length > 1 ? 's' : ''} Worked *</span>
+                  </Label>
+                  <MultiDatePicker
+                    selectedDates={selectedDates}
+                    onDatesChange={setSelectedDates}
+                  />
+                </div>
+
+                {/* Time Fields */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <Label>Time In *</Label>
+                    <Input
+                      type="time"
+                      value={formData?.timeIn}
+                      onChange={(e) => {
+                        handleInputChange(0, 'timeIn', e.target.value);
+                        setTimeout(() => calculateTimeInOut(), 100);
+                      }}
+                      className="font-mono text-center"
+                    />
+                  </div>
+                  <div>
+                    <Label>Time Out *</Label>
+                    <Input
+                      type="time"
+                      value={formData?.timeOut}
+                      onChange={(e) => {
+                        handleInputChange(0, 'timeOut', e.target.value);
+                        setTimeout(() => calculateTimeInOut(), 100);
+                      }}
+                      className="font-mono text-center"
+                    />
+                  </div>
+                  <div>
+                    <Label>Break Start</Label>
+                    <Input
+                      type="time"
+                      value={formData?.breakStart}
+                      onChange={(e) => {
+                        handleInputChange(0, 'breakStart', e.target.value);
+                        setTimeout(() => calculateTimeInOut(), 100);
+                      }}
+                      className="font-mono text-center"
+                    />
+                  </div>
+                  <div>
+                    <Label>Break End</Label>
+                    <Input
+                      type="time"
+                      value={formData?.breakEnd}
+                      onChange={(e) => {
+                        handleInputChange(0, 'breakEnd', e.target.value);
+                        setTimeout(() => calculateTimeInOut(), 100);
+                      }}
+                      className="font-mono text-center"
+                    />
+                  </div>
+                </div>
+
+                {/* Cross Midnight Warning */}
+                {crossesMidnight && (
+                  <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg border-l-4 border-l-amber-500">
+                    <div className="flex items-start space-x-3">
+                      <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
+                      <div>
+                        <div className="font-semibold text-amber-900 mb-2">⚠️ Cross-Midnight Shift Detected</div>
+                        <p className="text-amber-800 text-sm mb-3">This shift crosses midnight and will be split into two entries:</p>
+                        <div className="space-y-2">
+                          <div className="flex justify-between bg-white p-2 rounded border text-sm">
+                            <span>{formData?.dateWorked}: {formData?.timeIn} - 11:59 PM</span>
+                            <span className="font-medium">2.00 hours</span>
+                          </div>
+                          <div className="flex justify-between bg-white p-2 rounded border text-sm">
+                            <span>Next day: 12:00 AM - {formData?.timeOut}</span>
+                            <span className="font-medium">6.00 hours</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Calculated Hours */}
+                <div className="bg-muted p-4 rounded-lg">
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div className="bg-card p-4 rounded-lg border">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Standard</div>
+                      <div className="text-2xl font-bold">{formData?.standardHours.toFixed(2)}</div>
+                    </div>
+                    <div className="bg-card p-4 rounded-lg border">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Overtime</div>
+                      <div className="text-2xl font-bold text-orange-600">{formData?.overtimeHours.toFixed(2)}</div>
+                    </div>
+                    <div className="bg-card p-4 rounded-lg border">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total</div>
+                      <div className="text-2xl font-bold text-blue-600">{(formData?.standardHours + formData?.overtimeHours).toFixed(2)}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Project Information */}
+                <div className="border-t pt-6">
+                  <h4 className="text-sm font-medium mb-4">Project Information</h4>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
                       <Label className="flex items-center space-x-1">
-                        <User className="w-4 h-4" />
-                        <span>Employee *</span>
+                        <Building className="w-4 h-4" />
+                        <span>Project *</span>
                       </Label>
                       <Select 
-                        value={entry.employeeId} 
-                        onValueChange={(value) => handleInputChange(index, 'employeeId', value)}
-                        disabled={!managerMode}
+                        value={formData?.projectCode} 
+                        onValueChange={(value) => handleInputChange(0, 'projectCode', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Project" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="21-0066">21-0066 - Edmonton EXPO SOLAR IPD</SelectItem>
+                          <SelectItem value="22-0006">22-0006 - AltaPro Service Department</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Extra</Label>
+                      <Select 
+                        value={formData?.extraValue} 
+                        onValueChange={(value) => handleInputChange(0, 'extraValue', value)}
                       >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="JSMITH">John Smith - Foreman</SelectItem>
-                          <SelectItem value="MJONES">Mary Jones - Journeyman</SelectItem>
-                          <SelectItem value="BWILSON">Bob Wilson - Apprentice</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label className="flex items-center space-x-1">
-                        <Calendar className="w-4 h-4" />
-                        <span>Date Worked *</span>
-                      </Label>
-                      <Input
-                        type="date"
-                        value={entry.dateWorked}
-                        max={new Date().toISOString().split('T')[0]}
-                        onChange={(e) => handleInputChange(index, 'dateWorked', e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Time Fields */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                    <div>
-                      <Label>Time In *</Label>
-                      <Input
-                        type="time"
-                        value={entry.timeIn}
-                        onChange={(e) => {
-                          handleInputChange(index, 'timeIn', e.target.value);
-                          setTimeout(() => calculateTimeInOut(), 100);
-                        }}
-                        className="font-mono text-center"
-                      />
-                    </div>
-                    <div>
-                      <Label>Time Out *</Label>
-                      <Input
-                        type="time"
-                        value={entry.timeOut}
-                        onChange={(e) => {
-                          handleInputChange(index, 'timeOut', e.target.value);
-                          setTimeout(() => calculateTimeInOut(), 100);
-                        }}
-                        className="font-mono text-center"
-                      />
-                    </div>
-                    <div>
-                      <Label>Break Start</Label>
-                      <Input
-                        type="time"
-                        value={entry.breakStart}
-                        onChange={(e) => {
-                          handleInputChange(index, 'breakStart', e.target.value);
-                          setTimeout(() => calculateTimeInOut(), 100);
-                        }}
-                        className="font-mono text-center"
-                      />
-                    </div>
-                    <div>
-                      <Label>Break End</Label>
-                      <Input
-                        type="time"
-                        value={entry.breakEnd}
-                        onChange={(e) => {
-                          handleInputChange(index, 'breakEnd', e.target.value);
-                          setTimeout(() => calculateTimeInOut(), 100);
-                        }}
-                        className="font-mono text-center"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Cross Midnight Warning */}
-                  {crossesMidnight && (
-                    <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg border-l-4 border-l-amber-500">
-                      <div className="flex items-start space-x-3">
-                        <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
-                        <div>
-                          <div className="font-semibold text-amber-900 mb-2">⚠️ Cross-Midnight Shift Detected</div>
-                          <p className="text-amber-800 text-sm mb-3">This shift crosses midnight and will be split into two entries:</p>
-                          <div className="space-y-2">
-                            <div className="flex justify-between bg-white p-2 rounded border text-sm">
-                              <span>{formData?.dateWorked}: {formData?.timeIn} - 11:59 PM</span>
-                              <span className="font-medium">2.00 hours</span>
-                            </div>
-                            <div className="flex justify-between bg-white p-2 rounded border text-sm">
-                              <span>Next day: 12:00 AM - {formData?.timeOut}</span>
-                              <span className="font-medium">6.00 hours</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Calculated Hours */}
-                  <div className="bg-muted p-4 rounded-lg">
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div className="bg-card p-4 rounded-lg border">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Standard</div>
-                        <div className="text-2xl font-bold">{formData?.standardHours.toFixed(2)}</div>
-                      </div>
-                      <div className="bg-card p-4 rounded-lg border">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Overtime</div>
-                        <div className="text-2xl font-bold text-orange-600">{formData?.overtimeHours.toFixed(2)}</div>
-                      </div>
-                      <div className="bg-card p-4 rounded-lg border">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total</div>
-                        <div className="text-2xl font-bold text-blue-600">{(formData?.standardHours + formData?.overtimeHours).toFixed(2)}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Project Information */}
-                  <div className="border-t pt-6">
-                    <h4 className="text-sm font-medium mb-4">Project Information</h4>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <Label className="flex items-center space-x-1">
-                          <Building className="w-4 h-4" />
-                          <span>Project *</span>
-                        </Label>
-                        <Select 
-                          value={entry.projectCode} 
-                          onValueChange={(value) => handleInputChange(index, 'projectCode', value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Project" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="21-0066">21-0066 - Edmonton EXPO SOLAR IPD</SelectItem>
-                            <SelectItem value="22-0006">22-0006 - AltaPro Service Department</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Extra</Label>
-                        <Select 
-                          value={entry.extraValue} 
-                          onValueChange={(value) => handleInputChange(index, 'extraValue', value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Default">Default</SelectItem>
-                            <SelectItem value="005">005 - Phase 1</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="flex items-center space-x-1">
-                        <Hash className="w-4 h-4" />
-                        <span>Cost Code *</span>
-                      </Label>
-                      <Select 
-                        value={entry.costCode} 
-                        onValueChange={(value) => handleInputChange(index, 'costCode', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Cost Code" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="001-040-043">001-040-043 - Direct Labor</SelectItem>
+                          <SelectItem value="Default">Default</SelectItem>
+                          <SelectItem value="005">005 - Phase 1</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
 
-                  {/* Notes */}
                   <div>
-                    <Label>Notes</Label>
-                    <Textarea
-                      rows={3}
-                      placeholder="Enter any additional notes..."
-                      value={entry.notes}
-                      onChange={(e) => handleInputChange(index, 'notes', e.target.value)}
-                    />
+                    <Label className="flex items-center space-x-1">
+                      <Hash className="w-4 h-4" />
+                      <span>Cost Code *</span>
+                    </Label>
+                    <Select 
+                      value={formData?.costCode} 
+                      onValueChange={(value) => handleInputChange(0, 'costCode', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Cost Code" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="001-040-043">001-040-043 - Direct Labor</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
-              ))}
+
+                {/* Notes */}
+                <div>
+                  <Label>Notes</Label>
+                  <Textarea
+                    rows={3}
+                    placeholder="Enter any additional notes..."
+                    value={formData?.notes}
+                    onChange={(e) => handleInputChange(0, 'notes', e.target.value)}
+                  />
+                </div>
+              </div>
 
               <Button type="submit" className="w-full">
-                Submit {entries.length === 1 ? 'Time Entry' : `${entries.length} Time Entries`}
+                Submit {totalEntriesToCreate === 1 ? 'Time Entry' : `${totalEntriesToCreate} Time Entries`}
               </Button>
             </form>
           </CardContent>
@@ -667,7 +650,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
 
         {/* Bulk Entry Tab */}
         <TabsContent value="bulk">
-          <BulkEntryTab onSubmit={handleBulkSubmit} managerMode={managerMode} />
+          <BulkEntryTab onSubmit={handleBulkSubmit} />
         </TabsContent>
 
         {/* My Timesheets Tab */}

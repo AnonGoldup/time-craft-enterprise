@@ -1,15 +1,11 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { TimesheetLayout } from '@/components/Timesheet/TimesheetLayout';
 import { TimesheetSidebar } from '@/components/Timesheet/TimesheetSidebar';
 import { ComprehensiveTimeEntryForm } from '@/components/Timesheet/ComprehensiveTimeEntryForm';
-import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 const Timesheet = () => {
-  const { hasRole, UserRole } = useAuth();
-  const [managerMode, setManagerMode] = useState(false);
-
   const weekSummary = {
     totalHours: 32.5,
     regularHours: 30.0,
@@ -51,29 +47,18 @@ const Timesheet = () => {
     toast.success('Week submitted for approval!');
   };
 
-  const handleToggleManagerMode = () => {
-    setManagerMode(!managerMode);
-    toast.info(managerMode ? 'Manager mode disabled' : 'Manager mode enabled');
-  };
-
   const handleTimeEntrySubmit = (data: any) => {
     console.log('Time entry submitted:', data);
     toast.success('Time entry submitted successfully!');
   };
 
-  const isManager = hasRole([UserRole.MANAGER, UserRole.ADMIN]);
-
   return (
-    <TimesheetLayout 
-      showManagerAlert={isManager}
-      onToggleManagerMode={handleToggleManagerMode}
-    >
+    <TimesheetLayout>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Main Form Area */}
         <div className="lg:col-span-3">
           <ComprehensiveTimeEntryForm 
             onSubmit={handleTimeEntrySubmit}
-            managerMode={managerMode && isManager}
           />
         </div>
 
