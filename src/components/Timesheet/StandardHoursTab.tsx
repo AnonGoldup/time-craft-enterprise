@@ -161,21 +161,32 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
               </div>
             </div>
 
-            {/* Hours Input */}
-            <div className="mb-4">
-              <Label>Total Hours *</Label>
-              <Input
-                type="number"
-                step="0.25"
-                min="0"
-                max="24"
-                value={entry.standardHours + entry.overtimeHours}
-                onChange={(e) => handleHoursChange(index, parseFloat(e.target.value) || 0)}
-                className="w-32"
-              />
-              <p className="text-sm text-muted-foreground mt-1">
-                Hours over 8 will automatically be calculated as overtime
-              </p>
+            {/* Hours Input - Updated labels */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <Label>Standard Hours (PayID 1)</Label>
+                <Input
+                  type="number"
+                  step="0.25"
+                  min="0"
+                  max="24"
+                  value={entry.standardHours}
+                  onChange={(e) => handleInputChange(index, 'standardHours', parseFloat(e.target.value) || 0)}
+                  className="w-32"
+                />
+              </div>
+              <div>
+                <Label>Overtime Hours (PayID 2)</Label>
+                <Input
+                  type="number"
+                  step="0.25"
+                  min="0"
+                  max="24"
+                  value={entry.overtimeHours}
+                  onChange={(e) => handleInputChange(index, 'overtimeHours', parseFloat(e.target.value) || 0)}
+                  className="w-32"
+                />
+              </div>
             </div>
 
             {/* Hours Display */}
