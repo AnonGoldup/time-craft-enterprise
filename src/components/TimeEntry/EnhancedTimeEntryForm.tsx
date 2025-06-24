@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -101,7 +102,7 @@ export function EnhancedTimeEntryForm({
   const employees: Employee[] = mockEmployees.map(emp => ({
     employeeId: emp.id,
     fullName: emp.name,
-    email: emp.email,
+    email: `${emp.id.toLowerCase()}@company.com`, // Generate email from ID
     class: emp.class,
     isActive: true
   }))
