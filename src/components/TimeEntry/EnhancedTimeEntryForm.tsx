@@ -133,6 +133,17 @@ export function EnhancedTimeEntryForm({
     if (validCurrentUser) return [validCurrentUser];
     return [];
   };
+
+  // Filter employees to ensure they have required properties
+  const validEmployees = React.useMemo(() => {
+    return employees.filter((emp): emp is Employee => 
+      typeof emp.employeeId === 'string' && 
+      emp.employeeId.length > 0 &&
+      typeof emp.fullName === 'string' && 
+      emp.fullName.length > 0 &&
+      emp.isActive !== false
+    );
+  }, [employees]);
   
   const form = useForm<TimeEntryFormValues>({
     resolver: zodResolver(timeEntrySchema),
@@ -246,7 +257,7 @@ export function EnhancedTimeEntryForm({
                   <FormLabel>Select Employees</FormLabel>
                   <FormControl>
                     <MultiEmployeeSelector
-                      employees={employees.filter(emp => emp.isActive !== false)}
+                      employees={validEmployees}
                       selectedEmployees={field.value}
                       onEmployeeChange={field.onChange}
                       placeholder="Select employees..."
