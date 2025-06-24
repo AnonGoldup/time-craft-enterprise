@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -412,7 +411,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
               {/* Employee & Date Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="flex items-center space-x-1">
+                  <Label className="flex items-center space-x-1 mb-2">
                     <User className="w-4 h-4" />
                     <span>Employee *</span>
                   </Label>
@@ -420,7 +419,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                     value={formData.employeeId} 
                     onValueChange={(value) => handleInputChange('employeeId', value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-10">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -431,7 +430,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </Select>
                 </div>
                 <div>
-                  <Label className="flex items-center space-x-1">
+                  <Label className="flex items-center space-x-1 mb-2">
                     <Calendar className="w-4 h-4" />
                     <span>Date Worked *</span>
                   </Label>
@@ -440,14 +439,15 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                     value={formData.dateWorked}
                     max={new Date().toISOString().split('T')[0]}
                     onChange={(e) => handleInputChange('dateWorked', e.target.value)}
+                    className="h-10"
                   />
                 </div>
               </div>
 
-              {/* Project Information - moved up */}
+              {/* Project, Extra, Cost Code Row - Fixed alignment */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label className="flex items-center space-x-1">
+                  <Label className="flex items-center space-x-1 mb-2">
                     <Building className="w-4 h-4" />
                     <span>Project *</span>
                   </Label>
@@ -455,7 +455,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                     value={formData.projectCode} 
                     onValueChange={(value) => handleInputChange('projectCode', value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-10">
                       <SelectValue placeholder="Select Project" />
                     </SelectTrigger>
                     <SelectContent>
@@ -465,12 +465,12 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </Select>
                 </div>
                 <div>
-                  <Label>Extra</Label>
+                  <Label className="mb-2 block">Extra</Label>
                   <Select 
                     value={formData.extraValue} 
                     onValueChange={(value) => handleInputChange('extraValue', value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-10">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -480,7 +480,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </Select>
                 </div>
                 <div>
-                  <Label className="flex items-center space-x-1">
+                  <Label className="flex items-center space-x-1 mb-2">
                     <Hash className="w-4 h-4" />
                     <span>Cost Code *</span>
                   </Label>
@@ -488,7 +488,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                     value={formData.costCode} 
                     onValueChange={(value) => handleInputChange('costCode', value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-10">
                       <SelectValue placeholder="Select Cost Code" />
                     </SelectTrigger>
                     <SelectContent>
@@ -501,7 +501,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
               {/* Time Fields */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
-                  <Label>Time In *</Label>
+                  <Label className="mb-2 block">Time In *</Label>
                   <Input
                     type="time"
                     value={formData.timeIn}
@@ -509,11 +509,11 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                       handleInputChange('timeIn', e.target.value);
                       setTimeout(calculateTimeInOut, 100);
                     }}
-                    className="font-mono text-center"
+                    className="font-mono text-center h-10"
                   />
                 </div>
                 <div>
-                  <Label>Time Out *</Label>
+                  <Label className="mb-2 block">Time Out *</Label>
                   <Input
                     type="time"
                     value={formData.timeOut}
@@ -521,7 +521,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                       handleInputChange('timeOut', e.target.value);
                       setTimeout(calculateTimeInOut, 100);
                     }}
-                    className="font-mono text-center"
+                    className="font-mono text-center h-10"
                   />
                 </div>
               </div>
@@ -539,21 +539,21 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   {breakPeriods.map((breakPeriod, index) => (
                     <div key={breakPeriod.id} className="grid grid-cols-2 md:grid-cols-3 gap-4 p-3 border rounded-lg">
                       <div>
-                        <Label className="text-sm">Break Start</Label>
+                        <Label className="text-sm mb-2 block">Break Start</Label>
                         <Input
                           type="time"
                           value={breakPeriod.start}
                           onChange={(e) => updateBreakPeriod(breakPeriod.id, 'start', e.target.value)}
-                          className="font-mono text-center"
+                          className="font-mono text-center h-10"
                         />
                       </div>
                       <div>
-                        <Label className="text-sm">Break End</Label>
+                        <Label className="text-sm mb-2 block">Break End</Label>
                         <Input
                           type="time"
                           value={breakPeriod.end}
                           onChange={(e) => updateBreakPeriod(breakPeriod.id, 'end', e.target.value)}
-                          className="font-mono text-center"
+                          className="font-mono text-center h-10"
                         />
                       </div>
                       <div className="flex items-end">
@@ -563,7 +563,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                             variant="outline"
                             size="sm"
                             onClick={() => removeBreakPeriod(breakPeriod.id)}
-                            className="text-red-600"
+                            className="text-red-600 h-10"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -599,7 +599,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
 
               {/* Notes */}
               <div>
-                <Label>Notes</Label>
+                <Label className="mb-2 block">Notes</Label>
                 <Textarea
                   rows={3}
                   placeholder="Enter any additional notes..."
