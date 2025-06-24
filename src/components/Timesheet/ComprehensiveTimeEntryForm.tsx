@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import { Clock, User, Calendar, Building, Hash, AlertTriangle, Users, FileText, 
 import { useProjectCostCodes } from '@/hooks/useProjectCostCodes';
 import { BulkEntryTab } from './BulkEntryTab';
 import { MyTimesheetsTab } from './MyTimesheetsTab';
+import MultiDatePicker from '@/components/TimeEntry/MultiDatePicker';
 import { toast } from 'sonner';
 
 interface TimeEntryData {
@@ -54,6 +54,8 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     breakEnd: '12:30'
   }]);
 
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const [useMultiDateSelection, setUseMultiDateSelection] = useState(false);
   const [crossesMidnight, setCrossesMidnight] = useState(false);
   const [hoursWarning, setHoursWarning] = useState(false);
 
@@ -150,12 +152,32 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     setEntries(newEntries);
   };
 
+  const createEntriesForMultipleDates = (templateEntry: TimeEntryData): TimeEntryData[] => {
+    if (!useMultiDateSelection || selectedDates.length === 0) {
+      return [templateEntry];
+    }
+
+    return selectedDates.map(date => ({
+      ...templateEntry,
+      dateWorked: date.toISOString().split('T')[0]
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    let finalEntries: TimeEntryData[] = [];
+
+    if (useMultiDateSelection && selectedDates.length > 0) {
+      // Create entries for each selected date using the first entry as template
+      finalEntries = createEntriesForMultipleDates(entries[0]);
+    } else {
+      finalEntries = entries;
+    }
+
     // Validation for all entries
-    for (let i = 0; i < entries.length; i++) {
-      const entry = entries[i];
+    for (let i = 0; i < finalEntries.length; i++) {
+      const entry = finalEntries[i];
       if (!entry.projectCode) {
         toast.error(`Please select a project for entry ${i + 1}`);
         return;
@@ -177,8 +199,8 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
       }
     }
 
-    onSubmit(entries.length === 1 ? entries[0] : entries);
-    toast.success(`${entries.length} time ${entries.length === 1 ? 'entry' : 'entries'} submitted successfully!`);
+    onSubmit(finalEntries.length === 1 ? finalEntries[0] : finalEntries);
+    toast.success(`${finalEntries.length} time ${finalEntries.length === 1 ? 'entry' : 'entries'} submitted successfully!`);
   };
 
   const handleBulkSubmit = (entries: any[]) => {
@@ -206,24 +228,59 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
               <div className="flex items-center space-x-2">
                 <Clock className="w-5 h-5 text-blue-600" />
                 <h3 className="text-lg font-semibold">Standard Hours Entry</h3>
-                <Badge variant="secondary">{entries.length} {entries.length === 1 ? 'entry' : 'entries'}</Badge>
+                <Badge variant="secondary">
+                  {useMultiDateSelection && selectedDates.length > 0 
+                    ? `${selectedDates.length} dates selected`
+                    : `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`
+                  }
+                </Badge>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addNewEntry}
-                className="flex items-center space-x-1"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Entry</span>
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Button
+                  type="button"
+                  variant={useMultiDateSelection ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setUseMultiDateSelection(!useMultiDateSelection)}
+                >
+                  Multi-Date
+                </Button>
+                {!useMultiDateSelection && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addNewEntry}
+                    className="flex items-center space-x-1"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Entry</span>
+                  </Button>
+                )}
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {entries.map((entry, index) => (
+              {/* Multi-Date Picker */}
+              {useMultiDateSelection && (
+                <div className="mb-6 p-4 border rounded-lg bg-blue-50">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Calendar className="w-4 h-4 text-blue-600" />
+                    <Label className="font-medium">Select Multiple Dates</Label>
+                  </div>
+                  <MultiDatePicker
+                    selectedDates={selectedDates}
+                    onDatesChange={setSelectedDates}
+                  />
+                  <p className="text-sm text-blue-600 mt-2">
+                    Selected dates will use the same project, cost code, and hours settings below.
+                  </p>
+                </div>
+              )}
+
+              {/* Show only first entry for multi-date mode, or all entries for regular mode */}
+              {(useMultiDateSelection ? [entries[0]] : entries).map((entry, index) => (
                 <div key={index} className="border rounded-lg p-4 relative">
-                  {entries.length > 1 && (
+                  {!useMultiDateSelection && entries.length > 1 && (
                     <div className="absolute top-2 right-2">
                       <Button
                         type="button"
@@ -237,9 +294,11 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                     </div>
                   )}
                   
-                  <div className="mb-4">
-                    <Badge variant="outline">Entry {index + 1}</Badge>
-                  </div>
+                  {!useMultiDateSelection && (
+                    <div className="mb-4">
+                      <Badge variant="outline">Entry {index + 1}</Badge>
+                    </div>
+                  )}
 
                   {/* Employee & Date Row */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -263,18 +322,20 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
-                      <Label className="flex items-center space-x-1">
-                        <Calendar className="w-4 h-4" />
-                        <span>Date Worked *</span>
-                      </Label>
-                      <Input
-                        type="date"
-                        value={entry.dateWorked}
-                        max={new Date().toISOString().split('T')[0]}
-                        onChange={(e) => handleInputChange(index, 'dateWorked', e.target.value)}
-                      />
-                    </div>
+                    {!useMultiDateSelection && (
+                      <div>
+                        <Label className="flex items-center space-x-1">
+                          <Calendar className="w-4 h-4" />
+                          <span>Date Worked *</span>
+                        </Label>
+                        <Input
+                          type="date"
+                          value={entry.dateWorked}
+                          max={new Date().toISOString().split('T')[0]}
+                          onChange={(e) => handleInputChange(index, 'dateWorked', e.target.value)}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   {/* Project & Extra Row */}
@@ -409,7 +470,10 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
               ))}
 
               <Button type="submit" className="w-full">
-                Submit {entries.length === 1 ? 'Time Entry' : `${entries.length} Time Entries`}
+                Submit {useMultiDateSelection && selectedDates.length > 0 
+                  ? `${selectedDates.length} Time Entries` 
+                  : entries.length === 1 ? 'Time Entry' : `${entries.length} Time Entries`
+                }
               </Button>
             </form>
           </CardContent>
@@ -422,24 +486,59 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
               <div className="flex items-center space-x-2">
                 <Clock className="w-5 h-5 text-blue-600" />
                 <h3 className="text-lg font-semibold">Time In/Out Entry</h3>
-                <Badge variant="secondary">{entries.length} {entries.length === 1 ? 'entry' : 'entries'}</Badge>
+                <Badge variant="secondary">
+                  {useMultiDateSelection && selectedDates.length > 0 
+                    ? `${selectedDates.length} dates selected`
+                    : `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`
+                  }
+                </Badge>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addNewEntry}
-                className="flex items-center space-x-1"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Entry</span>
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Button
+                  type="button"
+                  variant={useMultiDateSelection ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setUseMultiDateSelection(!useMultiDateSelection)}
+                >
+                  Multi-Date
+                </Button>
+                {!useMultiDateSelection && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addNewEntry}
+                    className="flex items-center space-x-1"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Entry</span>
+                  </Button>
+                )}
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {entries.map((entry, index) => (
+              {/* Multi-Date Picker */}
+              {useMultiDateSelection && (
+                <div className="mb-6 p-4 border rounded-lg bg-blue-50">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Calendar className="w-4 h-4 text-blue-600" />
+                    <Label className="font-medium">Select Multiple Dates</Label>
+                  </div>
+                  <MultiDatePicker
+                    selectedDates={selectedDates}
+                    onDatesChange={setSelectedDates}
+                  />
+                  <p className="text-sm text-blue-600 mt-2">
+                    Selected dates will use the same time settings and project information below.
+                  </p>
+                </div>
+              )}
+
+              {/* Show only first entry for multi-date mode, or all entries for regular mode */}
+              {(useMultiDateSelection ? [entries[0]] : entries).map((entry, index) => (
                 <div key={index} className="border rounded-lg p-4 relative">
-                  {entries.length > 1 && (
+                  {!useMultiDateSelection && entries.length > 1 && (
                     <div className="absolute top-2 right-2">
                       <Button
                         type="button"
@@ -453,9 +552,11 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                     </div>
                   )}
                   
-                  <div className="mb-4">
-                    <Badge variant="outline">Entry {index + 1}</Badge>
-                  </div>
+                  {!useMultiDateSelection && (
+                    <div className="mb-4">
+                      <Badge variant="outline">Entry {index + 1}</Badge>
+                    </div>
+                  )}
 
                   {/* Employee & Date Row */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -479,18 +580,20 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
-                      <Label className="flex items-center space-x-1">
-                        <Calendar className="w-4 h-4" />
-                        <span>Date Worked *</span>
-                      </Label>
-                      <Input
-                        type="date"
-                        value={entry.dateWorked}
-                        max={new Date().toISOString().split('T')[0]}
-                        onChange={(e) => handleInputChange(index, 'dateWorked', e.target.value)}
-                      />
-                    </div>
+                    {!useMultiDateSelection && (
+                      <div>
+                        <Label className="flex items-center space-x-1">
+                          <Calendar className="w-4 h-4" />
+                          <span>Date Worked *</span>
+                        </Label>
+                        <Input
+                          type="date"
+                          value={entry.dateWorked}
+                          max={new Date().toISOString().split('T')[0]}
+                          onChange={(e) => handleInputChange(index, 'dateWorked', e.target.value)}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   {/* Time Fields */}
@@ -659,7 +762,10 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
               ))}
 
               <Button type="submit" className="w-full">
-                Submit {entries.length === 1 ? 'Time Entry' : `${entries.length} Time Entries`}
+                Submit {useMultiDateSelection && selectedDates.length > 0 
+                  ? `${selectedDates.length} Time Entries` 
+                  : entries.length === 1 ? 'Time Entry' : `${entries.length} Time Entries`
+                }
               </Button>
             </form>
           </CardContent>
