@@ -217,6 +217,9 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     onSubmit(entries);
   };
 
+  // Calculate dynamic margin for Time In/Out section based on breaks
+  const timeInOutMarginTop = breakPeriods.length > 1 ? `${(breakPeriods.length - 1) * 32}px` : '0px';
+
   return (
     <Card>
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -509,8 +512,52 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </Button>
                 </div>
 
-                {/* Time In/Out Fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg bg-blue-50">
+                {/* Break Periods - Now in single line layout */}
+                {breakPeriods.length > 0 && (
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium text-gray-700">Break Periods</Label>
+                    {breakPeriods.map((breakPeriod, index) => (
+                      <div key={breakPeriod.id} className="flex items-center space-x-4 p-3 border rounded-lg bg-amber-50">
+                        <div className="flex items-center space-x-2">
+                          <Label className="text-sm whitespace-nowrap">Break Start</Label>
+                          <Input
+                            type="time"
+                            value={breakPeriod.start}
+                            onChange={(e) => updateBreakPeriod(breakPeriod.id, 'start', e.target.value)}
+                            className="font-mono text-center h-9 w-24"
+                          />
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Label className="text-sm whitespace-nowrap">Break End</Label>
+                          <Input
+                            type="time"
+                            value={breakPeriod.end}
+                            onChange={(e) => updateBreakPeriod(breakPeriod.id, 'end', e.target.value)}
+                            className="font-mono text-center h-9 w-24"
+                          />
+                        </div>
+                        <div className="flex-1"></div>
+                        {breakPeriods.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeBreakPeriod(breakPeriod.id)}
+                            className="text-red-600 h-9 w-9 p-0"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Time In/Out Fields - Dynamically positioned */}
+                <div 
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg bg-blue-50 transition-all duration-300"
+                  style={{ marginTop: timeInOutMarginTop }}
+                >
                   <div>
                     <Label className="flex items-center space-x-1 mb-2">
                       <Clock className="w-4 h-4" />
@@ -542,48 +589,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                     />
                   </div>
                 </div>
-
-                {/* Break Periods */}
-                {breakPeriods.length > 0 && (
-                  <div className="space-y-3">
-                    <Label className="text-sm font-medium text-gray-700">Break Periods</Label>
-                    {breakPeriods.map((breakPeriod, index) => (
-                      <div key={breakPeriod.id} className="grid grid-cols-2 md:grid-cols-3 gap-4 p-3 border rounded-lg bg-amber-50">
-                        <div>
-                          <Label className="text-sm mb-2 block">Break Start</Label>
-                          <Input
-                            type="time"
-                            value={breakPeriod.start}
-                            onChange={(e) => updateBreakPeriod(breakPeriod.id, 'start', e.target.value)}
-                            className="font-mono text-center h-10"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-sm mb-2 block">Break End</Label>
-                          <Input
-                            type="time"
-                            value={breakPeriod.end}
-                            onChange={(e) => updateBreakPeriod(breakPeriod.id, 'end', e.target.value)}
-                            className="font-mono text-center h-10"
-                          />
-                        </div>
-                        <div className="flex items-end">
-                          {breakPeriods.length > 1 && (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => removeBreakPeriod(breakPeriod.id)}
-                              className="text-red-600 h-10"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
 
               {/* Cross Midnight Warning */}
