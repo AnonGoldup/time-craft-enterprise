@@ -25,10 +25,6 @@ interface Employee {
 export const StandardHoursTab: React.FC<TabContentProps> = ({
   entries,
   setEntries,
-  selectedDates,
-  setSelectedDates,
-  useMultiDateSelection,
-  setUseMultiDateSelection,
   onSubmit,
   managerMode
 }) => {
@@ -40,11 +36,6 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
     class: emp.class,
     isActive: true
   }))
-
-  const [selectedEmployees, setSelectedEmployees] = useState<Employee[]>(() => {
-    const currentUser = employees.find(emp => emp.employeeId === 'JSMITH');
-    return currentUser ? [currentUser] : [];
-  });
 
   const addNewEntry = () => {
     const newEntry: TimeEntryData = {
@@ -92,11 +83,6 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
     setEntries(newEntries);
   };
 
-  // Calculate total entries for display
-  const totalEntries = useMultiDateSelection ? 
-    selectedEmployees.length * selectedDates.length : 
-    entries.length;
-
   return (
     <CardContent className="p-6">
       <div className="flex items-center justify-between mb-6">
@@ -104,77 +90,27 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
           <Clock className="w-5 h-5 text-blue-600" />
           <h3 className="text-lg font-semibold">Standard Hours Entry</h3>
           <Badge variant="secondary">
-            {totalEntries} {totalEntries === 1 ? 'entry' : 'entries'} will be created
+            {entries.length} {entries.length === 1 ? 'entry' : 'entries'}
           </Badge>
         </div>
         <div className="flex items-center space-x-2">
           <Button
             type="button"
-            variant={useMultiDateSelection ? "default" : "outline"}
+            variant="outline"
             size="sm"
-            onClick={() => setUseMultiDateSelection(!useMultiDateSelection)}
+            onClick={addNewEntry}
+            className="flex items-center space-x-1"
           >
-            Multi-Date Mode
+            <Plus className="w-4 h-4" />
+            <span>Add Entry</span>
           </Button>
-          {!useMultiDateSelection && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={addNewEntry}
-              className="flex items-center space-x-1"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Entry</span>
-            </Button>
-          )}
         </div>
       </div>
 
       <form onSubmit={onSubmit} className="space-y-6">
-        {/* Multi-Date and Multi-Employee Selection */}
-        {useMultiDateSelection && (
-          <div className="space-y-4 p-4 border rounded-lg bg-blue-50">
-            {/* Employee Selection */}
-            <div>
-              <Label className="font-medium mb-2 block">Select Employees</Label>
-              <MultiEmployeeSelector
-                employees={employees.filter(emp => emp.isActive !== false)}
-                selectedEmployees={selectedEmployees}
-                onEmployeeChange={setSelectedEmployees}
-                placeholder={managerMode ? "Select employees..." : "Select employee..."}
-                maxSelected={managerMode ? undefined : 1}
-                groupByClass={managerMode}
-                disabled={!managerMode}
-              />
-              <p className="text-sm text-blue-600 mt-1">
-                {managerMode 
-                  ? "Select employees to create entries for"
-                  : "Your employee account"
-                }
-              </p>
-            </div>
-
-            {/* Date Selection */}
-            <div>
-              <Label className="font-medium mb-2 block">Select Dates</Label>
-              <MultiDatePicker
-                selectedDates={selectedDates}
-                onDateChange={setSelectedDates}
-                placeholder="Select dates for time entry..."
-                maxDates={10}
-              />
-              <p className="text-sm text-blue-600 mt-1">
-                Selected dates will use the same hours and project information below.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Show only first entry for multi-date mode, or all entries for regular mode */}
-        {(useMultiDateSelection ? [entries[0]] : entries).map((entry, index) => (
+        {entries.map((entry, index) => (
           <div key={index} className="border rounded-lg p-4 relative">
-            {!useMultiDateSelection && entries.length > 1 && (
+            {entries.length > 1 && (
               <div className="absolute top-2 right-2">
                 <Button
                   type="button"
@@ -188,45 +124,41 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
               </div>
             )}
             
-            {!useMultiDateSelection && (
-              <div className="mb-4">
-                <Badge variant="outline">Entry {index + 1}</Badge>
-              </div>
-            )}
+            <div className="mb-4">
+              <Badge variant="outline">Entry {index + 1}</Badge>
+            </div>
 
-            {/* Employee & Date Row for single-entry mode */}
-            {!useMultiDateSelection && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <Label>Employee *</Label>
-                  <MultiEmployeeSelector
-                    employees={employees.filter(emp => emp.isActive !== false)}
-                    selectedEmployees={employees.filter(emp => emp.employeeId === entry.employeeId)}
-                    onEmployeeChange={(selected) => {
-                      if (selected.length > 0) {
-                        handleInputChange(index, 'employeeId', selected[0].employeeId);
-                      }
-                    }}
-                    placeholder="Select employee..."
-                    maxSelected={1}
-                    disabled={!managerMode}
-                  />
-                </div>
-                <div>
-                  <Label>Date Worked *</Label>
-                  <MultiDatePicker
-                    selectedDates={entry.dateWorked ? [new Date(entry.dateWorked)] : []}
-                    onDateChange={(dates) => {
-                      if (dates.length > 0) {
-                        handleInputChange(index, 'dateWorked', dates[0].toISOString().split('T')[0]);
-                      }
-                    }}
-                    placeholder="Select date..."
-                    maxDates={1}
-                  />
-                </div>
+            {/* Employee & Date Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <Label>Employee *</Label>
+                <MultiEmployeeSelector
+                  employees={employees.filter(emp => emp.isActive !== false)}
+                  selectedEmployees={employees.filter(emp => emp.employeeId === entry.employeeId)}
+                  onEmployeeChange={(selected) => {
+                    if (selected.length > 0) {
+                      handleInputChange(index, 'employeeId', selected[0].employeeId);
+                    }
+                  }}
+                  placeholder="Select employee..."
+                  maxSelected={1}
+                  disabled={!managerMode}
+                />
               </div>
-            )}
+              <div>
+                <Label>Date Worked *</Label>
+                <MultiDatePicker
+                  selectedDates={entry.dateWorked ? [new Date(entry.dateWorked)] : []}
+                  onDateChange={(dates) => {
+                    if (dates.length > 0) {
+                      handleInputChange(index, 'dateWorked', dates[0].toISOString().split('T')[0]);
+                    }
+                  }}
+                  placeholder="Select date..."
+                  maxDates={1}
+                />
+              </div>
+            </div>
 
             {/* Hours Input */}
             <div className="mb-4">
@@ -346,7 +278,7 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
         ))}
 
         <Button type="submit" className="w-full">
-          Submit {totalEntries} Time {totalEntries === 1 ? 'Entry' : 'Entries'}
+          Submit {entries.length} Time {entries.length === 1 ? 'Entry' : 'Entries'}
         </Button>
       </form>
     </CardContent>
