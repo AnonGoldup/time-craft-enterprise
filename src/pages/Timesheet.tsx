@@ -54,16 +54,16 @@ const Timesheet = () => {
 
   return (
     <TimesheetLayout>
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
         {/* Main Form Area */}
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 order-2 lg:order-1">
           <ComprehensiveTimeEntryForm 
             onSubmit={handleTimeEntrySubmit}
           />
         </div>
 
         {/* Sidebar */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 order-1 lg:order-2">
           <TimesheetSidebar
             weekSummary={weekSummary}
             onQuickAction={handleQuickAction}
