@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Clock, User, Calendar, Building, Hash, AlertTriangle, Users, FileText } from 'lucide-react';
 import { useProjectCostCodes } from '@/hooks/useProjectCostCodes';
+import { BulkEntryTab } from './BulkEntryTab';
 import { toast } from 'sonner';
 
 interface TimeEntryData {
@@ -28,7 +28,7 @@ interface TimeEntryData {
 }
 
 interface ComprehensiveTimeEntryFormProps {
-  onSubmit: (data: TimeEntryData) => void;
+  onSubmit: (data: TimeEntryData | TimeEntryData[]) => void;
   managerMode?: boolean;
 }
 
@@ -141,6 +141,11 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
 
     onSubmit(formData);
     toast.success('Time entry submitted successfully!');
+  };
+
+  const handleBulkSubmit = (entries: any[]) => {
+    console.log('Bulk entries submitted:', entries);
+    onSubmit(entries);
   };
 
   return (
@@ -558,17 +563,12 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
           </CardContent>
         </TabsContent>
 
-        {/* Placeholder Tabs */}
+        {/* Bulk Entry Tab */}
         <TabsContent value="bulk">
-          <CardContent className="p-6">
-            <div className="text-center py-12">
-              <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Bulk Entry</h3>
-              <p className="text-muted-foreground">Coming soon - Enter multiple employees at once</p>
-            </div>
-          </CardContent>
+          <BulkEntryTab onSubmit={handleBulkSubmit} managerMode={managerMode} />
         </TabsContent>
 
+        {/* My Timesheets Tab */}
         <TabsContent value="timesheets">
           <CardContent className="p-6">
             <div className="text-center py-12">

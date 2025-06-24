@@ -64,7 +64,7 @@ export const TimesheetLayout: React.FC<TimesheetLayoutProps> = ({
               <div className="flex items-center space-x-3">
                 <div className="text-right hidden sm:block">
                   <div className="text-sm font-medium text-foreground">{user?.fullName}</div>
-                  <div className="text-xs text-muted-foreground">{user?.employeeID}</div>
+                  <div className="text-xs text-muted-foreground">{user?.employeeId}</div>
                 </div>
                 <AvatarInitials name={user?.fullName || 'User'} />
               </div>
@@ -100,7 +100,7 @@ export const TimesheetLayout: React.FC<TimesheetLayoutProps> = ({
                   {user?.fullName}
                 </Badge>
                 <Badge variant="outline" className="bg-white/10 border-white/20 text-white">
-                  {user?.employeeID}
+                  {user?.employeeId}
                 </Badge>
               </div>
             </div>
@@ -116,7 +116,7 @@ export const TimesheetLayout: React.FC<TimesheetLayoutProps> = ({
                     <div>
                       <div className="font-semibold text-blue-900">Manager Entry Mode</div>
                       <div className="text-sm text-blue-700">
-                        You are entering time on behalf of team members. Entries will be marked as "Manager Entry by {user?.employeeID}"
+                        You are entering time on behalf of team members. Entries will be marked as "Manager Entry by {user?.employeeId}"
                       </div>
                     </div>
                   </div>
