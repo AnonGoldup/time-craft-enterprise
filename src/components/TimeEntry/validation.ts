@@ -47,12 +47,5 @@ export const validateEmployees = (employees: Array<Partial<Employee>>): Employee
       typeof emp.fullName === 'string' && 
       emp.fullName.length > 0 &&
       emp.isActive !== false
-    )
-    .map((emp) => ({
-      employeeId: emp.employeeId,
-      fullName: emp.fullName,
-      email: emp.email,
-      class: emp.class,
-      isActive: emp.isActive
-    }));
+    );
 }
