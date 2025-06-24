@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Clock, User, Calendar, Building, Hash, AlertTriangle, Users, FileText, Plus, Trash2 } from 'lucide-react';
+import { Clock, User, Calendar, Building, Hash, AlertTriangle, Users, FileText } from 'lucide-react';
 import { useProjectCostCodes } from '@/hooks/useProjectCostCodes';
 import { BulkEntryTab } from './BulkEntryTab';
 import { MyTimesheetsTab } from './MyTimesheetsTab';
@@ -26,12 +26,6 @@ interface TimeEntryData {
   timeOut?: string;
   breakStart?: string;
   breakEnd?: string;
-}
-
-interface BreakPeriod {
-  id: string;
-  start: string;
-  end: string;
 }
 
 interface ComprehensiveTimeEntryFormProps {
@@ -59,12 +53,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     breakEnd: '12:30'
   });
 
-  const [standardEntries, setStandardEntries] = useState([{ id: '1', ...formData }]);
-  const [timeInOutEntries, setTimeInOutEntries] = useState([{ id: '1', ...formData }]);
-  const [breakPeriods, setBreakPeriods] = useState<BreakPeriod[]>([
-    { id: '1', start: '12:00', end: '12:30' }
-  ]);
-
   const [crossesMidnight, setCrossesMidnight] = useState(false);
   const [hoursWarning, setHoursWarning] = useState(false);
 
@@ -91,7 +79,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
   };
 
   const calculateTimeInOut = () => {
-    if (!formData.timeIn || formData.timeOut) return;
+    if (!formData.timeIn || !formData.timeOut) return;
 
     const startMinutes = parseTimeToMinutes(formData.timeIn);
     let endMinutes = parseTimeToMinutes(formData.timeOut);
@@ -103,14 +91,12 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     let totalMinutes = endMinutes - startMinutes;
 
     // Subtract break time
-    breakPeriods.forEach(breakPeriod => {
-      if (breakPeriod.start && breakPeriod.end) {
-        const breakStartMinutes = parseTimeToMinutes(breakPeriod.start);
-        const breakEndMinutes = parseTimeToMinutes(breakPeriod.end);
-        const breakMinutes = breakEndMinutes - breakStartMinutes;
-        totalMinutes -= breakMinutes;
-      }
-    });
+    if (formData.breakStart && formData.breakEnd) {
+      const breakStartMinutes = parseTimeToMinutes(formData.breakStart);
+      const breakEndMinutes = parseTimeToMinutes(formData.breakEnd);
+      const breakMinutes = breakEndMinutes - breakStartMinutes;
+      totalMinutes -= breakMinutes;
+    }
 
     const totalHours = Math.round((totalMinutes / 60) * 4) / 4; // Quarter hour rounding
     const standardHours = Math.min(totalHours, 8);
@@ -128,60 +114,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
       ...prev,
       [field]: value
     }));
-  };
-
-  const addStandardEntry = () => {
-    const newEntry = {
-      id: Date.now().toString(),
-      ...formData,
-      standardHours: 0,
-      overtimeHours: 0
-    };
-    setStandardEntries([...standardEntries, newEntry]);
-  };
-
-  const removeStandardEntry = (id: string) => {
-    if (standardEntries.length > 1) {
-      setStandardEntries(standardEntries.filter(entry => entry.id !== id));
-    }
-  };
-
-  const addTimeInOutEntry = () => {
-    const newEntry = {
-      id: Date.now().toString(),
-      ...formData,
-      timeIn: '',
-      timeOut: ''
-    };
-    setTimeInOutEntries([...timeInOutEntries, newEntry]);
-  };
-
-  const removeTimeInOutEntry = (id: string) => {
-    if (timeInOutEntries.length > 1) {
-      setTimeInOutEntries(timeInOutEntries.filter(entry => entry.id !== id));
-    }
-  };
-
-  const addBreakPeriod = () => {
-    const newBreak = {
-      id: Date.now().toString(),
-      start: '',
-      end: ''
-    };
-    setBreakPeriods([...breakPeriods, newBreak]);
-  };
-
-  const removeBreakPeriod = (id: string) => {
-    if (breakPeriods.length > 1) {
-      setBreakPeriods(breakPeriods.filter(breakPeriod => breakPeriod.id !== id));
-    }
-  };
-
-  const updateBreakPeriod = (id: string, field: 'start' | 'end', value: string) => {
-    setBreakPeriods(breakPeriods.map(breakPeriod =>
-      breakPeriod.id === id ? { ...breakPeriod, [field]: value } : breakPeriod
-    ));
-    setTimeout(calculateTimeInOut, 100);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -216,9 +148,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     console.log('Bulk entries submitted:', entries);
     onSubmit(entries);
   };
-
-  // Calculate dynamic margin for Time In/Out section based on breaks
-  const timeInOutMarginTop = breakPeriods.length > 1 ? `${(breakPeriods.length - 1) * 32}px` : '0px';
 
   return (
     <Card>
@@ -278,7 +207,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                 </div>
               </div>
 
-              {/* Project & Extra Row - Fixed alignment */}
+              {/* Project & Extra Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label className="flex items-center space-x-1">
@@ -298,6 +227,13 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                       <SelectItem value="23-0004">23-0004 - Office and Shop OH</SelectItem>
                     </SelectContent>
                   </Select>
+                  <div className="text-xs text-muted-foreground flex items-center space-x-1 mt-1">
+                    <span>Project</span>
+                    <span>→</span>
+                    <span>Extra</span>
+                    <span>→</span>
+                    <span>Cost Code</span>
+                  </div>
                 </div>
                 <div>
                   <Label>Extra</Label>
@@ -368,6 +304,24 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                 </div>
               </div>
 
+              {/* Hours Display */}
+              <div className="bg-muted p-4 rounded-lg">
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div className="bg-card p-4 rounded-lg border">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Standard</div>
+                    <div className="text-2xl font-bold">{formData.standardHours.toFixed(2)}</div>
+                  </div>
+                  <div className="bg-card p-4 rounded-lg border">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Overtime</div>
+                    <div className="text-2xl font-bold text-orange-600">{formData.overtimeHours.toFixed(2)}</div>
+                  </div>
+                  <div className="bg-card p-4 rounded-lg border">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total</div>
+                    <div className="text-2xl font-bold text-blue-600">{(formData.standardHours + formData.overtimeHours).toFixed(2)}</div>
+                  </div>
+                </div>
+              </div>
+
               {/* Hours Warning */}
               {hoursWarning && (
                 <div className="bg-red-50 border border-red-200 p-4 rounded-lg flex items-center space-x-3">
@@ -389,15 +343,9 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                 />
               </div>
 
-              <div className="flex gap-3">
-                <Button type="submit" className="flex-1">
-                  Submit Time Entry
-                </Button>
-                <Button type="button" variant="outline" onClick={addStandardEntry}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Entry
-                </Button>
-              </div>
+              <Button type="submit" className="w-full">
+                Submit Time Entry
+              </Button>
             </form>
           </CardContent>
         </TabsContent>
@@ -414,7 +362,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
               {/* Employee & Date Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="flex items-center space-x-1 mb-2">
+                  <Label className="flex items-center space-x-1">
                     <User className="w-4 h-4" />
                     <span>Employee *</span>
                   </Label>
@@ -422,7 +370,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                     value={formData.employeeId} 
                     onValueChange={(value) => handleInputChange('employeeId', value)}
                   >
-                    <SelectTrigger className="h-10">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -433,7 +381,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </Select>
                 </div>
                 <div>
-                  <Label className="flex items-center space-x-1 mb-2">
+                  <Label className="flex items-center space-x-1">
                     <Calendar className="w-4 h-4" />
                     <span>Date Worked *</span>
                   </Label>
@@ -442,152 +390,59 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                     value={formData.dateWorked}
                     max={new Date().toISOString().split('T')[0]}
                     onChange={(e) => handleInputChange('dateWorked', e.target.value)}
-                    className="h-10"
                   />
                 </div>
               </div>
 
-              {/* Project, Extra, Cost Code Row */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Time Fields */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
-                  <Label className="flex items-center space-x-1 mb-2">
-                    <Building className="w-4 h-4" />
-                    <span>Project *</span>
-                  </Label>
-                  <Select 
-                    value={formData.projectCode} 
-                    onValueChange={(value) => handleInputChange('projectCode', value)}
-                  >
-                    <SelectTrigger className="h-10">
-                      <SelectValue placeholder="Select Project" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="21-0066">21-0066 - Edmonton EXPO SOLAR IPD</SelectItem>
-                      <SelectItem value="22-0006">22-0006 - AltaPro Service Department</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label>Time In *</Label>
+                  <Input
+                    type="time"
+                    value={formData.timeIn}
+                    onChange={(e) => {
+                      handleInputChange('timeIn', e.target.value);
+                      setTimeout(calculateTimeInOut, 100);
+                    }}
+                    className="font-mono text-center"
+                  />
                 </div>
                 <div>
-                  <Label className="mb-2 block">Extra</Label>
-                  <Select 
-                    value={formData.extraValue} 
-                    onValueChange={(value) => handleInputChange('extraValue', value)}
-                  >
-                    <SelectTrigger className="h-10">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Default">Default</SelectItem>
-                      <SelectItem value="005">005 - Phase 1</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label>Time Out *</Label>
+                  <Input
+                    type="time"
+                    value={formData.timeOut}
+                    onChange={(e) => {
+                      handleInputChange('timeOut', e.target.value);
+                      setTimeout(calculateTimeInOut, 100);
+                    }}
+                    className="font-mono text-center"
+                  />
                 </div>
                 <div>
-                  <Label className="flex items-center space-x-1 mb-2">
-                    <Hash className="w-4 h-4" />
-                    <span>Cost Code *</span>
-                  </Label>
-                  <Select 
-                    value={formData.costCode} 
-                    onValueChange={(value) => handleInputChange('costCode', value)}
-                  >
-                    <SelectTrigger className="h-10">
-                      <SelectValue placeholder="Select Cost Code" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="001-040-043">001-040-043 - Direct Labor</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label>Break Start</Label>
+                  <Input
+                    type="time"
+                    value={formData.breakStart}
+                    onChange={(e) => {
+                      handleInputChange('breakStart', e.target.value);
+                      setTimeout(calculateTimeInOut, 100);
+                    }}
+                    className="font-mono text-center"
+                  />
                 </div>
-              </div>
-
-              {/* Combined Time and Break Section */}
-              <div className="space-y-4">
-                {/* Time In/Out Header with Plus Button */}
-                <div className="flex items-center justify-between">
-                  <Label className="text-base font-semibold">Time & Break Schedule</Label>
-                  <Button type="button" variant="outline" size="sm" onClick={addBreakPeriod}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Break
-                  </Button>
-                </div>
-
-                {/* Break Periods - Now in single line layout */}
-                {breakPeriods.length > 0 && (
-                  <div className="space-y-3">
-                    <Label className="text-sm font-medium text-gray-700">Break Periods</Label>
-                    {breakPeriods.map((breakPeriod, index) => (
-                      <div key={breakPeriod.id} className="flex items-center space-x-4 p-3 border rounded-lg bg-amber-50">
-                        <div className="flex items-center space-x-2">
-                          <Label className="text-sm whitespace-nowrap">Break Start</Label>
-                          <Input
-                            type="time"
-                            value={breakPeriod.start}
-                            onChange={(e) => updateBreakPeriod(breakPeriod.id, 'start', e.target.value)}
-                            className="font-mono text-center h-9 w-24"
-                          />
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Label className="text-sm whitespace-nowrap">Break End</Label>
-                          <Input
-                            type="time"
-                            value={breakPeriod.end}
-                            onChange={(e) => updateBreakPeriod(breakPeriod.id, 'end', e.target.value)}
-                            className="font-mono text-center h-9 w-24"
-                          />
-                        </div>
-                        <div className="flex-1"></div>
-                        {breakPeriods.length > 1 && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeBreakPeriod(breakPeriod.id)}
-                            className="text-red-600 h-9 w-9 p-0"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Time In/Out Fields - Dynamically positioned */}
-                <div 
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg bg-blue-50 transition-all duration-300"
-                  style={{ marginTop: timeInOutMarginTop }}
-                >
-                  <div>
-                    <Label className="flex items-center space-x-1 mb-2">
-                      <Clock className="w-4 h-4" />
-                      <span>Time In *</span>
-                    </Label>
-                    <Input
-                      type="time"
-                      value={formData.timeIn}
-                      onChange={(e) => {
-                        handleInputChange('timeIn', e.target.value);
-                        setTimeout(calculateTimeInOut, 100);
-                      }}
-                      className="h-10 font-mono text-center"
-                    />
-                  </div>
-                  <div>
-                    <Label className="flex items-center space-x-1 mb-2">
-                      <Clock className="w-4 h-4" />
-                      <span>Time Out *</span>
-                    </Label>
-                    <Input
-                      type="time"
-                      value={formData.timeOut}
-                      onChange={(e) => {
-                        handleInputChange('timeOut', e.target.value);
-                        setTimeout(calculateTimeInOut, 100);
-                      }}
-                      className="h-10 font-mono text-center"
-                    />
-                  </div>
+                <div>
+                  <Label>Break End</Label>
+                  <Input
+                    type="time"
+                    value={formData.breakEnd}
+                    onChange={(e) => {
+                      handleInputChange('breakEnd', e.target.value);
+                      setTimeout(calculateTimeInOut, 100);
+                    }}
+                    className="font-mono text-center"
+                  />
                 </div>
               </div>
 
@@ -614,9 +469,86 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                 </div>
               )}
 
+              {/* Calculated Hours */}
+              <div className="bg-muted p-4 rounded-lg">
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div className="bg-card p-4 rounded-lg border">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Standard</div>
+                    <div className="text-2xl font-bold">{formData.standardHours.toFixed(2)}</div>
+                  </div>
+                  <div className="bg-card p-4 rounded-lg border">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Overtime</div>
+                    <div className="text-2xl font-bold text-orange-600">{formData.overtimeHours.toFixed(2)}</div>
+                  </div>
+                  <div className="bg-card p-4 rounded-lg border">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total</div>
+                    <div className="text-2xl font-bold text-blue-600">{(formData.standardHours + formData.overtimeHours).toFixed(2)}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Project Information */}
+              <div className="border-t pt-6">
+                <h4 className="text-sm font-medium mb-4">Project Information</h4>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <Label className="flex items-center space-x-1">
+                      <Building className="w-4 h-4" />
+                      <span>Project *</span>
+                    </Label>
+                    <Select 
+                      value={formData.projectCode} 
+                      onValueChange={(value) => handleInputChange('projectCode', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Project" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="21-0066">21-0066 - Edmonton EXPO SOLAR IPD</SelectItem>
+                        <SelectItem value="22-0006">22-0006 - AltaPro Service Department</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Extra</Label>
+                    <Select 
+                      value={formData.extraValue} 
+                      onValueChange={(value) => handleInputChange('extraValue', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Default">Default</SelectItem>
+                        <SelectItem value="005">005 - Phase 1</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="flex items-center space-x-1">
+                    <Hash className="w-4 h-4" />
+                    <span>Cost Code *</span>
+                  </Label>
+                  <Select 
+                    value={formData.costCode} 
+                    onValueChange={(value) => handleInputChange('costCode', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Cost Code" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="001-040-043">001-040-043 - Direct Labor</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               {/* Notes */}
               <div>
-                <Label className="mb-2 block">Notes</Label>
+                <Label>Notes</Label>
                 <Textarea
                   rows={3}
                   placeholder="Enter any additional notes..."
@@ -625,15 +557,9 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                 />
               </div>
 
-              <div className="flex gap-3">
-                <Button type="submit" className="flex-1">
-                  Submit Time Entry
-                </Button>
-                <Button type="button" variant="outline" onClick={addTimeInOutEntry}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Entry
-                </Button>
-              </div>
+              <Button type="submit" className="w-full">
+                Submit Time Entry
+              </Button>
             </form>
           </CardContent>
         </TabsContent>
