@@ -2,15 +2,18 @@
 import { z } from "zod"
 import { Employee } from "./types"
 
+// Employee validation schema that matches the Employee interface exactly
+const employeeSchema = z.object({
+  employeeId: z.string().min(1, "Employee ID is required"),
+  fullName: z.string().min(1, "Full name is required"),
+  email: z.string().optional(),
+  class: z.string().optional(),
+  isActive: z.boolean().optional(),
+})
+
 // Form validation schema with business rules
 export const bulkTimeEntrySchema = z.object({
-  selectedEmployees: z.array(z.object({
-    employeeId: z.string().min(1, "Employee ID is required"),
-    fullName: z.string().min(1, "Full name is required"),
-    email: z.string().optional(),
-    class: z.string().optional(),
-    isActive: z.boolean().optional(),
-  })).min(1, "At least one employee must be selected"),
+  selectedEmployees: z.array(employeeSchema).min(1, "At least one employee must be selected"),
   
   selectedDates: z.array(z.date()).min(1, "At least one date must be selected"),
   
