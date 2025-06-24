@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,8 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Clock, User, Calendar, Building, Hash, AlertTriangle, Plus, Trash2 } from 'lucide-react';
-import MultiDatePicker from '@/components/TimeEntry/MultiDatePicker';
+import { Clock, User, Calendar, Building, Hash, Plus, Trash2 } from 'lucide-react';
+import { MultiDatePicker } from '@/components/TimeEntry/MultiDatePicker';
 import { TabContentProps, TimeEntryData } from './types';
 import { mockEmployees, projects, extras, costCodes } from './mockEmployees';
 
@@ -31,11 +31,7 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
       costCode: '',
       standardHours: 8,
       overtimeHours: 0,
-      notes: '',
-      timeIn: '07:00',
-      timeOut: '15:30',
-      breakStart: '12:00',
-      breakEnd: '12:30'
+      notes: ''
     };
     setEntries([...entries, newEntry]);
   };
@@ -51,6 +47,23 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
     newEntries[index] = {
       ...newEntries[index],
       [field]: value
+    };
+    setEntries(newEntries);
+  };
+
+  const calculateOvertimeHours = (standardHours: number) => {
+    return Math.max(0, standardHours - 8);
+  };
+
+  const handleHoursChange = (index: number, hours: number) => {
+    const standardHours = Math.min(hours, 8);
+    const overtimeHours = calculateOvertimeHours(hours);
+    
+    const newEntries = [...entries];
+    newEntries[index] = {
+      ...newEntries[index],
+      standardHours,
+      overtimeHours
     };
     setEntries(newEntries);
   };
@@ -102,10 +115,12 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
             </div>
             <MultiDatePicker
               selectedDates={selectedDates}
-              onDatesChange={setSelectedDates}
+              onDateChange={setSelectedDates}
+              placeholder="Select dates for time entry..."
+              maxDates={10}
             />
             <p className="text-sm text-blue-600 mt-2">
-              Selected dates will use the same project, cost code, and hours settings below.
+              Selected dates will use the same hours and project information below.
             </p>
           </div>
         )}
@@ -173,96 +188,21 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
               )}
             </div>
 
-            {/* Project & Extra Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <Label className="flex items-center space-x-1">
-                  <Building className="w-4 h-4" />
-                  <span>Project *</span>
-                </Label>
-                <Select 
-                  value={entry.projectCode} 
-                  onValueChange={(value) => handleInputChange(index, 'projectCode', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Project" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {projects.map(project => (
-                      <SelectItem key={project.code} value={project.code}>
-                        {project.code} - {project.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Extra</Label>
-                <Select 
-                  value={entry.extraValue} 
-                  onValueChange={(value) => handleInputChange(index, 'extraValue', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {extras.map(extra => (
-                      <SelectItem key={extra.extraID} value={extra.extraValue}>
-                        {extra.extraValue} - {extra.description}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Cost Code */}
+            {/* Hours Input */}
             <div className="mb-4">
-              <Label className="flex items-center space-x-1">
-                <Hash className="w-4 h-4" />
-                <span>Cost Code *</span>
-              </Label>
-              <Select 
-                value={entry.costCode} 
-                onValueChange={(value) => handleInputChange(index, 'costCode', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Cost Code" />
-                </SelectTrigger>
-                <SelectContent>
-                  {costCodes.map(code => (
-                    <SelectItem key={code.costCodeID} value={code.costCode}>
-                      {code.costCode} - {code.description}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Hours Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <Label>Standard Hours (PayID 1)</Label>
-                <Input
-                  type="number"
-                  step="0.25"
-                  min="0"
-                  max="16"
-                  value={entry.standardHours}
-                  onChange={(e) => handleInputChange(index, 'standardHours', parseFloat(e.target.value) || 0)}
-                />
-              </div>
-              <div>
-                <Label>Overtime Hours (PayID 2)</Label>
-                <Input
-                  type="number"
-                  step="0.25"
-                  min="0"
-                  max="16"
-                  value={entry.overtimeHours}
-                  onChange={(e) => handleInputChange(index, 'overtimeHours', parseFloat(e.target.value) || 0)}
-                />
-              </div>
+              <Label>Total Hours *</Label>
+              <Input
+                type="number"
+                step="0.25"
+                min="0"
+                max="24"
+                value={entry.standardHours + entry.overtimeHours}
+                onChange={(e) => handleHoursChange(index, parseFloat(e.target.value) || 0)}
+                className="w-32"
+              />
+              <p className="text-sm text-muted-foreground mt-1">
+                Hours over 8 will automatically be calculated as overtime
+              </p>
             </div>
 
             {/* Hours Display */}
@@ -283,15 +223,74 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
               </div>
             </div>
 
-            {/* Hours Warning */}
-            {(entry.standardHours + entry.overtimeHours) > 16 && (
-              <div className="bg-red-50 border border-red-200 p-4 rounded-lg flex items-center space-x-3 mb-4">
-                <AlertTriangle className="w-5 h-5 text-red-600" />
-                <span className="text-red-700">
-                  Total hours cannot exceed 16 per day (current: {(entry.standardHours + entry.overtimeHours).toFixed(2)})
-                </span>
+            {/* Project Information */}
+            <div className="border-t pt-4">
+              <h4 className="text-sm font-medium mb-4">Project Information</h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <Label className="flex items-center space-x-1">
+                    <Building className="w-4 h-4" />
+                    <span>Project *</span>
+                  </Label>
+                  <Select 
+                    value={entry.projectCode} 
+                    onValueChange={(value) => handleInputChange(index, 'projectCode', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Project" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {projects.map(project => (
+                        <SelectItem key={project.code} value={project.code}>
+                          {project.code} - {project.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Extra</Label>
+                  <Select 
+                    value={entry.extraValue} 
+                    onValueChange={(value) => handleInputChange(index, 'extraValue', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {extras.map(extra => (
+                        <SelectItem key={extra.extraID} value={extra.extraValue}>
+                          {extra.extraValue} - {extra.description}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-            )}
+
+              <div className="mb-4">
+                <Label className="flex items-center space-x-1">
+                  <Hash className="w-4 h-4" />
+                  <span>Cost Code *</span>
+                </Label>
+                <Select 
+                  value={entry.costCode} 
+                  onValueChange={(value) => handleInputChange(index, 'costCode', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Cost Code" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {costCodes.map(code => (
+                      <SelectItem key={code.costCodeID} value={code.costCode}>
+                        {code.costCode} - {code.description}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
             {/* Notes */}
             <div>

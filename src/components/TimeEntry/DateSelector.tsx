@@ -28,7 +28,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
       {useMultiDateSelection && setSelectedDates ? (
         <MultiDatePicker
           selectedDates={selectedDates}
-          onDatesChange={setSelectedDates}
+          onDateChange={setSelectedDates}
         />
       ) : (
         <Input 
