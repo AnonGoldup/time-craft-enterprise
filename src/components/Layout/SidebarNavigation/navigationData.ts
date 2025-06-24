@@ -15,7 +15,7 @@ export const navigationItems: MenuItem[] = [
 export const timesheetModule: MenuItem[] = [
   {
     path: '/timesheet',
-    label: 'Comprehensive Timesheet',
+    label: 'Timesheet',
     icon: Clock,
     roles: [UserRole.EMPLOYEE, UserRole.ADMIN]
   },
