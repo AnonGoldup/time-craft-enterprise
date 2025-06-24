@@ -444,7 +444,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                 </div>
               </div>
 
-              {/* Project, Extra, Cost Code Row - Fixed alignment */}
+              {/* Project, Extra, Cost Code Row */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label className="flex items-center space-x-1 mb-2">
@@ -498,10 +498,13 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                 </div>
               </div>
 
-              {/* Time Fields */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* Time Fields - Fixed alignment */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="mb-2 block">Time In *</Label>
+                  <Label className="flex items-center space-x-1 mb-2">
+                    <Clock className="w-4 h-4" />
+                    <span>Time In *</span>
+                  </Label>
                   <Input
                     type="time"
                     value={formData.timeIn}
@@ -509,11 +512,14 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                       handleInputChange('timeIn', e.target.value);
                       setTimeout(calculateTimeInOut, 100);
                     }}
-                    className="font-mono text-center h-10"
+                    className="h-10 font-mono text-center"
                   />
                 </div>
                 <div>
-                  <Label className="mb-2 block">Time Out *</Label>
+                  <Label className="flex items-center space-x-1 mb-2">
+                    <Clock className="w-4 h-4" />
+                    <span>Time Out *</span>
+                  </Label>
                   <Input
                     type="time"
                     value={formData.timeOut}
@@ -521,7 +527,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                       handleInputChange('timeOut', e.target.value);
                       setTimeout(calculateTimeInOut, 100);
                     }}
-                    className="font-mono text-center h-10"
+                    className="h-10 font-mono text-center"
                   />
                 </div>
               </div>
