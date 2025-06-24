@@ -6,10 +6,16 @@ import { Employee } from "./types"
 const employeeSchema = z.object({
   employeeId: z.string().min(1, "Employee ID is required"),
   fullName: z.string().min(1, "Full name is required"),
-  email: z.string().optional(),
-  class: z.string().optional(),
-  isActive: z.boolean().optional(),
-})
+  email: z.string().default(undefined).optional(),
+  class: z.string().default(undefined).optional(),
+  isActive: z.boolean().default(true).optional(),
+}).transform((data): Employee => ({
+  employeeId: data.employeeId,
+  fullName: data.fullName,
+  email: data.email,
+  class: data.class,
+  isActive: data.isActive,
+}))
 
 // Form validation schema with business rules
 export const bulkTimeEntrySchema = z.object({
