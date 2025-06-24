@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -99,8 +100,8 @@ export function EnhancedTimeEntryForm({
   const employees: Employee[] = mockEmployees
     .filter(emp => emp.id && emp.name) // Filter first to ensure we have required data
     .map(emp => ({
-      employeeId: emp.id!,
-      fullName: emp.name!,
+      employeeId: emp.id!, // Use non-null assertion since we filtered above
+      fullName: emp.name!, // Use non-null assertion since we filtered above
       email: `${emp.id!.toLowerCase()}@company.com`,
       class: emp.class || '',
       isActive: true
