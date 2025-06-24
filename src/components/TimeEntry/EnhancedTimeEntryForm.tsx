@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -100,12 +99,12 @@ export function EnhancedTimeEntryForm({
   
   // Convert mock data to match interface with all required properties
   const employees: Employee[] = mockEmployees.map(emp => ({
-    employeeId: emp.id,
-    fullName: emp.name,
-    email: `${emp.id.toLowerCase()}@company.com`,
-    class: emp.class,
+    employeeId: emp.id || '',
+    fullName: emp.name || '',
+    email: `${(emp.id || '').toLowerCase()}@company.com`,
+    class: emp.class || '',
     isActive: true
-  }))
+  })).filter(emp => emp.employeeId && emp.fullName) // Filter out any invalid entries
 
   const currentUser = employees.find(emp => emp.employeeId === 'JSMITH')
   
