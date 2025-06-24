@@ -57,14 +57,14 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({
 }) => {
   const [activeEmployees, setActiveEmployees] = useState(allEmployees.slice(0, 5));
   const [selectedEmployees, setSelectedEmployees] = useState<Set<string>>(new Set());
-  const [classFilter, setClassFilter] = useState('');
-  const [selectedEmployee, setSelectedEmployee] = useState('');
+  const [classFilter, setClassFilter] = useState('all');
+  const [selectedEmployee, setSelectedEmployee] = useState('none');
   const [previewOpen, setPreviewOpen] = useState(false);
   
   const [bulkData, setBulkData] = useState({
-    projectCode: '',
+    projectCode: 'none',
     extraValue: 'Default',
-    costCode: '',
+    costCode: 'none',
     notes: ''
   });
 
@@ -116,17 +116,19 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({
   const getAvailableEmployees = () => {
     return allEmployees.filter(emp => {
       const notActive = !activeEmployees.find(active => active.id === emp.id);
-      const matchesClass = !classFilter || emp.class === classFilter;
+      const matchesClass = classFilter === 'all' || emp.class === classFilter;
       return notActive && matchesClass;
     });
   };
 
   const addEmployee = (employeeId: string) => {
+    if (employeeId === 'none') return;
+    
     const employee = allEmployees.find(emp => emp.id === employeeId);
     if (!employee || activeEmployees.find(emp => emp.id === employeeId)) return;
 
     setActiveEmployees(prev => [...prev, employee].sort((a, b) => a.name.localeCompare(b.name)));
-    setSelectedEmployee('');
+    setSelectedEmployee('none');
     toast.success(`Added ${employee.name} to bulk entry`);
   };
 
@@ -151,7 +153,7 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({
   };
 
   const addEmployeesByClass = () => {
-    if (!classFilter) {
+    if (classFilter === 'all') {
       toast.error('Please select a class filter first');
       return;
     }
@@ -231,8 +233,8 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    if (!bulkData.projectCode) errors.push('Project is required');
-    if (!bulkData.costCode) errors.push('Cost Code is required');
+    if (bulkData.projectCode === 'none') errors.push('Project is required');
+    if (bulkData.costCode === 'none') errors.push('Cost Code is required');
     if (activeEmployees.length === 0) errors.push('No employees added to bulk entry');
 
     activeEmployees.forEach(emp => {
@@ -254,7 +256,7 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({
   const collectEntries = (): BulkEntry[] => {
     const entries: BulkEntry[] = [];
     
-    if (!bulkData.projectCode || !bulkData.costCode) return entries;
+    if (bulkData.projectCode === 'none' || bulkData.costCode === 'none') return entries;
 
     activeEmployees.forEach(emp => {
       days.forEach((day, index) => {
@@ -326,10 +328,10 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({
             <p className="text-slate-300 text-sm">Enter time for multiple employees efficiently</p>
           </div>
           <div className="flex items-center space-x-3">
-            <Badge className="bg-white/20 text-white border-white/20">
+            <Badge variant="secondary" className="bg-white/20 text-white">
               {selectedEmployees.size} selected
             </Badge>
-            <Badge className="bg-white/10 border-white/20 text-white">
+            <Badge variant="outline" className="bg-white/10 border-white/20 text-white">
               {stats.validEntries} entries
             </Badge>
           </div>
@@ -356,6 +358,7 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({
                       <SelectValue placeholder="Select Project" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="none">Select Project</SelectItem>
                       <SelectItem value="21-0066">21-0066 - Edmonton EXPO SOLAR IPD</SelectItem>
                       <SelectItem value="22-0006">22-0006 - AltaPro Service Department</SelectItem>
                       <SelectItem value="23-0004">23-0004 - Office and Shop OH</SelectItem>
@@ -385,6 +388,7 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({
                       <SelectValue placeholder="Select Cost Code" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="none">Select Cost Code</SelectItem>
                       <SelectItem value="001-040-043">001-040-043 - Direct Labor</SelectItem>
                       <SelectItem value="001-040-054">001-040-054 - Employee Training</SelectItem>
                       <SelectItem value="001-500-501">001-500-501 - Vehicle Travel</SelectItem>
@@ -406,6 +410,7 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({
                         <SelectValue placeholder="Select Employee" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="none">Select Employee</SelectItem>
                         {getAvailableEmployees().map(emp => (
                           <SelectItem key={emp.id} value={emp.id}>
                             {emp.name} - {emp.class}
@@ -428,7 +433,7 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({
                       <SelectValue placeholder="All Classes" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Classes</SelectItem>
+                      <SelectItem value="all">All Classes</SelectItem>
                       <SelectItem value="Foreman">Foremen</SelectItem>
                       <SelectItem value="Journeyman">Journeymen</SelectItem>
                       <SelectItem value="Apprentice">Apprentices</SelectItem>
