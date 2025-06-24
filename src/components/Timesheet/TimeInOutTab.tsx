@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -63,15 +62,13 @@ export const TimeInOutTab: React.FC<TabContentProps> = ({
     const standardHours = Math.min(totalHours, 8);
     const overtimeHours = Math.max(0, totalHours - 8);
 
-    setEntries((prevEntries: TimeEntryData[]) => {
-      const newEntries = [...prevEntries];
-      newEntries[0] = {
-        ...newEntries[0],
-        standardHours,
-        overtimeHours
-      };
-      return newEntries;
-    });
+    const newEntries = [...entries];
+    newEntries[0] = {
+      ...newEntries[0],
+      standardHours,
+      overtimeHours
+    };
+    setEntries(newEntries);
   };
 
   const addNewEntry = () => {
