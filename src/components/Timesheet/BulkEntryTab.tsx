@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,12 +7,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Users, Calendar, Building, Hash, Plus, Trash2, FileSpreadsheet } from 'lucide-react';
+import { Users, Calendar, Building, Hash, FileSpreadsheet } from 'lucide-react';
 import MultiDatePicker from '@/components/TimeEntry/MultiDatePicker';
 import EmployeeSelector from '@/components/TimeEntry/EmployeeSelector';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { Employee } from '@/services/api';
+import { mockEmployees } from './mockEmployees';
 
 interface BulkEntryTabProps {
   onSubmit: (entries: any[]) => void;
@@ -31,49 +32,6 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit }) => {
     overtimeHours: 0,
     notes: ''
   });
-
-  // Complete mock employees data matching Employee interface
-  const mockEmployees: Employee[] = [
-    {
-      employeeID: 'EMP001',
-      firstName: 'John',
-      lastName: 'Smith',
-      fullName: 'John Smith',
-      email: 'john.smith@company.com',
-      class: 'Foreman',
-      department: 'Construction',
-      unionID: 1,
-      activeEmp: true,
-      createdDate: '2024-01-01T00:00:00Z',
-      modifiedDate: '2024-01-01T00:00:00Z'
-    },
-    {
-      employeeID: 'EMP002',
-      firstName: 'Mary',
-      lastName: 'Jones',
-      fullName: 'Mary Jones',
-      email: 'mary.jones@company.com',
-      class: 'Journeyman',
-      department: 'Construction',
-      unionID: 1,
-      activeEmp: true,
-      createdDate: '2024-01-01T00:00:00Z',
-      modifiedDate: '2024-01-01T00:00:00Z'
-    },
-    {
-      employeeID: 'EMP003',
-      firstName: 'Bob',
-      lastName: 'Wilson',
-      fullName: 'Bob Wilson',
-      email: 'bob.wilson@company.com',
-      class: 'Apprentice',
-      department: 'Construction',
-      unionID: 1,
-      activeEmp: true,
-      createdDate: '2024-01-01T00:00:00Z',
-      modifiedDate: '2024-01-01T00:00:00Z'
-    }
-  ];
 
   const totalEntries = selectedDates.length * (isManager ? selectedEmployees.length : 1);
 
@@ -161,7 +119,6 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit }) => {
       </div>
 
       <form onSubmit={handleBulkSubmit} className="space-y-6">
-        {/* Employee Selection */}
         <div>
           <Label className="flex items-center space-x-1 mb-2">
             <Users className="w-4 h-4" />
@@ -176,7 +133,6 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit }) => {
           />
         </div>
 
-        {/* Date Selection */}
         <div>
           <Label className="flex items-center space-x-1 mb-2">
             <Calendar className="w-4 h-4" />
@@ -188,7 +144,6 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit }) => {
           />
         </div>
 
-        {/* Project Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label className="flex items-center space-x-1">
@@ -226,7 +181,6 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit }) => {
           </div>
         </div>
 
-        {/* Cost Code */}
         <div>
           <Label className="flex items-center space-x-1">
             <Hash className="w-4 h-4" />
@@ -246,7 +200,6 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit }) => {
           </Select>
         </div>
 
-        {/* Hours */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label>Standard Hours</Label>
@@ -272,7 +225,6 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit }) => {
           </div>
         </div>
 
-        {/* Notes */}
         <div>
           <Label>Notes</Label>
           <Textarea
