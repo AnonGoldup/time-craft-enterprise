@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import MultiDatePicker from '@/components/TimeEntry/MultiDatePicker';
 import EmployeeSelector from '@/components/TimeEntry/EmployeeSelector';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { Employee } from '@/services/api';
 
 interface BulkEntryTabProps {
   onSubmit: (entries: any[]) => void;
@@ -32,11 +32,47 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit }) => {
     notes: ''
   });
 
-  // Mock employees data
-  const mockEmployees = [
-    { employeeID: 'JSMITH', fullName: 'John Smith', class: 'Foreman' },
-    { employeeID: 'MJONES', fullName: 'Mary Jones', class: 'Journeyman' },
-    { employeeID: 'BWILSON', fullName: 'Bob Wilson', class: 'Apprentice' }
+  // Complete mock employees data matching Employee interface
+  const mockEmployees: Employee[] = [
+    {
+      employeeID: 'EMP001',
+      firstName: 'John',
+      lastName: 'Smith',
+      fullName: 'John Smith',
+      email: 'john.smith@company.com',
+      class: 'Foreman',
+      department: 'Construction',
+      unionID: 1,
+      activeEmp: true,
+      createdDate: '2024-01-01T00:00:00Z',
+      modifiedDate: '2024-01-01T00:00:00Z'
+    },
+    {
+      employeeID: 'EMP002',
+      firstName: 'Mary',
+      lastName: 'Jones',
+      fullName: 'Mary Jones',
+      email: 'mary.jones@company.com',
+      class: 'Journeyman',
+      department: 'Construction',
+      unionID: 1,
+      activeEmp: true,
+      createdDate: '2024-01-01T00:00:00Z',
+      modifiedDate: '2024-01-01T00:00:00Z'
+    },
+    {
+      employeeID: 'EMP003',
+      firstName: 'Bob',
+      lastName: 'Wilson',
+      fullName: 'Bob Wilson',
+      email: 'bob.wilson@company.com',
+      class: 'Apprentice',
+      department: 'Construction',
+      unionID: 1,
+      activeEmp: true,
+      createdDate: '2024-01-01T00:00:00Z',
+      modifiedDate: '2024-01-01T00:00:00Z'
+    }
   ];
 
   const totalEntries = selectedDates.length * (isManager ? selectedEmployees.length : 1);

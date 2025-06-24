@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,6 +15,7 @@ import MultiDatePicker from '@/components/TimeEntry/MultiDatePicker';
 import EmployeeSelector from '@/components/TimeEntry/EmployeeSelector';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { Employee } from '@/services/api';
 
 interface TimeEntryData {
   employeeId: string;
@@ -45,11 +45,11 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
   const [activeTab, setActiveTab] = useState('standard');
   const [selectedDates, setSelectedDates] = useState<Date[]>([new Date()]);
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>(
-    isManager ? [] : [user?.employeeId || 'JSMITH']
+    isManager ? [] : [user?.employeeId || 'EMP001']
   );
   
   const [entries, setEntries] = useState<TimeEntryData[]>([{
-    employeeId: user?.employeeId || 'JSMITH',
+    employeeId: user?.employeeId || 'EMP001',
     dateWorked: new Date().toISOString().split('T')[0],
     projectCode: '',
     extraValue: 'Default',
@@ -68,20 +68,54 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
 
   const { extras, costCodes, selectedExtra, setSelectedExtra } = useProjectCostCodes(entries[0]?.projectCode || '');
 
-  // Mock employees data - in real app this would come from API
-  const mockEmployees = [
-    { employeeID: 'JSMITH', fullName: 'John Smith', class: 'Foreman' },
-    { employeeID: 'MJONES', fullName: 'Mary Jones', class: 'Journeyman' },
-    { employeeID: 'BWILSON', fullName: 'Bob Wilson', class: 'Apprentice' }
+  // Complete mock employees data matching Employee interface
+  const mockEmployees: Employee[] = [
+    {
+      employeeID: 'EMP001',
+      firstName: 'John',
+      lastName: 'Smith',
+      fullName: 'John Smith',
+      email: 'john.smith@company.com',
+      class: 'Foreman',
+      department: 'Construction',
+      unionID: 1,
+      activeEmp: true,
+      createdDate: '2024-01-01T00:00:00Z',
+      modifiedDate: '2024-01-01T00:00:00Z'
+    },
+    {
+      employeeID: 'EMP002',
+      firstName: 'Mary',
+      lastName: 'Jones',
+      fullName: 'Mary Jones',
+      email: 'mary.jones@company.com',
+      class: 'Journeyman',
+      department: 'Construction',
+      unionID: 1,
+      activeEmp: true,
+      createdDate: '2024-01-01T00:00:00Z',
+      modifiedDate: '2024-01-01T00:00:00Z'
+    },
+    {
+      employeeID: 'EMP003',
+      firstName: 'Bob',
+      lastName: 'Wilson',
+      fullName: 'Bob Wilson',
+      email: 'bob.wilson@company.com',
+      class: 'Apprentice',
+      department: 'Construction',
+      unionID: 1,
+      activeEmp: true,
+      createdDate: '2024-01-01T00:00:00Z',
+      modifiedDate: '2024-01-01T00:00:00Z'
+    }
   ];
 
   // Calculate total entries that will be created
   const totalEntriesToCreate = selectedDates.length * (isManager ? selectedEmployees.length : 1);
 
-  // Validation and calculations for the first entry (for backward compatibility)
   const formData = entries[0];
 
-  // Validation and calculations
   useEffect(() => {
     const total = formData?.standardHours + formData?.overtimeHours;
     setHoursWarning(total > 16);
@@ -95,7 +129,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     }
   }, [formData?.timeIn, formData?.timeOut]);
 
-  // Utility functions
   const parseTimeToMinutes = (timeString: string): number => {
     const [hours, minutes] = timeString.split(':').map(Number);
     return hours * 60 + minutes;
@@ -108,12 +141,11 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     let endMinutes = parseTimeToMinutes(formData.timeOut);
 
     if (endMinutes <= startMinutes) {
-      endMinutes += 24 * 60; // Next day
+      endMinutes += 24 * 60;
     }
 
     let totalMinutes = endMinutes - startMinutes;
 
-    // Subtract break time
     if (formData?.breakStart && formData?.breakEnd) {
       const breakStartMinutes = parseTimeToMinutes(formData.breakStart);
       const breakEndMinutes = parseTimeToMinutes(formData.breakEnd);
@@ -121,7 +153,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
       totalMinutes -= breakMinutes;
     }
 
-    const totalHours = Math.round((totalMinutes / 60) * 4) / 4; // Quarter hour rounding
+    const totalHours = Math.round((totalMinutes / 60) * 4) / 4;
     const standardHours = Math.min(totalHours, 8);
     const overtimeHours = Math.max(0, totalHours - 8);
 
@@ -138,7 +170,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
 
   const addNewEntry = () => {
     const newEntry: TimeEntryData = {
-      employeeId: user?.employeeId || 'JSMITH',
+      employeeId: user?.employeeId || 'EMP001',
       dateWorked: new Date().toISOString().split('T')[0],
       projectCode: '',
       extraValue: 'Default',
@@ -173,7 +205,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     const generatedEntries: TimeEntryData[] = [];
     const baseEntry = entries[0];
     
-    const employeesToProcess = isManager ? selectedEmployees : [user?.employeeId || 'JSMITH'];
+    const employeesToProcess = isManager ? selectedEmployees : [user?.employeeId || 'EMP001'];
     
     selectedDates.forEach(date => {
       employeesToProcess.forEach(employeeId => {
@@ -191,10 +223,8 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Generate all entries from selections
     const allEntries = generateEntriesFromSelections();
     
-    // Validation for all entries
     for (let i = 0; i < allEntries.length; i++) {
       const entry = allEntries[i];
       if (!entry.projectCode) {
@@ -230,7 +260,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
   return (
     <Card>
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        {/* Tab Headers */}
         <div className="border-b">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="standard">Standard Hours</TabsTrigger>
@@ -240,7 +269,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
           </TabsList>
         </div>
 
-        {/* Standard Hours Tab */}
         <TabsContent value="standard">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-6">
@@ -255,7 +283,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="border rounded-lg p-4">
-                {/* Employee Selection - Dynamic based on role */}
                 <div className="mb-4">
                   <Label className="flex items-center space-x-1">
                     <User className="w-4 h-4" />
@@ -278,7 +305,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   )}
                 </div>
 
-                {/* Date Selection - Multi-date for all users */}
                 <div className="mb-4">
                   <Label className="flex items-center space-x-1">
                     <Calendar className="w-4 h-4" />
@@ -290,7 +316,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   />
                 </div>
 
-                {/* Project & Extra Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
                     <Label className="flex items-center space-x-1">
@@ -331,7 +356,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </div>
                 </div>
 
-                {/* Cost Code */}
                 <div className="mb-4">
                   <Label className="flex items-center space-x-1">
                     <Hash className="w-4 h-4" />
@@ -354,7 +378,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </Select>
                 </div>
 
-                {/* Hours Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
                     <Label>Standard Hours (PayID 1)</Label>
@@ -380,7 +403,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </div>
                 </div>
 
-                {/* Hours Display */}
                 <div className="bg-muted p-4 rounded-lg mb-4">
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div className="bg-card p-4 rounded-lg border">
@@ -398,7 +420,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </div>
                 </div>
 
-                {/* Hours Warning */}
                 {(formData?.standardHours + formData?.overtimeHours) > 16 && (
                   <div className="bg-red-50 border border-red-200 p-4 rounded-lg flex items-center space-x-3 mb-4">
                     <AlertTriangle className="w-5 h-5 text-red-600" />
@@ -408,7 +429,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </div>
                 )}
 
-                {/* Notes */}
                 <div>
                   <Label>Notes</Label>
                   <Textarea
@@ -427,7 +447,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
           </CardContent>
         </TabsContent>
 
-        {/* Time In/Out Tab */}
         <TabsContent value="timeinout">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-6">
@@ -442,7 +461,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="border rounded-lg p-4">
-                {/* Employee Selection - Dynamic based on role */}
                 <div className="mb-4">
                   <Label className="flex items-center space-x-1">
                     <User className="w-4 h-4" />
@@ -465,7 +483,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   )}
                 </div>
 
-                {/* Date Selection - Multi-date for all users */}
                 <div className="mb-4">
                   <Label className="flex items-center space-x-1">
                     <Calendar className="w-4 h-4" />
@@ -477,7 +494,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   />
                 </div>
 
-                {/* Time Fields */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   <div>
                     <Label>Time In *</Label>
@@ -529,7 +545,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </div>
                 </div>
 
-                {/* Cross Midnight Warning */}
                 {crossesMidnight && (
                   <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg border-l-4 border-l-amber-500">
                     <div className="flex items-start space-x-3">
@@ -552,7 +567,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </div>
                 )}
 
-                {/* Calculated Hours */}
                 <div className="bg-muted p-4 rounded-lg">
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div className="bg-card p-4 rounded-lg border">
@@ -570,7 +584,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </div>
                 </div>
 
-                {/* Project Information */}
                 <div className="border-t pt-6">
                   <h4 className="text-sm font-medium mb-4">Project Information</h4>
                   
@@ -629,7 +642,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                   </div>
                 </div>
 
-                {/* Notes */}
                 <div>
                   <Label>Notes</Label>
                   <Textarea
@@ -648,12 +660,10 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
           </CardContent>
         </TabsContent>
 
-        {/* Bulk Entry Tab */}
         <TabsContent value="bulk">
           <BulkEntryTab onSubmit={handleBulkSubmit} />
         </TabsContent>
 
-        {/* My Timesheets Tab */}
         <TabsContent value="timesheets">
           <MyTimesheetsTab />
         </TabsContent>
