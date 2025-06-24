@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, Users, FileText, TrendingUp, Calendar, History, Building2, BarChart3, CheckSquare, Activity, Target, AlertTriangle, Plus } from 'lucide-react';
+import { Clock, Users, FileText, TrendingUp, Calendar, History, Building2, BarChart3, CheckSquare, Activity, Target, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -111,53 +111,51 @@ const Index = () => {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Header */}
+    <div className="space-y-4">
+      {/* Compact Welcome Header */}
       <div className="flex justify-between items-start">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-foreground">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold text-foreground">
             Welcome back{user?.fullName ? `, ${user.fullName.split(' ')[0]}` : ''}!
           </h1>
-          <p className="text-lg text-muted-foreground">
-            Here's your timesheet overview for {new Date().toLocaleDateString('en-US', { 
+          <p className="text-sm text-muted-foreground">
+            {new Date().toLocaleDateString('en-US', { 
               weekday: 'long', 
               month: 'long', 
               day: 'numeric' 
-            })}.
+            })}
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button asChild className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
-            <Link to="/log">
-              <Plus className="h-4 w-4 mr-2" />
-              Log Time
-            </Link>
-          </Button>
-        </div>
+        <Button asChild size="sm" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
+          <Link to="/log">
+            <Plus className="h-4 w-4 mr-2" />
+            Log Time
+          </Link>
+        </Button>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      {/* Compact Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
         {quickStats.map((stat, index) => (
-          <Card key={index} className="hover:shadow-md transition-all duration-200 border-border">
-            <CardContent className="p-6">
+          <Card key={index} className="hover:shadow-sm transition-shadow border-border">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground">
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground">
                     {stat.title}
                   </p>
-                  <p className="text-3xl font-bold text-foreground">
+                  <p className="text-xl font-bold text-foreground">
                     {stat.value}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {stat.description}
                   </p>
                   <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
                     {stat.trend}
                   </p>
                 </div>
-                <div className={`p-3 rounded-xl ${stat.bgColor}`}>
-                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
+                  <stat.icon className={`h-4 w-4 ${stat.color}`} />
                 </div>
               </div>
             </CardContent>
@@ -165,30 +163,27 @@ const Index = () => {
         ))}
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      {/* Main Content Grid - More Compact */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         {/* Today's Schedule */}
         <Card className="xl:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="h-5 w-5" />
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Activity className="h-4 w-4" />
               Today's Schedule
             </CardTitle>
-            <CardDescription>
-              Your planned work for today
-            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-2">
             {todaysSchedule.map((item, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="flex items-center space-x-4">
-                  <div className="text-center">
-                    <div className="text-sm font-medium text-foreground">{item.time}</div>
+              <div key={index} className="flex items-center justify-between p-2 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                <div className="flex items-center space-x-3">
+                  <div className="text-center min-w-[60px]">
+                    <div className="text-xs font-medium text-foreground">{item.time}</div>
                     <div className="text-xs text-muted-foreground">{item.hours}</div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="font-medium text-foreground">{item.project}</p>
-                    <p className="text-sm text-muted-foreground">{item.task}</p>
+                  <div className="space-y-0.5">
+                    <p className="text-sm font-medium text-foreground">{item.project}</p>
+                    <p className="text-xs text-muted-foreground">{item.task}</p>
                   </div>
                 </div>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>
@@ -196,68 +191,65 @@ const Index = () => {
                 </span>
               </div>
             ))}
-            <Button asChild variant="outline" className="w-full mt-6">
+            <Button asChild variant="outline" size="sm" className="w-full mt-3">
               <Link to="/calendar">
                 <Calendar className="h-4 w-4 mr-2" />
-                View Full Calendar
+                View Calendar
               </Link>
             </Button>
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
+        {/* Compact Quick Actions */}
         <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>
-              Fast access to common tasks
-            </CardDescription>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <Button asChild className="w-full justify-start h-12 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800">
+          <CardContent className="space-y-2">
+            <Button asChild size="sm" className="w-full justify-start h-9 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800">
               <Link to="/log">
-                <Clock className="h-4 w-4 mr-3" />
+                <Clock className="h-4 w-4 mr-2" />
                 Clock In/Out
               </Link>
             </Button>
             
-            <Button asChild variant="outline" className="w-full justify-start h-12">
+            <Button asChild variant="outline" size="sm" className="w-full justify-start h-9">
               <Link to="/projects">
-                <Building2 className="h-4 w-4 mr-3" />
-                View Projects
+                <Building2 className="h-4 w-4 mr-2" />
+                Projects
               </Link>
             </Button>
             
-            <Button asChild variant="outline" className="w-full justify-start h-12">
+            <Button asChild variant="outline" size="sm" className="w-full justify-start h-9">
               <Link to="/daily-reporting">
-                <FileText className="h-4 w-4 mr-3" />
+                <FileText className="h-4 w-4 mr-2" />
                 Daily Reports
               </Link>
             </Button>
             
             {hasRole([UserRole.MANAGER, UserRole.ADMIN]) && (
               <>
-                <Button asChild variant="outline" className="w-full justify-start h-12">
+                <Button asChild variant="outline" size="sm" className="w-full justify-start h-9">
                   <Link to="/manager-approval">
-                    <CheckSquare className="h-4 w-4 mr-3" />
-                    Pending Approvals
+                    <CheckSquare className="h-4 w-4 mr-2" />
+                    Approvals
                   </Link>
                 </Button>
                 
-                <Button asChild variant="outline" className="w-full justify-start h-12">
+                <Button asChild variant="outline" size="sm" className="w-full justify-start h-9">
                   <Link to="/team">
-                    <Users className="h-4 w-4 mr-3" />
-                    Team Management
+                    <Users className="h-4 w-4 mr-2" />
+                    Team
                   </Link>
                 </Button>
               </>
             )}
             
             {hasRole([UserRole.ADMIN]) && (
-              <Button asChild variant="outline" className="w-full justify-start h-12">
+              <Button asChild variant="outline" size="sm" className="w-full justify-start h-9">
                 <Link to="/reports">
-                  <BarChart3 className="h-4 w-4 mr-3" />
-                  Reports & Analytics
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Reports
                 </Link>
               </Button>
             )}
@@ -265,28 +257,25 @@ const Index = () => {
         </Card>
       </div>
 
-      {/* Recent Activity */}
+      {/* Compact Recent Activity */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <History className="h-5 w-5" />
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <History className="h-4 w-4" />
             Recent Activity
           </CardTitle>
-          <CardDescription>
-            Your latest timesheet and project updates
-          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-2">
             {recentActivity.map((activity) => (
-              <div key={activity.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                    <activity.icon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <div key={activity.id} className="flex items-center justify-between p-2 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                    <activity.icon className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <div className="space-y-1">
-                    <p className="font-medium text-foreground">{activity.action}</p>
-                    <p className="text-sm text-muted-foreground">{activity.details}</p>
+                  <div className="space-y-0.5">
+                    <p className="text-sm font-medium text-foreground">{activity.action}</p>
+                    <p className="text-xs text-muted-foreground">{activity.details}</p>
                   </div>
                 </div>
                 <div className="text-right space-y-1">
@@ -301,36 +290,33 @@ const Index = () => {
         </CardContent>
       </Card>
 
-      {/* Current Status Summary */}
+      {/* Compact Progress Summary */}
       <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
-        <CardHeader>
-          <CardTitle className="text-blue-900 dark:text-blue-100 flex items-center gap-2">
-            <Target className="h-5 w-5" />
+        <CardHeader className="pb-3">
+          <CardTitle className="text-blue-900 dark:text-blue-100 flex items-center gap-2 text-base">
+            <Target className="h-4 w-4" />
             Today's Progress
           </CardTitle>
-          <CardDescription className="text-blue-700 dark:text-blue-200">
-            Track your daily targets and achievements
-          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">8:00 AM</div>
-              <div className="text-sm text-blue-700 dark:text-blue-200">Start Time</div>
+              <div className="text-lg font-bold text-blue-900 dark:text-blue-100">8:00 AM</div>
+              <div className="text-xs text-blue-700 dark:text-blue-200">Start Time</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">6.5h</div>
-              <div className="text-sm text-blue-700 dark:text-blue-200">Hours Logged</div>
-              <div className="text-xs text-blue-600 dark:text-blue-300 mt-1">81% of target</div>
+              <div className="text-lg font-bold text-blue-900 dark:text-blue-100">6.5h</div>
+              <div className="text-xs text-blue-700 dark:text-blue-200">Hours Logged</div>
+              <div className="text-xs text-blue-600 dark:text-blue-300 mt-0.5">81% of target</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">2</div>
-              <div className="text-sm text-blue-700 dark:text-blue-200">Projects Today</div>
+              <div className="text-lg font-bold text-blue-900 dark:text-blue-100">2</div>
+              <div className="text-xs text-blue-700 dark:text-blue-200">Projects Today</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">1.5h</div>
-              <div className="text-sm text-blue-700 dark:text-blue-200">Remaining</div>
-              <div className="text-xs text-green-600 dark:text-green-400 mt-1">On track</div>
+              <div className="text-lg font-bold text-blue-900 dark:text-blue-100">1.5h</div>
+              <div className="text-xs text-blue-700 dark:text-blue-200">Remaining</div>
+              <div className="text-xs text-green-600 dark:text-green-400 mt-0.5">On track</div>
             </div>
           </div>
         </CardContent>
