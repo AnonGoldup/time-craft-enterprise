@@ -1,11 +1,10 @@
+
 import { UserRole } from '@/contexts/AuthContext';
 import type { RouteConfig } from './types';
 
 // Main pages
 import Index from '@/pages/Index';
 import Log from '@/pages/Log';
-import TimeEntryStandard from '@/pages/TimeEntryStandard';
-import TimeEntryTimeInOut from '@/pages/TimeEntryTimeInOut';
 import ManagerApproval from '@/pages/ManagerApproval';
 import DailyReporting from '@/pages/DailyReporting';
 import EditDailyReport from '@/pages/EditDailyReport';
@@ -17,7 +16,6 @@ import Calendar from '@/pages/Calendar';
 import Documents from '@/pages/Documents';
 import CompanySettings from '@/pages/CompanySettings';
 import ExportPayrollData from '@/pages/ExportPayrollData';
-import { RedirectToStandardTimeEntry } from '@/components/RedirectToStandardTimeEntry';
 
 export const mainRoutes: RouteConfig[] = [
   {
@@ -26,23 +24,8 @@ export const mainRoutes: RouteConfig[] = [
     requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {
-    path: '/time-entry',
-    component: RedirectToStandardTimeEntry,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
-  },
-  {
     path: '/log',
     component: Log,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
-  },
-  {
-    path: '/time-entry/standard',
-    component: TimeEntryStandard,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
-  },
-  {
-    path: '/time-entry/time-in-out',
-    component: TimeEntryTimeInOut,
     requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {
