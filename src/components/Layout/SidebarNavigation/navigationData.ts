@@ -36,12 +36,6 @@ export const timesheetModule: MenuItem[] = [
     label: 'Documents',
     icon: FileText,
     roles: [UserRole.EMPLOYEE, UserRole.ADMIN]
-  },
-  {
-    path: '/manager-approval',
-    label: 'Approval Management',
-    icon: Users,
-    roles: [UserRole.ADMIN]
   }
 ];
 
@@ -67,6 +61,12 @@ export const projectManagementModule: MenuItem[] = [
 ];
 
 export const administratorModule: MenuItem[] = [
+  {
+    path: '/manager-approval',
+    label: 'Manager Approval',
+    icon: Users,
+    roles: [UserRole.ADMIN]
+  },
   {
     path: '/reports',
     label: 'Reports',

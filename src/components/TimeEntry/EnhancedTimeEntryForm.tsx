@@ -162,7 +162,7 @@ export function EnhancedTimeEntryForm({
   const getDefaultEmployees = React.useCallback((): Employee[] => {
     if (defaultEmployees) {
       // Filter and convert defaultEmployees to valid Employee objects
-      return defaultEmployees
+      const validDefaults = defaultEmployees
         .filter((defaultEmp): defaultEmp is Required<Pick<typeof defaultEmp, 'employeeId' | 'fullName'>> & typeof defaultEmp => 
           typeof defaultEmp.employeeId === 'string' && 
           defaultEmp.employeeId.length > 0 &&
@@ -177,6 +177,8 @@ export function EnhancedTimeEntryForm({
           class: defaultEmp.class,
           isActive: defaultEmp.isActive
         }));
+      
+      return validDefaults;
     }
     if (validCurrentUser && validEmployees.some(emp => emp.employeeId === validCurrentUser.employeeId)) {
       return [validCurrentUser];
