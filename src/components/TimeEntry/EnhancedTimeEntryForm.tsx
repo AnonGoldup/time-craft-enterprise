@@ -102,13 +102,7 @@ interface EnhancedTimeEntryFormProps {
   userRole?: 'ADMIN' | 'EMPLOYEE'
   title?: string
   description?: string
-  defaultEmployees?: Array<{
-    employeeId?: string
-    fullName?: string
-    email?: string
-    class?: string
-    isActive?: boolean
-  }>
+  defaultEmployees?: Employee[]
   defaultDates?: Date[]
 }
 
@@ -160,22 +154,10 @@ export function EnhancedTimeEntryForm({
   // Set default employees based on props or current user - ensure proper typing
   const getDefaultEmployees = React.useCallback((): Employee[] => {
     if (defaultEmployees) {
-      // Filter and convert defaultEmployees to valid Employee objects
-      return defaultEmployees
-        .filter((defaultEmp): defaultEmp is Required<Pick<typeof defaultEmp, 'employeeId' | 'fullName'>> & typeof defaultEmp => 
-          typeof defaultEmp.employeeId === 'string' && 
-          defaultEmp.employeeId.length > 0 &&
-          typeof defaultEmp.fullName === 'string' && 
-          defaultEmp.fullName.length > 0 &&
-          validEmployees.some(validEmp => validEmp.employeeId === defaultEmp.employeeId)
-        )
-        .map((defaultEmp): Employee => ({
-          employeeId: defaultEmp.employeeId,
-          fullName: defaultEmp.fullName,
-          email: defaultEmp.email,
-          class: defaultEmp.class,
-          isActive: defaultEmp.isActive
-        }));
+      // Filter defaultEmployees to ensure they match our valid employees
+      return defaultEmployees.filter(defaultEmp => 
+        validEmployees.some(validEmp => validEmp.employeeId === defaultEmp.employeeId)
+      );
     }
     if (validCurrentUser && validEmployees.some(emp => emp.employeeId === validCurrentUser.employeeId)) {
       return [validCurrentUser];
