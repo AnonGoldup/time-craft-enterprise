@@ -144,7 +144,7 @@ export const MyTimesheetsTab: React.FC = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [projectFilter, setProjectFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [searchFilter, setSearchFilter] = useState('');
 
   // Initialize dates
@@ -163,7 +163,7 @@ export const MyTimesheetsTab: React.FC = () => {
       const matchesDateRange = (!startDate || entry.dateWorked >= startDate) && 
                              (!endDate || entry.dateWorked <= endDate);
       const matchesProject = !projectFilter || entry.projectCode.toLowerCase().includes(projectFilter.toLowerCase());
-      const matchesStatus = !statusFilter || entry.status === statusFilter;
+      const matchesStatus = statusFilter === 'all' || entry.status === statusFilter;
       const matchesSearch = !searchFilter || 
         entry.projectDescription.toLowerCase().includes(searchFilter.toLowerCase()) ||
         entry.costCodeDescription.toLowerCase().includes(searchFilter.toLowerCase()) ||
@@ -297,7 +297,7 @@ export const MyTimesheetsTab: React.FC = () => {
     setStartDate(format(weekStart, 'yyyy-MM-dd'));
     setEndDate(format(weekEnd, 'yyyy-MM-dd'));
     setProjectFilter('');
-    setStatusFilter('');
+    setStatusFilter('all');
     setSearchFilter('');
   };
 
@@ -422,7 +422,7 @@ export const MyTimesheetsTab: React.FC = () => {
                   <SelectValue placeholder="All Statuses" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Statuses</SelectItem>
+                  <SelectItem value="all">All Statuses</SelectItem>
                   <SelectItem value="Draft">Draft</SelectItem>
                   <SelectItem value="Submitted">Submitted</SelectItem>
                   <SelectItem value="Approved">Approved</SelectItem>
