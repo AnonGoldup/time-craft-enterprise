@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Project, ProjectExtra, CostCode } from '@/services/api';
 import { EntryFormData } from '../EntryValidation';
@@ -28,25 +27,31 @@ export const useTimeEntryData = (): TimeEntryData => {
       projectID: 1, 
       projectCode: 'PROJ001', 
       projectDescription: 'Sample Project 1',
-      status: 'Active'
+      status: 'Active',
+      isActive: true,
+      createdDate: '2024-01-01',
+      modifiedDate: '2024-01-01'
     },
     { 
       projectID: 2, 
       projectCode: 'PROJ002', 
       projectDescription: 'Sample Project 2',
-      status: 'Active'
+      status: 'Active',
+      isActive: true,
+      createdDate: '2024-01-01',
+      modifiedDate: '2024-01-01'
     }
   ]);
   
   const [projectExtras, setProjectExtras] = useState<{ [key: string]: ProjectExtra[] }>({});
   const [costCodes] = useState<{ [key: string]: CostCode[] }>({
     '1': [
-      { costCodeID: 1, costCode: 'LABOR', description: 'Labor Costs' },
-      { costCodeID: 2, costCode: 'MATERIAL', description: 'Material Costs' }
+      { costCodeID: 1, costCode: 'LABOR', description: 'Labor Costs', costCodeForSAGE: 'LAB001', isActive: true },
+      { costCodeID: 2, costCode: 'MATERIAL', description: 'Material Costs', costCodeForSAGE: 'MAT001', isActive: true }
     ],
     '2': [
-      { costCodeID: 3, costCode: 'LABOR', description: 'Labor Costs' },
-      { costCodeID: 4, costCode: 'EQUIPMENT', description: 'Equipment Costs' }
+      { costCodeID: 3, costCode: 'LABOR', description: 'Labor Costs', costCodeForSAGE: 'LAB002', isActive: true },
+      { costCodeID: 4, costCode: 'EQUIPMENT', description: 'Equipment Costs', costCodeForSAGE: 'EQP001', isActive: true }
     ]
   });
 
