@@ -63,7 +63,7 @@ export const TimeInOutTab: React.FC<TabContentProps> = ({
     const standardHours = Math.min(totalHours, 8);
     const overtimeHours = Math.max(0, totalHours - 8);
 
-    setEntries(prevEntries => {
+    setEntries((prevEntries: TimeEntryData[]) => {
       const newEntries = [...prevEntries];
       newEntries[0] = {
         ...newEntries[0],
