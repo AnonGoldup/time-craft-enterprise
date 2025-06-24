@@ -1048,14 +1048,14 @@ export default function StandardHoursTab() {
                     </div>
                   </div>
 
-                  {/* Hours Entry - UPDATED: Removed Total Hours column */}
+                  {/* Hours Entry */}
                   <div className="pt-2">
                     <Label className="text-xs font-medium flex items-center space-x-1 mb-2">
                       <Timer className="w-3 h-3" />
                       <span>Hours Entry</span>
                     </Label>
                     
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
                       <div>
                         <Label className="text-xs">Standard Hours *</Label>
                         <Input
@@ -1091,7 +1091,6 @@ export default function StandardHoursTab() {
                           <p className="text-xs text-red-600 mt-1">{getFieldError(entry.id, 'overtimeHours')}</p>
                         )}
                       </div>
-                    </div>
 
                     {/* Quick Hour Buttons */}
                     <div className="flex items-center gap-2 py-2">
