@@ -56,7 +56,6 @@ interface WeekSummary {
 }
 
 export const MyTimesheetsTab: React.FC = () => {
-  // Mock data
   const mockEntries: TimesheetEntry[] = [
     {
       entryId: 1,
@@ -132,21 +131,18 @@ export const MyTimesheetsTab: React.FC = () => {
     }
   ];
 
-  // State
   const [allEntries] = useState<TimesheetEntry[]>(mockEntries);
   const [filteredEntries, setFilteredEntries] = useState<TimesheetEntry[]>(mockEntries);
   const [selectedEntries, setSelectedEntries] = useState<number[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<TimesheetEntry | null>(null);
   const [showEntryModal, setShowEntryModal] = useState(false);
   
-  // Filter state
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [projectFilter, setProjectFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchFilter, setSearchFilter] = useState('');
 
-  // Initialize dates
   useEffect(() => {
     const today = new Date();
     const weekStart = startOfWeek(today);
@@ -156,7 +152,6 @@ export const MyTimesheetsTab: React.FC = () => {
     setEndDate(format(weekEnd, 'yyyy-MM-dd'));
   }, []);
 
-  // Apply filters
   useEffect(() => {
     let filtered = allEntries.filter(entry => {
       const matchesDateRange = (!startDate || entry.dateWorked >= startDate) && 
@@ -174,7 +169,6 @@ export const MyTimesheetsTab: React.FC = () => {
     setFilteredEntries(filtered);
   }, [allEntries, startDate, endDate, projectFilter, statusFilter, searchFilter]);
 
-  // Helper functions
   const formatDate = (dateStr: string) => {
     return format(new Date(dateStr), 'MMM dd');
   };
@@ -210,7 +204,6 @@ export const MyTimesheetsTab: React.FC = () => {
     );
   };
 
-  // Selection functions
   const toggleEntrySelection = (entryId: number) => {
     setSelectedEntries(prev => 
       prev.includes(entryId) 
@@ -238,7 +231,6 @@ export const MyTimesheetsTab: React.FC = () => {
     setSelectedEntries([]);
   };
 
-  // Entry operations
   const viewEntry = (entry: TimesheetEntry) => {
     setSelectedEntry(entry);
     setShowEntryModal(true);
@@ -315,23 +307,23 @@ export const MyTimesheetsTab: React.FC = () => {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
-      <CardContent className="p-6">
-        <div className="flex items-center space-x-2 mb-6">
+      <div className="space-y-2">
+        <div className="flex items-center space-x-2">
           <FileText className="w-5 h-5 text-blue-600" />
           <h3 className="text-lg font-semibold">My Timesheets</h3>
         </div>
-        <p className="text-muted-foreground mt-1">View and manage your timesheet entries for the selected period</p>
-      </CardContent>
+        <p className="text-muted-foreground">View and manage your timesheet entries for the selected period</p>
+      </div>
 
       {/* Summary Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <Clock className="h-4 w-4 text-blue-600" />
-              <div>
+              <Clock className="h-4 w-4 text-blue-600 flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-sm text-muted-foreground">Total Hours</p>
                 <p className="text-2xl font-bold">{summaryStats.totalHours.toFixed(1)}</p>
               </div>
@@ -342,8 +334,8 @@ export const MyTimesheetsTab: React.FC = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <User className="h-4 w-4 text-green-600" />
-              <div>
+              <User className="h-4 w-4 text-green-600 flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-sm text-muted-foreground">Standard</p>
                 <p className="text-2xl font-bold text-green-600">{summaryStats.totalStandardHours.toFixed(1)}</p>
               </div>
@@ -354,8 +346,8 @@ export const MyTimesheetsTab: React.FC = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <AlertCircle className="h-4 w-4 text-orange-600" />
-              <div>
+              <AlertCircle className="h-4 w-4 text-orange-600 flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-sm text-muted-foreground">Overtime</p>
                 <p className="text-2xl font-bold text-orange-600">{summaryStats.totalOvertimeHours.toFixed(1)}</p>
               </div>
@@ -366,8 +358,8 @@ export const MyTimesheetsTab: React.FC = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <FileText className="h-4 w-4 text-purple-600" />
-              <div>
+              <FileText className="h-4 w-4 text-purple-600 flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-sm text-muted-foreground">Entries</p>
                 <p className="text-2xl font-bold">{summaryStats.totalEntries}</p>
               </div>
@@ -384,38 +376,41 @@ export const MyTimesheetsTab: React.FC = () => {
             <h3 className="text-lg font-semibold">Filters</h3>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Start Date</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="space-y-1">
+              <label className="block text-sm font-medium">Start Date</label>
               <Input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
+                className="w-full"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium mb-1">End Date</label>
+            <div className="space-y-1">
+              <label className="block text-sm font-medium">End Date</label>
               <Input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
+                className="w-full"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium mb-1">Project</label>
+            <div className="space-y-1">
+              <label className="block text-sm font-medium">Project</label>
               <Input
                 placeholder="Filter by project..."
                 value={projectFilter}
                 onChange={(e) => setProjectFilter(e.target.value)}
+                className="w-full"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium mb-1">Status</label>
+            <div className="space-y-1">
+              <label className="block text-sm font-medium">Status</label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="All Statuses" />
                 </SelectTrigger>
                 <SelectContent>
@@ -428,13 +423,13 @@ export const MyTimesheetsTab: React.FC = () => {
               </Select>
             </div>
             
-            <div>
-              <label className="block text-sm font-medium mb-1">Search</label>
+            <div className="space-y-1">
+              <label className="block text-sm font-medium">Search</label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search entries..."
-                  className="pl-9"
+                  className="pl-9 w-full"
                   value={searchFilter}
                   onChange={(e) => setSearchFilter(e.target.value)}
                 />
@@ -442,7 +437,7 @@ export const MyTimesheetsTab: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex justify-between items-center mt-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 space-y-2 sm:space-y-0">
             <Button variant="outline" onClick={resetFilters} className="flex items-center space-x-1">
               <RefreshCw className="h-4 w-4" />
               <span>Reset</span>
@@ -467,11 +462,11 @@ export const MyTimesheetsTab: React.FC = () => {
 
           {/* Entry Details Tab */}
           <TabsContent value="entries" className="p-6">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
               <h3 className="text-lg font-semibold">Timesheet Entries</h3>
-              <div className="flex space-x-2">
+              <div className="flex flex-wrap gap-2">
                 {selectedEntries.length > 0 && (
-                  <div className="flex space-x-2">
+                  <>
                     <Button variant="outline" size="sm" onClick={clearSelection}>
                       Clear ({selectedEntries.length})
                     </Button>
@@ -479,7 +474,7 @@ export const MyTimesheetsTab: React.FC = () => {
                       <Trash2 className="h-3 w-3 mr-1" />
                       Delete Selected
                     </Button>
-                  </div>
+                  </>
                 )}
                 <Button variant="outline" size="sm" onClick={selectAllDraft}>
                   Select All Draft
@@ -498,10 +493,10 @@ export const MyTimesheetsTab: React.FC = () => {
                 </Button>
               </div>
             ) : (
-              <div className="space-y-2">
-                {/* Table Header */}
-                <div className="grid grid-cols-12 gap-2 p-3 bg-muted text-sm font-medium">
-                  <div className="col-span-1">
+              <div className="space-y-2 overflow-x-auto">
+                {/* Table Header - Fixed layout */}
+                <div className="min-w-[1200px] grid grid-cols-12 gap-2 p-3 bg-muted text-sm font-medium rounded-t-lg">
+                  <div className="col-span-1 flex items-center">
                     <input
                       type="checkbox"
                       checked={selectedEntries.length === filteredEntries.filter(e => e.status === 'Draft').length && filteredEntries.filter(e => e.status === 'Draft').length > 0}
@@ -520,107 +515,113 @@ export const MyTimesheetsTab: React.FC = () => {
                   <div className="col-span-1 text-right">Actions</div>
                 </div>
                 
-                {/* Table Body */}
-                {filteredEntries.map(entry => (
-                  <div
-                    key={entry.entryId}
-                    className={`grid grid-cols-12 gap-2 p-3 hover:bg-muted/50 border rounded ${
-                      selectedEntries.includes(entry.entryId) ? 'bg-blue-50' : ''
-                    }`}
-                  >
-                    <div className="col-span-1 flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedEntries.includes(entry.entryId)}
-                        onChange={() => toggleEntrySelection(entry.entryId)}
-                        disabled={entry.status !== 'Draft'}
-                        className="rounded border-input"
-                      />
-                    </div>
-                    <div className="col-span-1 flex items-center font-medium">
-                      {formatDate(entry.dateWorked)}
-                    </div>
-                    <div className="col-span-2 flex items-center">
-                      <div className="flex items-center space-x-1">
-                        <Building className="h-3 w-3 text-muted-foreground" />
-                        <div className="min-w-0">
-                          <div className="font-medium text-sm">{entry.projectCode}</div>
-                          <div className="text-xs text-muted-foreground truncate">
-                            {entry.projectDescription}
+                {/* Table Body - Fixed layout */}
+                <div className="space-y-1">
+                  {filteredEntries.map(entry => (
+                    <div
+                      key={entry.entryId}
+                      className={`min-w-[1200px] grid grid-cols-12 gap-2 p-3 hover:bg-muted/50 border rounded transition-colors ${
+                        selectedEntries.includes(entry.entryId) ? 'bg-blue-50 border-blue-200' : ''
+                      }`}
+                    >
+                      <div className="col-span-1 flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedEntries.includes(entry.entryId)}
+                          onChange={() => toggleEntrySelection(entry.entryId)}
+                          disabled={entry.status !== 'Draft'}
+                          className="rounded border-input"
+                        />
+                      </div>
+                      <div className="col-span-1 flex items-center font-medium text-sm">
+                        {formatDate(entry.dateWorked)}
+                      </div>
+                      <div className="col-span-2 flex items-center min-w-0">
+                        <div className="flex items-start space-x-1 min-w-0">
+                          <Building className="h-3 w-3 text-muted-foreground mt-0.5 flex-shrink-0" />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium text-sm truncate">{entry.projectCode}</div>
+                            <div className="text-xs text-muted-foreground truncate">
+                              {entry.projectDescription}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="col-span-1 flex items-center">
-                      <Badge variant="secondary" className="text-xs">
-                        {entry.extraValue}
-                      </Badge>
-                    </div>
-                    <div className="col-span-2 flex items-center">
-                      <div className="flex items-center space-x-1">
-                        <Hash className="h-3 w-3 text-muted-foreground" />
-                        <div className="min-w-0">
-                          <div className="font-medium text-sm">{entry.costCode}</div>
-                          <div className="text-xs text-muted-foreground truncate">
-                            {entry.costCodeDescription}
+                      <div className="col-span-1 flex items-center">
+                        <Badge variant="secondary" className="text-xs truncate max-w-full">
+                          {entry.extraValue}
+                        </Badge>
+                      </div>
+                      <div className="col-span-2 flex items-center min-w-0">
+                        <div className="flex items-start space-x-1 min-w-0">
+                          <Hash className="h-3 w-3 text-muted-foreground mt-0.5 flex-shrink-0" />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium text-sm truncate">{entry.costCode}</div>
+                            <div className="text-xs text-muted-foreground truncate">
+                              {entry.costCodeDescription}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="col-span-1 text-right font-mono flex items-center justify-end">
-                      {entry.standardHours.toFixed(2)}
-                    </div>
-                    <div className="col-span-1 text-right font-mono text-orange-600 flex items-center justify-end">
-                      {entry.overtimeHours.toFixed(2)}
-                    </div>
-                    <div className="col-span-1 text-right font-mono font-semibold flex items-center justify-end">
-                      {entry.totalHours.toFixed(2)}
-                    </div>
-                    <div className="col-span-1 flex items-center">
-                      {getStatusBadge(entry.status)}
-                    </div>
-                    <div className="col-span-1 flex items-center justify-end">
-                      <div className="flex items-center space-x-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => viewEntry(entry)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Eye className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => duplicateEntry(entry)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                        {entry.status === 'Draft' && (
-                          <>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => editEntry(entry)}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Edit3 className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => deleteEntry(entry)}
-                              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </>
-                        )}
+                      <div className="col-span-1 text-right font-mono flex items-center justify-end text-sm">
+                        {entry.standardHours.toFixed(2)}
+                      </div>
+                      <div className="col-span-1 text-right font-mono text-orange-600 flex items-center justify-end text-sm">
+                        {entry.overtimeHours.toFixed(2)}
+                      </div>
+                      <div className="col-span-1 text-right font-mono font-semibold flex items-center justify-end text-sm">
+                        {entry.totalHours.toFixed(2)}
+                      </div>
+                      <div className="col-span-1 flex items-center">
+                        {getStatusBadge(entry.status)}
+                      </div>
+                      <div className="col-span-1 flex items-center justify-end">
+                        <div className="flex items-center space-x-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => viewEntry(entry)}
+                            className="h-8 w-8 p-0"
+                            title="View entry"
+                          >
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => duplicateEntry(entry)}
+                            className="h-8 w-8 p-0"
+                            title="Duplicate entry"
+                          >
+                            <Copy className="h-3 w-3" />
+                          </Button>
+                          {entry.status === 'Draft' && (
+                            <>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => editEntry(entry)}
+                                className="h-8 w-8 p-0"
+                                title="Edit entry"
+                              >
+                                <Edit3 className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => deleteEntry(entry)}
+                                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                title="Delete entry"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
           </TabsContent>
@@ -649,7 +650,6 @@ export const MyTimesheetsTab: React.FC = () => {
                     </div>
                     <CardContent className="p-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Summary Statistics */}
                         <div className="space-y-4">
                           <h5 className="font-semibold">Summary</h5>
                           <div className="grid grid-cols-2 gap-4">
@@ -672,7 +672,6 @@ export const MyTimesheetsTab: React.FC = () => {
                           </div>
                         </div>
                         
-                        {/* Daily Breakdown */}
                         <div className="space-y-4">
                           <h5 className="font-semibold">Daily Breakdown</h5>
                           <div className="grid grid-cols-7 gap-2 text-center">
@@ -704,8 +703,7 @@ export const MyTimesheetsTab: React.FC = () => {
                         </div>
                       </div>
                       
-                      {/* Actions */}
-                      <div className="flex justify-between items-center mt-6 pt-4 border-t">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 pt-4 border-t space-y-2 sm:space-y-0">
                         <div className="text-sm text-muted-foreground">
                           {week.status === 'Draft' ? 'Ready to submit for approval' : 
                            week.status === 'Submitted' ? 'Awaiting manager approval' : 
@@ -740,7 +738,7 @@ export const MyTimesheetsTab: React.FC = () => {
           </DialogHeader>
           {selectedEntry && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-muted-foreground">Employee</label>
                   <p className="text-sm">{selectedEntry.employeeName} ({selectedEntry.employeeId})</p>
@@ -766,7 +764,7 @@ export const MyTimesheetsTab: React.FC = () => {
                   <div className="pt-1">{getStatusBadge(selectedEntry.status)}</div>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-muted-foreground">Standard Hours</label>
                   <p className="text-lg font-semibold">{selectedEntry.standardHours.toFixed(2)}</p>
