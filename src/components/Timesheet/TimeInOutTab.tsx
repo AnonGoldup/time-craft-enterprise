@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -198,7 +197,76 @@ export const TimeInOutTab: React.FC<TabContentProps> = ({
               </div>
             </div>
 
-            {/* Time Fields */}
+            {/* Project Information */}
+            <div className="border-t pt-6 mb-4">
+              <h4 className="text-sm font-medium mb-4">Project Information</h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <Label className="flex items-center space-x-1">
+                    <Building className="w-4 h-4" />
+                    <span>Project *</span>
+                  </Label>
+                  <Select 
+                    value={entry.projectCode} 
+                    onValueChange={(value) => handleInputChange(index, 'projectCode', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Project" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {projects.map(project => (
+                        <SelectItem key={project.code} value={project.code}>
+                          {project.code} - {project.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Extra</Label>
+                  <Select 
+                    value={entry.extraValue} 
+                    onValueChange={(value) => handleInputChange(index, 'extraValue', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {extras.map(extra => (
+                        <SelectItem key={extra.extraID} value={extra.extraValue}>
+                          {extra.extraValue} - {extra.description}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <Label className="flex items-center space-x-1">
+                  <Hash className="w-4 h-4" />
+                  <span>Cost Code *</span>
+                </Label>
+                <Select 
+                  value={entry.costCode} 
+                  onValueChange={(value) => handleInputChange(index, 'costCode', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Cost Code" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {costCodes.map(code => (
+                      <SelectItem key={code.costCodeID} value={code.costCode}>
+                        {code.costCode} - {code.description}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Time Fields - Moved underneath Cost Code */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
               <div>
                 <Label>Time In *</Label>
@@ -252,7 +320,7 @@ export const TimeInOutTab: React.FC<TabContentProps> = ({
 
             {/* Cross Midnight Warning */}
             {crossesMidnight && (
-              <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg border-l-4 border-l-amber-500">
+              <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg border-l-4 border-l-amber-500 mb-4">
                 <div className="flex items-start space-x-3">
                   <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
                   <div>
@@ -274,7 +342,7 @@ export const TimeInOutTab: React.FC<TabContentProps> = ({
             )}
 
             {/* Calculated Hours */}
-            <div className="bg-muted p-4 rounded-lg">
+            <div className="bg-muted p-4 rounded-lg mb-4">
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div className="bg-card p-4 rounded-lg border">
                   <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Standard</div>
@@ -288,75 +356,6 @@ export const TimeInOutTab: React.FC<TabContentProps> = ({
                   <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total</div>
                   <div className="text-2xl font-bold text-blue-600">{(formData?.standardHours + formData?.overtimeHours).toFixed(2)}</div>
                 </div>
-              </div>
-            </div>
-
-            {/* Project Information */}
-            <div className="border-t pt-6">
-              <h4 className="text-sm font-medium mb-4">Project Information</h4>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <Label className="flex items-center space-x-1">
-                    <Building className="w-4 h-4" />
-                    <span>Project *</span>
-                  </Label>
-                  <Select 
-                    value={entry.projectCode} 
-                    onValueChange={(value) => handleInputChange(index, 'projectCode', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Project" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {projects.map(project => (
-                        <SelectItem key={project.code} value={project.code}>
-                          {project.code} - {project.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Extra</Label>
-                  <Select 
-                    value={entry.extraValue} 
-                    onValueChange={(value) => handleInputChange(index, 'extraValue', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {extras.map(extra => (
-                        <SelectItem key={extra.extraID} value={extra.extraValue}>
-                          {extra.extraValue} - {extra.description}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <Label className="flex items-center space-x-1">
-                  <Hash className="w-4 h-4" />
-                  <span>Cost Code *</span>
-                </Label>
-                <Select 
-                  value={entry.costCode} 
-                  onValueChange={(value) => handleInputChange(index, 'costCode', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Cost Code" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {costCodes.map(code => (
-                      <SelectItem key={code.costCodeID} value={code.costCode}>
-                        {code.costCode} - {code.description}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
             </div>
 
