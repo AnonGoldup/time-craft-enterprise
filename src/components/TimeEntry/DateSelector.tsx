@@ -3,7 +3,7 @@ import React from 'react';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { { MultiDatePicker } from './MultiDatePicker';
+import { MultiDatePicker } from './MultiDatePicker';
 import {
   Popover,
   PopoverContent,
