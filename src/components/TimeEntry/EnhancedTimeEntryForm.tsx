@@ -95,7 +95,7 @@ export function EnhancedTimeEntryForm({
 }: EnhancedTimeEntryFormProps) {
   const [isLoading, setIsLoading] = React.useState(false)
   
-  // Convert mock data to match interface with all required properties
+  // Convert mock employees to proper format with required fields
   const employees: Employee[] = mockEmployees
     .filter(emp => emp.id && emp.name) // Filter first to ensure we have required data
     .map(emp => ({
