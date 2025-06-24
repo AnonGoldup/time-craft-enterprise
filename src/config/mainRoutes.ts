@@ -1,3 +1,4 @@
+
 import { UserRole } from '@/contexts/AuthContext';
 import type { RouteConfig } from './types';
 
@@ -21,62 +22,62 @@ export const mainRoutes: RouteConfig[] = [
   {
     path: '/',
     component: Index,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.ADMIN]
   },
   {
     path: '/log',
     component: Log,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.ADMIN]
   },
   {
     path: '/timesheet',
     component: Timesheet,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.ADMIN]
   },
   {
     path: '/manager-approval',
     component: ManagerApproval,
-    requiredRoles: [UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.ADMIN]
   },
   {
     path: '/daily-reporting',
     component: DailyReporting,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.ADMIN]
   },
   {
     path: '/daily-reporting/edit/:id',
     component: EditDailyReport,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.ADMIN]
   },
   {
     path: '/reports',
     component: Reports,
-    requiredRoles: [UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.ADMIN]
   },
   {
     path: '/team',
     component: TeamManagement,
-    requiredRoles: [UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.ADMIN]
   },
   {
     path: '/projects',
     component: Projects,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.ADMIN]
   },
   {
     path: '/projects/:id',
     component: ProjectDetail,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.ADMIN]
   },
   {
     path: '/calendar',
     component: Calendar,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.ADMIN]
   },
   {
     path: '/documents',
     component: Documents,
-    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.ADMIN]
   },
   {
     path: '/company-settings',

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -38,13 +37,13 @@ const Index = () => {
       trend: "1 new assigned"
     },
     {
-      title: hasRole([UserRole.MANAGER, UserRole.ADMIN]) ? "Team Hours" : "Monthly Total",
-      value: hasRole([UserRole.MANAGER, UserRole.ADMIN]) ? "284h" : "142h",
-      description: hasRole([UserRole.MANAGER, UserRole.ADMIN]) ? "8 team members" : "8h over target",
-      icon: hasRole([UserRole.MANAGER, UserRole.ADMIN]) ? Users : TrendingUp,
+      title: hasRole([UserRole.ADMIN]) ? "Team Hours" : "Monthly Total",
+      value: hasRole([UserRole.ADMIN]) ? "284h" : "142h",
+      description: hasRole([UserRole.ADMIN]) ? "8 team members" : "8h over target",
+      icon: hasRole([UserRole.ADMIN]) ? Users : TrendingUp,
       color: "text-orange-600 dark:text-orange-400",
       bgColor: "bg-orange-50 dark:bg-orange-900/20",
-      trend: hasRole([UserRole.MANAGER, UserRole.ADMIN]) ? "+12% vs last week" : "+5.6% vs last month"
+      trend: hasRole([UserRole.ADMIN]) ? "+12% vs last week" : "+5.6% vs last month"
     }
   ];
 
@@ -227,7 +226,7 @@ const Index = () => {
               </Link>
             </Button>
             
-            {hasRole([UserRole.MANAGER, UserRole.ADMIN]) && (
+            {hasRole([UserRole.ADMIN]) && (
               <>
                 <Button asChild variant="outline" size="sm" className="w-full justify-start h-9">
                   <Link to="/manager-approval">
@@ -242,16 +241,14 @@ const Index = () => {
                     Team
                   </Link>
                 </Button>
+                
+                <Button asChild variant="outline" size="sm" className="w-full justify-start h-9">
+                  <Link to="/reports">
+                    <BarChart3 className="h-4 w-4 mr-2" />
+                    Reports
+                  </Link>
+                </Button>
               </>
-            )}
-            
-            {hasRole([UserRole.ADMIN]) && (
-              <Button asChild variant="outline" size="sm" className="w-full justify-start h-9">
-                <Link to="/reports">
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  Reports
-                </Link>
-              </Button>
             )}
           </CardContent>
         </Card>
