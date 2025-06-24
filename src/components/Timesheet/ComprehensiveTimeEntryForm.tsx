@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Clock, User, Calendar, Building, Hash, AlertTriangle, Users, FileText } from 'lucide-react';
 import { useProjectCostCodes } from '@/hooks/useProjectCostCodes';
 import { BulkEntryTab } from './BulkEntryTab';
+import { MyTimesheetsTab } from './MyTimesheetsTab';
 import { toast } from 'sonner';
 
 interface TimeEntryData {
@@ -570,13 +571,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
 
         {/* My Timesheets Tab */}
         <TabsContent value="timesheets">
-          <CardContent className="p-6">
-            <div className="text-center py-12">
-              <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">My Timesheets</h3>
-              <p className="text-muted-foreground">View and manage your timesheet entries</p>
-            </div>
-          </CardContent>
+          <MyTimesheetsTab />
         </TabsContent>
       </Tabs>
     </Card>
