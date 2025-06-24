@@ -6,14 +6,7 @@ import ProjectDetailsRow from './ProjectDetailsRow';
 import TimeInOutRow from './TimeInOutRow';
 import NotesAndSubmitRow from './NotesAndSubmitRow';
 
-interface TimeInOutEntryCardProps {
-  entry: { id: number; notes: string };
-  index: number;
-  entriesLength: number;
-  onDeleteRow: (id: number) => void;
-  onUpdateNotes: (entryId: number, notes: string) => void;
-  onSubmit: () => void;
-  // Project details props
+interface TimeInOutFormState {
   selectedProject: string;
   setSelectedProject: (value: string) => void;
   selectedExtra: string;
@@ -28,82 +21,48 @@ interface TimeInOutEntryCardProps {
   setSelectedEmployee: (value: string) => void;
   selectedEmployees: string[];
   setSelectedEmployees: (value: string[]) => void;
-  // Time props
   timeInHour: string;
   setTimeInHour: (value: string) => void;
   timeInMinute: string;
   setTimeInMinute: (value: string) => void;
-  timeInPeriod: string;
-  setTimeInPeriod: (value: string) => void;
+  timeInPeriod: 'AM' | 'PM';
+  setTimeInPeriod: (value: 'AM' | 'PM') => void;
   timeOutHour: string;
   setTimeOutHour: (value: string) => void;
   timeOutMinute: string;
   setTimeOutMinute: (value: string) => void;
-  timeOutPeriod: string;
-  setTimeOutPeriod: (value: string) => void;
+  timeOutPeriod: 'AM' | 'PM';
+  setTimeOutPeriod: (value: 'AM' | 'PM') => void;
   breakInHour: string;
   setBreakInHour: (value: string) => void;
   breakInMinute: string;
   setBreakInMinute: (value: string) => void;
-  breakInPeriod: string;
-  setBreakInPeriod: (value: string) => void;
+  breakInPeriod: 'AM' | 'PM';
+  setBreakInPeriod: (value: 'AM' | 'PM') => void;
   breakOutHour: string;
   setBreakOutHour: (value: string) => void;
   breakOutMinute: string;
   setBreakOutMinute: (value: string) => void;
-  breakOutPeriod: string;
-  setBreakOutPeriod: (value: string) => void;
-  setQuickTime: (startHour: string, startPeriod: string, endHour: string, endPeriod: string) => void;
+  breakOutPeriod: 'AM' | 'PM';
+  setBreakOutPeriod: (value: 'AM' | 'PM') => void;
+  setQuickTime: (startHour: string, startPeriod: 'AM' | 'PM', endHour: string, endPeriod: 'AM' | 'PM') => void;
+  updateEntryNotes: (entryId: number, notes: string) => void;
+  deleteRow: (id: number) => void;
+  handleSubmit: () => void;
+}
+
+interface TimeInOutEntryCardProps {
+  entry: { id: number; notes: string };
+  index: number;
+  entriesLength: number;
+  formState: TimeInOutFormState;
 }
 
 const TimeInOutEntryCard: React.FC<TimeInOutEntryCardProps> = ({
   entry,
   index,
   entriesLength,
-  onDeleteRow,
-  onUpdateNotes,
-  onSubmit,
-  // Project details props
-  selectedProject,
-  setSelectedProject,
-  selectedExtra,
-  setSelectedExtra,
-  selectedCostCode,
-  setSelectedCostCode,
-  selectedDate,
-  setSelectedDate,
-  selectedDates,
-  setSelectedDates,
-  selectedEmployee,
-  setSelectedEmployee,
-  selectedEmployees,
-  setSelectedEmployees,
-  // Time props
-  timeInHour,
-  setTimeInHour,
-  timeInMinute,
-  setTimeInMinute,
-  timeInPeriod,
-  setTimeInPeriod,
-  timeOutHour,
-  setTimeOutHour,
-  timeOutMinute,
-  setTimeOutMinute,
-  timeOutPeriod,
-  setTimeOutPeriod,
-  breakInHour,
-  setBreakInHour,
-  breakInMinute,
-  setBreakInMinute,
-  breakInPeriod,
-  setBreakInPeriod,
-  breakOutHour,
-  setBreakOutHour,
-  breakOutMinute,
-  setBreakOutMinute,
-  breakOutPeriod,
-  setBreakOutPeriod,
-  setQuickTime
+  formState
 }) => {
   const getRowBackgroundClass = (index: number) => {
     if (index === 0) return 'bg-card';
@@ -129,7 +88,7 @@ const TimeInOutEntryCard: React.FC<TimeInOutEntryCardProps> = ({
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => onDeleteRow(entry.id)} 
+            onClick={() => formState.deleteRow(entry.id)} 
             className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
           >
             <Trash2 className="h-4 w-4" />
@@ -143,53 +102,53 @@ const TimeInOutEntryCard: React.FC<TimeInOutEntryCardProps> = ({
         <div className="space-y-2">
           <h4 className="text-sm font-medium text-foreground">Project & Time Details</h4>
           <ProjectDetailsRow 
-            selectedProject={selectedProject} 
-            setSelectedProject={setSelectedProject} 
-            selectedExtra={selectedExtra} 
-            setSelectedExtra={setSelectedExtra} 
-            selectedCostCode={selectedCostCode} 
-            setSelectedCostCode={setSelectedCostCode} 
-            selectedDate={selectedDate} 
-            setSelectedDate={setSelectedDate} 
-            selectedDates={selectedDates} 
-            setSelectedDates={setSelectedDates} 
-            selectedEmployee={selectedEmployee} 
-            setSelectedEmployee={setSelectedEmployee} 
-            selectedEmployees={selectedEmployees} 
-            setSelectedEmployees={setSelectedEmployees} 
-            useCostCodeInput={false} 
-            useMultiDateSelection={true} 
+            selectedProject={formState.selectedProject}
+            setSelectedProject={formState.setSelectedProject}
+            selectedExtra={formState.selectedExtra}
+            setSelectedExtra={formState.setSelectedExtra}
+            selectedCostCode={formState.selectedCostCode}
+            setSelectedCostCode={formState.setSelectedCostCode}
+            selectedDate={formState.selectedDate}
+            setSelectedDate={formState.setSelectedDate}
+            selectedDates={formState.selectedDates}
+            setSelectedDates={formState.setSelectedDates}
+            selectedEmployee={formState.selectedEmployee}
+            setSelectedEmployee={formState.setSelectedEmployee}
+            selectedEmployees={formState.selectedEmployees}
+            setSelectedEmployees={formState.setSelectedEmployees}
+            useCostCodeInput={false}
+            useMultiDateSelection={true}
           />
         </div>
 
         {/* Time In/Out Row */}
         <div className="border-t pt-3">
           <TimeInOutRow 
-            timeInHour={timeInHour} 
-            setTimeInHour={setTimeInHour} 
-            timeInMinute={timeInMinute} 
-            setTimeInMinute={setTimeInMinute} 
-            timeInPeriod={timeInPeriod} 
-            setTimeInPeriod={setTimeInPeriod} 
-            timeOutHour={timeOutHour} 
-            setTimeOutHour={setTimeOutHour} 
-            timeOutMinute={timeOutMinute} 
-            setTimeOutMinute={setTimeOutMinute} 
-            timeOutPeriod={timeOutPeriod} 
-            setTimeOutPeriod={setTimeOutPeriod} 
-            breakInHour={breakInHour} 
-            setBreakInHour={setBreakInHour} 
-            breakInMinute={breakInMinute} 
-            setBreakInMinute={setBreakInMinute} 
-            breakInPeriod={breakInPeriod} 
-            setBreakInPeriod={setBreakInPeriod} 
-            breakOutHour={breakOutHour} 
-            setBreakOutHour={setBreakOutHour} 
-            breakOutMinute={breakOutMinute} 
-            setBreakOutMinute={setBreakOutMinute} 
-            breakOutPeriod={breakOutPeriod} 
-            setBreakOutPeriod={setBreakOutPeriod} 
-            setQuickTime={setQuickTime} 
+            timeInHour={formState.timeInHour}
+            setTimeInHour={formState.setTimeInHour}
+            timeInMinute={formState.timeInMinute}
+            setTimeInMinute={formState.setTimeInMinute}
+            timeInPeriod={formState.timeInPeriod}
+            setTimeInPeriod={formState.setTimeInPeriod}
+            timeOutHour={formState.timeOutHour}
+            setTimeOutHour={formState.setTimeOutHour}
+            timeOutMinute={formState.timeOutMinute}
+            setTimeOutMinute={formState.setTimeOutMinute}
+            timeOutPeriod={formState.timeOutPeriod}
+            setTimeOutPeriod={formState.setTimeOutPeriod}
+            breakInHour={formState.breakInHour}
+            setBreakInHour={formState.setBreakInHour}
+            breakInMinute={formState.breakInMinute}
+            setBreakInMinute={formState.setBreakInMinute}
+            breakInPeriod={formState.breakInPeriod}
+            setBreakInPeriod={formState.setBreakInPeriod}
+            breakOutHour={formState.breakOutHour}
+            setBreakOutHour={formState.setBreakOutHour}
+            breakOutMinute={formState.breakOutMinute}
+            setBreakOutMinute={formState.setBreakOutMinute}
+            breakOutPeriod={formState.breakOutPeriod}
+            setBreakOutPeriod={formState.setBreakOutPeriod}
+            setQuickTime={formState.setQuickTime}
           />
         </div>
       </div>
@@ -197,22 +156,22 @@ const TimeInOutEntryCard: React.FC<TimeInOutEntryCardProps> = ({
       {/* Notes Section - Individual per entry */}
       <div className="bg-muted/30 rounded-lg p-2 border">
         <NotesAndSubmitRow 
-          notes={entry.notes} 
-          setNotes={(notes) => onUpdateNotes(entry.id, notes)} 
-          showTotalHours={true} 
-          timeInHour={timeInHour} 
-          timeInMinute={timeInMinute} 
-          timeInPeriod={timeInPeriod} 
-          timeOutHour={timeOutHour} 
-          timeOutMinute={timeOutMinute} 
-          timeOutPeriod={timeOutPeriod} 
-          breakInHour={breakInHour} 
-          breakInMinute={breakInMinute} 
-          breakInPeriod={breakInPeriod} 
-          breakOutHour={breakOutHour} 
-          breakOutMinute={breakOutMinute} 
-          breakOutPeriod={breakOutPeriod}
-          onSubmit={onSubmit}
+          notes={entry.notes}
+          setNotes={(notes) => formState.updateEntryNotes(entry.id, notes)}
+          showTotalHours={true}
+          timeInHour={formState.timeInHour}
+          timeInMinute={formState.timeInMinute}
+          timeInPeriod={formState.timeInPeriod}
+          timeOutHour={formState.timeOutHour}
+          timeOutMinute={formState.timeOutMinute}
+          timeOutPeriod={formState.timeOutPeriod}
+          breakInHour={formState.breakInHour}
+          breakInMinute={formState.breakInMinute}
+          breakInPeriod={formState.breakInPeriod}
+          breakOutHour={formState.breakOutHour}
+          breakOutMinute={formState.breakOutMinute}
+          breakOutPeriod={formState.breakOutPeriod}
+          onSubmit={formState.handleSubmit}
         />
       </div>
     </div>

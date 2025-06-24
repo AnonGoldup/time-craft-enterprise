@@ -44,7 +44,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   useCostCodeInput = false,
   useMultiDateSelection = false
 }) => {
-  const { projects, employees, projectExtras, costCodes } = useProjectData(selectedProject, selectedExtra);
+  const { projects, employees, projectExtras, costCodes, loading } = useProjectData(selectedProject, selectedExtra);
 
   const handleProjectChange = (value: string) => {
     setSelectedProject(value);
@@ -90,6 +90,7 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
           selectedEmployees={selectedEmployees}
           setSelectedEmployees={setSelectedEmployees}
           employees={employees}
+          loading={loading}
         />
       </div>
     </div>

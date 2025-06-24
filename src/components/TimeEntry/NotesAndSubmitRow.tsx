@@ -2,7 +2,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { calculateWorkHours } from '@/utils/timeCalculations';
 
 interface NotesAndSubmitRowProps {
   notes: string;
@@ -10,89 +11,51 @@ interface NotesAndSubmitRowProps {
   showTotalHours?: boolean;
   timeInHour?: string;
   timeInMinute?: string;
-  timeInPeriod?: string;
+  timeInPeriod?: 'AM' | 'PM';
   timeOutHour?: string;
   timeOutMinute?: string;
-  timeOutPeriod?: string;
+  timeOutPeriod?: 'AM' | 'PM';
   breakInHour?: string;
   breakInMinute?: string;
-  breakInPeriod?: string;
+  breakInPeriod?: 'AM' | 'PM';
   breakOutHour?: string;
   breakOutMinute?: string;
-  breakOutPeriod?: string;
-  onSubmit?: () => void;
+  breakOutPeriod?: 'AM' | 'PM';
+  onSubmit: () => void;
 }
 
 const NotesAndSubmitRow: React.FC<NotesAndSubmitRowProps> = ({
   notes,
   setNotes,
   showTotalHours = false,
-  timeInHour,
-  timeInMinute,
-  timeInPeriod,
-  timeOutHour,
-  timeOutMinute,
-  timeOutPeriod,
-  breakInHour,
-  breakInMinute,
-  breakInPeriod,
-  breakOutHour,
-  breakOutMinute,
-  breakOutPeriod,
+  timeInHour = '',
+  timeInMinute = '',
+  timeInPeriod = 'AM',
+  timeOutHour = '',
+  timeOutMinute = '',
+  timeOutPeriod = 'AM',
+  breakInHour = '',
+  breakInMinute = '',
+  breakInPeriod = 'AM',
+  breakOutHour = '',
+  breakOutMinute = '',
+  breakOutPeriod = 'AM',
   onSubmit
 }) => {
-  // Calculate total hours for Time In/Out display
   const calculateTotalHours = () => {
-    if (!timeInHour || !timeOutHour) return 0;
+    if (!showTotalHours || !timeInHour || !timeOutHour) return null;
     
-    const timeInHour12 = parseInt(timeInHour);
-    const timeOutHour12 = parseInt(timeOutHour);
-    const timeInMinutes = parseInt(timeInMinute || '0');
-    const timeOutMinutes = parseInt(timeOutMinute || '0');
+    const result = calculateWorkHours(
+      { hour: timeInHour, minute: timeInMinute, period: timeInPeriod },
+      { hour: timeOutHour, minute: timeOutMinute, period: timeOutPeriod },
+      breakInHour ? { hour: breakInHour, minute: breakInMinute, period: breakInPeriod } : undefined,
+      breakOutHour ? { hour: breakOutHour, minute: breakOutMinute, period: breakOutPeriod } : undefined
+    );
     
-    // Convert to 24-hour format
-    let timeIn24 = timeInHour12;
-    let timeOut24 = timeOutHour12;
-    
-    if (timeInPeriod === 'PM' && timeInHour12 !== 12) timeIn24 += 12;
-    if (timeInPeriod === 'AM' && timeInHour12 === 12) timeIn24 = 0;
-    if (timeOutPeriod === 'PM' && timeOutHour12 !== 12) timeOut24 += 12;
-    if (timeOutPeriod === 'AM' && timeOutHour12 === 12) timeOut24 = 0;
-    
-    const startTime = timeIn24 * 60 + timeInMinutes;
-    const endTime = timeOut24 * 60 + timeOutMinutes;
-    
-    let totalMinutes = endTime - startTime;
-    if (totalMinutes < 0) totalMinutes += 24 * 60; // Handle next day
-    
-    // Subtract break time if provided
-    if (breakInHour && breakOutHour) {
-      const breakInHour12 = parseInt(breakInHour);
-      const breakOutHour12 = parseInt(breakOutHour);
-      const breakInMinutes = parseInt(breakInMinute || '0');
-      const breakOutMinutes = parseInt(breakOutMinute || '0');
-      
-      let breakIn24 = breakInHour12;
-      let breakOut24 = breakOutHour12;
-      
-      if (breakInPeriod === 'PM' && breakInHour12 !== 12) breakIn24 += 12;
-      if (breakInPeriod === 'AM' && breakInHour12 === 12) breakIn24 = 0;
-      if (breakOutPeriod === 'PM' && breakOutHour12 !== 12) breakOut24 += 12;
-      if (breakOutPeriod === 'AM' && breakOutHour12 === 12) breakOut24 = 0;
-      
-      const breakStart = breakIn24 * 60 + breakInMinutes;
-      const breakEnd = breakOut24 * 60 + breakOutMinutes;
-      const breakDuration = breakEnd - breakStart;
-      
-      if (breakDuration > 0) {
-        totalMinutes -= breakDuration;
-      }
-    }
-    
-    return Math.max(0, totalMinutes / 60);
+    return result.isValid ? result.totalHours.toFixed(2) : '0.00';
   };
 
-  const totalHours = showTotalHours ? calculateTotalHours() : 0;
+  const totalHours = calculateTotalHours();
 
   return (
     <div className="space-y-3">
@@ -101,26 +64,22 @@ const NotesAndSubmitRow: React.FC<NotesAndSubmitRowProps> = ({
         <Textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Add any notes about this time entry..."
-          className="min-h-[80px] resize-none border-border focus:border-ring bg-background"
+          placeholder="Enter any additional notes..."
+          className="min-h-[80px] resize-none"
         />
       </div>
-
+      
       <div className="flex items-center justify-between">
-        {showTotalHours && (
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-foreground">Total Hours:</span>
-            <div className="px-3 py-1 bg-primary/20 rounded border border-primary/30">
-              <span className="text-sm font-semibold text-primary">{totalHours.toFixed(2)}h</span>
-            </div>
-          </div>
+        {showTotalHours && totalHours && (
+          <Badge variant="outline" className="text-sm">
+            Total Hours: {totalHours}
+          </Badge>
         )}
         
         <Button 
           onClick={onSubmit}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
+          className="ml-auto bg-primary hover:bg-primary/90"
         >
-          <Send className="h-4 w-4" />
           Submit Entry
         </Button>
       </div>

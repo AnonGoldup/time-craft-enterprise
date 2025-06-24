@@ -4,56 +4,21 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Clock, Timer } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useProjectData } from '@/components/TimeEntry/hooks/useProjectData';
 import { useTimeInOutForm } from '@/components/TimeEntry/hooks/useTimeInOutForm';
 import TimeInOutHeader from '@/components/TimeEntry/TimeInOutHeader';
 import TimeInOutEntryCard from '@/components/TimeEntry/TimeInOutEntryCard';
 
 const TimeEntryTimeInOut = () => {
-  const {
-    // State
-    selectedProject, setSelectedProject,
-    selectedExtra, setSelectedExtra,
-    selectedCostCode, setSelectedCostCode,
-    selectedDate, setSelectedDate,
-    selectedDates, setSelectedDates,
-    selectedEmployee, setSelectedEmployee,
-    selectedEmployees, setSelectedEmployees,
-    timeInHour, setTimeInHour,
-    timeInMinute, setTimeInMinute,
-    timeInPeriod, setTimeInPeriod,
-    timeOutHour, setTimeOutHour,
-    timeOutMinute, setTimeOutMinute,
-    timeOutPeriod, setTimeOutPeriod,
-    breakInHour, setBreakInHour,
-    breakInMinute, setBreakInMinute,
-    breakInPeriod, setBreakInPeriod,
-    breakOutHour, setBreakOutHour,
-    breakOutMinute, setBreakOutMinute,
-    breakOutPeriod, setBreakOutPeriod,
-    entries,
-    // Actions
-    updateEntryNotes,
-    setQuickTime,
-    addRow,
-    deleteRow,
-    copyPreviousDay,
-    copyPreviousWeek,
-    handleSubmit
-  } = useTimeInOutForm();
-
-  const { projects, employees, projectExtras, costCodes, loading } = useProjectData(selectedProject, selectedExtra);
+  const timeInOutForm = useTimeInOutForm();
 
   return (
     <div className="unity-fade-in max-w-full mx-auto space-y-6 px-4">
-      {/* Header */}
       <TimeInOutHeader
-        onAddRow={addRow}
-        onCopyPreviousDay={copyPreviousDay}
-        onCopyPreviousWeek={copyPreviousWeek}
+        onAddRow={timeInOutForm.addRow}
+        onCopyPreviousDay={timeInOutForm.copyPreviousDay}
+        onCopyPreviousWeek={timeInOutForm.copyPreviousWeek}
       />
 
-      {/* Main Card */}
       <Card className="border shadow-sm">
         <Tabs defaultValue="time-in-out" className="w-full">
           <div className="border-b bg-muted/30">
@@ -72,56 +37,13 @@ const TimeEntryTimeInOut = () => {
           </div>
           
           <TabsContent value="time-in-out" className="mt-0 p-2 space-y-4">
-            {entries.map((entry, index) => (
+            {timeInOutForm.entries.map((entry, index) => (
               <TimeInOutEntryCard
                 key={entry.id}
                 entry={entry}
                 index={index}
-                entriesLength={entries.length}
-                onDeleteRow={deleteRow}
-                onUpdateNotes={updateEntryNotes}
-                onSubmit={handleSubmit}
-                // Project details props
-                selectedProject={selectedProject}
-                setSelectedProject={setSelectedProject}
-                selectedExtra={selectedExtra}
-                setSelectedExtra={setSelectedExtra}
-                selectedCostCode={selectedCostCode}
-                setSelectedCostCode={setSelectedCostCode}
-                selectedDate={selectedDate}
-                setSelectedDate={setSelectedDate}
-                selectedDates={selectedDates}
-                setSelectedDates={setSelectedDates}
-                selectedEmployee={selectedEmployee}
-                setSelectedEmployee={setSelectedEmployee}
-                selectedEmployees={selectedEmployees}
-                setSelectedEmployees={setSelectedEmployees}
-                // Time props
-                timeInHour={timeInHour}
-                setTimeInHour={setTimeInHour}
-                timeInMinute={timeInMinute}
-                setTimeInMinute={setTimeInMinute}
-                timeInPeriod={timeInPeriod}
-                setTimeInPeriod={setTimeInPeriod}
-                timeOutHour={timeOutHour}
-                setTimeOutHour={setTimeOutHour}
-                timeOutMinute={timeOutMinute}
-                setTimeOutMinute={setTimeOutMinute}
-                timeOutPeriod={timeOutPeriod}
-                setTimeOutPeriod={setTimeOutPeriod}
-                breakInHour={breakInHour}
-                setBreakInHour={setBreakInHour}
-                breakInMinute={breakInMinute}
-                setBreakInMinute={setBreakInMinute}
-                breakInPeriod={breakInPeriod}
-                setBreakInPeriod={setBreakInPeriod}
-                breakOutHour={breakOutHour}
-                setBreakOutHour={setBreakOutHour}
-                breakOutMinute={breakOutMinute}
-                setBreakOutMinute={setBreakOutMinute}
-                breakOutPeriod={breakOutPeriod}
-                setBreakOutPeriod={setBreakOutPeriod}
-                setQuickTime={setQuickTime}
+                entriesLength={timeInOutForm.entries.length}
+                formState={timeInOutForm}
               />
             ))}
           </TabsContent>

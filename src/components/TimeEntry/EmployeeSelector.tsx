@@ -14,6 +14,7 @@ interface EmployeeSelectorProps {
   selectedEmployees?: string[];
   setSelectedEmployees?: (value: string[]) => void;
   employees: Employee[];
+  loading?: boolean;
 }
 
 const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
@@ -21,7 +22,8 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   setSelectedEmployee,
   selectedEmployees = [],
   setSelectedEmployees,
-  employees = []
+  employees = [],
+  loading = false
 }) => {
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false);
 
@@ -30,13 +32,11 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
 
   const handleEmployeeSelect = (employeeId: string) => {
     if (setSelectedEmployees) {
-      // Multi-select mode
       const newSelection = safeSelectedEmployees.includes(employeeId)
         ? safeSelectedEmployees.filter(id => id !== employeeId)
         : [...safeSelectedEmployees, employeeId];
       setSelectedEmployees(newSelection);
     } else {
-      // Single select mode
       setSelectedEmployee(employeeId);
       setEmployeePopoverOpen(false);
     }
@@ -54,6 +54,20 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
       .map(emp => emp.fullName);
   };
 
+  const getButtonText = () => {
+    if (loading) return "Loading employees...";
+    
+    if (setSelectedEmployees) {
+      if (safeSelectedEmployees.length === 0) return "Select employees...";
+      if (safeSelectedEmployees.length === 1) return getSelectedEmployeeNames()[0];
+      return `${safeSelectedEmployees.length} employees selected`;
+    } else {
+      if (!selectedEmployee) return "Select employee...";
+      const employee = safeEmployees.find(emp => emp.employeeID === selectedEmployee);
+      return employee?.fullName || "Select employee...";
+    }
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex flex-col gap-2">
@@ -69,25 +83,18 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
               role="combobox"
               aria-expanded={employeePopoverOpen}
               className="w-48 justify-between border-slate-300 dark:border-slate-600"
+              disabled={loading}
             >
-              {setSelectedEmployees ? (
-                safeSelectedEmployees.length === 0
-                  ? "Select employees..."
-                  : safeSelectedEmployees.length === 1
-                  ? getSelectedEmployeeNames()[0]
-                  : `${safeSelectedEmployees.length} employees selected`
-              ) : (
-                selectedEmployee
-                  ? safeEmployees.find(emp => emp.employeeID === selectedEmployee)?.fullName || "Select employee..."
-                  : "Select employee..."
-              )}
+              {getButtonText()}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-48 p-0 bg-popover border-border z-50">
             <Command>
               <CommandInput placeholder="Search employees..." />
-              <CommandEmpty>No employee found.</CommandEmpty>
+              <CommandEmpty>
+                {loading ? "Loading..." : "No employee found."}
+              </CommandEmpty>
               <CommandGroup className="max-h-64 overflow-auto">
                 {safeEmployees.map((employee) => (
                   <CommandItem
@@ -117,7 +124,6 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
         </Popover>
       </div>
 
-      {/* Selected employees badges (for multi-select) */}
       {setSelectedEmployees && safeSelectedEmployees.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {getSelectedEmployeeNames().map((name, index) => (
