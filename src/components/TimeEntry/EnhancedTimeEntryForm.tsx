@@ -165,10 +165,20 @@ export function EnhancedTimeEntryForm({
     return [];
   }, [defaultEmployees, validCurrentUser, validEmployees]);
 
+  // Get safe default employees for form initialization
+  const safeDefaultEmployees = React.useMemo(() => {
+    try {
+      return getDefaultEmployees();
+    } catch (error) {
+      console.error('Error getting default employees:', error);
+      return [];
+    }
+  }, [getDefaultEmployees]);
+
   const form = useForm<TimeEntryFormValues>({
     resolver: zodResolver(timeEntrySchema),
     defaultValues: {
-      selectedEmployees: getDefaultEmployees(),
+      selectedEmployees: safeDefaultEmployees,
       selectedDates: defaultDates || [],
       projectId: "",
       costCodeId: "",
@@ -231,7 +241,7 @@ export function EnhancedTimeEntryForm({
       
       // Reset form with defaults
       form.reset({
-        selectedEmployees: getDefaultEmployees(),
+        selectedEmployees: safeDefaultEmployees,
         selectedDates: defaultDates || [],
         projectId: "",
         costCodeId: "",
