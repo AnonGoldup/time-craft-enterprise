@@ -18,7 +18,6 @@ import { Badge } from "@/components/ui/badge"
 
 import { MultiDatePicker } from "./MultiDatePicker"
 import { MultiEmployeeSelector } from "./MultiEmployeeSelector"
-import { mockEmployees, projects, costCodes } from "../Timesheet/mockEmployees"
 
 // Types matching your database structure
 interface Employee {
@@ -30,12 +29,14 @@ interface Employee {
 }
 
 interface Project {
-  code: string
-  name: string
+  projectId: number
+  projectCode: string
+  projectDescription: string
+  isActive: boolean
 }
 
 interface CostCode {
-  costCodeID: number
+  costCodeId: number
   costCode: string
   description: string
 }
@@ -44,14 +45,14 @@ interface TimesheetEntry {
   entryId?: number
   employeeId: string
   dateWorked: string
-  projectCode: string
-  costCode: string
+  projectId: number
+  costCodeId: number
   standardHours: number
   overtimeHours: number
   notes?: string
 }
 
-// Form validation schema with business rules - fix the employee schema to match Employee interface
+// Form validation schema with business rules
 const timeEntrySchema = z.object({
   selectedEmployees: z.array(z.object({
     employeeId: z.string().min(1, "Employee ID is required"),
@@ -63,9 +64,9 @@ const timeEntrySchema = z.object({
   
   selectedDates: z.array(z.date()).min(1, "At least one date must be selected"),
   
-  projectCode: z.string().min(1, "Project is required"),
+  projectId: z.string().min(1, "Project is required"),
   
-  costCode: z.string().min(1, "Cost code is required"),
+  costCodeId: z.string().min(1, "Cost code is required"),
   
   standardHours: z.number()
     .min(0, "Standard hours cannot be negative")
@@ -88,36 +89,58 @@ const timeEntrySchema = z.object({
 type TimeEntryFormValues = z.infer<typeof timeEntrySchema>
 
 interface EnhancedTimeEntryFormProps {
+  employees: Employee[]
+  projects: Project[]
+  costCodes: CostCode[]
   onSubmit: (entries: TimesheetEntry[]) => Promise<void>
-  isAdmin?: boolean
+  currentUser?: Employee | null
+  userRole?: 'ADMIN' | 'EMPLOYEE'
+  title?: string
+  description?: string
+  defaultEmployees?: Employee[]
+  defaultDates?: Date[]
 }
 
 export function EnhancedTimeEntryForm({
+  employees,
+  projects,
+  costCodes,
   onSubmit,
-  isAdmin = false,
+  currentUser,
+  userRole = 'EMPLOYEE',
+  title,
+  description,
+  defaultEmployees,
+  defaultDates,
 }: EnhancedTimeEntryFormProps) {
   const [isLoading, setIsLoading] = React.useState(false)
   
-  // Convert mock employees to proper format with required fields
-  const employees: Employee[] = mockEmployees
-    .filter(emp => emp.id && emp.name) // Filter first to ensure we have required data
-    .map(emp => ({
-      employeeId: emp.id!, // Use non-null assertion since we filtered above
-      fullName: emp.name!, // Use non-null assertion since we filtered above
-      email: `${emp.id!.toLowerCase()}@company.com`,
-      class: emp.class || '',
-      isActive: true
-    }))
-
-  const currentUser = employees.find(emp => emp.employeeId === 'JSMITH')
+  // Type guard to ensure currentUser has required properties
+  const isValidEmployee = (user: any): user is Employee => {
+    return user && 
+           typeof user.employeeId === 'string' && 
+           user.employeeId.length > 0 &&
+           typeof user.fullName === 'string' && 
+           user.fullName.length > 0;
+  }
+  
+  const validCurrentUser = isValidEmployee(currentUser) ? currentUser : null;
+  const isAdmin = userRole === 'ADMIN';
+  
+  // Set default employees based on props or current user
+  const getDefaultEmployees = () => {
+    if (defaultEmployees) return defaultEmployees;
+    if (validCurrentUser) return [validCurrentUser];
+    return [];
+  };
   
   const form = useForm<TimeEntryFormValues>({
     resolver: zodResolver(timeEntrySchema),
     defaultValues: {
-      selectedEmployees: currentUser && !isAdmin ? [currentUser] : [],
-      selectedDates: [],
-      projectCode: "",
-      costCode: "",
+      selectedEmployees: getDefaultEmployees(),
+      selectedDates: defaultDates || [],
+      projectId: "",
+      costCodeId: "",
       standardHours: 8,
       overtimeHours: 0,
       notes: "",
@@ -139,17 +162,33 @@ export function EnhancedTimeEntryForm({
       
       values.selectedEmployees.forEach(employee => {
         values.selectedDates.forEach(date => {
-          // Create combined entry with both standard and overtime hours
-          const totalHours = values.standardHours + values.overtimeHours
-          if (totalHours > 0) {
+          // Create standard hours entry if > 0
+          if (values.standardHours > 0) {
             entries.push({
               employeeId: employee.employeeId,
               dateWorked: date.toISOString().split('T')[0],
-              projectCode: values.projectCode,
-              costCode: values.costCode,
+              projectId: parseInt(values.projectId),
+              costCodeId: parseInt(values.costCodeId),
               standardHours: values.standardHours,
+              overtimeHours: 0,
+              notes: isAdmin ? 
+                `${values.notes || ''} [Admin Entry by ${validCurrentUser?.employeeId || 'SYSTEM'}]`.trim() :
+                values.notes,
+            })
+          }
+          
+          // Create overtime entry if > 0
+          if (values.overtimeHours > 0) {
+            entries.push({
+              employeeId: employee.employeeId,
+              dateWorked: date.toISOString().split('T')[0],
+              projectId: parseInt(values.projectId),
+              costCodeId: parseInt(values.costCodeId),
+              standardHours: 0,
               overtimeHours: values.overtimeHours,
-              notes: values.notes,
+              notes: isAdmin ? 
+                `${values.notes || ''} [Admin Entry by ${validCurrentUser?.employeeId || 'SYSTEM'}]`.trim() :
+                values.notes,
             })
           }
         })
@@ -159,12 +198,12 @@ export function EnhancedTimeEntryForm({
       
       toast.success(`Successfully created ${entries.length} timesheet entries`)
       
-      // Reset form but keep current user selected
+      // Reset form with defaults
       form.reset({
-        selectedEmployees: currentUser && !isAdmin ? [currentUser] : [],
-        selectedDates: [],
-        projectCode: "",
-        costCode: "",
+        selectedEmployees: getDefaultEmployees(),
+        selectedDates: defaultDates || [],
+        projectId: "",
+        costCodeId: "",
         standardHours: 8,
         overtimeHours: 0,
         notes: "",
@@ -179,10 +218,10 @@ export function EnhancedTimeEntryForm({
   }
 
   return (
-    <Card className="w-full">
+    <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          {isAdmin ? "Admin Time Entry" : "Enhanced Time Entry"}
+          {title || "Time Entry Form"}
           {totalEntries > 1 && (
             <Badge variant="outline">
               {totalEntries} entries will be created
@@ -190,10 +229,7 @@ export function EnhancedTimeEntryForm({
           )}
         </CardTitle>
         <CardDescription>
-          {isAdmin 
-            ? "Create time entries for multiple employees and dates."
-            : "Select dates and enter your time for projects."
-          }
+          {description || "Select employees, dates, and enter time for projects. Create multiple entries efficiently."}
         </CardDescription>
       </CardHeader>
       
@@ -201,38 +237,32 @@ export function EnhancedTimeEntryForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
             
-            {/* Employee Selection */}
+            {/* Employee Selection - Available to Everyone */}
             <FormField
               control={form.control}
               name="selectedEmployees"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {isAdmin ? "Select Employees" : "Employee"}
-                  </FormLabel>
+                  <FormLabel>Select Employees</FormLabel>
                   <FormControl>
                     <MultiEmployeeSelector
                       employees={employees.filter(emp => emp.isActive !== false)}
-                      selectedEmployees={field.value as Employee[]}
-                      onEmployeeChange={(selectedEmps: Employee[]) => field.onChange(selectedEmps)}
-                      placeholder={isAdmin ? "Select employees..." : "Select employee..."}
-                      maxSelected={isAdmin ? undefined : 1}
-                      groupByClass={isAdmin}
-                      disabled={!isAdmin && !!currentUser}
+                      selectedEmployees={field.value}
+                      onEmployeeChange={field.onChange}
+                      placeholder="Select employees..."
+                      groupByClass={true}
+                      searchPlaceholder="Search by name, ID, or job class..."
                     />
                   </FormControl>
                   <FormDescription>
-                    {isAdmin 
-                      ? "Select one or more employees to create entries for"
-                      : "Your employee account"
-                    }
+                    Select one or more employees to create timesheet entries for. Search by name, employee ID, or job class.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Date Selection */}
+            {/* Date Selection - Available to Everyone */}
             <FormField
               control={form.control}
               name="selectedDates"
@@ -247,7 +277,7 @@ export function EnhancedTimeEntryForm({
                     />
                   </FormControl>
                   <FormDescription>
-                    Select the date(s) when work was performed. Future dates are not allowed.
+                    Select the date(s) when work was performed. You can select multiple dates to create entries efficiently.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -260,7 +290,7 @@ export function EnhancedTimeEntryForm({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="projectCode"
+                name="projectId"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Project</FormLabel>
@@ -271,14 +301,16 @@ export function EnhancedTimeEntryForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {projects.map((project) => (
-                          <SelectItem 
-                            key={project.code} 
-                            value={project.code}
-                          >
-                            {project.code} - {project.name}
-                          </SelectItem>
-                        ))}
+                        {projects
+                          .filter(project => project.isActive)
+                          .map((project) => (
+                            <SelectItem 
+                              key={project.projectId} 
+                              value={project.projectId.toString()}
+                            >
+                              {project.projectCode} - {project.projectDescription}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -288,7 +320,7 @@ export function EnhancedTimeEntryForm({
 
               <FormField
                 control={form.control}
-                name="costCode"
+                name="costCodeId"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Cost Code</FormLabel>
@@ -301,8 +333,8 @@ export function EnhancedTimeEntryForm({
                       <SelectContent>
                         {costCodes.map((costCode) => (
                           <SelectItem 
-                            key={costCode.costCodeID} 
-                            value={costCode.costCode}
+                            key={costCode.costCodeId} 
+                            value={costCode.costCodeId.toString()}
                           >
                             {costCode.costCode} - {costCode.description}
                           </SelectItem>
@@ -358,7 +390,7 @@ export function EnhancedTimeEntryForm({
                       />
                     </FormControl>
                     <FormDescription>
-                      Overtime hours will be included in the same entry
+                      Overtime hours (separate entry will be created)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -381,6 +413,11 @@ export function EnhancedTimeEntryForm({
                       {...field}
                     />
                   </FormControl>
+                  {isAdmin && (
+                    <FormDescription>
+                      Note: All entries will be automatically marked as admin entries.
+                    </FormDescription>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -404,8 +441,8 @@ export function EnhancedTimeEntryForm({
                     <div className="font-medium">{totalEntries}</div>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Entry Type:</span>
-                    <div className="font-medium">{isAdmin ? "Admin" : "Employee"}</div>
+                    <span className="text-muted-foreground">User Role:</span>
+                    <div className="font-medium">{userRole}</div>
                   </div>
                 </div>
               </div>
