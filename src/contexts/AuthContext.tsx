@@ -25,6 +25,7 @@ interface AuthContextType {
   hasRole: (roles: string[]) => boolean;
   isManager: () => boolean;
   loading: boolean;
+  UserRole: typeof UserRole; // Export UserRole enum through context
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -134,7 +135,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     hasRole,
     isManager,
-    loading
+    loading,
+    UserRole // Include UserRole in the context value
   };
 
   return (
