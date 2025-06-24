@@ -498,86 +498,92 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                 </div>
               </div>
 
-              {/* Time Fields - Fixed alignment */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="flex items-center space-x-1 mb-2">
-                    <Clock className="w-4 h-4" />
-                    <span>Time In *</span>
-                  </Label>
-                  <Input
-                    type="time"
-                    value={formData.timeIn}
-                    onChange={(e) => {
-                      handleInputChange('timeIn', e.target.value);
-                      setTimeout(calculateTimeInOut, 100);
-                    }}
-                    className="h-10 font-mono text-center"
-                  />
-                </div>
-                <div>
-                  <Label className="flex items-center space-x-1 mb-2">
-                    <Clock className="w-4 h-4" />
-                    <span>Time Out *</span>
-                  </Label>
-                  <Input
-                    type="time"
-                    value={formData.timeOut}
-                    onChange={(e) => {
-                      handleInputChange('timeOut', e.target.value);
-                      setTimeout(calculateTimeInOut, 100);
-                    }}
-                    className="h-10 font-mono text-center"
-                  />
-                </div>
-              </div>
-
-              {/* Break Periods */}
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <Label>Break Periods</Label>
+              {/* Combined Time and Break Section */}
+              <div className="space-y-4">
+                {/* Time In/Out Header with Plus Button */}
+                <div className="flex items-center justify-between">
+                  <Label className="text-base font-semibold">Time & Break Schedule</Label>
                   <Button type="button" variant="outline" size="sm" onClick={addBreakPeriod}>
                     <Plus className="w-4 h-4 mr-2" />
                     Add Break
                   </Button>
                 </div>
-                <div className="space-y-3">
-                  {breakPeriods.map((breakPeriod, index) => (
-                    <div key={breakPeriod.id} className="grid grid-cols-2 md:grid-cols-3 gap-4 p-3 border rounded-lg">
-                      <div>
-                        <Label className="text-sm mb-2 block">Break Start</Label>
-                        <Input
-                          type="time"
-                          value={breakPeriod.start}
-                          onChange={(e) => updateBreakPeriod(breakPeriod.id, 'start', e.target.value)}
-                          className="font-mono text-center h-10"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-sm mb-2 block">Break End</Label>
-                        <Input
-                          type="time"
-                          value={breakPeriod.end}
-                          onChange={(e) => updateBreakPeriod(breakPeriod.id, 'end', e.target.value)}
-                          className="font-mono text-center h-10"
-                        />
-                      </div>
-                      <div className="flex items-end">
-                        {breakPeriods.length > 1 && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeBreakPeriod(breakPeriod.id)}
-                            className="text-red-600 h-10"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+
+                {/* Time In/Out Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg bg-blue-50">
+                  <div>
+                    <Label className="flex items-center space-x-1 mb-2">
+                      <Clock className="w-4 h-4" />
+                      <span>Time In *</span>
+                    </Label>
+                    <Input
+                      type="time"
+                      value={formData.timeIn}
+                      onChange={(e) => {
+                        handleInputChange('timeIn', e.target.value);
+                        setTimeout(calculateTimeInOut, 100);
+                      }}
+                      className="h-10 font-mono text-center"
+                    />
+                  </div>
+                  <div>
+                    <Label className="flex items-center space-x-1 mb-2">
+                      <Clock className="w-4 h-4" />
+                      <span>Time Out *</span>
+                    </Label>
+                    <Input
+                      type="time"
+                      value={formData.timeOut}
+                      onChange={(e) => {
+                        handleInputChange('timeOut', e.target.value);
+                        setTimeout(calculateTimeInOut, 100);
+                      }}
+                      className="h-10 font-mono text-center"
+                    />
+                  </div>
                 </div>
+
+                {/* Break Periods */}
+                {breakPeriods.length > 0 && (
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium text-gray-700">Break Periods</Label>
+                    {breakPeriods.map((breakPeriod, index) => (
+                      <div key={breakPeriod.id} className="grid grid-cols-2 md:grid-cols-3 gap-4 p-3 border rounded-lg bg-amber-50">
+                        <div>
+                          <Label className="text-sm mb-2 block">Break Start</Label>
+                          <Input
+                            type="time"
+                            value={breakPeriod.start}
+                            onChange={(e) => updateBreakPeriod(breakPeriod.id, 'start', e.target.value)}
+                            className="font-mono text-center h-10"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-sm mb-2 block">Break End</Label>
+                          <Input
+                            type="time"
+                            value={breakPeriod.end}
+                            onChange={(e) => updateBreakPeriod(breakPeriod.id, 'end', e.target.value)}
+                            className="font-mono text-center h-10"
+                          />
+                        </div>
+                        <div className="flex items-end">
+                          {breakPeriods.length > 1 && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeBreakPeriod(breakPeriod.id)}
+                              className="text-red-600 h-10"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Cross Midnight Warning */}
