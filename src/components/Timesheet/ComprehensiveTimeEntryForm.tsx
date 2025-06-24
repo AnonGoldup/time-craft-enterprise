@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -466,6 +467,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
                       <Select 
                         value={entry.employeeId} 
                         onValueChange={(value) => handleInputChange(index, 'employeeId', value)}
+                        disabled={!managerMode}
                       >
                         <SelectTrigger>
                           <SelectValue />
