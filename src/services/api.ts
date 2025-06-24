@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 // API base configuration
@@ -108,7 +107,7 @@ export interface TimesheetEntry {
   employeeID: string;
   dateWorked: string;
   projectID: number;
-  extraID: number; // Make required to match mock data structure
+  extraID: number;
   costCodeID: number;
   payID: number;
   hours: number;
@@ -157,21 +156,22 @@ export interface TimesheetApproval {
   approvalNotes?: string;
 }
 
-// API service functions
-export const employeeApi = {
-  getAll: () => apiClient.get<ApiResponse<Employee[]>>('/employees'),
-  getById: (id: string) => apiClient.get<ApiResponse<Employee>>(`/employees/${id}`),
-  getActive: () => apiClient.get<ApiResponse<Employee[]>>('/employees/active'),
-};
+// Template interfaces
+export interface TimesheetTemplate {
+  templateID: number;
+  employeeID: string;
+  templateName: string;
+  projectCode: string;
+  extraValue: string;
+  costCode: string;
+  standardHours: number;
+  overtimeHours: number;
+  notes: string;
+  isActive: boolean;
+  createdDate: string;
+}
 
-export const projectApi = {
-  getAll: () => apiClient.get<ApiResponse<Project[]>>('/projects'),
-  getActive: () => apiClient.get<ApiResponse<Project[]>>('/projects/active'),
-  getExtras: (projectId: number) => apiClient.get<ApiResponse<ProjectExtra[]>>(`/projects/${projectId}/extras`),
-  getCostCodes: (projectId: number, extraId?: number) => 
-    apiClient.get<ApiResponse<CostCode[]>>(`/projects/${projectId}/costcodes${extraId ? `?extraId=${extraId}` : ''}`),
-};
-
+// Enhanced timesheet API with comprehensive features
 export const timesheetApi = {
   getEntries: (employeeId: string, weekEnding?: string) => 
     apiClient.get<ApiResponse<TimesheetEntry[]>>(`/employees/${employeeId}/timesheets${weekEnding ? `?week=${weekEnding}` : ''}`),
@@ -184,9 +184,78 @@ export const timesheetApi = {
   
   deleteEntry: (entryId: number) => 
     apiClient.delete<ApiResponse<void>>(`/timesheets/${entryId}`),
-  
+
+  // Enhanced features for comprehensive timesheet
+  duplicateEntry: (entryId: number, newDate?: string) =>
+    apiClient.post<ApiResponse<TimesheetEntry>>(`/timesheets/${entryId}/duplicate`, { newDate }),
+
+  splitCrossMidnightEntry: (entryData: {
+    employeeId: string;
+    dateWorked: string;
+    timeIn: string;
+    timeOut: string;
+    breakStart?: string;
+    breakEnd?: string;
+    projectCode: string;
+    extraValue: string;
+    costCode: string;
+  }) =>
+    apiClient.post<ApiResponse<TimesheetEntry[]>>('/timesheets/split-midnight', entryData),
+
+  bulkCreateEntries: (entries: Omit<TimesheetEntry, 'entryID'>[]) =>
+    apiClient.post<ApiResponse<TimesheetEntry[]>>('/timesheets/bulk', { entries }),
+
+  bulkDeleteEntries: (entryIds: number[]) =>
+    apiClient.delete<ApiResponse<void>>('/timesheets/bulk', { data: { entryIds } }),
+
+  copyWeek: (employeeId: string, sourceWeek: string, targetWeek: string) =>
+    apiClient.post<ApiResponse<TimesheetEntry[]>>('/timesheets/copy-week', {
+      employeeId,
+      sourceWeek,
+      targetWeek
+    }),
+
+  // Template management
+  getTemplates: (employeeId: string) =>
+    apiClient.get<ApiResponse<TimesheetTemplate[]>>(`/employees/${employeeId}/templates`),
+
+  createTemplate: (template: Omit<TimesheetTemplate, 'templateID'>) =>
+    apiClient.post<ApiResponse<TimesheetTemplate>>('/timesheets/templates', template),
+
+  applyTemplate: (templateId: number, dates: string[]) =>
+    apiClient.post<ApiResponse<TimesheetEntry[]>>(`/timesheets/templates/${templateId}/apply`, { dates }),
+
+  // Week management and submission
   submitWeek: (employeeId: string, weekEnding: string) => 
     apiClient.post<ApiResponse<TimesheetSubmission>>('/timesheets/submit', { employeeId, weekEnding }),
+  
+  getWeekSummary: (employeeId: string, weekEnding: string) =>
+    apiClient.get<ApiResponse<{
+      totalStandardHours: number;
+      totalOvertimeHours: number;
+      totalHours: number;
+      entriesCount: number;
+      status: string;
+      dailyTotals: { [date: string]: number };
+    }>>(`/employees/${employeeId}/week-summary?week=${weekEnding}`),
+
+  // CSV Export
+  exportWeekCSV: (employeeId: string, weekEnding: string) =>
+    apiClient.get<Blob>(`/timesheets/export-csv?employeeId=${employeeId}&week=${weekEnding}`, {
+      responseType: 'blob'
+    }),
+
+  exportDateRangeCSV: (employeeId: string, startDate: string, endDate: string) =>
+    apiClient.get<Blob>(`/timesheets/export-csv?employeeId=${employeeId}&startDate=${startDate}&endDate=${endDate}`, {
+      responseType: 'blob'
+    }),
+
+  // Manager functions
+  getTeamEntries: (managerId: string, weekEnding?: string) =>
+    apiClient.get<ApiResponse<TimesheetEntry[]>>(`/managers/${managerId}/team-timesheets${weekEnding ? `?week=${weekEnding}` : ''}`),
+
+  createEntryForEmployee: (managerId: string, entry: Omit<TimesheetEntry, 'entryID' | 'createdBy'>) =>
+    apiClient.post<ApiResponse<TimesheetEntry>>(`/managers/${managerId}/timesheets`, entry),
   
   getPendingApprovals: (managerId?: string) => 
     apiClient.get<ApiResponse<TimesheetSubmission[]>>(`/timesheets/pending${managerId ? `?managerId=${managerId}` : ''}`),
@@ -199,6 +268,20 @@ export const timesheetApi = {
   
   requestChanges: (submissionId: number, notes: string) => 
     apiClient.post<ApiResponse<TimesheetApproval>>(`/timesheets/${submissionId}/request-changes`, { notes }),
+};
+
+export const employeeApi = {
+  getAll: () => apiClient.get<ApiResponse<Employee[]>>('/employees'),
+  getById: (id: string) => apiClient.get<ApiResponse<Employee>>(`/employees/${id}`),
+  getActive: () => apiClient.get<ApiResponse<Employee[]>>('/employees/active'),
+};
+
+export const projectApi = {
+  getAll: () => apiClient.get<ApiResponse<Project[]>>('/projects'),
+  getActive: () => apiClient.get<ApiResponse<Project[]>>('/projects/active'),
+  getExtras: (projectId: number) => apiClient.get<ApiResponse<ProjectExtra[]>>(`/projects/${projectId}/extras`),
+  getCostCodes: (projectId: number, extraId?: number) => 
+    apiClient.get<ApiResponse<CostCode[]>>(`/projects/${projectId}/costcodes${extraId ? `?extraId=${extraId}` : ''}`),
 };
 
 export const costCodeApi = {

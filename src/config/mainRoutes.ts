@@ -1,10 +1,10 @@
-
 import { UserRole } from '@/contexts/AuthContext';
 import type { RouteConfig } from './types';
 
 // Main pages
 import Index from '@/pages/Index';
 import Log from '@/pages/Log';
+import Timesheet from '@/pages/Timesheet';
 import ManagerApproval from '@/pages/ManagerApproval';
 import DailyReporting from '@/pages/DailyReporting';
 import EditDailyReport from '@/pages/EditDailyReport';
@@ -26,6 +26,11 @@ export const mainRoutes: RouteConfig[] = [
   {
     path: '/log',
     component: Log,
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+  },
+  {
+    path: '/timesheet',
+    component: Timesheet,
     requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {

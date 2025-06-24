@@ -1,6 +1,5 @@
-
 import { UserRole } from '@/contexts/AuthContext';
-import { Home, Calendar, FileText, Users, BarChart3, Settings, Building2, Download } from 'lucide-react';
+import { Home, Calendar, FileText, Users, BarChart3, Settings, Building2, Download, Clock } from 'lucide-react';
 import type { MenuItem } from './types';
 
 export const navigationItems: MenuItem[] = [
@@ -13,6 +12,12 @@ export const navigationItems: MenuItem[] = [
 ];
 
 export const timesheetModule: MenuItem[] = [
+  {
+    path: '/timesheet',
+    label: 'Comprehensive Timesheet',
+    icon: Clock,
+    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+  },
   {
     path: '/log',
     label: 'Time Log',
