@@ -93,7 +93,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           <SidebarInset className="flex-1">
             <TopBar />
             <main className="flex-1 p-6 bg-background">
-              <div className="max-w-7xl mx-auto space-y-4">
+              <div className="w-full mx-auto space-y-4">
                 <Breadcrumb items={breadcrumbItems} className="mb-6" />
                 <Suspense fallback={<LoadingState message="Loading page..." />}>
                   <ErrorBoundary>
