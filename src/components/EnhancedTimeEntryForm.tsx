@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Copy } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTimeEntryData, useTimeEntryForm } from "./TimeEntry/useTimeEntryData";
+import { useTimeEntryData, useTimeEntryForm } from "./TimeEntry/hooks/useTimeEntryData";
 import TimeEntryFormFields from "./TimeEntry/TimeEntryFormFields";
 import TimeEntrySubmission from "./TimeEntry/TimeEntrySubmission";
 
