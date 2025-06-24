@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -5,15 +6,13 @@ import { BulkEntryTab } from './BulkEntryTab';
 import { MyTimesheetsTab } from './MyTimesheetsTab';
 import { StandardHoursTab } from './StandardHoursTab';
 import { TimeInOutTab } from './TimeInOutTab';
-import { EnhancedTimeEntryForm } from '../TimeEntry/EnhancedTimeEntryForm';
 import { ComprehensiveTimeEntryFormProps, TimeEntryData } from './types';
 import { toast } from 'sonner';
 
 export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProps> = ({
-  onSubmit,
-  managerMode = false
+  onSubmit
 }) => {
-  const [activeTab, setActiveTab] = useState('enhanced');
+  const [activeTab, setActiveTab] = useState('standard');
   const [entries, setEntries] = useState<TimeEntryData[]>([{
     employeeId: 'JSMITH',
     dateWorked: new Date().toISOString().split('T')[0],
@@ -88,11 +87,6 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     onSubmit(entries);
   };
 
-  const handleEnhancedSubmit = async (entries: any[]) => {
-    console.log('Enhanced entries submitted:', entries);
-    onSubmit(entries.length === 1 ? entries[0] : entries);
-  };
-
   const tabContentProps = {
     entries,
     setEntries,
@@ -100,8 +94,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     setSelectedDates,
     useMultiDateSelection,
     setUseMultiDateSelection,
-    onSubmit: handleSubmit,
-    managerMode
+    onSubmit: handleSubmit
   };
 
   return (
@@ -109,22 +102,13 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         {/* Tab Headers */}
         <div className="border-b">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="enhanced">Enhanced Entry</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="standard">Standard Hours</TabsTrigger>
             <TabsTrigger value="timeinout">Time In/Out</TabsTrigger>
             <TabsTrigger value="bulk">Bulk Entry</TabsTrigger>
             <TabsTrigger value="timesheets">My Timesheets</TabsTrigger>
           </TabsList>
         </div>
-
-        {/* Enhanced Time Entry Tab */}
-        <TabsContent value="enhanced">
-          <EnhancedTimeEntryForm 
-            onSubmit={handleEnhancedSubmit} 
-            isManager={managerMode} 
-          />
-        </TabsContent>
 
         {/* Standard Hours Tab */}
         <TabsContent value="standard">
@@ -138,7 +122,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
 
         {/* Bulk Entry Tab */}
         <TabsContent value="bulk">
-          <BulkEntryTab onSubmit={handleBulkSubmit} managerMode={managerMode} />
+          <BulkEntryTab onSubmit={handleBulkSubmit} />
         </TabsContent>
 
         {/* My Timesheets Tab */}

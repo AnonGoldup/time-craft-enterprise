@@ -25,17 +25,18 @@ interface Employee {
 export const StandardHoursTab: React.FC<TabContentProps> = ({
   entries,
   setEntries,
-  onSubmit,
-  managerMode
+  onSubmit
 }) => {
-  // Convert mock employees to proper format
-  const employees: Employee[] = mockEmployees.map(emp => ({
-    employeeId: emp.id,
-    fullName: emp.name,
-    email: `${emp.id.toLowerCase()}@company.com`,
-    class: emp.class,
-    isActive: true
-  }))
+  // Convert mock employees to proper format with required fields
+  const employees: Employee[] = mockEmployees
+    .filter(emp => emp.id && emp.name) // Filter first to ensure we have required data
+    .map(emp => ({
+      employeeId: emp.id!,
+      fullName: emp.name!,
+      email: `${emp.id!.toLowerCase()}@company.com`,
+      class: emp.class || '',
+      isActive: true
+    }))
 
   const addNewEntry = () => {
     const newEntry: TimeEntryData = {
@@ -142,7 +143,7 @@ export const StandardHoursTab: React.FC<TabContentProps> = ({
                   }}
                   placeholder="Select employee..."
                   maxSelected={1}
-                  disabled={!managerMode}
+                  disabled={false}
                 />
               </div>
               <div>

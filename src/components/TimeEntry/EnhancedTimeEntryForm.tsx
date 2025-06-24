@@ -88,30 +88,30 @@ type TimeEntryFormValues = z.infer<typeof timeEntrySchema>
 
 interface EnhancedTimeEntryFormProps {
   onSubmit: (entries: TimesheetEntry[]) => Promise<void>
-  isManager?: boolean
 }
 
 export function EnhancedTimeEntryForm({
   onSubmit,
-  isManager = false,
 }: EnhancedTimeEntryFormProps) {
   const [isLoading, setIsLoading] = React.useState(false)
   
   // Convert mock data to match interface with all required properties
-  const employees: Employee[] = mockEmployees.map(emp => ({
-    employeeId: emp.id || '',
-    fullName: emp.name || '',
-    email: `${(emp.id || '').toLowerCase()}@company.com`,
-    class: emp.class || '',
-    isActive: true
-  })).filter(emp => emp.employeeId && emp.fullName) // Filter out any invalid entries
+  const employees: Employee[] = mockEmployees
+    .filter(emp => emp.id && emp.name) // Filter first to ensure we have required data
+    .map(emp => ({
+      employeeId: emp.id!,
+      fullName: emp.name!,
+      email: `${emp.id!.toLowerCase()}@company.com`,
+      class: emp.class || '',
+      isActive: true
+    }))
 
   const currentUser = employees.find(emp => emp.employeeId === 'JSMITH')
   
   const form = useForm<TimeEntryFormValues>({
     resolver: zodResolver(timeEntrySchema),
     defaultValues: {
-      selectedEmployees: currentUser && !isManager ? [currentUser] : [],
+      selectedEmployees: currentUser ? [currentUser] : [],
       selectedDates: [],
       projectCode: "",
       costCode: "",
@@ -146,9 +146,7 @@ export function EnhancedTimeEntryForm({
               costCode: values.costCode,
               standardHours: values.standardHours,
               overtimeHours: values.overtimeHours,
-              notes: isManager ? 
-                `${values.notes || ''} [Manager Entry by ${currentUser?.employeeId || 'SYSTEM'}]`.trim() :
-                values.notes,
+              notes: values.notes,
             })
           }
         })
@@ -158,9 +156,9 @@ export function EnhancedTimeEntryForm({
       
       toast.success(`Successfully created ${entries.length} timesheet entries`)
       
-      // Reset form but keep current user selected if not manager
+      // Reset form but keep current user selected
       form.reset({
-        selectedEmployees: currentUser && !isManager ? [currentUser] : [],
+        selectedEmployees: currentUser ? [currentUser] : [],
         selectedDates: [],
         projectCode: "",
         costCode: "",
@@ -181,7 +179,7 @@ export function EnhancedTimeEntryForm({
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          {isManager ? "Manager Time Entry" : "Enhanced Time Entry"}
+          Enhanced Time Entry
           {totalEntries > 1 && (
             <Badge variant="outline">
               {totalEntries} entries will be created
@@ -189,10 +187,7 @@ export function EnhancedTimeEntryForm({
           )}
         </CardTitle>
         <CardDescription>
-          {isManager 
-            ? "Create time entries for multiple employees and dates. All entries will be marked as manager entries."
-            : "Select dates and enter your time for projects."
-          }
+          Select dates and enter your time for projects.
         </CardDescription>
       </CardHeader>
       
@@ -206,25 +201,19 @@ export function EnhancedTimeEntryForm({
               name="selectedEmployees"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {isManager ? "Select Employees" : "Employee"}
-                  </FormLabel>
+                  <FormLabel>Employee</FormLabel>
                   <FormControl>
                     <MultiEmployeeSelector
                       employees={employees.filter(emp => emp.isActive !== false)}
                       selectedEmployees={field.value}
                       onEmployeeChange={field.onChange}
-                      placeholder={isManager ? "Select employees..." : "Select employee..."}
-                      maxSelected={isManager ? undefined : 1}
-                      groupByClass={isManager}
-                      disabled={!isManager && !!currentUser}
+                      placeholder="Select employee..."
+                      maxSelected={1}
+                      disabled={!!currentUser}
                     />
                   </FormControl>
                   <FormDescription>
-                    {isManager 
-                      ? "Select one or more employees to create entries for"
-                      : "Your employee account"
-                    }
+                    Your employee account
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -243,7 +232,6 @@ export function EnhancedTimeEntryForm({
                       selectedDates={field.value}
                       onDateChange={field.onChange}
                       placeholder="Select dates worked..."
-                      maxDates={isManager ? 7 : undefined}
                     />
                   </FormControl>
                   <FormDescription>
@@ -381,11 +369,6 @@ export function EnhancedTimeEntryForm({
                       {...field}
                     />
                   </FormControl>
-                  {isManager && (
-                    <FormDescription>
-                      Note: All entries will be automatically marked as manager entries.
-                    </FormDescription>
-                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -410,7 +393,7 @@ export function EnhancedTimeEntryForm({
                   </div>
                   <div>
                     <span className="text-muted-foreground">Entry Type:</span>
-                    <div className="font-medium">{isManager ? "Manager" : "Employee"}</div>
+                    <div className="font-medium">Employee</div>
                   </div>
                 </div>
               </div>
