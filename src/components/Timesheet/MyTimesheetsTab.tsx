@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -318,15 +317,13 @@ export const MyTimesheetsTab: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center space-x-2">
-            <FileText className="h-6 w-6" />
-            <h2 className="text-xl font-semibold">My Timesheet Entries</h2>
-          </div>
-          <p className="text-muted-foreground mt-1">View and manage your timesheet entries for the selected period</p>
-        </CardContent>
-      </Card>
+      <CardContent className="p-6">
+        <div className="flex items-center space-x-2 mb-6">
+          <FileText className="w-5 h-5 text-blue-600" />
+          <h3 className="text-lg font-semibold">My Timesheets</h3>
+        </div>
+        <p className="text-muted-foreground mt-1">View and manage your timesheet entries for the selected period</p>
+      </CardContent>
 
       {/* Summary Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
