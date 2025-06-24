@@ -4,7 +4,6 @@
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -18,189 +17,35 @@ import { Badge } from "@/components/ui/badge"
 
 import { MultiDatePicker } from "./MultiDatePicker"
 import { MultiEmployeeSelector } from "./MultiEmployeeSelector"
+import { BulkTimesheetFormProps, Employee, TimesheetEntry } from "./types"
+import { bulkTimeEntrySchema, BulkTimeEntryFormValues, validateEmployees } from "./validation"
 
-// Types matching your database structure
-interface Employee {
-  employeeId: string
-  fullName: string
-  email?: string
-  class?: string
-  isActive?: boolean
-}
-
-interface Project {
-  projectId: number
-  projectCode: string
-  projectDescription: string
-  isActive: boolean
-}
-
-interface CostCode {
-  costCodeId: number
-  costCode: string
-  description: string
-}
-
-interface TimesheetEntry {
-  entryId?: number
-  employeeId: string
-  dateWorked: string
-  projectId: number
-  costCodeId: number
-  standardHours: number
-  overtimeHours: number
-  notes?: string
-}
-
-// Form validation schema with business rules
-const timeEntrySchema = z.object({
-  selectedEmployees: z.array(z.object({
-    employeeId: z.string().min(1, "Employee ID is required"),
-    fullName: z.string().min(1, "Full name is required"),
-    email: z.string().optional(),
-    class: z.string().optional(),
-    isActive: z.boolean().optional(),
-  })).min(1, "At least one employee must be selected"),
-  
-  selectedDates: z.array(z.date()).min(1, "At least one date must be selected"),
-  
-  projectId: z.string().min(1, "Project is required"),
-  
-  costCodeId: z.string().min(1, "Cost code is required"),
-  
-  standardHours: z.number()
-    .min(0, "Standard hours cannot be negative")
-    .max(16, "Cannot exceed 16 hours per day")
-    .multipleOf(0.25, "Hours must be in quarter-hour increments"),
-    
-  overtimeHours: z.number()
-    .min(0, "Overtime hours cannot be negative")
-    .max(16, "Cannot exceed 16 hours per day")
-    .multipleOf(0.25, "Hours must be in quarter-hour increments"),
-    
-  notes: z.string().optional(),
-}).refine((data) => {
-  return (data.standardHours + data.overtimeHours) <= 16
-}, {
-  message: "Total hours cannot exceed 16 per day",
-  path: ["overtimeHours"],
-})
-
-type TimeEntryFormValues = z.infer<typeof timeEntrySchema>
-
-interface EnhancedTimeEntryFormProps {
-  employees: Array<{
-    employeeId?: string
-    fullName?: string
-    email?: string
-    class?: string
-    isActive?: boolean
-  }>
-  projects: Project[]
-  costCodes: CostCode[]
-  onSubmit: (entries: TimesheetEntry[]) => Promise<void>
-  currentUser?: Employee | null
-  userRole?: 'ADMIN' | 'EMPLOYEE'
-  title?: string
-  description?: string
-  defaultEmployees?: Array<{
-    employeeId?: string
-    fullName?: string
-    email?: string
-    class?: string
-    isActive?: boolean
-  }>
-  defaultDates?: Date[]
-}
-
-export function EnhancedTimeEntryForm({
+export function BulkTimesheetForm({
   employees,
   projects,
   costCodes,
   onSubmit,
   currentUser,
   userRole = 'EMPLOYEE',
-  title,
-  description,
-  defaultEmployees,
-  defaultDates,
-}: EnhancedTimeEntryFormProps) {
+}: BulkTimesheetFormProps) {
   const [isLoading, setIsLoading] = React.useState(false)
   
-  // Type guard to ensure currentUser has required properties
-  const isValidEmployee = (user: any): user is Employee => {
-    return user && 
-           typeof user.employeeId === 'string' && 
-           user.employeeId.length > 0 &&
-           typeof user.fullName === 'string' && 
-           user.fullName.length > 0;
-  }
+  const isAdmin = userRole === 'ADMIN'
+  const validEmployees = React.useMemo(() => validateEmployees(employees), [employees])
   
-  const validCurrentUser = isValidEmployee(currentUser) ? currentUser : null;
-  const isAdmin = userRole === 'ADMIN';
-
-  // Filter employees to ensure they have required properties and convert to proper Employee type
-  const validEmployees = React.useMemo((): Employee[] => {
-    return employees
-      .filter((emp): emp is Required<Pick<typeof emp, 'employeeId' | 'fullName'>> & typeof emp => 
-        typeof emp.employeeId === 'string' && 
-        emp.employeeId.length > 0 &&
-        typeof emp.fullName === 'string' && 
-        emp.fullName.length > 0 &&
-        emp.isActive !== false
-      )
-      .map((emp): Employee => ({
-        employeeId: emp.employeeId,
-        fullName: emp.fullName,
-        email: emp.email,
-        class: emp.class,
-        isActive: emp.isActive
-      }));
-  }, [employees]);
-  
-  // Set default employees based on props or current user - ensure proper typing
+  // Get default employee selection
   const getDefaultEmployees = React.useCallback((): Employee[] => {
-    if (defaultEmployees) {
-      // Filter and convert defaultEmployees to valid Employee objects
-      const validDefaults = defaultEmployees
-        .filter((defaultEmp): defaultEmp is Required<Pick<typeof defaultEmp, 'employeeId' | 'fullName'>> & typeof defaultEmp => 
-          typeof defaultEmp.employeeId === 'string' && 
-          defaultEmp.employeeId.length > 0 &&
-          typeof defaultEmp.fullName === 'string' && 
-          defaultEmp.fullName.length > 0 &&
-          validEmployees.some(validEmp => validEmp.employeeId === defaultEmp.employeeId)
-        )
-        .map((defaultEmp): Employee => ({
-          employeeId: defaultEmp.employeeId,
-          fullName: defaultEmp.fullName,
-          email: defaultEmp.email,
-          class: defaultEmp.class,
-          isActive: defaultEmp.isActive
-        }));
-      
-      return validDefaults;
+    if (currentUser && validEmployees.some(emp => emp.employeeId === currentUser.employeeId)) {
+      return [currentUser as Employee]
     }
-    if (validCurrentUser && validEmployees.some(emp => emp.employeeId === validCurrentUser.employeeId)) {
-      return [validCurrentUser];
-    }
-    return [];
-  }, [defaultEmployees, validCurrentUser, validEmployees]);
+    return []
+  }, [currentUser, validEmployees])
 
-  // Get safe default employees for form initialization
-  const safeDefaultEmployees = React.useMemo(() => {
-    try {
-      return getDefaultEmployees();
-    } catch (error) {
-      console.error('Error getting default employees:', error);
-      return [];
-    }
-  }, [getDefaultEmployees]);
-
-  const form = useForm<TimeEntryFormValues>({
-    resolver: zodResolver(timeEntrySchema),
+  const form = useForm<BulkTimeEntryFormValues>({
+    resolver: zodResolver(bulkTimeEntrySchema),
     defaultValues: {
-      selectedEmployees: safeDefaultEmployees,
-      selectedDates: defaultDates || [],
+      selectedEmployees: getDefaultEmployees(),
+      selectedDates: [],
       projectId: "",
       costCodeId: "",
       standardHours: 8,
@@ -211,15 +56,12 @@ export function EnhancedTimeEntryForm({
 
   const watchedEmployees = form.watch("selectedEmployees")
   const watchedDates = form.watch("selectedDates")
-
-  // Calculate total entries that will be created
   const totalEntries = watchedEmployees.length * watchedDates.length
 
-  const handleFormSubmit = async (values: TimeEntryFormValues) => {
+  const handleFormSubmit = async (values: BulkTimeEntryFormValues) => {
     setIsLoading(true)
     
     try {
-      // Create timesheet entries for each employee and date combination
       const entries: TimesheetEntry[] = []
       
       values.selectedEmployees.forEach(employee => {
@@ -234,7 +76,7 @@ export function EnhancedTimeEntryForm({
               standardHours: values.standardHours,
               overtimeHours: 0,
               notes: isAdmin ? 
-                `${values.notes || ''} [Admin Entry by ${validCurrentUser?.employeeId || 'SYSTEM'}]`.trim() :
+                `${values.notes || ''} [Admin Entry by ${currentUser?.employeeId || 'SYSTEM'}]`.trim() :
                 values.notes,
             })
           }
@@ -249,7 +91,7 @@ export function EnhancedTimeEntryForm({
               standardHours: 0,
               overtimeHours: values.overtimeHours,
               notes: isAdmin ? 
-                `${values.notes || ''} [Admin Entry by ${validCurrentUser?.employeeId || 'SYSTEM'}]`.trim() :
+                `${values.notes || ''} [Admin Entry by ${currentUser?.employeeId || 'SYSTEM'}]`.trim() :
                 values.notes,
             })
           }
@@ -260,10 +102,10 @@ export function EnhancedTimeEntryForm({
       
       toast.success(`Successfully created ${entries.length} timesheet entries`)
       
-      // Reset form with defaults
+      // Reset form
       form.reset({
-        selectedEmployees: safeDefaultEmployees,
-        selectedDates: defaultDates || [],
+        selectedEmployees: getDefaultEmployees(),
+        selectedDates: [],
         projectId: "",
         costCodeId: "",
         standardHours: 8,
@@ -283,7 +125,7 @@ export function EnhancedTimeEntryForm({
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          {title || "Time Entry Form"}
+          Bulk Time Entry
           {totalEntries > 1 && (
             <Badge variant="outline">
               {totalEntries} entries will be created
@@ -291,7 +133,7 @@ export function EnhancedTimeEntryForm({
           )}
         </CardTitle>
         <CardDescription>
-          {description || "Select employees, dates, and enter time for projects. Create multiple entries efficiently."}
+          Create multiple timesheet entries efficiently for multiple employees and dates.
         </CardDescription>
       </CardHeader>
       
@@ -299,7 +141,7 @@ export function EnhancedTimeEntryForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
             
-            {/* Employee Selection - Available to Everyone */}
+            {/* Employee Selection */}
             <FormField
               control={form.control}
               name="selectedEmployees"
@@ -317,14 +159,14 @@ export function EnhancedTimeEntryForm({
                     />
                   </FormControl>
                   <FormDescription>
-                    Select one or more employees to create timesheet entries for. Search by name, employee ID, or job class.
+                    Select one or more employees to create timesheet entries for.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Date Selection - Available to Everyone */}
+            {/* Date Selection */}
             <FormField
               control={form.control}
               name="selectedDates"
@@ -339,7 +181,7 @@ export function EnhancedTimeEntryForm({
                     />
                   </FormControl>
                   <FormDescription>
-                    Select the date(s) when work was performed. You can select multiple dates to create entries efficiently.
+                    Select the date(s) when work was performed.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -428,7 +270,7 @@ export function EnhancedTimeEntryForm({
                       />
                     </FormControl>
                     <FormDescription>
-                      Hours in quarter-hour increments (0.25, 0.5, 0.75, etc.)
+                      Hours in quarter-hour increments
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -477,7 +319,7 @@ export function EnhancedTimeEntryForm({
                   </FormControl>
                   {isAdmin && (
                     <FormDescription>
-                      Note: All entries will be automatically marked as admin entries.
+                      All entries will be marked as admin entries.
                     </FormDescription>
                   )}
                   <FormMessage />
