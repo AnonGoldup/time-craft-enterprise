@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Calendar, User, Building, Hash, Plus, Trash2, Users, Upload, Download, Copy, Clock, CheckSquare, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { mockEmployees, projects, costCodes } from './mockEmployees';
 
 interface Employee {
   id: string;
@@ -52,26 +52,6 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
   const [showPreview, setShowPreview] = useState(false);
   const [weekStartDate, setWeekStartDate] = useState(new Date().toISOString().split('T')[0]);
 
-  const availableEmployees: Employee[] = [
-    { id: 'JSMITH', name: 'John Smith', class: 'Foreman' },
-    { id: 'MJONES', name: 'Mary Jones', class: 'Journeyman' },
-    { id: 'BWILSON', name: 'Bob Wilson', class: 'Apprentice' },
-    { id: 'SGREEN', name: 'Steve Green', class: 'Foreman' },
-    { id: 'LJOHNSON', name: 'Lisa Johnson', class: 'Journeyman' },
-    { id: 'DBROWN', name: 'David Brown', class: 'Apprentice' }
-  ];
-
-  const projects = [
-    { code: '21-0066', name: 'Edmonton EXPO SOLAR IPD' },
-    { code: '22-0006', name: 'AltaPro Service Department' },
-    { code: '23-0004', name: 'Office and Shop OH' }
-  ];
-
-  const costCodes = [
-    { code: '001-040-043', name: 'Direct Labor' },
-    { code: '001-500-501', name: 'Vehicle Travel' }
-  ];
-
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
 
@@ -95,14 +75,14 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
   });
 
   const addEmployee = (employeeId: string) => {
-    const employee = availableEmployees.find(emp => emp.id === employeeId);
+    const employee = mockEmployees.find(emp => emp.id === employeeId);
     if (employee && !employees.find(emp => emp.employee.id === employeeId)) {
       setEmployees([...employees, createEmptyWeek(employee)]);
     }
   };
 
   const addEmployeesByClass = (className: string) => {
-    const classEmployees = availableEmployees.filter(emp => 
+    const classEmployees = mockEmployees.filter(emp => 
       emp.class === className && !employees.find(existing => existing.employee.id === emp.id)
     );
     const newEmployees = classEmployees.map(emp => createEmptyWeek(emp));
@@ -278,8 +258,8 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
   };
 
   const filteredAvailableEmployees = filterClass === 'all' 
-    ? availableEmployees 
-    : availableEmployees.filter(emp => emp.class === filterClass);
+    ? mockEmployees 
+    : mockEmployees.filter(emp => emp.class === filterClass);
 
   const stats = getValidationStats();
 
@@ -327,8 +307,8 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
               </SelectTrigger>
               <SelectContent>
                 {costCodes.map(code => (
-                  <SelectItem key={code.code} value={code.code}>
-                    {code.code} - {code.name}
+                  <SelectItem key={code.costCodeID} value={code.costCode}>
+                    {code.costCode} - {code.description}
                   </SelectItem>
                 ))}
               </SelectContent>
