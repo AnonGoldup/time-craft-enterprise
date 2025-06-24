@@ -1,45 +1,18 @@
 
 import { useState, useEffect } from 'react';
-
-interface Project {
-  id: number;
-  code: string;
-  description: string;
-}
-
-interface ProjectExtra {
-  id: number;
-  projectId: number;
-  description: string;
-}
-
-interface CostCode {
-  id: number;
-  code: string;
-  description: string;
-}
+import { Project, ProjectExtra, CostCode } from '@/services/api';
+import { EntryFormData } from '../EntryValidation';
 
 interface TimeEntryData {
   projects: Project[];
-  projectExtras: ProjectExtra[];
-  costCodes: CostCode[];
+  projectExtras: { [key: string]: ProjectExtra[] };
+  costCodes: { [key: string]: CostCode[] };
   loadProjectExtras: (projectId: number) => void;
 }
 
-interface TimeEntry {
-  id: number;
-  projectID: string;
-  extraID: string;
-  costCodeID: string;
-  standardHours: string;
-  overtimeHours: string;
-  dateWorked: string;
-  notes: string;
-}
-
 interface TimeEntryForm {
-  entries: TimeEntry[];
-  setEntries: (entries: TimeEntry[]) => void;
+  entries: EntryFormData[];
+  setEntries: (entries: EntryFormData[]) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
   updateEntry: (id: number, field: string, value: string) => void;
@@ -51,22 +24,52 @@ interface TimeEntryForm {
 
 export const useTimeEntryData = (): TimeEntryData => {
   const [projects] = useState<Project[]>([
-    { id: 1, code: 'PROJ001', description: 'Sample Project 1' },
-    { id: 2, code: 'PROJ002', description: 'Sample Project 2' }
+    { 
+      projectID: 1, 
+      projectCode: 'PROJ001', 
+      projectDescription: 'Sample Project 1',
+      status: 'Active',
+      startDate: '2024-01-01',
+      endDate: '2024-12-31',
+      budget: 100000
+    },
+    { 
+      projectID: 2, 
+      projectCode: 'PROJ002', 
+      projectDescription: 'Sample Project 2',
+      status: 'Active',
+      startDate: '2024-01-01',
+      endDate: '2024-12-31',
+      budget: 150000
+    }
   ]);
   
-  const [projectExtras, setProjectExtras] = useState<ProjectExtra[]>([]);
-  const [costCodes] = useState<CostCode[]>([
-    { id: 1, code: 'LABOR', description: 'Labor Costs' },
-    { id: 2, code: 'MATERIAL', description: 'Material Costs' }
-  ]);
+  const [projectExtras, setProjectExtras] = useState<{ [key: string]: ProjectExtra[] }>({});
+  const [costCodes] = useState<{ [key: string]: CostCode[] }>({
+    '1': [
+      { costCodeID: 1, costCode: 'LABOR', description: 'Labor Costs', projectID: 1 },
+      { costCodeID: 2, costCode: 'MATERIAL', description: 'Material Costs', projectID: 1 }
+    ],
+    '2': [
+      { costCodeID: 3, costCode: 'LABOR', description: 'Labor Costs', projectID: 2 },
+      { costCodeID: 4, costCode: 'EQUIPMENT', description: 'Equipment Costs', projectID: 2 }
+    ]
+  });
 
   const loadProjectExtras = (projectId: number) => {
     // Mock loading project extras based on selected project
     const mockExtras: ProjectExtra[] = [
-      { id: 1, projectId: projectId, description: `Extra for Project ${projectId}` }
+      { 
+        extraID: 1, 
+        projectID: projectId, 
+        extraValue: `Extra-${projectId}`,
+        description: `Extra for Project ${projectId}` 
+      }
     ];
-    setProjectExtras(mockExtras);
+    setProjectExtras(prev => ({
+      ...prev,
+      [projectId.toString()]: mockExtras
+    }));
   };
 
   return {
@@ -78,36 +81,38 @@ export const useTimeEntryData = (): TimeEntryData => {
 };
 
 export const useTimeEntryForm = (): TimeEntryForm => {
-  const [entries, setEntries] = useState<TimeEntry[]>([
+  const [entries, setEntries] = useState<EntryFormData[]>([
     {
       id: 1,
+      date: new Date().toISOString().split('T')[0],
       projectID: '',
       extraID: '',
       costCodeID: '',
       standardHours: '',
       overtimeHours: '',
-      dateWorked: '',
-      notes: ''
+      notes: '',
+      errors: {}
     }
   ]);
   const [loading, setLoading] = useState(false);
 
   const updateEntry = (id: number, field: string, value: string) => {
     setEntries(entries.map(entry => 
-      entry.id === id ? { ...entry, [field]: value } : entry
+      entry.id === id ? { ...entry, [field]: value, errors: { ...entry.errors } } : entry
     ));
   };
 
   const addEntry = () => {
-    const newEntry: TimeEntry = {
+    const newEntry: EntryFormData = {
       id: Math.max(...entries.map(e => e.id)) + 1,
+      date: new Date().toISOString().split('T')[0],
       projectID: '',
       extraID: '',
       costCodeID: '',
       standardHours: '',
       overtimeHours: '',
-      dateWorked: '',
-      notes: ''
+      notes: '',
+      errors: {}
     };
     setEntries([...entries, newEntry]);
   };
@@ -115,10 +120,11 @@ export const useTimeEntryForm = (): TimeEntryForm => {
   const copyLastEntry = () => {
     if (entries.length > 0) {
       const lastEntry = entries[entries.length - 1];
-      const newEntry: TimeEntry = {
+      const newEntry: EntryFormData = {
         ...lastEntry,
         id: Math.max(...entries.map(e => e.id)) + 1,
-        notes: ''
+        notes: '',
+        errors: {}
       };
       setEntries([...entries, newEntry]);
     }
