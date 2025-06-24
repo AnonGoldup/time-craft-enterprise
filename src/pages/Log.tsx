@@ -1,200 +1,178 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
-import { format, startOfWeek, endOfWeek, addWeeks } from 'date-fns';
-import { toast } from 'sonner';
-import { ErrorBoundary } from '@/components/ui/error-boundary';
-import TimeEntryEditForm from '@/components/TimeEntry/TimeEntryEditForm';
-import LogFilters from '@/components/TimeEntry/LogFilters';
-import LogSummaryCards from '@/components/TimeEntry/LogSummaryCards';
-import LogTable from '@/components/TimeEntry/LogTable';
-import { useTimesheetData } from '@/hooks/useTimesheetData';
-import { mockApiService } from '@/services/mockApiService';
-import { Project, TimesheetEntry } from '@/services/api';
 
-interface LogTimeEntry {
-  entryID: number;
-  dateWorked: string;
-  projectCode: string;
-  projectDescription: string;
-  extraValue?: string;
-  costCode: string;
-  timeIn?: string;
-  timeOut?: string;
-  breaks?: number;
-  standardHours?: number;
-  overtimeHours?: number;
-  doubleTimeHours?: number;
-  total: number;
-  location?: string;
-  comments?: string;
-  status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected';
-  entryType: 'Standard' | 'TimeInOut';
-}
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Clock, Plus, Calendar, Building2, Edit2, Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Log = () => {
-  const { user } = useAuth();
-  const [selectedEmployee, setSelectedEmployee] = useState(user?.employeeId.toString() || '');
-  const [selectedProject, setSelectedProject] = useState('all');
-  const [currentWeek, setCurrentWeek] = useState(new Date());
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [editingEntry, setEditingEntry] = useState<LogTimeEntry | null>(null);
-  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('today');
 
-  const weekEndingDate = format(endOfWeek(currentWeek, { weekStartsOn: 1 }), 'yyyy-MM-dd');
-  const { entries, loading, error, updateEntry, deleteEntry, refresh } = useTimesheetData(
-    selectedEmployee, 
-    weekEndingDate
-  );
+  const todayEntries = [
+    {
+      id: 1,
+      project: "Office Complex - Phase 2",
+      costCode: "Electrical Installation", 
+      hours: 4.0,
+      timeIn: "8:00 AM",
+      timeOut: "12:00 PM",
+      break: 0,
+      status: "Approved",
+      notes: "Completed main panel installation"
+    },
+    {
+      id: 2,
+      project: "Residential Development",
+      costCode: "Panel Wiring",
+      hours: 3.5,
+      timeIn: "1:00 PM", 
+      timeOut: "4:30 PM",
+      break: 0,
+      status: "Pending",
+      notes: "Wired units 1-3"
+    }
+  ];
 
-  // Transform timesheet entries to display format
-  const timeEntries: LogTimeEntry[] = entries.map(entry => ({
-    entryID: entry.entryID!,
-    dateWorked: entry.dateWorked,
-    projectCode: `PROJ${entry.projectID.toString().padStart(3, '0')}`,
-    projectDescription: projects.find(p => p.projectID === entry.projectID)?.projectDescription || 'Unknown Project',
-    extraValue: entry.extraID ? `Extra ${entry.extraID}` : undefined,
-    costCode: `CC-${entry.costCodeID.toString().padStart(3, '0')}`,
-    standardHours: entry.payID === 1 ? entry.hours : undefined,
-    overtimeHours: entry.payID === 2 ? entry.hours : undefined,
-    total: entry.hours,
-    location: 'Site A', // Mock data
-    comments: entry.notes,
-    status: entry.status === 'Exported' ? 'Approved' : entry.status as 'Draft' | 'Submitted' | 'Approved' | 'Rejected',
-    entryType: entry.entryType as 'Standard' | 'TimeInOut'
-  }));
+  const weekSummary = {
+    totalHours: 32.5,
+    regularHours: 30.0,
+    overtimeHours: 2.5,
+    projects: 3,
+    daysWorked: 4
+  };
 
-  useEffect(() => {
-    loadProjects();
-  }, []);
-
-  const loadProjects = async () => {
-    try {
-      const response = await mockApiService.projects.getAll();
-      setProjects(response.data);
-    } catch (error) {
-      console.error('Failed to load projects:', error);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Approved': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'Pending': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400';
+      case 'Rejected': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
     }
   };
-
-  const getWeekRange = () => {
-    const start = startOfWeek(currentWeek, { weekStartsOn: 1 });
-    const end = endOfWeek(currentWeek, { weekStartsOn: 1 });
-    return `${format(start, 'MMM dd')} - ${format(end, 'MMM dd, yyyy')}`;
-  };
-
-  const getTotalHours = () => {
-    return timeEntries.reduce((sum, entry) => sum + entry.total, 0);
-  };
-
-  const handleEditEntry = (entry: LogTimeEntry) => {
-    if (entry.status !== 'Draft') {
-      toast.error("Only draft entries can be edited", {
-        description: "Submitted entries cannot be modified."
-      });
-      return;
-    }
-    setEditingEntry(entry);
-    setIsEditFormOpen(true);
-  };
-
-  const handleSaveEntry = async (updatedEntry: LogTimeEntry) => {
-    try {
-      await updateEntry(updatedEntry.entryID, {
-        dateWorked: updatedEntry.dateWorked,
-        hours: updatedEntry.total,
-        notes: updatedEntry.comments
-      });
-      await refresh();
-    } catch (error) {
-      console.error('Failed to save entry:', error);
-    }
-  };
-
-  const handleDeleteEntry = async (entryID: number) => {
-    const entry = timeEntries.find(e => e.entryID === entryID);
-    if (entry?.status !== 'Draft') {
-      toast.error("Only draft entries can be deleted", {
-        description: "Submitted entries cannot be removed."
-      });
-      return;
-    }
-    
-    try {
-      await deleteEntry(entryID);
-    } catch (error) {
-      console.error('Failed to delete entry:', error);
-    }
-  };
-
-  if (error) {
-    return (
-      <div className="space-y-6">
-        <div className="text-center py-12">
-          <p className="text-destructive text-lg font-medium">Error Loading Data</p>
-          <p className="text-muted-foreground mt-2">{error}</p>
-          <Button onClick={refresh} className="mt-4">
-            Try Again
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <ErrorBoundary>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">
-              Time Log
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              View and manage your time entries
-            </p>
-          </div>
+    <div className="space-y-4">
+      {/* Compact Header */}
+      <div className="flex justify-between items-start">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold text-foreground">Time Log</h1>
+          <p className="text-sm text-muted-foreground">Track and manage your time entries</p>
         </div>
-
-        {/* Filters */}
-        <LogFilters
-          selectedEmployee={selectedEmployee}
-          setSelectedEmployee={setSelectedEmployee}
-          selectedProject={selectedProject}
-          setSelectedProject={setSelectedProject}
-          currentWeek={currentWeek}
-          setCurrentWeek={setCurrentWeek}
-          projects={projects}
-          userFullName={user?.fullName || ''}
-          getWeekRange={getWeekRange}
-        />
-
-        {/* Summary Cards */}
-        <LogSummaryCards 
-          timeEntries={timeEntries}
-          getTotalHours={getTotalHours}
-        />
-
-        {/* Table */}
-        <LogTable
-          timeEntries={timeEntries}
-          loading={loading}
-          onEditEntry={handleEditEntry}
-          onDeleteEntry={handleDeleteEntry}
-        />
-
-        {/* Edit Form Modal */}
-        <TimeEntryEditForm
-          isOpen={isEditFormOpen}
-          onClose={() => {
-            setIsEditFormOpen(false);
-            setEditingEntry(null);
-          }}
-          entry={editingEntry}
-          onSave={handleSaveEntry}
-        />
+        <Button asChild size="sm" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
+          <Link to="/time-entry">
+            <Plus className="h-4 w-4 mr-2" />
+            Log Time
+          </Link>
+        </Button>
       </div>
-    </ErrorBoundary>
+
+      {/* Compact Week Summary */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <Card className="hover:shadow-sm transition-shadow border-border">
+          <CardContent className="p-3 text-center">
+            <div className="space-y-1">
+              <p className="text-xl font-bold text-foreground">{weekSummary.totalHours}h</p>
+              <p className="text-xs font-medium text-muted-foreground">Total Hours</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="hover:shadow-sm transition-shadow border-border">
+          <CardContent className="p-3 text-center">
+            <div className="space-y-1">
+              <p className="text-xl font-bold text-foreground">{weekSummary.regularHours}h</p>
+              <p className="text-xs font-medium text-muted-foreground">Regular</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="hover:shadow-sm transition-shadow border-border">
+          <CardContent className="p-3 text-center">
+            <div className="space-y-1">
+              <p className="text-xl font-bold text-foreground">{weekSummary.overtimeHours}h</p>
+              <p className="text-xs font-medium text-muted-foreground">Overtime</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="hover:shadow-sm transition-shadow border-border">
+          <CardContent className="p-3 text-center">
+            <div className="space-y-1">
+              <p className="text-xl font-bold text-foreground">{weekSummary.projects}</p>
+              <p className="text-xs font-medium text-muted-foreground">Projects</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="hover:shadow-sm transition-shadow border-border">
+          <CardContent className="p-3 text-center">
+            <div className="space-y-1">
+              <p className="text-xl font-bold text-foreground">{weekSummary.daysWorked}</p>
+              <p className="text-xs font-medium text-muted-foreground">Days Worked</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Compact Time Entries */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base">Today's Entries</CardTitle>
+            <div className="flex gap-2">
+              <Button 
+                variant={activeTab === 'today' ? 'default' : 'outline'} 
+                size="sm" 
+                onClick={() => setActiveTab('today')}
+                className="h-8"
+              >
+                Today
+              </Button>
+              <Button 
+                variant={activeTab === 'week' ? 'default' : 'outline'} 
+                size="sm"
+                onClick={() => setActiveTab('week')}
+                className="h-8"
+              >
+                This Week
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {todayEntries.map((entry) => (
+              <div key={entry.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                    <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div className="space-y-0.5 flex-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium text-foreground">{entry.project}</p>
+                      <Badge className={`text-xs ${getStatusColor(entry.status)}`}>
+                        {entry.status}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{entry.costCode}</p>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>{entry.timeIn} - {entry.timeOut}</span>
+                      <span>{entry.hours} hours</span>
+                      {entry.notes && <span className="truncate max-w-[200px]">{entry.notes}</span>}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-1 ml-3">
+                  <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                    <Edit2 className="h-3 w-3" />
+                  </Button>
+                  <Button variant="outline" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700">
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
