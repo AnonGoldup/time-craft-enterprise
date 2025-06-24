@@ -293,7 +293,7 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
       </div>
 
       {/* Controls Section */}
-      <div className="space-y-4 mb-6">
+      <div className="space-y-6 mb-6">
         {/* Week Selection */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
@@ -336,11 +336,11 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
           </div>
         </div>
 
-        {/* Employee Management */}
-        <div className="border rounded-lg p-4">
-          <div className="flex items-center justify-between mb-3">
+        {/* Employee Management - Fixed stacking issue */}
+        <div className="border rounded-lg p-4 space-y-4">
+          <div className="flex items-center justify-between">
             <h4 className="font-medium">Employee Management</h4>
-            <div className="flex space-x-2">
+            <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={selectAllEmployees}>
                 <CheckSquare className="w-4 h-4 mr-1" />
                 Select All
@@ -351,8 +351,8 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="space-y-2">
               <Label>Filter by Class</Label>
               <Select value={filterClass} onValueChange={setFilterClass}>
                 <SelectTrigger>
@@ -366,7 +366,8 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
                 </SelectContent>
               </Select>
             </div>
-            <div>
+            
+            <div className="space-y-2">
               <Label>Add Employee</Label>
               <Select onValueChange={addEmployee}>
                 <SelectTrigger>
@@ -383,23 +384,25 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
                 </SelectContent>
               </Select>
             </div>
-            <div>
+            
+            <div className="space-y-2">
               <Label>Add by Class</Label>
-              <div className="flex space-x-1">
+              <div className="flex flex-wrap gap-1">
                 <Button variant="outline" size="sm" onClick={() => addEmployeesByClass('Foreman')}>
                   Foreman
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => addEmployeesByClass('Journeyman')}>
-                  Journeyman
+                  Journey
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => addEmployeesByClass('Apprentice')}>
                   Apprentice
                 </Button>
               </div>
             </div>
-            <div>
+            
+            <div className="space-y-2">
               <Label>Templates</Label>
-              <div className="flex space-x-1">
+              <div className="flex flex-wrap gap-1">
                 <Button variant="outline" size="sm" onClick={() => applyTemplate('standard')}>
                   Standard
                 </Button>
@@ -437,7 +440,7 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
 
       {/* Time Entry Grid */}
       {employees.length > 0 && (
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-hidden mb-6">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -503,7 +506,7 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
                       {calculateEmployeeTotal(emp).toFixed(1)}h
                     </TableCell>
                     <TableCell>
-                      <div className="flex space-x-1">
+                      <div className="flex flex-col gap-1">
                         <Button
                           variant="ghost"
                           size="sm"
@@ -531,8 +534,8 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
       )}
 
       {/* Action Buttons */}
-      <div className="flex justify-between items-center mt-6">
-        <div className="flex space-x-2">
+      <div className="flex justify-between items-center">
+        <div className="flex gap-2">
           <Button variant="outline">
             <Upload className="w-4 h-4 mr-2" />
             Import CSV
@@ -543,7 +546,7 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
           </Button>
         </div>
         
-        <div className="flex space-x-2">
+        <div className="flex gap-2">
           <Dialog open={showPreview} onOpenChange={setShowPreview}>
             <DialogTrigger asChild>
               <Button variant="outline">Preview Entries</Button>
@@ -561,7 +564,6 @@ export const BulkEntryTab: React.FC<BulkEntryTabProps> = ({ onSubmit, managerMod
                     }, 0);
                   }, 0)} time entries.
                 </p>
-                {/* Preview content would go here */}
               </div>
             </DialogContent>
           </Dialog>
