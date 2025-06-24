@@ -28,6 +28,7 @@ import {
   Search,
   Clock
 } from 'lucide-react';
+import { TabContentProps } from './types';
 
 // Utility function to merge classNames
 const cn = (...classes: (string | undefined | null | false)[]): string => {
@@ -694,9 +695,18 @@ const validateEntry = (entry: StandardHoursEntry): ValidationError[] => {
   return errors;
 };
 
-export default function StandardHoursTab() {
+// Updated main component to accept TabContentProps
+const StandardHoursTab: React.FC<TabContentProps> = ({
+  entries,
+  setEntries,
+  selectedDates,
+  setSelectedDates,
+  useMultiDateSelection,
+  setUseMultiDateSelection,
+  onSubmit
+}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [entries, setEntries] = useState<StandardHoursEntry[]>([
+  const [standardEntries, setStandardEntries] = useState<StandardHoursEntry[]>([
     {
       id: generateId(),
       selectedEmployees: [mockEmployees[0]], // Default to first employee
@@ -714,7 +724,7 @@ export default function StandardHoursTab() {
   useEffect(() => {
     const newErrors: EntryErrors = {};
     
-    entries.forEach((entry) => {
+    standardEntries.forEach((entry) => {
       const entryErrors = validateEntry(entry);
       if (entryErrors.length > 0) {
         newErrors[entry.id] = entryErrors;
@@ -722,16 +732,16 @@ export default function StandardHoursTab() {
     });
     
     setErrors(newErrors);
-  }, [entries]);
+  }, [standardEntries]);
 
   const updateEntry = useCallback((id: string, field: keyof StandardHoursEntry, value: any) => {
-    setEntries(prev => prev.map(entry => 
+    setStandardEntries(prev => prev.map(entry => 
       entry.id === id ? { ...entry, [field]: value } : entry
     ));
   }, []);
 
   const addNewEntry = useCallback(() => {
-    const lastEntry = entries[entries.length - 1];
+    const lastEntry = standardEntries[standardEntries.length - 1];
     const newEntry: StandardHoursEntry = {
       id: generateId(),
       selectedEmployees: lastEntry?.selectedEmployees || [mockEmployees[0]],
@@ -743,22 +753,22 @@ export default function StandardHoursTab() {
       overtimeHours: 0,
       notes: '',
     };
-    setEntries(prev => [...prev, newEntry]);
-  }, [entries]);
+    setStandardEntries(prev => [...prev, newEntry]);
+  }, [standardEntries]);
 
   const removeEntry = useCallback((id: string) => {
-    if (entries.length > 1) {
-      setEntries(prev => prev.filter(entry => entry.id !== id));
+    if (standardEntries.length > 1) {
+      setStandardEntries(prev => prev.filter(entry => entry.id !== id));
       setErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[id];
         return newErrors;
       });
     }
-  }, [entries.length]);
+  }, [standardEntries.length]);
 
   const resetForm = useCallback(() => {
-    setEntries([{
+    setStandardEntries([{
       id: generateId(),
       selectedEmployees: [mockEmployees[0]],
       selectedDates: [new Date()], // Default to today
@@ -785,7 +795,7 @@ export default function StandardHoursTab() {
     try {
       const timesheetEntries: any[] = [];
       
-      entries.forEach((entry) => {
+      standardEntries.forEach((entry) => {
         const notes = entry.notes || '';
         
         // Create entries for each selected employee and date combination
@@ -842,14 +852,14 @@ export default function StandardHoursTab() {
   };
 
   const totalTimesheetEntries = useMemo(() => {
-    return entries.reduce((total, entry) => {
+    return standardEntries.reduce((total, entry) => {
       const employeeCount = entry.selectedEmployees.length;
       const dateCount = entry.selectedDates.length;
       const entriesPerEmployeeDate = (entry.standardHours > 0 ? 1 : 0) + (entry.overtimeHours > 0 ? 1 : 0);
       
       return total + (employeeCount * dateCount * entriesPerEmployeeDate);
     }, 0);
-  }, [entries]);
+  }, [standardEntries]);
 
   const hasValidationErrors = Object.keys(errors).length > 0;
 
@@ -870,9 +880,9 @@ export default function StandardHoursTab() {
               <h3 className="text-base font-semibold">Standard Hours</h3>
               <Badge variant="secondary" className="text-xs">
                 <Users className="w-3 h-3 mr-1" />
-                {entries.length} {entries.length === 1 ? 'entry' : 'entries'}
+                {standardEntries.length} {standardEntries.length === 1 ? 'entry' : 'entries'}
               </Badge>
-              {totalTimesheetEntries > entries.length && (
+              {totalTimesheetEntries > standardEntries.length && (
                 <Badge variant="outline" className="text-xs">
                   <Zap className="w-3 h-3 mr-1" />
                   → {totalTimesheetEntries} timesheet entries
@@ -895,14 +905,14 @@ export default function StandardHoursTab() {
           </div>
 
           <div className="space-y-4">
-            {entries.map((entry, index) => {
+            {standardEntries.map((entry, index) => {
               const entryErrors = errors[entry.id] || [];
               const hasErrors = entryErrors.length > 0;
               const totalHours = entry.standardHours + entry.overtimeHours;
               
               return (
                 <div key={entry.id} className="border rounded-lg p-3 relative space-y-3">
-                  {entries.length > 1 && (
+                  {standardEntries.length > 1 && (
                     <div className="absolute top-2 right-2">
                       <Button
                         type="button"
@@ -1250,4 +1260,6 @@ export default function StandardHoursTab() {
       </Card>
     </div>
   );
-}
+};
+
+export default StandardHoursTab;
