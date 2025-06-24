@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -89,7 +88,13 @@ const timeEntrySchema = z.object({
 type TimeEntryFormValues = z.infer<typeof timeEntrySchema>
 
 interface EnhancedTimeEntryFormProps {
-  employees: Employee[]
+  employees: Array<{
+    employeeId?: string
+    fullName?: string
+    email?: string
+    class?: string
+    isActive?: boolean
+  }>
   projects: Project[]
   costCodes: CostCode[]
   onSubmit: (entries: TimesheetEntry[]) => Promise<void>
@@ -134,15 +139,23 @@ export function EnhancedTimeEntryForm({
     return [];
   };
 
-  // Filter employees to ensure they have required properties
-  const validEmployees = React.useMemo(() => {
-    return employees.filter((emp): emp is Employee => 
-      typeof emp.employeeId === 'string' && 
-      emp.employeeId.length > 0 &&
-      typeof emp.fullName === 'string' && 
-      emp.fullName.length > 0 &&
-      emp.isActive !== false
-    );
+  // Filter employees to ensure they have required properties and convert to proper Employee type
+  const validEmployees = React.useMemo((): Employee[] => {
+    return employees
+      .filter((emp): emp is Required<Pick<typeof emp, 'employeeId' | 'fullName'>> & typeof emp => 
+        typeof emp.employeeId === 'string' && 
+        emp.employeeId.length > 0 &&
+        typeof emp.fullName === 'string' && 
+        emp.fullName.length > 0 &&
+        emp.isActive !== false
+      )
+      .map((emp): Employee => ({
+        employeeId: emp.employeeId,
+        fullName: emp.fullName,
+        email: emp.email,
+        class: emp.class,
+        isActive: emp.isActive
+      }));
   }, [employees]);
   
   const form = useForm<TimeEntryFormValues>({
