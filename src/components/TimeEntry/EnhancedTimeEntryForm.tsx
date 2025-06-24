@@ -89,10 +89,12 @@ type TimeEntryFormValues = z.infer<typeof timeEntrySchema>
 
 interface EnhancedTimeEntryFormProps {
   onSubmit: (entries: TimesheetEntry[]) => Promise<void>
+  isManager?: boolean
 }
 
 export function EnhancedTimeEntryForm({
   onSubmit,
+  isManager = false,
 }: EnhancedTimeEntryFormProps) {
   const [isLoading, setIsLoading] = React.useState(false)
   
@@ -112,7 +114,7 @@ export function EnhancedTimeEntryForm({
   const form = useForm<TimeEntryFormValues>({
     resolver: zodResolver(timeEntrySchema),
     defaultValues: {
-      selectedEmployees: currentUser ? [currentUser] : [],
+      selectedEmployees: currentUser && !isManager ? [currentUser] : [],
       selectedDates: [],
       projectCode: "",
       costCode: "",
@@ -159,7 +161,7 @@ export function EnhancedTimeEntryForm({
       
       // Reset form but keep current user selected
       form.reset({
-        selectedEmployees: currentUser ? [currentUser] : [],
+        selectedEmployees: currentUser && !isManager ? [currentUser] : [],
         selectedDates: [],
         projectCode: "",
         costCode: "",
@@ -180,7 +182,7 @@ export function EnhancedTimeEntryForm({
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          Enhanced Time Entry
+          {isManager ? "Manager Time Entry" : "Enhanced Time Entry"}
           {totalEntries > 1 && (
             <Badge variant="outline">
               {totalEntries} entries will be created
@@ -188,7 +190,10 @@ export function EnhancedTimeEntryForm({
           )}
         </CardTitle>
         <CardDescription>
-          Select dates and enter your time for projects.
+          {isManager 
+            ? "Create time entries for multiple employees and dates."
+            : "Select dates and enter your time for projects."
+          }
         </CardDescription>
       </CardHeader>
       
@@ -202,19 +207,25 @@ export function EnhancedTimeEntryForm({
               name="selectedEmployees"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Employee</FormLabel>
+                  <FormLabel>
+                    {isManager ? "Select Employees" : "Employee"}
+                  </FormLabel>
                   <FormControl>
                     <MultiEmployeeSelector
                       employees={employees.filter(emp => emp.isActive !== false)}
                       selectedEmployees={field.value as Employee[]}
                       onEmployeeChange={(selectedEmps: Employee[]) => field.onChange(selectedEmps)}
-                      placeholder="Select employee..."
-                      maxSelected={1}
-                      disabled={!!currentUser}
+                      placeholder={isManager ? "Select employees..." : "Select employee..."}
+                      maxSelected={isManager ? undefined : 1}
+                      groupByClass={isManager}
+                      disabled={!isManager && !!currentUser}
                     />
                   </FormControl>
                   <FormDescription>
-                    Your employee account
+                    {isManager 
+                      ? "Select one or more employees to create entries for"
+                      : "Your employee account"
+                    }
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -394,7 +405,7 @@ export function EnhancedTimeEntryForm({
                   </div>
                   <div>
                     <span className="text-muted-foreground">Entry Type:</span>
-                    <div className="font-medium">Employee</div>
+                    <div className="font-medium">{isManager ? "Manager" : "Employee"}</div>
                   </div>
                 </div>
               </div>
