@@ -5,7 +5,6 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Employee } from '@/services/api';
 
@@ -22,13 +21,12 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
   setSelectedEmployee,
   selectedEmployees = [],
   setSelectedEmployees,
-  employees = [] // Provide default empty array
+  employees = []
 }) => {
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false);
 
-  // Ensure arrays are always properly defined and not null/undefined
   const safeSelectedEmployees = Array.isArray(selectedEmployees) ? selectedEmployees : [];
-  const safeEmployees = Array.isArray(employees) && employees ? employees : [];
+  const safeEmployees = Array.isArray(employees) ? employees : [];
 
   const handleEmployeeSelect = (employeeId: string) => {
     if (setSelectedEmployees) {
@@ -38,7 +36,7 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
         : [...safeSelectedEmployees, employeeId];
       setSelectedEmployees(newSelection);
     } else {
-      // Single select mode (fallback)
+      // Single select mode
       setSelectedEmployee(employeeId);
       setEmployeePopoverOpen(false);
     }
@@ -56,21 +54,6 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
       .map(emp => emp.fullName);
   };
 
-  // Don't render if employees are still loading or empty
-  if (!safeEmployees || safeEmployees.length === 0) {
-    return (
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-blue-500" />
-          <span className="text-sm text-slate-600 dark:text-slate-400">Employee</span>
-        </div>
-        <div className="w-48 p-2 border rounded text-sm text-muted-foreground">
-          Loading employees...
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-2">
       <div className="flex flex-col gap-2">
@@ -79,66 +62,59 @@ const EmployeeSelector: React.FC<EmployeeSelectorProps> = ({
           <span className="text-sm text-slate-600 dark:text-slate-400">Employee</span>
         </div>
         
-        {setSelectedEmployees ? (
-          // Multi-select mode
-          <Popover open={employeePopoverOpen} onOpenChange={setEmployeePopoverOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={employeePopoverOpen}
-                className="w-48 justify-between border-slate-300 dark:border-slate-600"
-              >
-                {safeSelectedEmployees.length === 0
+        <Popover open={employeePopoverOpen} onOpenChange={setEmployeePopoverOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={employeePopoverOpen}
+              className="w-48 justify-between border-slate-300 dark:border-slate-600"
+            >
+              {setSelectedEmployees ? (
+                safeSelectedEmployees.length === 0
                   ? "Select employees..."
                   : safeSelectedEmployees.length === 1
                   ? getSelectedEmployeeNames()[0]
-                  : `${safeSelectedEmployees.length} employees selected`}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-48 p-0">
-              <Command>
-                <CommandInput placeholder="Search employees..." />
-                <CommandEmpty>No employee found.</CommandEmpty>
-                <CommandGroup className="max-h-64 overflow-auto">
-                  {safeEmployees.map((employee) => (
-                    <CommandItem
-                      key={employee.employeeID}
-                      value={employee.fullName}
-                      onSelect={() => handleEmployeeSelect(employee.employeeID)}
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          safeSelectedEmployees.includes(employee.employeeID) ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {employee.fullName}
-                      <span className="ml-auto text-xs text-slate-500">
-                        {employee.class}
-                      </span>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
-        ) : (
-          // Single select mode (fallback)
-          <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
-            <SelectTrigger className="w-48 border-slate-300 dark:border-slate-600">
-              <SelectValue placeholder="Select employee..." />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-              {safeEmployees.map((employee) => (
-                <SelectItem key={employee.employeeID} value={employee.employeeID}>
-                  {employee.fullName} - {employee.class}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
+                  : `${safeSelectedEmployees.length} employees selected`
+              ) : (
+                selectedEmployee
+                  ? safeEmployees.find(emp => emp.employeeID === selectedEmployee)?.fullName || "Select employee..."
+                  : "Select employee..."
+              )}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-48 p-0 bg-popover border-border z-50">
+            <Command>
+              <CommandInput placeholder="Search employees..." />
+              <CommandEmpty>No employee found.</CommandEmpty>
+              <CommandGroup className="max-h-64 overflow-auto">
+                {safeEmployees.map((employee) => (
+                  <CommandItem
+                    key={employee.employeeID}
+                    value={employee.fullName}
+                    onSelect={() => handleEmployeeSelect(employee.employeeID)}
+                    className="hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        (setSelectedEmployees 
+                          ? safeSelectedEmployees.includes(employee.employeeID)
+                          : selectedEmployee === employee.employeeID
+                        ) ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {employee.fullName}
+                    <span className="ml-auto text-xs text-slate-500">
+                      {employee.class}
+                    </span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Selected employees badges (for multi-select) */}

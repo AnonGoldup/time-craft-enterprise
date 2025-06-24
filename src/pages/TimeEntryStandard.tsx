@@ -4,12 +4,21 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Clock, Timer } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import TimeEntryHeader from '@/components/TimeEntry/TimeEntryHeader';
 import ProjectDetailsRow from '@/components/TimeEntry/ProjectDetailsRow';
 import HoursEntryRow from '@/components/TimeEntry/HoursEntryRow';
 import NotesAndSubmitRow from '@/components/TimeEntry/NotesAndSubmitRow';
+import { useProjectData } from '@/components/TimeEntry/hooks/useProjectData';
+import { useTimesheetData } from '@/hooks/useTimesheetData';
+import { format } from 'date-fns';
 
 const TimeEntryStandard = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const { createEntry } = useTimesheetData(user?.employeeId || '');
+  
   const [selectedProject, setSelectedProject] = useState('');
   const [selectedExtra, setSelectedExtra] = useState('');
   const [selectedCostCode, setSelectedCostCode] = useState('');
@@ -23,6 +32,8 @@ const TimeEntryStandard = () => {
     id: 1,
     notes: ''
   }]);
+
+  const { projects, employees, projectExtras, costCodes, loading } = useProjectData(selectedProject, selectedExtra);
 
   const updateEntryNotes = (entryId: number, notes: string) => {
     setEntries(entries.map(entry => 
@@ -48,11 +59,131 @@ const TimeEntryStandard = () => {
   };
 
   const copyPreviousDay = () => {
-    console.log('Copy previous day');
+    // Copy mock data from previous day
+    setSelectedProject('1');
+    setSelectedExtra('1');
+    setSelectedCostCode('1');
+    setStandardHours('8');
+    setOvertimeHours('0');
+    updateEntryNotes(entries[0].id, 'Continued work from previous day');
+    
+    toast({
+      title: "Previous Day Copied",
+      description: "Time entry data from previous day has been copied."
+    });
   };
 
   const copyPreviousWeek = () => {
-    console.log('Copy previous week');
+    // Copy mock data from previous week
+    setSelectedProject('2');
+    setSelectedExtra('3');
+    setSelectedCostCode('2');
+    setStandardHours('7.5');
+    setOvertimeHours('0.5');
+    updateEntryNotes(entries[0].id, 'Weekly routine work pattern');
+    
+    toast({
+      title: "Previous Week Copied",
+      description: "Time entry data from previous week has been copied."
+    });
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedProject || !selectedCostCode || !user) {
+      toast({
+        title: "Missing Information",
+        description: "Please select project, cost code, and enter hours.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const datesToSubmit = selectedDates.length > 0 
+      ? selectedDates.map(date => format(date, 'yyyy-MM-dd'))
+      : selectedDate ? [selectedDate] : [format(new Date(), 'yyyy-MM-dd')];
+
+    const employeesToSubmit = selectedEmployees.length > 0 ? selectedEmployees : [user.employeeId];
+
+    try {
+      for (const employeeId of employeesToSubmit) {
+        for (const dateWorked of datesToSubmit) {
+          for (const entry of entries) {
+            // Create standard hours entry
+            if (parseFloat(standardHours) > 0) {
+              await createEntry({
+                employeeID: employeeId,
+                dateWorked: dateWorked,
+                projectID: parseInt(selectedProject),
+                extraID: selectedExtra ? parseInt(selectedExtra) : 0,
+                costCodeID: parseInt(selectedCostCode),
+                payID: 1,
+                hours: parseFloat(standardHours),
+                unionID: 1,
+                entryType: 'Standard',
+                notes: entry.notes,
+                status: 'Draft',
+                createdBy: user.employeeId,
+                createdDate: new Date().toISOString(),
+                modifiedBy: '',
+                modifiedDate: '',
+                exportedDate: '',
+                startTime: '',
+                endTime: '',
+                breakInTime: '',
+                breakOutTime: '',
+                timeIn: '',
+                timeOut: '',
+                breakIn: '',
+                breakOut: ''
+              });
+            }
+
+            // Create overtime hours entry
+            if (parseFloat(overtimeHours) > 0) {
+              await createEntry({
+                employeeID: employeeId,
+                dateWorked: dateWorked,
+                projectID: parseInt(selectedProject),
+                extraID: selectedExtra ? parseInt(selectedExtra) : 0,
+                costCodeID: parseInt(selectedCostCode),
+                payID: 2,
+                hours: parseFloat(overtimeHours),
+                unionID: 1,
+                entryType: 'Standard',
+                notes: entry.notes,
+                status: 'Draft',
+                createdBy: user.employeeId,
+                createdDate: new Date().toISOString(),
+                modifiedBy: '',
+                modifiedDate: '',
+                exportedDate: '',
+                startTime: '',
+                endTime: '',
+                breakInTime: '',
+                breakOutTime: '',
+                timeIn: '',
+                timeOut: '',
+                breakIn: '',
+                breakOut: ''
+              });
+            }
+          }
+        }
+      }
+
+      // Reset form
+      setStandardHours('');
+      setOvertimeHours('');
+      setSelectedDates([]);
+      setEntries([{ id: 1, notes: '' }]);
+      
+      toast({
+        title: "Success",
+        description: `Time entries created for ${employeesToSubmit.length} employee(s) across ${datesToSubmit.length} date(s).`
+      });
+    } catch (error) {
+      console.error('Submit error:', error);
+    }
   };
 
   const getRowBackgroundClass = (index: number) => {
@@ -166,6 +297,7 @@ const TimeEntryStandard = () => {
                     notes={entry.notes} 
                     setNotes={(notes) => updateEntryNotes(entry.id, notes)} 
                     showTotalHours={false}
+                    onSubmit={handleSubmit}
                   />
                 </div>
               </div>
