@@ -51,11 +51,11 @@ interface TimesheetEntry {
   notes?: string
 }
 
-// Form validation schema with business rules
+// Form validation schema with business rules - fix the employee schema to match Employee interface
 const timeEntrySchema = z.object({
   selectedEmployees: z.array(z.object({
-    employeeId: z.string(),
-    fullName: z.string(),
+    employeeId: z.string().min(1, "Employee ID is required"),
+    fullName: z.string().min(1, "Full name is required"),
     email: z.string().optional(),
     class: z.string().optional(),
     isActive: z.boolean().optional(),
@@ -206,8 +206,8 @@ export function EnhancedTimeEntryForm({
                   <FormControl>
                     <MultiEmployeeSelector
                       employees={employees.filter(emp => emp.isActive !== false)}
-                      selectedEmployees={field.value}
-                      onEmployeeChange={field.onChange}
+                      selectedEmployees={field.value as Employee[]}
+                      onEmployeeChange={(selectedEmps: Employee[]) => field.onChange(selectedEmps)}
                       placeholder="Select employee..."
                       maxSelected={1}
                       disabled={!!currentUser}
