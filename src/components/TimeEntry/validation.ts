@@ -41,11 +41,18 @@ export type BulkTimeEntryFormValues = z.infer<typeof bulkTimeEntrySchema>
 // Utility function to filter and validate employees
 export const validateEmployees = (employees: Array<Partial<Employee>>): Employee[] => {
   return employees
-    .filter((emp): emp is Employee => 
+    .filter((emp): emp is Required<Pick<Partial<Employee>, 'employeeId' | 'fullName'>> & Partial<Employee> => 
       typeof emp.employeeId === 'string' && 
       emp.employeeId.length > 0 &&
       typeof emp.fullName === 'string' && 
       emp.fullName.length > 0 &&
       emp.isActive !== false
-    );
+    )
+    .map((emp): Employee => ({
+      employeeId: emp.employeeId,
+      fullName: emp.fullName,
+      email: emp.email,
+      class: emp.class,
+      isActive: emp.isActive
+    }));
 }
