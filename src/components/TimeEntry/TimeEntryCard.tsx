@@ -31,6 +31,7 @@ interface TimeEntryCardProps {
   overtimeHours: string;
   setOvertimeHours: (hours: string) => void;
   setQuickHours: (hours: number) => void;
+  onSubmit?: () => void;
 }
 
 const TimeEntryCard: React.FC<TimeEntryCardProps> = ({
@@ -57,7 +58,8 @@ const TimeEntryCard: React.FC<TimeEntryCardProps> = ({
   setStandardHours,
   overtimeHours,
   setOvertimeHours,
-  setQuickHours
+  setQuickHours,
+  onSubmit = () => {}
 }) => {
   const getRowBackgroundClass = (index: number) => {
     if (index === 0) return 'bg-card';
@@ -111,6 +113,7 @@ const TimeEntryCard: React.FC<TimeEntryCardProps> = ({
           notes={entry.notes} 
           setNotes={(notes) => updateEntryNotes(entry.id, notes)} 
           showTotalHours={false}
+          onSubmit={onSubmit}
         />
       </div>
     </Card>
