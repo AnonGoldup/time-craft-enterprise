@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import BulkEntryTab from './BulkEntryTab';
 import { MyTimesheetsTab } from './MyTimesheetsTab';
 import StandardHoursTab from './StandardHoursTab';
-import { TimeInOutTab } from './TimeInOutTab';
+import TimeInOutTab from './TimeInOutTab';
 import { ComprehensiveTimeEntryFormProps, TimeEntryData } from './types';
 import { toast } from 'sonner';
 
