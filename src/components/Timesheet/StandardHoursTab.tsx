@@ -762,7 +762,7 @@ export default function StandardHoursTab() {
                 </Badge>}
             </div>
             <div className="flex items-center space-x-2">
-              <Button type="button" variant="default" size="sm" onClick={addNewEntry} className="flex items-center space-x-1 h-8 bg-green-600 hover:bg-green-700 text-white" disabled={isSubmitting}>
+              <Button type="button" variant="default" size="sm" onClick={addNewEntry} disabled={isSubmitting} className="flex items-center space-x-1 h-8 text-white bg-blue-600 hover:bg-blue-500">
                 <Plus className="w-3 h-3" />
                 <span>Add Entry</span>
               </Button>
