@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,31 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { 
-  Database, 
-  Package, 
-  Users, 
-  Clock, 
-  CheckCircle2, 
-  AlertTriangle, 
-  Activity, 
-  XCircle,
-  Download,
-  BarChart3,
-  PieChart,
-  RefreshCw,
-  Settings,
-  Building,
-  DollarSign,
-  Timer,
-  Zap,
-  Eye,
-  Layers,
-  TrendingUp,
-  AlertCircle,
-  FileSpreadsheet,
-  Send
-} from 'lucide-react';
+import { Database, Package, Users, Clock, CheckCircle2, AlertTriangle, Activity, XCircle, Download, BarChart3, PieChart, RefreshCw, Settings, Building, DollarSign, Timer, Zap, Eye, Layers, TrendingUp, AlertCircle, FileSpreadsheet, Send } from 'lucide-react';
 
 // Mock data
 const systemStatus = {
@@ -49,21 +24,77 @@ const systemStatus = {
     connected: true,
     latency: 156,
     apiVersion: '2.3.1',
-    rateLimit: { used: 23, limit: 100 }
+    rateLimit: {
+      used: 23,
+      limit: 100
+    }
   }
 };
-
-const projectData = [
-  { code: '21-0066', name: 'Edmonton EXPO SOLAR IPD', employees: 24, approved: 24, pending: 0, rejected: 0, hours: 968 },
-  { code: '22-0006', name: 'AltaPro Service Department', employees: 18, approved: 15, pending: 3, rejected: 0, hours: 704 },
-  { code: '24-0052', name: 'Grant MacEwan School', employees: 32, approved: 28, pending: 3, rejected: 1, hours: 1328 },
-  { code: '21-0029', name: 'Edmonton EXPO IPD', employees: 15, approved: 15, pending: 0, rejected: 0, hours: 600 },
-  { code: '23-0045', name: 'Calgary Tower Retrofit', employees: 22, approved: 18, pending: 4, rejected: 0, hours: 872 },
-  { code: '25-0012', name: 'Red Deer Hospital Wing', employees: 45, approved: 45, pending: 0, rejected: 0, hours: 1920 },
-  { code: '24-0078', name: 'Lethbridge Solar Farm', employees: 28, approved: 22, pending: 5, rejected: 1, hours: 1096 },
-  { code: '22-0089', name: 'Fort Mac Emergency', employees: 12, approved: 8, pending: 4, rejected: 0, hours: 528 }
-];
-
+const projectData = [{
+  code: '21-0066',
+  name: 'Edmonton EXPO SOLAR IPD',
+  employees: 24,
+  approved: 24,
+  pending: 0,
+  rejected: 0,
+  hours: 968
+}, {
+  code: '22-0006',
+  name: 'AltaPro Service Department',
+  employees: 18,
+  approved: 15,
+  pending: 3,
+  rejected: 0,
+  hours: 704
+}, {
+  code: '24-0052',
+  name: 'Grant MacEwan School',
+  employees: 32,
+  approved: 28,
+  pending: 3,
+  rejected: 1,
+  hours: 1328
+}, {
+  code: '21-0029',
+  name: 'Edmonton EXPO IPD',
+  employees: 15,
+  approved: 15,
+  pending: 0,
+  rejected: 0,
+  hours: 600
+}, {
+  code: '23-0045',
+  name: 'Calgary Tower Retrofit',
+  employees: 22,
+  approved: 18,
+  pending: 4,
+  rejected: 0,
+  hours: 872
+}, {
+  code: '25-0012',
+  name: 'Red Deer Hospital Wing',
+  employees: 45,
+  approved: 45,
+  pending: 0,
+  rejected: 0,
+  hours: 1920
+}, {
+  code: '24-0078',
+  name: 'Lethbridge Solar Farm',
+  employees: 28,
+  approved: 22,
+  pending: 5,
+  rejected: 1,
+  hours: 1096
+}, {
+  code: '22-0089',
+  name: 'Fort Mac Emergency',
+  employees: 12,
+  approved: 8,
+  pending: 4,
+  rejected: 0,
+  hours: 528
+}];
 const weeklyStats = {
   totalEmployees: 160,
   submitted: 145,
@@ -74,13 +105,19 @@ const weeklyStats = {
   totalEntries: 1205,
   estimatedPayroll: 287543.50
 };
-
-const lateSubmissions = [
-  { id: 'JSMITH', name: 'John Smith', daysLate: 1 },
-  { id: 'MJONES', name: 'Mary Jones', daysLate: 2 },
-  { id: 'BWILSON', name: 'Bob Wilson', daysLate: 4 }
-];
-
+const lateSubmissions = [{
+  id: 'JSMITH',
+  name: 'John Smith',
+  daysLate: 1
+}, {
+  id: 'MJONES',
+  name: 'Mary Jones',
+  daysLate: 2
+}, {
+  id: 'BWILSON',
+  name: 'Bob Wilson',
+  daysLate: 4
+}];
 export default function AltaProTimesheetDashboard() {
   const [selectedWeek, setSelectedWeek] = useState('2025-06-21');
   const [exportFormat, setExportFormat] = useState('sage300');
@@ -106,7 +143,6 @@ export default function AltaProTimesheetDashboard() {
         message: `${lateSubmissions.length} late submissions require attention`
       });
     }
-    
     const pendingProjects = projectData.filter(p => p.pending > 0).length;
     if (pendingProjects > 0) {
       alerts.push({
@@ -114,14 +150,11 @@ export default function AltaProTimesheetDashboard() {
         message: `${pendingProjects} projects have pending approvals`
       });
     }
-    
     setSystemAlerts(alerts);
   }, []);
-
   const handleExport = async () => {
     setIsExporting(true);
     setExportProgress(0);
-
     const interval = setInterval(() => {
       setExportProgress(prev => {
         if (prev >= 100) {
@@ -133,22 +166,17 @@ export default function AltaProTimesheetDashboard() {
       });
     }, 300);
   };
-
   const handleRefresh = () => {
     setRefreshing(true);
     setTimeout(() => setRefreshing(false), 1500);
   };
-
   const submissionRate = useMemo(() => {
-    return ((weeklyStats.submitted / weeklyStats.totalEmployees) * 100).toFixed(1);
+    return (weeklyStats.submitted / weeklyStats.totalEmployees * 100).toFixed(1);
   }, []);
-
   const totalHours = useMemo(() => {
     return projectData.reduce((sum, project) => sum + project.hours, 0);
   }, []);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-6">
+  return <div className="min-h-screen bg-gradient-to-br from-grey-100 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-6 bg-gray-100">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex justify-between items-start">
@@ -178,16 +206,12 @@ export default function AltaProTimesheetDashboard() {
         </div>
 
         {/* System Alerts */}
-        {systemAlerts.length > 0 && (
-          <div className="space-y-2">
-            {systemAlerts.map((alert, index) => (
-              <Alert key={index} variant={alert.type === 'warning' ? 'destructive' : 'default'}>
+        {systemAlerts.length > 0 && <div className="space-y-2">
+            {systemAlerts.map((alert, index) => <Alert key={index} variant={alert.type === 'warning' ? 'destructive' : 'default'}>
                 <AlertTriangle className="w-4 h-4" />
                 <AlertDescription>{alert.message}</AlertDescription>
-              </Alert>
-            ))}
-          </div>
-        )}
+              </Alert>)}
+          </div>}
 
         {/* System Status Cards */}
         <div className="grid grid-cols-3 gap-4">
@@ -218,10 +242,7 @@ export default function AltaProTimesheetDashboard() {
                     {systemStatus.sql.activeConnections}/{systemStatus.sql.maxConnections}
                   </span>
                 </div>
-                <Progress 
-                  value={(systemStatus.sql.activeConnections / systemStatus.sql.maxConnections) * 100} 
-                  className="h-2 mt-2"
-                />
+                <Progress value={systemStatus.sql.activeConnections / systemStatus.sql.maxConnections * 100} className="h-2 mt-2" />
               </div>
             </CardContent>
           </Card>
@@ -253,10 +274,7 @@ export default function AltaProTimesheetDashboard() {
                     {systemStatus.sage.rateLimit.used}/{systemStatus.sage.rateLimit.limit}
                   </span>
                 </div>
-                <Progress 
-                  value={(systemStatus.sage.rateLimit.used / systemStatus.sage.rateLimit.limit) * 100} 
-                  className="h-2 mt-2"
-                />
+                <Progress value={systemStatus.sage.rateLimit.used / systemStatus.sage.rateLimit.limit * 100} className="h-2 mt-2" />
               </div>
             </CardContent>
           </Card>
@@ -331,19 +349,9 @@ export default function AltaProTimesheetDashboard() {
               <CardContent>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                   {projectData.map(project => {
-                    const isFullyApproved = project.pending === 0 && project.rejected === 0;
-                    const approvalRate = (project.approved / project.employees) * 100;
-                    
-                    return (
-                      <Card 
-                        key={project.code}
-                        className={`cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg ${
-                          isFullyApproved ? 'border-green-500 bg-green-50' : 
-                          project.rejected > 0 ? 'border-red-500 bg-red-50' : 
-                          'border-orange-500 bg-orange-50'
-                        }`}
-                        onClick={() => setSelectedProject(project)}
-                      >
+                  const isFullyApproved = project.pending === 0 && project.rejected === 0;
+                  const approvalRate = project.approved / project.employees * 100;
+                  return <Card key={project.code} className={`cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg ${isFullyApproved ? 'border-green-500 bg-green-50' : project.rejected > 0 ? 'border-red-500 bg-red-50' : 'border-orange-500 bg-orange-50'}`} onClick={() => setSelectedProject(project)}>
                         <CardContent className="p-4">
                           <div className="space-y-3">
                             <div>
@@ -356,22 +364,10 @@ export default function AltaProTimesheetDashboard() {
                             <div className="space-y-2">
                               <div className="flex justify-between items-center">
                                 <span className="text-xs font-medium">{approvalRate.toFixed(0)}%</span>
-                                {isFullyApproved ? (
-                                  <CheckCircle2 className="w-4 h-4 text-green-600" />
-                                ) : project.rejected > 0 ? (
-                                  <XCircle className="w-4 h-4 text-red-600" />
-                                ) : (
-                                  <AlertCircle className="w-4 h-4 text-orange-600" />
-                                )}
+                                {isFullyApproved ? <CheckCircle2 className="w-4 h-4 text-green-600" /> : project.rejected > 0 ? <XCircle className="w-4 h-4 text-red-600" /> : <AlertCircle className="w-4 h-4 text-orange-600" />}
                               </div>
                               
-                              <Progress 
-                                value={approvalRate} 
-                                className={`h-2 ${
-                                  isFullyApproved ? 'bg-green-200' : 
-                                  project.rejected > 0 ? 'bg-red-200' : 'bg-orange-200'
-                                }`}
-                              />
+                              <Progress value={approvalRate} className={`h-2 ${isFullyApproved ? 'bg-green-200' : project.rejected > 0 ? 'bg-red-200' : 'bg-orange-200'}`} />
                               
                               <div className="grid grid-cols-3 gap-1 text-xs">
                                 <div className="text-center">
@@ -395,9 +391,8 @@ export default function AltaProTimesheetDashboard() {
                             </div>
                           </div>
                         </CardContent>
-                      </Card>
-                    );
-                  })}
+                      </Card>;
+                })}
                 </div>
               </CardContent>
             </Card>
@@ -430,7 +425,7 @@ export default function AltaProTimesheetDashboard() {
                       
                       <div>
                         <label className="text-sm font-medium">Export Format</label>
-                        <Select value={exportFormat} onValueChange={(value) => setExportFormat(value)}>
+                        <Select value={exportFormat} onValueChange={value => setExportFormat(value)}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
@@ -460,8 +455,7 @@ export default function AltaProTimesheetDashboard() {
                         <div className="mt-3 p-3 bg-gray-50 rounded border">
                           <div className="text-xs font-medium text-gray-700 mb-2">Format Preview:</div>
                           <div className="text-xs font-mono text-gray-600">
-                            {exportFormat === 'sage300' && (
-                              <div className="space-y-1">
+                            {exportFormat === 'sage300' && <div className="space-y-1">
                                 <div className="text-green-700 font-medium">SAGE 300 Standard CSV:</div>
                                 <div>"EMP001","21-0066","","001-040-043",1,1,8.00,,,06212025</div>
                                 <div className="text-gray-500 text-xs mt-1">
@@ -470,10 +464,8 @@ export default function AltaProTimesheetDashboard() {
                                 <div className="text-gray-500 text-xs">
                                   Note: Extra field is blank when "Default" is selected
                                 </div>
-                              </div>
-                            )}
-                            {exportFormat === 'sage300custom' && (
-                              <div className="space-y-1">
+                              </div>}
+                            {exportFormat === 'sage300custom' && <div className="space-y-1">
                                 <div className="text-blue-700 font-medium">SAGE 300 Custom CSV:</div>
                                 <div>"EMP001","21-0066","","001-040-043",1,1,8.00,"Edmonton EXPO","Direct Labor",06212025</div>
                                 <div className="text-gray-500 text-xs mt-1">
@@ -482,10 +474,8 @@ export default function AltaProTimesheetDashboard() {
                                 <div className="text-gray-500 text-xs">
                                   Note: Extra field is blank when "Default" is selected
                                 </div>
-                              </div>
-                            )}
-                            {exportFormat === 'excel' && (
-                              <div className="space-y-1">
+                              </div>}
+                            {exportFormat === 'excel' && <div className="space-y-1">
                                 <div className="text-purple-700 font-medium">Excel Detailed Format:</div>
                                 <div className="grid grid-cols-1 gap-1">
                                   <div>Employee ID | Name | Date | Project | Description | Cost Code | Hours | Type</div>
@@ -497,8 +487,7 @@ export default function AltaProTimesheetDashboard() {
                                 <div className="text-gray-500 text-xs">
                                   Note: Extra column shows "(Default)" when no specific extra is selected
                                 </div>
-                              </div>
-                            )}
+                              </div>}
                           </div>
                         </div>
                       </div>
@@ -509,34 +498,24 @@ export default function AltaProTimesheetDashboard() {
                         <Eye className="w-4 h-4 mr-2" />
                         Preview Export
                       </Button>
-                      <Button 
-                        onClick={handleExport} 
-                        disabled={isExporting}
-                        className="flex-1"
-                      >
-                        {isExporting ? (
-                          <>
+                      <Button onClick={handleExport} disabled={isExporting} className="flex-1">
+                        {isExporting ? <>
                             <Timer className="w-4 h-4 mr-2 animate-spin" />
                             Exporting...
-                          </>
-                        ) : (
-                          <>
+                          </> : <>
                             <Download className="w-4 h-4 mr-2" />
                             Export to SAGE
-                          </>
-                        )}
+                          </>}
                       </Button>
                     </div>
                     
-                    {isExporting && (
-                      <div className="space-y-2">
+                    {isExporting && <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span>Processing entries...</span>
                           <span>{exportProgress}%</span>
                         </div>
                         <Progress value={exportProgress} />
-                      </div>
-                    )}
+                      </div>}
                   </CardContent>
                 </Card>
               </div>
@@ -570,8 +549,7 @@ export default function AltaProTimesheetDashboard() {
                 </Card>
                 
                 {/* Late Submissions */}
-                {lateSubmissions.length > 0 && (
-                  <Card className="border-orange-200">
+                {lateSubmissions.length > 0 && <Card className="border-orange-200">
                     <CardHeader>
                       <CardTitle className="text-lg text-orange-600 flex items-center">
                         <AlertCircle className="w-5 h-5 mr-2" />
@@ -581,16 +559,14 @@ export default function AltaProTimesheetDashboard() {
                     <CardContent>
                       <ScrollArea className="h-32">
                         <div className="space-y-2">
-                          {lateSubmissions.map(emp => (
-                            <div key={emp.id} className="p-2 bg-orange-50 rounded border border-orange-200">
+                          {lateSubmissions.map(emp => <div key={emp.id} className="p-2 bg-orange-50 rounded border border-orange-200">
                               <div className="flex justify-between items-center">
                                 <span className="text-sm font-medium">{emp.name}</span>
                                 <Badge variant="outline" className="text-orange-600">
                                   {emp.daysLate} days late
                                 </Badge>
                               </div>
-                            </div>
-                          ))}
+                            </div>)}
                         </div>
                       </ScrollArea>
                       <Button variant="outline" className="w-full mt-3" size="sm">
@@ -598,8 +574,7 @@ export default function AltaProTimesheetDashboard() {
                         Send Reminders
                       </Button>
                     </CardContent>
-                  </Card>
-                )}
+                  </Card>}
               </div>
             </div>
           </TabsContent>
@@ -676,7 +651,7 @@ export default function AltaProTimesheetDashboard() {
         </Tabs>
 
         {/* Project Detail Modal */}
-        <Dialog open={!!selectedProject} onOpenChange={(open) => !open && setSelectedProject(null)}>
+        <Dialog open={!!selectedProject} onOpenChange={open => !open && setSelectedProject(null)}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>
@@ -686,8 +661,7 @@ export default function AltaProTimesheetDashboard() {
                 Detailed project information and approval status
               </DialogDescription>
             </DialogHeader>
-            {selectedProject && (
-              <div className="space-y-4">
+            {selectedProject && <div className="space-y-4">
                 <div className="grid grid-cols-4 gap-4">
                   <div className="text-center p-3 bg-blue-50 rounded">
                     <div className="text-lg font-bold">{selectedProject.employees}</div>
@@ -725,11 +699,9 @@ export default function AltaProTimesheetDashboard() {
                     Export Project
                   </Button>
                 </div>
-              </div>
-            )}
+              </div>}
           </DialogContent>
         </Dialog>
       </div>
-    </div>
-  );
+    </div>;
 }
