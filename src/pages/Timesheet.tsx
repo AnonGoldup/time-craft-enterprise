@@ -1,10 +1,8 @@
-
 import React from 'react';
 import { TimesheetLayout } from '@/components/Timesheet/TimesheetLayout';
 import { TimesheetSidebar } from '@/components/Timesheet/TimesheetSidebar';
 import { ComprehensiveTimeEntryForm } from '@/components/Timesheet/ComprehensiveTimeEntryForm';
 import { toast } from 'sonner';
-
 const Timesheet = () => {
   const weekSummary = {
     totalHours: 32.5,
@@ -23,7 +21,6 @@ const Timesheet = () => {
       'saturday': 0
     }
   };
-
   const handleQuickAction = (action: string) => {
     switch (action) {
       case 'last-entry':
@@ -42,37 +39,25 @@ const Timesheet = () => {
         toast.info(`Quick action: ${action}`);
     }
   };
-
   const handleSubmitWeek = () => {
     toast.success('Week submitted for approval!');
   };
-
   const handleTimeEntrySubmit = (data: any) => {
     console.log('Time entry submitted:', data);
     toast.success('Time entry submitted successfully!');
   };
-
-  return (
-    <TimesheetLayout>
+  return <TimesheetLayout>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
         {/* Main Form Area */}
         <div className="lg:col-span-3 order-2 lg:order-1">
-          <ComprehensiveTimeEntryForm 
-            onSubmit={handleTimeEntrySubmit}
-          />
+          <ComprehensiveTimeEntryForm onSubmit={handleTimeEntrySubmit} />
         </div>
 
         {/* Sidebar */}
-        <div className="lg:col-span-1 order-1 lg:order-2">
-          <TimesheetSidebar
-            weekSummary={weekSummary}
-            onQuickAction={handleQuickAction}
-            onSubmitWeek={handleSubmitWeek}
-          />
+        <div className="lg:col-span-1 order-1 lg:order-2 px-0">
+          <TimesheetSidebar weekSummary={weekSummary} onQuickAction={handleQuickAction} onSubmitWeek={handleSubmitWeek} />
         </div>
       </div>
-    </TimesheetLayout>
-  );
+    </TimesheetLayout>;
 };
-
 export default Timesheet;
