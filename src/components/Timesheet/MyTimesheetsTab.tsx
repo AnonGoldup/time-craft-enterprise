@@ -35,10 +35,28 @@ import {
   User
 } from 'lucide-react';
 
-// Utility functions
-const cn = (...classes) => classes.filter(Boolean).join(' ');
+// Type definitions
+interface WeeklySummary {
+  weekStart: Date;
+  weekEnd: Date;
+  days: Record<number, DayData>;
+  totalStandard: number;
+  totalOvertime: number;
+  totalHours: number;
+  entries: number;
+  projects: Set<string>;
+}
 
-const formatDate = (date, format = 'yyyy-MM-dd') => {
+interface DayData {
+  standard: number;
+  overtime: number;
+  entries: any[];
+}
+
+// Utility functions
+const cn = (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' ');
+
+const formatDate = (date: Date | string, format = 'yyyy-MM-dd') => {
   if (!date) return '';
   const d = new Date(date);
   const year = d.getFullYear();
@@ -650,7 +668,7 @@ export default function MyTimesheet() {
   
   // Calculate weekly summary data
   const weeklySummary = useMemo(() => {
-    const weeks = {};
+    const weeks: Record<string, WeeklySummary> = {};
     
     filteredEntries.forEach(entry => {
       const date = new Date(entry.dateWorked);
@@ -691,7 +709,7 @@ export default function MyTimesheet() {
       weeks[weekKey].projects.add(entry.projectCode);
     });
     
-    return Object.values(weeks).sort((a, b) => b.weekStart - a.weekStart);
+    return Object.values(weeks).sort((a, b) => b.weekStart.getTime() - a.weekStart.getTime());
   }, [filteredEntries]);
   
   const resetFilters = () => {
