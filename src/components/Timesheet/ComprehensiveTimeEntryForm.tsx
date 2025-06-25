@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -73,3 +74,4 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
     </Card>
   );
 };
+
