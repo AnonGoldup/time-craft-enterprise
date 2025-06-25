@@ -6,26 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { 
-  FileText, 
-  Clock, 
-  User, 
-  AlertCircle, 
-  Filter, 
-  Search, 
-  RefreshCw, 
-  Trash2, 
-  Plus, 
-  Eye, 
-  Copy, 
-  Edit3, 
-  Building, 
-  Hash, 
-  Download,
-  CheckCircle
-} from 'lucide-react';
+import { FileText, Clock, User, AlertCircle, Filter, Search, RefreshCw, Trash2, Plus, Eye, Copy, Edit3, Building, Hash, Download, CheckCircle } from 'lucide-react';
 import { format, startOfWeek, endOfWeek, isToday } from 'date-fns';
-
 interface TimesheetEntry {
   entryId: number;
   employeeId: string;
@@ -44,7 +26,6 @@ interface TimesheetEntry {
   createdDate: string;
   createdBy: string;
 }
-
 interface WeekSummary {
   weekEndingDate: string;
   totalStandardHours: number;
@@ -52,135 +33,114 @@ interface WeekSummary {
   totalHours: number;
   entriesCount: number;
   status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected';
-  dailyTotals: { [key: string]: number };
+  dailyTotals: {
+    [key: string]: number;
+  };
 }
-
 export const MyTimesheetsTab: React.FC = () => {
-  const mockEntries: TimesheetEntry[] = [
-    {
-      entryId: 1,
-      employeeId: 'JSMITH',
-      employeeName: 'John Smith',
-      dateWorked: '2025-06-23',
-      projectCode: '21-0066',
-      projectDescription: 'Edmonton EXPO SOLAR IPD',
-      extraValue: 'Default',
-      costCode: '001-040-043',
-      costCodeDescription: 'Direct Labor',
-      standardHours: 8.0,
-      overtimeHours: 0.0,
-      totalHours: 8.0,
-      notes: 'Regular work day',
-      status: 'Draft',
-      createdDate: '2025-06-23T08:30:00',
-      createdBy: 'JSMITH'
-    },
-    {
-      entryId: 2,
-      employeeId: 'JSMITH',
-      employeeName: 'John Smith',
-      dateWorked: '2025-06-24',
-      projectCode: '21-0066',
-      projectDescription: 'Edmonton EXPO SOLAR IPD',
-      extraValue: 'Phase 1',
-      costCode: '001-040-043',
-      costCodeDescription: 'Direct Labor',
-      standardHours: 8.0,
-      overtimeHours: 2.0,
-      totalHours: 10.0,
-      notes: 'Overtime to meet deadline',
-      status: 'Draft',
-      createdDate: '2025-06-24T08:30:00',
-      createdBy: 'JSMITH'
-    },
-    {
-      entryId: 3,
-      employeeId: 'JSMITH',
-      employeeName: 'John Smith',
-      dateWorked: '2025-06-20',
-      projectCode: '22-0006',
-      projectDescription: 'AltaPro Service Department',
-      extraValue: 'Default',
-      costCode: '001-500-501',
-      costCodeDescription: 'Vehicle Travel',
-      standardHours: 4.0,
-      overtimeHours: 0.0,
-      totalHours: 4.0,
-      notes: 'Site visit and travel',
-      status: 'Submitted',
-      createdDate: '2025-06-20T16:45:00',
-      createdBy: 'JSMITH'
+  const mockEntries: TimesheetEntry[] = [{
+    entryId: 1,
+    employeeId: 'JSMITH',
+    employeeName: 'John Smith',
+    dateWorked: '2025-06-23',
+    projectCode: '21-0066',
+    projectDescription: 'Edmonton EXPO SOLAR IPD',
+    extraValue: 'Default',
+    costCode: '001-040-043',
+    costCodeDescription: 'Direct Labor',
+    standardHours: 8.0,
+    overtimeHours: 0.0,
+    totalHours: 8.0,
+    notes: 'Regular work day',
+    status: 'Draft',
+    createdDate: '2025-06-23T08:30:00',
+    createdBy: 'JSMITH'
+  }, {
+    entryId: 2,
+    employeeId: 'JSMITH',
+    employeeName: 'John Smith',
+    dateWorked: '2025-06-24',
+    projectCode: '21-0066',
+    projectDescription: 'Edmonton EXPO SOLAR IPD',
+    extraValue: 'Phase 1',
+    costCode: '001-040-043',
+    costCodeDescription: 'Direct Labor',
+    standardHours: 8.0,
+    overtimeHours: 2.0,
+    totalHours: 10.0,
+    notes: 'Overtime to meet deadline',
+    status: 'Draft',
+    createdDate: '2025-06-24T08:30:00',
+    createdBy: 'JSMITH'
+  }, {
+    entryId: 3,
+    employeeId: 'JSMITH',
+    employeeName: 'John Smith',
+    dateWorked: '2025-06-20',
+    projectCode: '22-0006',
+    projectDescription: 'AltaPro Service Department',
+    extraValue: 'Default',
+    costCode: '001-500-501',
+    costCodeDescription: 'Vehicle Travel',
+    standardHours: 4.0,
+    overtimeHours: 0.0,
+    totalHours: 4.0,
+    notes: 'Site visit and travel',
+    status: 'Submitted',
+    createdDate: '2025-06-20T16:45:00',
+    createdBy: 'JSMITH'
+  }];
+  const mockWeekSummaries: WeekSummary[] = [{
+    weekEndingDate: '2025-06-28',
+    totalStandardHours: 40.0,
+    totalOvertimeHours: 2.0,
+    totalHours: 42.0,
+    entriesCount: 6,
+    status: 'Draft',
+    dailyTotals: {
+      '2025-06-23': 8.0,
+      '2025-06-24': 10.0,
+      '2025-06-25': 8.0,
+      '2025-06-26': 8.0,
+      '2025-06-27': 8.0
     }
-  ];
-
-  const mockWeekSummaries: WeekSummary[] = [
-    {
-      weekEndingDate: '2025-06-28',
-      totalStandardHours: 40.0,
-      totalOvertimeHours: 2.0,
-      totalHours: 42.0,
-      entriesCount: 6,
-      status: 'Draft',
-      dailyTotals: {
-        '2025-06-23': 8.0,
-        '2025-06-24': 10.0,
-        '2025-06-25': 8.0,
-        '2025-06-26': 8.0,
-        '2025-06-27': 8.0
-      }
-    }
-  ];
-
+  }];
   const [allEntries] = useState<TimesheetEntry[]>(mockEntries);
   const [filteredEntries, setFilteredEntries] = useState<TimesheetEntry[]>(mockEntries);
   const [selectedEntries, setSelectedEntries] = useState<number[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<TimesheetEntry | null>(null);
   const [showEntryModal, setShowEntryModal] = useState(false);
-  
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [projectFilter, setProjectFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchFilter, setSearchFilter] = useState('');
-
   useEffect(() => {
     const today = new Date();
     const weekStart = startOfWeek(today);
     const weekEnd = endOfWeek(today);
-    
     setStartDate(format(weekStart, 'yyyy-MM-dd'));
     setEndDate(format(weekEnd, 'yyyy-MM-dd'));
   }, []);
-
   useEffect(() => {
     let filtered = allEntries.filter(entry => {
-      const matchesDateRange = (!startDate || entry.dateWorked >= startDate) && 
-                             (!endDate || entry.dateWorked <= endDate);
+      const matchesDateRange = (!startDate || entry.dateWorked >= startDate) && (!endDate || entry.dateWorked <= endDate);
       const matchesProject = !projectFilter || entry.projectCode.toLowerCase().includes(projectFilter.toLowerCase());
       const matchesStatus = statusFilter === 'all' || entry.status === statusFilter;
-      const matchesSearch = !searchFilter || 
-        entry.projectDescription.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        entry.costCodeDescription.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        (entry.notes && entry.notes.toLowerCase().includes(searchFilter.toLowerCase()));
-      
+      const matchesSearch = !searchFilter || entry.projectDescription.toLowerCase().includes(searchFilter.toLowerCase()) || entry.costCodeDescription.toLowerCase().includes(searchFilter.toLowerCase()) || entry.notes && entry.notes.toLowerCase().includes(searchFilter.toLowerCase());
       return matchesDateRange && matchesProject && matchesStatus && matchesSearch;
     });
-    
     setFilteredEntries(filtered);
   }, [allEntries, startDate, endDate, projectFilter, statusFilter, searchFilter]);
-
   const formatDate = (dateStr: string) => {
     return format(new Date(dateStr), 'MMM dd');
   };
-
   const formatFullDate = (dateStr: string) => {
     return format(new Date(dateStr), 'EEEE, MMMM do, yyyy');
   };
-
   const formatDateTime = (dateStr: string) => {
     return format(new Date(dateStr), 'PPpp');
   };
-
   const getStatusBadge = (status: string) => {
     const variants = {
       'Draft': 'bg-gray-100 text-gray-800 border-gray-200',
@@ -188,59 +148,43 @@ export const MyTimesheetsTab: React.FC = () => {
       'Approved': 'bg-green-100 text-green-800 border-green-200',
       'Rejected': 'bg-red-100 text-red-800 border-red-200'
     };
-
     const icons = {
       'Draft': <Edit3 className="w-3 h-3" />,
       'Submitted': <Clock className="w-3 h-3" />,
       'Approved': <CheckCircle className="w-3 h-3" />,
       'Rejected': <AlertCircle className="w-3 h-3" />
     };
-    
-    return (
-      <Badge className={`${variants[status as keyof typeof variants]} border flex items-center gap-1`}>
+    return <Badge className={`${variants[status as keyof typeof variants]} border flex items-center gap-1`}>
         {icons[status as keyof typeof icons]}
         {status}
-      </Badge>
-    );
+      </Badge>;
   };
-
   const toggleEntrySelection = (entryId: number) => {
-    setSelectedEntries(prev => 
-      prev.includes(entryId) 
-        ? prev.filter(id => id !== entryId)
-        : [...prev, entryId]
-    );
+    setSelectedEntries(prev => prev.includes(entryId) ? prev.filter(id => id !== entryId) : [...prev, entryId]);
   };
-
   const toggleSelectAll = () => {
     const draftEntries = filteredEntries.filter(e => e.status === 'Draft').map(e => e.entryId);
-    
     if (selectedEntries.length === draftEntries.length) {
       setSelectedEntries([]);
     } else {
       setSelectedEntries(draftEntries);
     }
   };
-
   const selectAllDraft = () => {
     const draftEntries = filteredEntries.filter(e => e.status === 'Draft').map(e => e.entryId);
     setSelectedEntries(draftEntries);
   };
-
   const clearSelection = () => {
     setSelectedEntries([]);
   };
-
   const viewEntry = (entry: TimesheetEntry) => {
     setSelectedEntry(entry);
     setShowEntryModal(true);
   };
-
   const duplicateEntry = (entry: TimesheetEntry) => {
     console.log('Duplicating entry:', entry.entryId);
     // Implementation would create a new entry
   };
-
   const editEntry = (entry: TimesheetEntry) => {
     if (entry.status !== 'Draft') {
       alert('Only draft entries can be edited');
@@ -249,42 +193,35 @@ export const MyTimesheetsTab: React.FC = () => {
     console.log('Editing entry:', entry.entryId);
     // Implementation would open edit form
   };
-
   const deleteEntry = (entry: TimesheetEntry) => {
     if (entry.status !== 'Draft') {
       alert('Only draft entries can be deleted');
       return;
     }
-    
     if (confirm('Are you sure you want to delete this entry?')) {
       console.log('Deleting entry:', entry.entryId);
       // Implementation would delete entry
     }
   };
-
   const bulkDelete = () => {
     const draftEntries = selectedEntries.filter(id => {
       const entry = allEntries.find(e => e.entryId === id);
       return entry && entry.status === 'Draft';
     });
-
     if (draftEntries.length === 0) {
       alert('No draft entries selected for deletion');
       return;
     }
-
     if (confirm(`Delete ${draftEntries.length} selected entries?`)) {
       console.log('Bulk deleting entries:', draftEntries);
       // Implementation would delete entries
       setSelectedEntries([]);
     }
   };
-
   const resetFilters = () => {
     const today = new Date();
     const weekStart = startOfWeek(today);
     const weekEnd = endOfWeek(today);
-    
     setStartDate(format(weekStart, 'yyyy-MM-dd'));
     setEndDate(format(weekEnd, 'yyyy-MM-dd'));
     setProjectFilter('');
@@ -305,9 +242,7 @@ export const MyTimesheetsTab: React.FC = () => {
     totalOvertimeHours: 0,
     totalHours: 0
   });
-
-  return (
-    <div className="space-y-6 p-6">
+  return <div className="space-y-6 p-6 px-[8px] py-[8px]">
       {/* Header */}
       <div className="space-y-2">
         <div className="flex items-center space-x-2">
@@ -379,32 +314,17 @@ export const MyTimesheetsTab: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="space-y-1">
               <label className="block text-sm font-medium">Start Date</label>
-              <Input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full"
-              />
+              <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full" />
             </div>
             
             <div className="space-y-1">
               <label className="block text-sm font-medium">End Date</label>
-              <Input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full"
-              />
+              <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full" />
             </div>
             
             <div className="space-y-1">
               <label className="block text-sm font-medium">Project</label>
-              <Input
-                placeholder="Filter by project..."
-                value={projectFilter}
-                onChange={(e) => setProjectFilter(e.target.value)}
-                className="w-full"
-              />
+              <Input placeholder="Filter by project..." value={projectFilter} onChange={e => setProjectFilter(e.target.value)} className="w-full" />
             </div>
             
             <div className="space-y-1">
@@ -427,12 +347,7 @@ export const MyTimesheetsTab: React.FC = () => {
               <label className="block text-sm font-medium">Search</label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search entries..."
-                  className="pl-9 w-full"
-                  value={searchFilter}
-                  onChange={(e) => setSearchFilter(e.target.value)}
-                />
+                <Input placeholder="Search entries..." className="pl-9 w-full" value={searchFilter} onChange={e => setSearchFilter(e.target.value)} />
               </div>
             </div>
           </div>
@@ -465,8 +380,7 @@ export const MyTimesheetsTab: React.FC = () => {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
               <h3 className="text-lg font-semibold">Timesheet Entries</h3>
               <div className="flex flex-wrap gap-2">
-                {selectedEntries.length > 0 && (
-                  <>
+                {selectedEntries.length > 0 && <>
                     <Button variant="outline" size="sm" onClick={clearSelection}>
                       Clear ({selectedEntries.length})
                     </Button>
@@ -474,16 +388,14 @@ export const MyTimesheetsTab: React.FC = () => {
                       <Trash2 className="h-3 w-3 mr-1" />
                       Delete Selected
                     </Button>
-                  </>
-                )}
+                  </>}
                 <Button variant="outline" size="sm" onClick={selectAllDraft}>
                   Select All Draft
                 </Button>
               </div>
             </div>
 
-            {filteredEntries.length === 0 ? (
-              <div className="text-center py-12">
+            {filteredEntries.length === 0 ? <div className="text-center py-12">
                 <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-muted-foreground mb-2">No entries found</h3>
                 <p className="text-muted-foreground mb-4">No timesheet entries match your current filters.</p>
@@ -491,18 +403,11 @@ export const MyTimesheetsTab: React.FC = () => {
                   <Plus className="h-4 w-4 mr-2" />
                   Add New Entry
                 </Button>
-              </div>
-            ) : (
-              <div className="space-y-2 overflow-x-auto">
+              </div> : <div className="space-y-2 overflow-x-auto">
                 {/* Table Header - Fixed layout */}
                 <div className="min-w-[1200px] grid grid-cols-12 gap-2 p-3 bg-muted text-sm font-medium rounded-t-lg">
                   <div className="col-span-1 flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={selectedEntries.length === filteredEntries.filter(e => e.status === 'Draft').length && filteredEntries.filter(e => e.status === 'Draft').length > 0}
-                      onChange={toggleSelectAll}
-                      className="rounded border-input"
-                    />
+                    <input type="checkbox" checked={selectedEntries.length === filteredEntries.filter(e => e.status === 'Draft').length && filteredEntries.filter(e => e.status === 'Draft').length > 0} onChange={toggleSelectAll} className="rounded border-input" />
                   </div>
                   <div className="col-span-1">Date</div>
                   <div className="col-span-2">Project</div>
@@ -517,21 +422,9 @@ export const MyTimesheetsTab: React.FC = () => {
                 
                 {/* Table Body - Fixed layout */}
                 <div className="space-y-1">
-                  {filteredEntries.map(entry => (
-                    <div
-                      key={entry.entryId}
-                      className={`min-w-[1200px] grid grid-cols-12 gap-2 p-3 hover:bg-muted/50 border rounded transition-colors ${
-                        selectedEntries.includes(entry.entryId) ? 'bg-blue-50 border-blue-200' : ''
-                      }`}
-                    >
+                  {filteredEntries.map(entry => <div key={entry.entryId} className={`min-w-[1200px] grid grid-cols-12 gap-2 p-3 hover:bg-muted/50 border rounded transition-colors ${selectedEntries.includes(entry.entryId) ? 'bg-blue-50 border-blue-200' : ''}`}>
                       <div className="col-span-1 flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedEntries.includes(entry.entryId)}
-                          onChange={() => toggleEntrySelection(entry.entryId)}
-                          disabled={entry.status !== 'Draft'}
-                          className="rounded border-input"
-                        />
+                        <input type="checkbox" checked={selectedEntries.includes(entry.entryId)} onChange={() => toggleEntrySelection(entry.entryId)} disabled={entry.status !== 'Draft'} className="rounded border-input" />
                       </div>
                       <div className="col-span-1 flex items-center font-medium text-sm">
                         {formatDate(entry.dateWorked)}
@@ -577,53 +470,25 @@ export const MyTimesheetsTab: React.FC = () => {
                       </div>
                       <div className="col-span-1 flex items-center justify-end">
                         <div className="flex items-center space-x-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => viewEntry(entry)}
-                            className="h-8 w-8 p-0"
-                            title="View entry"
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => viewEntry(entry)} className="h-8 w-8 p-0" title="View entry">
                             <Eye className="h-3 w-3" />
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => duplicateEntry(entry)}
-                            className="h-8 w-8 p-0"
-                            title="Duplicate entry"
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => duplicateEntry(entry)} className="h-8 w-8 p-0" title="Duplicate entry">
                             <Copy className="h-3 w-3" />
                           </Button>
-                          {entry.status === 'Draft' && (
-                            <>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => editEntry(entry)}
-                                className="h-8 w-8 p-0"
-                                title="Edit entry"
-                              >
+                          {entry.status === 'Draft' && <>
+                              <Button variant="ghost" size="sm" onClick={() => editEntry(entry)} className="h-8 w-8 p-0" title="Edit entry">
                                 <Edit3 className="h-3 w-3" />
                               </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => deleteEntry(entry)}
-                                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                                title="Delete entry"
-                              >
+                              <Button variant="ghost" size="sm" onClick={() => deleteEntry(entry)} className="h-8 w-8 p-0 text-destructive hover:text-destructive" title="Delete entry">
                                 <Trash2 className="h-3 w-3" />
                               </Button>
-                            </>
-                          )}
+                            </>}
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
-              </div>
-            )}
+              </div>}
           </TabsContent>
 
           {/* Weekly Summary Tab */}
@@ -635,11 +500,9 @@ export const MyTimesheetsTab: React.FC = () => {
             
             <div className="space-y-4">
               {mockWeekSummaries.map((week, index) => {
-                const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                const todayStr = format(new Date(), 'yyyy-MM-dd');
-                
-                return (
-                  <Card key={index}>
+              const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+              const todayStr = format(new Date(), 'yyyy-MM-dd');
+              return <Card key={index}>
                     <div className="p-6 border-b">
                       <div className="flex justify-between items-center">
                         <h4 className="text-lg font-semibold">
@@ -676,55 +539,42 @@ export const MyTimesheetsTab: React.FC = () => {
                           <h5 className="font-semibold">Daily Breakdown</h5>
                           <div className="grid grid-cols-7 gap-2 text-center">
                             {weekDays.map((day, dayIndex) => {
-                              const weekEndDate = new Date(week.weekEndingDate);
-                              const dayDate = new Date(weekEndDate);
-                              dayDate.setDate(weekEndDate.getDate() - (6 - dayIndex));
-                              const dayKey = format(dayDate, 'yyyy-MM-dd');
-                              
-                              const hours = week.dailyTotals[dayKey] || 0;
-                              const isToday = dayKey === todayStr;
-                              
-                              return (
-                                <div key={dayIndex} className="space-y-1">
-                                  <div className={`text-xs font-medium ${
-                                    isToday ? "text-blue-600" : "text-muted-foreground"
-                                  }`}>
+                          const weekEndDate = new Date(week.weekEndingDate);
+                          const dayDate = new Date(weekEndDate);
+                          dayDate.setDate(weekEndDate.getDate() - (6 - dayIndex));
+                          const dayKey = format(dayDate, 'yyyy-MM-dd');
+                          const hours = week.dailyTotals[dayKey] || 0;
+                          const isToday = dayKey === todayStr;
+                          return <div key={dayIndex} className="space-y-1">
+                                  <div className={`text-xs font-medium ${isToday ? "text-blue-600" : "text-muted-foreground"}`}>
                                     {day}
                                   </div>
-                                  <div className={`text-sm font-semibold p-2 rounded ${
-                                    hours > 0 ? "bg-green-100 text-green-800" : "bg-muted text-muted-foreground"
-                                  }`}>
+                                  <div className={`text-sm font-semibold p-2 rounded ${hours > 0 ? "bg-green-100 text-green-800" : "bg-muted text-muted-foreground"}`}>
                                     {hours > 0 ? hours.toFixed(1) : '-'}
                                   </div>
-                                </div>
-                              );
-                            })}
+                                </div>;
+                        })}
                           </div>
                         </div>
                       </div>
                       
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 pt-4 border-t space-y-2 sm:space-y-0">
                         <div className="text-sm text-muted-foreground">
-                          {week.status === 'Draft' ? 'Ready to submit for approval' : 
-                           week.status === 'Submitted' ? 'Awaiting manager approval' : 
-                           'Approved and ready for payroll'}
+                          {week.status === 'Draft' ? 'Ready to submit for approval' : week.status === 'Submitted' ? 'Awaiting manager approval' : 'Approved and ready for payroll'}
                         </div>
                         <div className="flex space-x-2">
                           <Button variant="outline" size="sm">
                             <Download className="h-3 w-3 mr-1" />
                             Export CSV
                           </Button>
-                          {week.status === 'Draft' && (
-                            <Button size="sm">
+                          {week.status === 'Draft' && <Button size="sm">
                               Submit for Approval
-                            </Button>
-                          )}
+                            </Button>}
                         </div>
                       </div>
                     </CardContent>
-                  </Card>
-                );
-              })}
+                  </Card>;
+            })}
             </div>
           </TabsContent>
         </Tabs>
@@ -736,8 +586,7 @@ export const MyTimesheetsTab: React.FC = () => {
           <DialogHeader>
             <DialogTitle>Entry Details</DialogTitle>
           </DialogHeader>
-          {selectedEntry && (
-            <div className="space-y-4">
+          {selectedEntry && <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-muted-foreground">Employee</label>
@@ -778,19 +627,15 @@ export const MyTimesheetsTab: React.FC = () => {
                   <p className="text-lg font-semibold text-blue-600">{selectedEntry.totalHours.toFixed(2)}</p>
                 </div>
               </div>
-              {selectedEntry.notes && (
-                <div>
+              {selectedEntry.notes && <div>
                   <label className="block text-sm font-medium text-muted-foreground">Notes</label>
                   <p className="text-sm bg-muted p-2 rounded">{selectedEntry.notes}</p>
-                </div>
-              )}
+                </div>}
               <div className="text-xs text-muted-foreground">
                 Created: {formatDateTime(selectedEntry.createdDate)} by {selectedEntry.createdBy}
               </div>
-            </div>
-          )}
+            </div>}
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>;
 };

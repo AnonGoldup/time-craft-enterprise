@@ -60,7 +60,7 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
         </TabsContent>
 
         {/* My Timesheets Tab */}
-        <TabsContent value="timesheets" className="p-3 sm:p-4 md:p-6">
+        <TabsContent value="timesheets" className="p-3 sm:p-4 md:p-6 px-[8px] py-0">
           <MyTimesheetsTab />
         </TabsContent>
       </Tabs>
