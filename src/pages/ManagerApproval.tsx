@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -687,12 +686,12 @@ export default function AltaProManagerDashboard() {
     }, {});
   }, [submissions]);
   
-  return <div className="min-h-screen bg-gray-50 p-6">
-      <div className="w-full mx-auto space-y-4">
+  return <div className="min-h-screen bg-gray-50 p-4">
+      <div className="w-full mx-auto space-y-3">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">AltaPro Timesheet Manager</h1>
+            <h1 className="text-xl font-bold text-gray-900">AltaPro Timesheet Manager</h1>
             <p className="text-sm text-gray-600">Enterprise timesheet approval and analytics dashboard</p>
           </div>
           <div className="flex items-center space-x-2">
@@ -710,37 +709,37 @@ export default function AltaProManagerDashboard() {
         {/* Overview Cards */}
         <div className="grid grid-cols-3 gap-3">
           <Card>
-            <CardContent className="p-3">
+            <CardContent className="p-2">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-gray-600">Pending Reviews</p>
-                  <p className="text-xl font-bold text-yellow-600">{pendingSubmissions.length}</p>
+                  <p className="text-lg font-bold text-yellow-600">{pendingSubmissions.length}</p>
                 </div>
-                <Clock className="w-6 h-6 text-yellow-600" />
+                <Clock className="w-5 h-5 text-yellow-600" />
               </div>
             </CardContent>
           </Card>
           
           <Card>
-            <CardContent className="p-3">
+            <CardContent className="p-2">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-gray-600">Total Hours</p>
-                  <p className="text-xl font-bold text-blue-600">{dashboardData.overview.totalHours}</p>
+                  <p className="text-lg font-bold text-blue-600">{dashboardData.overview.totalHours}</p>
                 </div>
-                <Timer className="w-6 h-6 text-blue-600" />
+                <Timer className="w-5 h-5 text-blue-600" />
               </div>
             </CardContent>
           </Card>
           
           <Card>
-            <CardContent className="p-3">
+            <CardContent className="p-2">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-gray-600">Active Projects</p>
-                  <p className="text-xl font-bold text-purple-600">{dashboardData.overview.activeProjects}</p>
+                  <p className="text-lg font-bold text-purple-600">{dashboardData.overview.activeProjects}</p>
                 </div>
-                <Building className="w-6 h-6 text-purple-600" />
+                <Building className="w-5 h-5 text-purple-600" />
               </div>
             </CardContent>
           </Card>
@@ -748,7 +747,7 @@ export default function AltaProManagerDashboard() {
 
         {/* Main Dashboard Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-4 w-full">
+          <TabsList className="grid grid-cols-4 w-full h-10">
             <TabsTrigger value="approvals" className="flex items-center space-x-2">
               <FileText className="w-4 h-4" />
               <span>Approvals ({pendingSubmissions.length})</span>
@@ -768,9 +767,9 @@ export default function AltaProManagerDashboard() {
           </TabsList>
 
           {/* Approvals Tab */}
-          <TabsContent value="approvals" className="space-y-6">
+          <TabsContent value="approvals" className="space-y-4">
             <Card>
-              <CardHeader>
+              <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center space-x-3">
                     <span>Pending Timesheet Submissions</span>
@@ -803,7 +802,7 @@ export default function AltaProManagerDashboard() {
                 </div>
               </CardHeader>
               
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4">
                 {Object.entries(groupedSubmissions).map(([projectCode, group]) => {
                 const isExpanded = expandedProjects.has(projectCode);
                 return <div key={projectCode} className="space-y-4">
@@ -852,56 +851,56 @@ export default function AltaProManagerDashboard() {
           </TabsContent>
 
           {/* Other tabs remain the same... */}
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <TabsContent value="overview" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <Card>
-                <CardHeader>
-                  <CardTitle>Weekly Hours Trend</CardTitle>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Weekly Hours Trend</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-2">
                   <WeeklyChart data={dashboardData.weeklyTrends.hoursData} type="hours" />
                 </CardContent>
               </Card>
               
               <Card>
-                <CardHeader>
-                  <CardTitle>Efficiency Trend</CardTitle>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Efficiency Trend</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-2">
                   <WeeklyChart data={dashboardData.weeklyTrends.efficiencyTrend} type="efficiency" />
                 </CardContent>
               </Card>
               
               <Card>
-                <CardHeader>
-                  <CardTitle>Daily Cost Trend</CardTitle>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Daily Cost Trend</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-2">
                   <WeeklyChart data={dashboardData.weeklyTrends.costTrend} type="costs" />
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
 
-          <TabsContent value="projects" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <TabsContent value="projects" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
               {dashboardData.projectMetrics.map(project => <ProjectMetricsCard key={project.code} project={project} />)}
             </div>
           </TabsContent>
 
-          <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <TabsContent value="analytics" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <Card>
-                <CardHeader>
-                  <CardTitle>Performance Summary</CardTitle>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Performance Summary</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 pt-2">
                   <div className="text-center">
-                    <p className="text-3xl font-bold text-green-600">87%</p>
+                    <p className="text-2xl font-bold text-green-600">87%</p>
                     <p className="text-sm text-gray-600">Overall Team Efficiency</p>
                   </div>
                   
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Top Performer:</span>
                       <span className="font-medium">Sarah Johnson (95%)</span>
@@ -919,25 +918,25 @@ export default function AltaProManagerDashboard() {
               </Card>
               
               <Card>
-                <CardHeader>
-                  <CardTitle>Weekly Insights</CardTitle>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Weekly Insights</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <Alert className="border-green-200 bg-green-50">
+                <CardContent className="space-y-3 pt-2">
+                  <Alert className="border-green-200 bg-green-50 py-2">
                     <TrendingUp className="w-4 h-4 text-green-600" />
                     <AlertDescription className="text-green-800">
                       <strong>Great News!</strong> Team efficiency is up 5% from last week.
                     </AlertDescription>
                   </Alert>
                   
-                  <Alert className="border-blue-200 bg-blue-50">
+                  <Alert className="border-blue-200 bg-blue-50 py-2">
                     <Eye className="w-4 h-4 text-blue-600" />
                     <AlertDescription className="text-blue-800">
                       <strong>Notice:</strong> Project 21-0066 approaching budget limit (67% used).
                     </AlertDescription>
                   </Alert>
                   
-                  <Alert className="border-yellow-200 bg-yellow-50">
+                  <Alert className="border-yellow-200 bg-yellow-50 py-2">
                     <AlertTriangle className="w-4 h-4 text-yellow-600" />
                     <AlertDescription className="text-yellow-800">
                       <strong>Action Required:</strong> 3 timesheets have anomalies requiring review.
