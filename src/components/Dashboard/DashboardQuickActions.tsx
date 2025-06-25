@@ -16,9 +16,9 @@ const DashboardQuickActions: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-2">
         <Button asChild size="sm" className="w-full justify-start h-9 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800">
-          <Link to="/log">
+          <Link to="/timesheet">
             <Clock className="h-4 w-4 mr-2" />
-            Clock In/Out
+            Timesheet
           </Link>
         </Button>
         

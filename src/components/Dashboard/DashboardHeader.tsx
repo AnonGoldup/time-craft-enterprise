@@ -23,9 +23,9 @@ const DashboardHeader: React.FC = () => {
         </p>
       </div>
       <Button asChild size="sm" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
-        <Link to="/log">
+        <Link to="/timesheet">
           <Plus className="h-4 w-4 mr-2" />
-          Log Time
+          Timesheet
         </Link>
       </Button>
     </div>

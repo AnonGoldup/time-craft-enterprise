@@ -133,6 +133,7 @@ const StandardHoursTab: React.FC<TabContentProps> = ({
     setTimeout(() => {
       setIsSubmitting(false);
       toast.success(`${standardEntries.length} time ${standardEntries.length === 1 ? 'entry' : 'entries'} submitted successfully!`);
+      onSubmit(e);
     }, 1000);
   };
 
