@@ -29,7 +29,6 @@ interface TimesheetSubmission {
   weekEnding: string;
   submitDate: string;
 }
-
 interface ProjectGroup {
   projectCode: string;
   projectDescription: string;
@@ -260,7 +259,6 @@ const ProjectSelectButton = ({
       {allSelected ? 'Deselect All' : 'Select All'}
     </Button>;
 };
-
 const SubmissionCard = ({
   submission,
   onApprove,
@@ -461,7 +459,6 @@ const SubmissionCard = ({
       </CardContent>
     </Card>;
 };
-
 const ProjectMetricsCard = ({
   project
 }: {
@@ -524,7 +521,6 @@ const ProjectMetricsCard = ({
       </CardContent>
     </Card>;
 };
-
 const WeeklyChart = ({
   data,
   type
@@ -577,7 +573,6 @@ const WeeklyChart = ({
       </div>
     </div>;
 };
-
 export default function AltaProManagerDashboard() {
   const [submissions, setSubmissions] = useState<TimesheetSubmission[]>(dashboardData.recentSubmissions);
   const [selectedSubmissions, setSelectedSubmissions] = useState(new Set<number>());
@@ -585,7 +580,6 @@ export default function AltaProManagerDashboard() {
   const [activeTab, setActiveTab] = useState('approvals');
   const [sortBy, setSortBy] = useState('project');
   const [expandedProjects, setExpandedProjects] = useState(new Set(['21-0066', '24-0052', '22-0006']));
-  
   const handleToggleProject = useCallback((projectCode: string) => {
     setExpandedProjects(prev => {
       const newSet = new Set(prev);
@@ -597,7 +591,6 @@ export default function AltaProManagerDashboard() {
       return newSet;
     });
   }, []);
-  
   const handleSelectSubmission = useCallback((submissionId: number) => {
     setSelectedSubmissions(prev => {
       const newSet = new Set(prev);
@@ -609,7 +602,6 @@ export default function AltaProManagerDashboard() {
       return newSet;
     });
   }, []);
-  
   const handleSelectAllInProject = useCallback((projectCode: string) => {
     const projectSubmissions = groupedSubmissions[projectCode]?.submissions || [];
     const projectSubmissionIds = projectSubmissions.map(sub => sub.id);
@@ -634,7 +626,6 @@ export default function AltaProManagerDashboard() {
       setSelectedSubmissions(new Set(pendingIds));
     }
   }, [submissions, selectedSubmissions.size]);
-  
   const handleBulkApprove = useCallback(async () => {
     if (selectedSubmissions.size === 0) return;
     setIsLoading(true);
@@ -646,7 +637,6 @@ export default function AltaProManagerDashboard() {
     setSelectedSubmissions(new Set());
     setIsLoading(false);
   }, [selectedSubmissions]);
-  
   const handleApprove = useCallback(async (submissionId: number) => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -656,7 +646,6 @@ export default function AltaProManagerDashboard() {
     } : sub));
     setIsLoading(false);
   }, []);
-  
   const handleReject = useCallback(async (submissionId: number) => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -666,7 +655,6 @@ export default function AltaProManagerDashboard() {
     } : sub));
     setIsLoading(false);
   }, []);
-  
   const pendingSubmissions = submissions.filter(s => s.status === 'Pending');
 
   // Group submissions by project
@@ -685,8 +673,7 @@ export default function AltaProManagerDashboard() {
       return groups;
     }, {});
   }, [submissions]);
-  
-  return <div className="min-h-screen bg-gray-50 p-4">
+  return <div className="min-h-screen p-4 bg-neutral-200">
       <div className="w-full mx-auto space-y-3">
         {/* Header */}
         <div className="flex items-center justify-between">
