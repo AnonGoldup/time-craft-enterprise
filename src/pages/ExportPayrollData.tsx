@@ -176,17 +176,17 @@ export default function AltaProTimesheetDashboard() {
   const totalHours = useMemo(() => {
     return projectData.reduce((sum, project) => sum + project.hours, 0);
   }, []);
-  return <div className="min-h-screen bg-gradient-to-br from-grey-100 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-6 bg-gray-100">
+  return <div className="min-h-screen bg-gradient-to-br from-grey-100 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-6 bg-gray-100 px-[8px] py-[8px]">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white flex items-center">
               <Building className="w-8 h-8 mr-3 text-blue-600" />
-              AltaPro Timesheet System
+              Export Payroll
             </h1>
             <p className="text-gray-600 dark:text-gray-300 mt-2">
-              Enterprise Timesheet Management & Payroll Export Center
+              Timesheet Management & Payroll Export Center
             </p>
             <div className="flex items-center mt-2 text-sm text-gray-500">
               <Clock className="w-4 h-4 mr-1" />
