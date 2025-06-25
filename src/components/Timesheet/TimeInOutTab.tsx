@@ -1,1565 +1,842 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import { 
-  Timer, 
-  Hash, 
-  AlertTriangle, 
-  Plus, 
-  Trash2,
-  Calculator,
-  Users,
   Calendar,
+  Clock,
+  Edit2,
+  Trash2,
+  Plus,
+  Filter,
+  Download,
+  Upload,
   CheckCircle2,
   XCircle,
-  Coffee,
-  Play,
-  Pause,
-  Zap,
-  Check,
-  ChevronsUpDown,
+  AlertTriangle,
+  BarChart3,
+  FileText,
+  Timer,
+  User,
+  Building,
+  Hash,
+  Search,
+  RefreshCw,
+  Eye,
+  Send,
   X,
-  Search
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal
 } from 'lucide-react';
 
-// Utility function to merge classNames
-const cn = (...classes: (string | undefined | null | false)[]): string => {
-  return classes.filter(Boolean).join(' ');
-};
-
-// Date formatting utilities (replacing date-fns)
-const formatDate = (date: Date, format: string): string => {
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const monthNames = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-  ];
-  const monthName = monthNames[date.getMonth()];
-
-  switch (format) {
-    case 'yyyy-MM-dd':
-      return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-    case 'MMM dd, yyyy':
-      return `${monthName} ${day.toString().padStart(2, '0')}, ${year}`;
-    case 'PPP':
-      return `${monthName} ${day}, ${year}`;
-    default:
-      return date.toDateString();
-  }
-};
-
-// Types
-interface Employee {
+// Types based on the system architecture
+interface TimesheetEntry {
+  entryId: number;
   employeeId: string;
-  fullName: string;
-  email?: string;
-  class?: string;
-  isActive?: boolean;
+  employeeName: string;
+  dateWorked: string;
+  projectCode: string;
+  projectDescription: string;
+  extraValue: string;
+  extraDescription?: string;
+  costCode: string;
+  costCodeDescription: string;
+  standardHours: number;
+  overtimeHours: number;
+  totalHours: number;
+  notes?: string;
+  status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected';
+  createdDate: string;
+  createdBy: string;
+  timeIn?: string;
+  timeOut?: string;
+  breakStartTime?: string;
+  breakEndTime?: string;
+}
+
+interface WeeklySummary {
+  weekEndingDate: string;
+  totalStandardHours: number;
+  totalOvertimeHours: number;
+  totalHours: number;
+  entriesCount: number;
+  submissionStatus: 'Draft' | 'Submitted' | 'Approved' | 'Rejected';
+  submittedOn?: string;
 }
 
 interface Project {
-  projectId: number;
   projectCode: string;
   projectDescription: string;
   isActive: boolean;
 }
 
-interface CostCode {
-  costCodeId: number;
-  costCode: string;
-  description: string;
-}
-
-interface Extra {
-  extraID: number;
-  extraValue: string;
-  description: string;
-}
-
-interface TimeValue {
-  hour: string;
-  minute: string;
-  period: 'AM' | 'PM';
-}
-
-interface Break {
-  id: string;
-  startTime: TimeValue;
-  endTime: TimeValue;
-}
-
-interface TimeCalculation {
-  totalMinutes: number;
-  standardHours: number;
-  overtimeHours: number;
-  crossesMidnight: boolean;
-  totalBreakMinutes: number;
-  dayOneHours?: number;
-  dayTwoHours?: number;
-  dayOneDate?: string;
-  dayTwoDate?: string;
-  workMinutes: number;
-  breakDetails: {
-    startTime: string;
-    endTime: string;
-    minutes: number;
-  }[];
-}
-
-interface TimeEntry {
-  id: string;
-  selectedEmployees: Employee[];
-  selectedDates: Date[];
-  projectCode: string;
-  extraValue: string;
-  costCode: string;
-  timeIn: TimeValue;
-  timeOut: TimeValue;
-  breaks: Break[];
-  notes?: string;
-}
-
-interface ValidationError {
-  field: string;
-  message: string;
-}
-
-interface EntryErrors {
-  [entryId: string]: ValidationError[];
-}
-
-// Custom hook for employee selection
-const useEmployeeSelection = ({
-  employees,
-  selectedEmployees,
-  onEmployeeChange,
-  maxSelected,
-  groupByClass,
-}: {
-  employees: Employee[];
-  selectedEmployees: Employee[];
-  onEmployeeChange: (employees: Employee[]) => void;
-  maxSelected?: number;
-  groupByClass: boolean;
-}) => {
-  const [open, setOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-
-  const selectedEmployeeIds = useMemo(() => 
-    new Set(selectedEmployees.map(emp => emp.employeeId)), 
-    [selectedEmployees]
-  );
-
-  const filteredEmployees = useMemo(() => {
-    if (!searchValue) return employees;
-    return employees.filter(employee =>
-      employee.fullName.toLowerCase().includes(searchValue.toLowerCase()) ||
-      employee.employeeId.toLowerCase().includes(searchValue.toLowerCase()) ||
-      employee.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
-      employee.class?.toLowerCase().includes(searchValue.toLowerCase())
-    );
-  }, [employees, searchValue]);
-
-  const groupedEmployees = useMemo(() => {
-    if (!groupByClass) {
-      return { 'All Employees': filteredEmployees };
-    }
-
-    const grouped = filteredEmployees.reduce((acc, employee) => {
-      const group = employee.class || 'Unassigned';
-      if (!acc[group]) {
-        acc[group] = [];
-      }
-      acc[group].push(employee);
-      return acc;
-    }, {} as Record<string, Employee[]>);
-
-    const sortedGrouped: Record<string, Employee[]> = {};
-    Object.keys(grouped)
-      .sort()
-      .forEach(key => {
-        sortedGrouped[key] = grouped[key].sort((a, b) => a.fullName.localeCompare(b.fullName));
-      });
-
-    return sortedGrouped;
-  }, [filteredEmployees, groupByClass]);
-
-  const handleEmployeeSelect = useCallback((employee: Employee) => {
-    const isSelected = selectedEmployeeIds.has(employee.employeeId);
-    
-    if (isSelected) {
-      const newSelection = selectedEmployees.filter(emp => emp.employeeId !== employee.employeeId);
-      onEmployeeChange(newSelection);
-    } else {
-      if (maxSelected && selectedEmployees.length >= maxSelected) {
-        return;
-      }
-      const newSelection = [...selectedEmployees, employee].sort((a, b) => a.fullName.localeCompare(b.fullName));
-      onEmployeeChange(newSelection);
-    }
-  }, [selectedEmployees, selectedEmployeeIds, onEmployeeChange, maxSelected]);
-
-  const removeEmployee = useCallback((employeeId: string) => {
-    const newSelection = selectedEmployees.filter(emp => emp.employeeId !== employeeId);
-    onEmployeeChange(newSelection);
-  }, [selectedEmployees, onEmployeeChange]);
-
-  const clearAllEmployees = useCallback(() => {
-    onEmployeeChange([]);
-  }, [onEmployeeChange]);
-
-  const formatSelectedText = useCallback((placeholder: string) => {
-    if (selectedEmployees.length === 0) return placeholder;
-    if (selectedEmployees.length === 1) return selectedEmployees[0].fullName;
-    return `${selectedEmployees.length} employees selected`;
-  }, [selectedEmployees]);
-
-  return {
-    open,
-    setOpen,
-    searchValue,
-    setSearchValue,
-    selectedEmployeeIds,
-    groupedEmployees,
-    handleEmployeeSelect,
-    removeEmployee,
-    clearAllEmployees,
-    formatSelectedText,
-  };
+// Utility functions
+const cn = (...classes: (string | undefined | null | false)[]): string => {
+  return classes.filter(Boolean).join(' ');
 };
 
-// EmployeeSelectionTrigger component
-const EmployeeSelectionTrigger: React.FC<{
-  selectedCount: number;
-  displayText: string;
-  onClearAll: () => void;
-  disabled: boolean;
-  className?: string;
-}> = ({ selectedCount, displayText, onClearAll, disabled, className }) => (
-  <PopoverTrigger asChild>
-    <Button
-      variant="outline"
-      role="combobox"
-      className={cn(
-        "w-full justify-between text-left font-normal h-8",
-        !selectedCount && "text-muted-foreground",
-        className
-      )}
-      disabled={disabled}
-    >
-      <div className="flex items-center">
-        <Users className="mr-2 h-4 w-4" />
-        {displayText}
-      </div>
-      <div className="flex items-center space-x-1">
-        {selectedCount > 0 && (
-          <Badge 
-            variant="secondary"
-            className="mr-1"
-            onClick={(e) => {
-              e.stopPropagation();
-              onClearAll();
-            }}
-          >
-            {selectedCount}
-            <X className="ml-1 h-3 w-3" />
-          </Badge>
-        )}
-        <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
-      </div>
-    </Button>
-  </PopoverTrigger>
-);
-
-// EmployeeSelectionList component
-const EmployeeSelectionList: React.FC<{
-  groupedEmployees: Record<string, Employee[]>;
-  selectedEmployeeIds: Set<string>;
-  onEmployeeSelect: (employee: Employee) => void;
-  searchValue: string;
-  onSearchChange: (value: string) => void;
-  maxSelected?: number;
-  selectedCount: number;
-  searchPlaceholder: string;
-  emptyText: string;
-  groupByClass: boolean;
-}> = ({
-  groupedEmployees,
-  selectedEmployeeIds,
-  onEmployeeSelect,
-  searchValue,
-  onSearchChange,
-  maxSelected,
-  selectedCount,
-  searchPlaceholder,
-  emptyText,
-  groupByClass
-}) => {
-  const hasResults = Object.values(groupedEmployees).some(group => group.length > 0);
-
-  return (
-    <div className="w-full">
-      {/* Search Input */}
-      <div className="flex items-center border-b px-3 py-2">
-        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-        <input
-          className="flex h-8 w-full rounded-md bg-transparent text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
-          placeholder={searchPlaceholder}
-          value={searchValue}
-          onChange={(e) => onSearchChange(e.target.value)}
-        />
-      </div>
-
-      {/* Results */}
-      <ScrollArea className="h-64">
-        <div className="p-1">
-          {!hasResults ? (
-            <div className="py-6 text-center text-sm text-muted-foreground">
-              {emptyText}
-            </div>
-          ) : (
-            Object.entries(groupedEmployees).map(([groupName, groupEmployees]) => (
-              <div key={groupName}>
-                {groupByClass && groupEmployees.length > 0 && (
-                  <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                    {groupName}
-                  </div>
-                )}
-                {groupEmployees.map((employee) => {
-                  const isSelected = selectedEmployeeIds.has(employee.employeeId);
-                  const isDisabled = maxSelected && 
-                    selectedCount >= maxSelected && 
-                    !isSelected;
-
-                  return (
-                    <div
-                      key={employee.employeeId}
-                      className={cn(
-                        "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-                        isDisabled && "opacity-50 cursor-not-allowed"
-                      )}
-                      onClick={() => !isDisabled && onEmployeeSelect(employee)}
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          isSelected ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium truncate">{employee.fullName}</div>
-                        <div className="text-xs text-muted-foreground flex items-center space-x-2">
-                          <span>{employee.employeeId}</span>
-                          {employee.class && (
-                            <span className="bg-muted px-1 rounded text-xs">
-                              {employee.class}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ))
-          )}
-        </div>
-      </ScrollArea>
-      
-      {maxSelected && (
-        <div className="p-3 border-t text-xs text-muted-foreground text-center">
-          {selectedCount}/{maxSelected} employees selected
-          {selectedCount >= maxSelected && " (limit reached)"}
-        </div>
-      )}
-    </div>
-  );
+const formatDate = (date: Date | string, format: string = 'MMM dd, yyyy'): string => {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  const options: Intl.DateTimeFormatOptions = {};
+  
+  switch (format) {
+    case 'yyyy-MM-dd':
+      return d.toISOString().split('T')[0];
+    case 'MMM dd, yyyy':
+      options.year = 'numeric';
+      options.month = 'short';
+      options.day = 'numeric';
+      break;
+    case 'MMM dd':
+      options.month = 'short';
+      options.day = 'numeric';
+      break;
+    default:
+      return d.toLocaleDateString();
+  }
+  
+  return d.toLocaleDateString('en-US', options);
 };
 
-// SelectedEmployeesBadges component
-const SelectedEmployeesBadges: React.FC<{
-  selectedEmployees: Employee[];
-  onRemoveEmployee: (employeeId: string) => void;
-  disabled: boolean;
-}> = ({ selectedEmployees, onRemoveEmployee, disabled }) => {
-  if (selectedEmployees.length === 0) return null;
-
-  return (
-    <div className="flex flex-wrap gap-1">
-      {selectedEmployees.map((employee) => (
-        <Badge
-          key={employee.employeeId}
-          variant="outline"
-          className="text-xs px-2 py-1 max-w-[200px]"
-        >
-          <div className="flex items-center space-x-1 min-w-0">
-            <span className="truncate">{employee.fullName}</span>
-            <span className="text-muted-foreground">({employee.employeeId})</span>
-            <button
-              type="button"
-              className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              onClick={() => onRemoveEmployee(employee.employeeId)}
-              disabled={disabled}
-            >
-              <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-            </button>
-          </div>
-        </Badge>
-      ))}
-    </div>
-  );
+const getWeekEndingDate = (date: Date): Date => {
+  const d = new Date(date);
+  const dayOfWeek = d.getDay();
+  const daysToSaturday = (6 - dayOfWeek) % 7;
+  d.setDate(d.getDate() + daysToSaturday);
+  return d;
 };
 
-// MultiDatePicker component
-const MultiDatePicker: React.FC<{
-  selectedDates?: Date[];
-  onDateChange: (dates: Date[]) => void;
-  placeholder?: string;
-  className?: string;
-  disabled?: boolean;
-  maxDates?: number;
-}> = ({
-  selectedDates = [],
-  onDateChange,
-  placeholder = "Select dates...",
-  className,
-  disabled = false,
-  maxDates,
-}) => {
-  const [open, setOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-
-  const handleDateSelect = (dates: Date[] | undefined) => {
-    if (dates) {
-      const sortedDates = Array.from(dates).sort((a, b) => a.getTime() - b.getTime());
-      onDateChange(sortedDates);
-    }
-  };
-
-  const removeDateAtIndex = (indexToRemove: number) => {
-    const newDates = selectedDates.filter((_, index) => index !== indexToRemove);
-    onDateChange(newDates);
-  };
-
-  const clearAllDates = () => {
-    onDateChange([]);
-  };
-
-  const formatSelectedDatesText = () => {
-    if (selectedDates.length === 0) return placeholder;
-    if (selectedDates.length === 1) return formatDate(selectedDates[0], "PPP");
-    return `${selectedDates.length} dates selected`;
-  };
-
-  // Check if date is a future date (business rule: no future dates)
-  const isFutureDate = (date: Date) => {
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    return date > today;
-  };
-
-  return (
-    <div className="space-y-2">
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className={cn(
-              "w-full justify-start text-left font-normal h-8",
-              !selectedDates.length && "text-muted-foreground",
-              className
-            )}
-            disabled={disabled}
-          >
-            <Calendar className="mr-2 h-4 w-4" />
-            {formatSelectedDatesText()}
-            {selectedDates.length > 0 && (
-              <Badge 
-                variant="secondary" 
-                className="ml-auto"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  clearAllDates();
-                }}
-              >
-                {selectedDates.length}
-                <X className="ml-1 h-3 w-3" />
-              </Badge>
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <CalendarComponent
-            mode="multiple"
-            selected={selectedDates}
-            onSelect={handleDateSelect}
-            month={currentMonth}
-            onMonthChange={setCurrentMonth}
-            disabled={(date) => {
-              // Disable future dates (business rule)
-              if (isFutureDate(date)) return true;
-              
-              // Disable if max dates reached and date not already selected
-              if (maxDates && selectedDates.length >= maxDates) {
-                const isAlreadySelected = selectedDates.some(
-                  (selectedDate) => formatDate(selectedDate, 'yyyy-MM-dd') === formatDate(date, 'yyyy-MM-dd')
-                );
-                return !isAlreadySelected;
-              }
-              
-              return false;
-            }}
-            className="rounded-md border"
-          />
-          {maxDates && (
-            <div className="p-3 border-t text-xs text-muted-foreground text-center">
-              {selectedDates.length}/{maxDates} dates selected
-              {selectedDates.length >= maxDates && " (limit reached)"}
-            </div>
-          )}
-        </PopoverContent>
-      </Popover>
-
-      {/* Selected Dates Display */}
-      {selectedDates.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {selectedDates.map((date, index) => (
-            <Badge
-              key={formatDate(date, 'yyyy-MM-dd')}
-              variant="outline"
-              className="text-xs px-2 py-1"
-            >
-              {formatDate(date, "MMM dd, yyyy")}
-              <button
-                type="button"
-                className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                onClick={() => removeDateAtIndex(index)}
-                disabled={disabled}
-              >
-                <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-              </button>
-            </Badge>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+const getCurrentWeekDates = (): { start: Date; end: Date } => {
+  const today = new Date();
+  const currentDay = today.getDay();
+  const sunday = new Date(today);
+  sunday.setDate(today.getDate() - currentDay);
+  
+  const saturday = new Date(sunday);
+  saturday.setDate(sunday.getDate() + 6);
+  
+  return { start: sunday, end: saturday };
 };
 
-// MultiEmployeeSelector main component
-const MultiEmployeeSelector: React.FC<{
-  employees: Employee[];
-  selectedEmployees: Employee[];
-  onEmployeeChange: (employees: Employee[]) => void;
-  placeholder?: string;
-  className?: string;
-  disabled?: boolean;
-  maxSelected?: number;
-  searchPlaceholder?: string;
-  emptyText?: string;
-  groupByClass?: boolean;
-}> = ({
-  employees,
-  selectedEmployees,
-  onEmployeeChange,
-  placeholder = "Select employees...",
-  className,
-  disabled = false,
-  maxSelected,
-  searchPlaceholder = "Search employees...",
-  emptyText = "No employees found.",
-  groupByClass = false,
-}) => {
-  const {
-    open,
-    setOpen,
-    searchValue,
-    setSearchValue,
-    selectedEmployeeIds,
-    groupedEmployees,
-    handleEmployeeSelect,
-    removeEmployee,
-    clearAllEmployees,
-    formatSelectedText,
-  } = useEmployeeSelection({
-    employees,
-    selectedEmployees,
-    onEmployeeChange,
-    maxSelected,
-    groupByClass,
-  });
+// Mock data - In production, this would come from API calls
+const mockTimesheetEntries: TimesheetEntry[] = [
+  {
+    entryId: 1,
+    employeeId: 'JSMITH',
+    employeeName: 'John Smith',
+    dateWorked: '2025-06-23',
+    projectCode: '21-0066',
+    projectDescription: 'Edmonton EXPO SOLAR IPD',
+    extraValue: 'Phase 1',
+    extraDescription: 'Phase 1 - Initial Setup',
+    costCode: '001-040-043',
+    costCodeDescription: 'INDIRECT LAB-Direct Labor',
+    standardHours: 8.0,
+    overtimeHours: 0.0,
+    totalHours: 8.0,
+    notes: 'Regular day work',
+    status: 'Draft',
+    createdDate: '2025-06-23T08:00:00Z',
+    createdBy: 'JSMITH',
+    timeIn: '07:00',
+    timeOut: '15:30',
+    breakStartTime: '12:00',
+    breakEndTime: '12:30'
+  },
+  {
+    entryId: 2,
+    employeeId: 'JSMITH',
+    employeeName: 'John Smith',
+    dateWorked: '2025-06-22',
+    projectCode: '21-0066',
+    projectDescription: 'Edmonton EXPO SOLAR IPD',
+    extraValue: 'Phase 1',
+    costCode: '001-040-043',
+    costCodeDescription: 'INDIRECT LAB-Direct Labor',
+    standardHours: 8.0,
+    overtimeHours: 2.0,
+    totalHours: 10.0,
+    notes: 'Overtime for project deadline',
+    status: 'Submitted',
+    createdDate: '2025-06-22T08:00:00Z',
+    createdBy: 'JSMITH'
+  },
+  {
+    entryId: 3,
+    employeeId: 'JSMITH',
+    employeeName: 'John Smith',
+    dateWorked: '2025-06-21',
+    projectCode: '22-0006',
+    projectDescription: 'AltaPro Service Department',
+    extraValue: 'Default',
+    costCode: '001-500-501',
+    costCodeDescription: 'GENEXP-Vehicle Travel',
+    standardHours: 6.0,
+    overtimeHours: 0.0,
+    totalHours: 6.0,
+    notes: 'Service call to client site',
+    status: 'Approved',
+    createdDate: '2025-06-21T08:00:00Z',
+    createdBy: 'JSMITH'
+  },
+  {
+    entryId: 4,
+    employeeId: 'JSMITH',
+    employeeName: 'John Smith',
+    dateWorked: '2025-06-20',
+    projectCode: '21-0066',
+    projectDescription: 'Edmonton EXPO SOLAR IPD',
+    extraValue: 'Phase 2',
+    costCode: '001-040-054',
+    costCodeDescription: 'INDIRECT LAB-Employee Training',
+    standardHours: 4.0,
+    overtimeHours: 0.0,
+    totalHours: 4.0,
+    notes: 'Training session',
+    status: 'Rejected',
+    createdDate: '2025-06-20T08:00:00Z',
+    createdBy: 'JSMITH'
+  }
+];
 
-  return (
-    <div className="space-y-2">
-      <Popover open={open} onOpenChange={setOpen}>
-        <EmployeeSelectionTrigger
-          selectedCount={selectedEmployees.length}
-          displayText={formatSelectedText(placeholder)}
-          onClearAll={clearAllEmployees}
-          disabled={disabled}
-          className={className}
-        />
-        <PopoverContent className="w-full p-0" align="start">
-          <EmployeeSelectionList
-            groupedEmployees={groupedEmployees}
-            selectedEmployeeIds={selectedEmployeeIds}
-            onEmployeeSelect={handleEmployeeSelect}
-            searchValue={searchValue}
-            onSearchChange={setSearchValue}
-            maxSelected={maxSelected}
-            selectedCount={selectedEmployees.length}
-            searchPlaceholder={searchPlaceholder}
-            emptyText={emptyText}
-            groupByClass={groupByClass}
-          />
-        </PopoverContent>
-      </Popover>
-      <SelectedEmployeesBadges
-        selectedEmployees={selectedEmployees}
-        onRemoveEmployee={removeEmployee}
-        disabled={disabled}
-      />
-    </div>
-  );
-};
-
-// Mock data
-const mockEmployees: Employee[] = [
-  { employeeId: 'JSMITH', fullName: 'John Smith', email: 'john@company.com', class: 'FMAN', isActive: true },
-  { employeeId: 'MJONES', fullName: 'Mary Jones', email: 'mary@company.com', class: 'JMAN', isActive: true },
-  { employeeId: 'BWILSON', fullName: 'Bob Wilson', email: 'bob@company.com', class: 'AP3', isActive: true },
-  { employeeId: 'ADMIN001', fullName: 'Admin User', email: 'admin@company.com', class: 'ADMIN', isActive: true },
-  { employeeId: 'GOLNIC', fullName: 'Nicholas Goldup', email: 'nick@company.com', class: 'ADMIN', isActive: true },
-  { employeeId: 'BARHEN', fullName: 'Henry Barendregt', email: 'henry@company.com', class: 'FMAN', isActive: true },
+const mockWeeklySummaries: WeeklySummary[] = [
+  {
+    weekEndingDate: '2025-06-28',
+    totalStandardHours: 32.0,
+    totalOvertimeHours: 4.0,
+    totalHours: 36.0,
+    entriesCount: 8,
+    submissionStatus: 'Draft'
+  },
+  {
+    weekEndingDate: '2025-06-21',
+    totalStandardHours: 40.0,
+    totalOvertimeHours: 2.0,
+    totalHours: 42.0,
+    entriesCount: 10,
+    submissionStatus: 'Submitted',
+    submittedOn: '2025-06-22T17:00:00Z'
+  }
 ];
 
 const mockProjects: Project[] = [
-  { projectId: 1, projectCode: '21-0066', projectDescription: 'Edmonton EXPO SOLAR IPD', isActive: true },
-  { projectId: 2, projectCode: '22-0006', projectDescription: 'AltaPro Service Department', isActive: true },
-  { projectId: 3, projectCode: '24-0052', projectDescription: 'Grant MacEwan School', isActive: true },
-  { projectId: 4, projectCode: '21-0029', projectDescription: 'Edmonton EXPO IPD', isActive: true },
+  { projectCode: '21-0066', projectDescription: 'Edmonton EXPO SOLAR IPD', isActive: true },
+  { projectCode: '22-0006', projectDescription: 'AltaPro Service Department', isActive: true },
+  { projectCode: '24-0052', projectDescription: 'Grant MacEwan School', isActive: true },
+  { projectCode: '21-0029', projectDescription: 'Edmonton EXPO IPD', isActive: true }
 ];
 
-const mockExtras: Extra[] = [
-  { extraID: 1, extraValue: 'Default', description: 'Default' },
-  { extraID: 2, extraValue: 'Phase 1', description: 'Phase 1 - Initial Setup' },
-  { extraID: 3, extraValue: 'Phase 2', description: 'Phase 2 - Implementation' },
-  { extraID: 4, extraValue: 'Phase 3', description: 'Phase 3 - Testing' },
-];
+// Status badge component
+const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
+  const getStatusConfig = (status: string) => {
+    switch (status) {
+      case 'Draft':
+        return { variant: 'secondary' as const, icon: Edit2, color: 'text-gray-600' };
+      case 'Submitted':
+        return { variant: 'default' as const, icon: Send, color: 'text-blue-600' };
+      case 'Approved':
+        return { variant: 'default' as const, icon: CheckCircle2, color: 'text-green-600' };
+      case 'Rejected':
+        return { variant: 'destructive' as const, icon: XCircle, color: 'text-red-600' };
+      default:
+        return { variant: 'outline' as const, icon: AlertTriangle, color: 'text-gray-600' };
+    }
+  };
 
-const mockCostCodes: CostCode[] = [
-  { costCodeId: 1, costCode: '001-040-043', description: 'INDIRECT LAB-Direct Labor' },
-  { costCodeId: 2, costCode: '001-040-054', description: 'INDIRECT LAB-Employee Training' },
-  { costCodeId: 3, costCode: '001-500-501', description: 'GENEXP-Vehicle Travel' },
-  { costCodeId: 4, costCode: '001-040-055', description: 'INDIRECT LAB-Safety Training' },
-];
-
-// Time picker component
-const TimePicker: React.FC<{
-  value: TimeValue;
-  onChange: (time: TimeValue) => void;
-  placeholder?: string;
-}> = ({ value, onChange, placeholder = "--" }) => {
-  const hours = Array.from({ length: 12 }, (_, i) => {
-    const hour = i === 0 ? 12 : i;
-    return hour.toString().padStart(2, '0');
-  });
-
-  const minutes = Array.from({ length: 60 }, (_, i) => {
-    return i.toString().padStart(2, '0');
-  });
+  const config = getStatusConfig(status);
+  const Icon = config.icon;
 
   return (
-    <div className="flex items-center gap-1">
-      <Select value={value.hour} onValueChange={(hour) => onChange({ ...value, hour })}>
-        <SelectTrigger className="w-14 h-8 border-slate-300 dark:border-slate-600 text-xs">
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {hours.map(hour => (
-            <SelectItem key={hour} value={hour} className="text-xs">{hour}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      
-      <span className="text-xs">:</span>
-      
-      <Select value={value.minute} onValueChange={(minute) => onChange({ ...value, minute })}>
-        <SelectTrigger className="w-14 h-8 border-slate-300 dark:border-slate-600 text-xs">
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {minutes.map(minute => (
-            <SelectItem key={minute} value={minute} className="text-xs">{minute}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      
-      <Select value={value.period} onValueChange={(period: 'AM' | 'PM') => onChange({ ...value, period })}>
-        <SelectTrigger className="w-14 h-8 border-slate-300 dark:border-slate-600 text-xs">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="AM" className="text-xs">AM</SelectItem>
-          <SelectItem value="PM" className="text-xs">PM</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
+    <Badge variant={config.variant} className="text-xs">
+      <Icon className="w-3 h-3 mr-1" />
+      {status}
+    </Badge>
   );
 };
 
-// Utility functions
-const timeValueToString = (time: TimeValue): string => {
-  if (!time.hour || !time.minute) return '';
-  let hour = parseInt(time.hour);
-  if (time.period === 'PM' && hour !== 12) hour += 12;
-  if (time.period === 'AM' && hour === 12) hour = 0;
-  return `${hour.toString().padStart(2, '0')}:${time.minute}`;
-};
+// Date range picker component
+const DateRangePicker: React.FC<{
+  startDate?: Date;
+  endDate?: Date;
+  onDateChange: (start: Date | undefined, end: Date | undefined) => void;
+}> = ({ startDate, endDate, onDateChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [tempStart, setTempStart] = useState<Date | undefined>(startDate);
+  const [tempEnd, setTempEnd] = useState<Date | undefined>(endDate);
 
-const parseTimeToMinutes = (timeString: string): number => {
-  if (!timeString) return 0;
-  const [hours, minutes] = timeString.split(':').map(Number);
-  return hours * 60 + minutes;
-};
-
-const roundToQuarterHour = (hours: number): number => {
-  return Math.round(hours * 4) / 4;
-};
-
-const formatDateString = (date: Date): string => {
-  return date.toISOString().split('T')[0];
-};
-
-const generateId = (): string => {
-  return Math.random().toString(36).substr(2, 9);
-};
-
-// Validation functions
-const validateTimeValue = (time: TimeValue): boolean => {
-  return !!(time.hour && time.minute && time.period);
-};
-
-const validateEntry = (entry: TimeEntry): ValidationError[] => {
-  const errors: ValidationError[] = [];
-
-  if (!entry.selectedEmployees || entry.selectedEmployees.length === 0) {
-    errors.push({ field: 'selectedEmployees', message: 'At least one employee is required' });
-  }
-
-  if (!entry.selectedDates || entry.selectedDates.length === 0) {
-    errors.push({ field: 'selectedDates', message: 'At least one date is required' });
-  } else {
-    // Check for future dates
-    const hasFutureDate = entry.selectedDates.some(date => {
-      const today = new Date();
-      today.setHours(23, 59, 59, 999);
-      return date > today;
-    });
-    
-    if (hasFutureDate) {
-      errors.push({ field: 'selectedDates', message: 'Cannot enter time for future dates' });
-    }
-  }
-
-  if (!entry.projectCode) {
-    errors.push({ field: 'projectCode', message: 'Project is required' });
-  }
-
-  if (!entry.costCode) {
-    errors.push({ field: 'costCode', message: 'Cost code is required' });
-  }
-
-  if (!validateTimeValue(entry.timeIn)) {
-    errors.push({ field: 'timeIn', message: 'Time in is required' });
-  }
-
-  if (!validateTimeValue(entry.timeOut)) {
-    errors.push({ field: 'timeOut', message: 'Time out is required' });
-  }
-
-  return errors;
-};
-
-const calculateTimeInOut = (
-  timeIn: TimeValue,
-  timeOut: TimeValue,
-  breaks: Break[],
-  dateWorked?: string
-): TimeCalculation => {
-  const timeInString = timeValueToString(timeIn);
-  const timeOutString = timeValueToString(timeOut);
-  
-  if (!timeInString || !timeOutString) {
-    return {
-      totalMinutes: 0,
-      workMinutes: 0,
-      standardHours: 0,
-      overtimeHours: 0,
-      crossesMidnight: false,
-      totalBreakMinutes: 0,
-      breakDetails: [],
-    };
-  }
-
-  const startMinutes = parseTimeToMinutes(timeInString);
-  let endMinutes = parseTimeToMinutes(timeOutString);
-  
-  const crossesMidnight = endMinutes <= startMinutes;
-  
-  if (crossesMidnight) {
-    endMinutes += 24 * 60;
-  }
-  
-  let totalMinutes = endMinutes - startMinutes;
-  
-  let totalBreakMinutes = 0;
-  const breakDetails: { startTime: string; endTime: string; minutes: number; }[] = [];
-  
-  breaks.forEach(breakItem => {
-    const breakStartString = timeValueToString(breakItem.startTime);
-    const breakEndString = timeValueToString(breakItem.endTime);
-    
-    if (breakStartString && breakEndString) {
-      const breakStartMinutes = parseTimeToMinutes(breakStartString);
-      const breakEndMinutes = parseTimeToMinutes(breakEndString);
-      const breakDuration = Math.max(0, breakEndMinutes - breakStartMinutes);
-      totalBreakMinutes += breakDuration;
-      
-      breakDetails.push({
-        startTime: breakStartString,
-        endTime: breakEndString,
-        minutes: breakDuration
-      });
-    }
-  });
-  
-  const workMinutes = Math.max(0, totalMinutes - totalBreakMinutes);
-  const totalHours = workMinutes / 60;
-  const roundedHours = roundToQuarterHour(totalHours);
-  
-  const standardHours = Math.min(roundedHours, 8);
-  const overtimeHours = Math.max(0, roundedHours - 8);
-  
-  return {
-    totalMinutes,
-    workMinutes,
-    standardHours,
-    overtimeHours,
-    crossesMidnight,
-    totalBreakMinutes,
-    breakDetails,
-  };
-};
-
-export const TimeInOutTab: React.FC = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [entries, setEntries] = useState<TimeEntry[]>([
-    {
-      id: generateId(),
-      selectedEmployees: [mockEmployees[0]], // Default to first employee
-      selectedDates: [new Date()], // Default to today
-      projectCode: '',
-      extraValue: 'Default',
-      costCode: '',
-      timeIn: { hour: '07', minute: '00', period: 'AM' },
-      timeOut: { hour: '03', minute: '30', period: 'PM' },
-      breaks: [
-        {
-          id: generateId(),
-          startTime: { hour: '12', minute: '00', period: 'PM' },
-          endTime: { hour: '12', minute: '30', period: 'PM' }
-        }
-      ],
-      notes: '',
-    }
-  ]);
-  const [errors, setErrors] = useState<EntryErrors>({});
-  const [calculations, setCalculations] = useState<Record<string, TimeCalculation>>({});
-
-  useEffect(() => {
-    const newCalculations: Record<string, TimeCalculation> = {};
-    const newErrors: EntryErrors = {};
-    
-    entries.forEach((entry) => {
-      const entryErrors = validateEntry(entry);
-      if (entryErrors.length > 0) {
-        newErrors[entry.id] = entryErrors;
-      }
-
-      if (validateTimeValue(entry.timeIn) && validateTimeValue(entry.timeOut)) {
-        try {
-          const calc = calculateTimeInOut(
-            entry.timeIn,
-            entry.timeOut,
-            entry.breaks
-          );
-          newCalculations[entry.id] = calc;
-        } catch (error) {
-          console.error(`Error calculating time for entry ${entry.id}:`, error);
-        }
-      }
-    });
-    
-    setErrors(newErrors);
-    setCalculations(newCalculations);
-  }, [entries]);
-
-  const updateEntry = useCallback((id: string, field: keyof TimeEntry, value: any) => {
-    setEntries(prev => prev.map(entry => 
-      entry.id === id ? { ...entry, [field]: value } : entry
-    ));
-  }, []);
-
-  const updateBreak = useCallback((entryId: string, breakId: string, field: 'startTime' | 'endTime', value: TimeValue) => {
-    setEntries(prev => prev.map(entry => 
-      entry.id === entryId ? {
-        ...entry,
-        breaks: entry.breaks.map(breakItem =>
-          breakItem.id === breakId ? { ...breakItem, [field]: value } : breakItem
-        )
-      } : entry
-    ));
-  }, []);
-
-  const addBreak = useCallback((entryId: string) => {
-    setEntries(prev => prev.map(entry => 
-      entry.id === entryId ? {
-        ...entry,
-        breaks: [...entry.breaks, {
-          id: generateId(),
-          startTime: { hour: '', minute: '', period: 'AM' },
-          endTime: { hour: '', minute: '', period: 'AM' }
-        }]
-      } : entry
-    ));
-  }, []);
-
-  const removeBreak = useCallback((entryId: string, breakId: string) => {
-    setEntries(prev => prev.map(entry => 
-      entry.id === entryId ? {
-        ...entry,
-        breaks: entry.breaks.filter(breakItem => breakItem.id !== breakId)
-      } : entry
-    ));
-  }, []);
-
-  const addNewEntry = useCallback(() => {
-    const lastEntry = entries[entries.length - 1];
-    const newEntry: TimeEntry = {
-      id: generateId(),
-      selectedEmployees: lastEntry?.selectedEmployees || [mockEmployees[0]],
-      selectedDates: [new Date()], // Default to today
-      projectCode: lastEntry?.projectCode || '',
-      extraValue: 'Default',
-      costCode: lastEntry?.costCode || '',
-      timeIn: { hour: '07', minute: '00', period: 'AM' },
-      timeOut: { hour: '03', minute: '30', period: 'PM' },
-      breaks: [
-        {
-          id: generateId(),
-          startTime: { hour: '12', minute: '00', period: 'PM' },
-          endTime: { hour: '12', minute: '30', period: 'PM' }
-        }
-      ],
-      notes: '',
-    };
-    setEntries(prev => [...prev, newEntry]);
-  }, [entries]);
-
-  const removeEntry = useCallback((id: string) => {
-    if (entries.length > 1) {
-      setEntries(prev => prev.filter(entry => entry.id !== id));
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[id];
-        return newErrors;
-      });
-      setCalculations(prev => {
-        const newCalc = { ...prev };
-        delete newCalc[id];
-        return newCalc;
-      });
-    }
-  }, [entries.length]);
-
-  const resetForm = useCallback(() => {
-    setEntries([{
-      id: generateId(),
-      selectedEmployees: [mockEmployees[0]],
-      selectedDates: [new Date()], // Default to today
-      projectCode: '',
-      extraValue: 'Default',
-      costCode: '',
-      timeIn: { hour: '07', minute: '00', period: 'AM' },
-      timeOut: { hour: '03', minute: '30', period: 'PM' },
-      breaks: [
-        {
-          id: generateId(),
-          startTime: { hour: '12', minute: '00', period: 'PM' },
-          endTime: { hour: '12', minute: '30', period: 'PM' }
-        }
-      ],
-      notes: '',
-    }]);
-    setErrors({});
-    setCalculations({});
-  }, []);
-
-  const handleSubmit = async () => {
-    const hasErrors = Object.keys(errors).length > 0;
-    const hasValidCalculations = entries.every(entry => calculations[entry.id]);
-
-    if (hasErrors || !hasValidCalculations) {
-      alert('Please fix all validation errors before submitting.');
-      return;
-    }
-
-    setIsSubmitting(true);
-    
-    try {
-      const timesheetEntries: any[] = [];
-      
-      entries.forEach((entry) => {
-        const calc = calculations[entry.id];
-        if (!calc) return;
-        
-        const notes = entry.notes || '';
-        
-        const breakInfo = calc.breakDetails.length > 0 
-          ? ` [Breaks: ${calc.breakDetails.map(b => `${b.startTime}-${b.endTime}`).join(', ')}]`
-          : '';
-        
-        // Create entries for each selected employee and date combination
-        entry.selectedEmployees.forEach(employee => {
-          entry.selectedDates.forEach(date => {
-            const formattedDate = formatDate(date, 'yyyy-MM-dd');
-            
-            if (calc.standardHours > 0) {
-              timesheetEntries.push({
-                employeeId: employee.employeeId,
-                employeeName: employee.fullName,
-                dateWorked: formattedDate,
-                projectCode: entry.projectCode,
-                extraValue: entry.extraValue,
-                costCode: entry.costCode,
-                standardHours: calc.standardHours,
-                overtimeHours: 0,
-                notes: `${notes}${breakInfo}`,
-                timeIn: timeValueToString(entry.timeIn),
-                timeOut: timeValueToString(entry.timeOut),
-              });
-            }
-            
-            if (calc.overtimeHours > 0) {
-              timesheetEntries.push({
-                employeeId: employee.employeeId,
-                employeeName: employee.fullName,
-                dateWorked: formattedDate,
-                projectCode: entry.projectCode,
-                extraValue: entry.extraValue,
-                costCode: entry.costCode,
-                standardHours: 0,
-                overtimeHours: calc.overtimeHours,
-                notes: `${notes}${breakInfo} [Overtime]`,
-                timeIn: timeValueToString(entry.timeIn),
-                timeOut: timeValueToString(entry.timeOut),
-              });
-            }
-          });
-        });
-      });
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      alert(`Successfully created ${timesheetEntries.length} timesheet entries!\n\nEntries:\n${timesheetEntries.map((e, i) => 
-        `${i+1}. ${e.employeeName} (${e.employeeId}) - ${e.dateWorked} - ${e.standardHours + e.overtimeHours}hrs (${e.projectCode})`
-      ).join('\n')}`);
-      
-      resetForm();
-      
-    } catch (error) {
-      console.error('Error submitting timesheet entries:', error);
-      alert('Error submitting timesheet entries. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+  const formatDateRange = () => {
+    if (!startDate && !endDate) return "Select date range";
+    if (startDate && !endDate) return `From ${formatDate(startDate, 'MMM dd')}`;
+    if (!startDate && endDate) return `Until ${formatDate(endDate, 'MMM dd')}`;
+    return `${formatDate(startDate!, 'MMM dd')} - ${formatDate(endDate!, 'MMM dd')}`;
   };
 
-  const totalTimesheetEntries = useMemo(() => {
-    return entries.reduce((total, entry) => {
-      const calc = calculations[entry.id];
-      if (!calc) return total;
-      
-      const employeeCount = entry.selectedEmployees.length;
-      const dateCount = entry.selectedDates.length;
-      const entriesPerEmployeeDate = (calc.standardHours > 0 ? 1 : 0) + (calc.overtimeHours > 0 ? 1 : 0);
-      
-      return total + (employeeCount * dateCount * entriesPerEmployeeDate);
-    }, 0);
-  }, [entries, calculations]);
+  const handleApply = () => {
+    onDateChange(tempStart, tempEnd);
+    setIsOpen(false);
+  };
 
-  const hasValidationErrors = Object.keys(errors).length > 0;
-
-  const getFieldError = (entryId: string, fieldName: string) => {
-    const entryErrors = errors[entryId] || [];
-    return entryErrors.find(err => err.field === fieldName)?.message;
+  const handleClear = () => {
+    setTempStart(undefined);
+    setTempEnd(undefined);
+    onDateChange(undefined, undefined);
+    setIsOpen(false);
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-4 w-full">
-      <Card className="w-full">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-2 pt-1">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <Timer className="w-4 h-4 text-blue-600" />
-              </div>
-              <h3 className="text-base font-semibold">Time In/Out</h3>
-              <Badge variant="secondary" className="text-xs">
-                <Users className="w-3 h-3 mr-1" />
-                {entries.length} {entries.length === 1 ? 'entry' : 'entries'}
-              </Badge>
-              {totalTimesheetEntries > entries.length && (
-                <Badge variant="outline" className="text-xs">
-                  <Zap className="w-3 h-3 mr-1" />
-                  → {totalTimesheetEntries} timesheet entries
-                </Badge>
-              )}
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className="justify-start text-left font-normal">
+          <Calendar className="mr-2 h-4 w-4" />
+          {formatDateRange()}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <div className="p-3 space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">Start Date</Label>
+              <CalendarComponent
+                mode="single"
+                selected={tempStart}
+                onSelect={setTempStart}
+                className="rounded-md border"
+              />
             </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                type="button"
-                variant="default"
-                size="sm"
-                onClick={addNewEntry}
-                className="flex items-center space-x-1 h-8 bg-blue-600 hover:bg-blue-700 text-white"
-                disabled={isSubmitting}
-              >
-                <Plus className="w-3 h-3" />
-                <span>Add Entry</span>
-              </Button>
+            <div>
+              <Label className="text-xs">End Date</Label>
+              <CalendarComponent
+                mode="single"
+                selected={tempEnd}
+                onSelect={setTempEnd}
+                className="rounded-md border"
+              />
             </div>
           </div>
+          <div className="flex justify-between">
+            <Button variant="outline" size="sm" onClick={handleClear}>
+              Clear
+            </Button>
+            <Button size="sm" onClick={handleApply}>
+              Apply
+            </Button>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
-          <div className="space-y-4">
-            {entries.map((entry, index) => {
-              const calc = calculations[entry.id];
-              const entryErrors = errors[entry.id] || [];
-              const hasErrors = entryErrors.length > 0;
-              
-              return (
-                <div key={entry.id} className="border rounded-lg p-3 relative space-y-3">
-                  {entries.length > 1 && (
-                    <div className="absolute top-2 right-2">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeEntry(entry.id)}
-                        className="h-6 w-6 p-0 text-red-600 hover:text-red-700"
-                        disabled={isSubmitting}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  )}
-                  
-                  <div className="mb-2">
-                    <Badge variant="outline" className="text-xs">Entry {index + 1}</Badge>
-                    {hasErrors && (
-                      <Badge variant="destructive" className="ml-2 text-xs">
-                        <XCircle className="w-3 h-3 mr-1" />
-                        Has Errors
-                      </Badge>
-                    )}
-                    {calc && !hasErrors && (
-                      <Badge variant="secondary" className="ml-2 text-xs">
-                        <CheckCircle2 className="w-3 h-3 mr-1" />
-                        Calculated
-                      </Badge>
-                    )}
-                    {entry.selectedEmployees.length > 0 && entry.selectedDates.length > 0 && (
-                      <Badge variant="outline" className="ml-2 text-xs">
-                        <Users className="w-3 h-3 mr-1" />
-                        {entry.selectedEmployees.length} × {entry.selectedDates.length} = {entry.selectedEmployees.length * entry.selectedDates.length} combinations
-                      </Badge>
-                    )}
-                  </div>
+// Main component
+export const TimeInOutTab = () => {
+  // State management
+  const [entries, setEntries] = useState<TimesheetEntry[]>(mockTimesheetEntries);
+  const [weeklySummaries, setWeeklySummaries] = useState<WeeklySummary[]>(mockWeeklySummaries);
+  const [filteredEntries, setFilteredEntries] = useState<TimesheetEntry[]>(entries);
+  
+  // Filter states
+  const [startDateFilter, setStartDateFilter] = useState<Date | undefined>();
+  const [endDateFilter, setEndDateFilter] = useState<Date | undefined>();
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [projectFilter, setProjectFilter] = useState<string>('all');
+  const [searchFilter, setSearchFilter] = useState<string>('');
+  
+  // UI states
+  const [selectedEntries, setSelectedEntries] = useState<Set<number>>(new Set());
+  const [isLoading, setIsLoading] = useState(false);
+  const [view, setView] = useState<'list' | 'weekly'>('list');
+  const [editingEntry, setEditingEntry] = useState<TimesheetEntry | null>(null);
 
-                  {/* Employee & Date Row */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-xs">Employees *</Label>
-                      <MultiEmployeeSelector
-                        employees={mockEmployees.filter(emp => emp.isActive !== false)}
-                        selectedEmployees={entry.selectedEmployees}
-                        onEmployeeChange={(employees) => updateEntry(entry.id, 'selectedEmployees', employees)}
-                        placeholder="Select employees..."
-                        groupByClass={true}
-                        searchPlaceholder="Search by name, ID, or job class..."
-                        disabled={isSubmitting}
-                      />
-                      {getFieldError(entry.id, 'selectedEmployees') && (
-                        <p className="text-xs text-red-600 mt-1">{getFieldError(entry.id, 'selectedEmployees')}</p>
-                      )}
-                    </div>
-                    
-                    <div>
-                      <Label className="text-xs">Dates Worked *</Label>
-                      <MultiDatePicker
-                        selectedDates={entry.selectedDates}
-                        onDateChange={(dates) => updateEntry(entry.id, 'selectedDates', dates)}
-                        placeholder="Select dates worked..."
-                        disabled={isSubmitting}
-                      />
-                      {getFieldError(entry.id, 'selectedDates') && (
-                        <p className="text-xs text-red-600 mt-1">{getFieldError(entry.id, 'selectedDates')}</p>
-                      )}
-                    </div>
-                  </div>
+  // Current week calculation
+  const currentWeek = useMemo(() => getCurrentWeekDates(), []);
 
-                  {/* Project Information */}
-                  <div className="pt-2">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-xs">Project *</Label>
-                        <Select 
-                          value={entry.projectCode} 
-                          onValueChange={(value) => updateEntry(entry.id, 'projectCode', value)}
-                        >
-                          <SelectTrigger className="h-8">
-                            <SelectValue placeholder="Select Project" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {mockProjects.filter(project => project.isActive).map(project => (
-                              <SelectItem key={project.projectCode} value={project.projectCode}>
-                                <div className="flex flex-col">
-                                  <span className="font-medium text-xs">{project.projectCode}</span>
-                                  <span className="text-xs text-gray-500">{project.projectDescription}</span>
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        {getFieldError(entry.id, 'projectCode') && (
-                          <p className="text-xs text-red-600 mt-1">{getFieldError(entry.id, 'projectCode')}</p>
-                        )}
-                      </div>
-                      
-                      <div>
-                        <Label className="text-xs">Extra</Label>
-                        <Select 
-                          value={entry.extraValue} 
-                          onValueChange={(value) => updateEntry(entry.id, 'extraValue', value)}
-                        >
-                          <SelectTrigger className="h-8">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {mockExtras.map(extra => (
-                              <SelectItem key={extra.extraID} value={extra.extraValue}>
-                                <span className="text-xs">{extra.extraValue} - {extra.description}</span>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+  // Filter entries based on active filters
+  useEffect(() => {
+    let filtered = [...entries];
 
-                    <div className="mt-3">
-                      <Label className="flex items-center space-x-1 text-xs">
-                        <Hash className="w-3 h-3" />
-                        <span>Cost Code *</span>
-                      </Label>
-                      <Select 
-                        value={entry.costCode} 
-                        onValueChange={(value) => updateEntry(entry.id, 'costCode', value)}
-                      >
-                        <SelectTrigger className="h-8">
-                          <SelectValue placeholder="Select Cost Code" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockCostCodes.map(code => (
-                            <SelectItem key={code.costCodeId} value={code.costCode}>
-                              <div className="flex flex-col">
-                                <span className="font-medium text-xs">{code.costCode}</span>
-                                <span className="text-xs text-gray-500">{code.description}</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {getFieldError(entry.id, 'costCode') && (
-                        <p className="text-xs text-red-600 mt-1">{getFieldError(entry.id, 'costCode')}</p>
-                      )}
-                    </div>
-                  </div>
+    // Date range filter
+    if (startDateFilter) {
+      filtered = filtered.filter(entry => new Date(entry.dateWorked) >= startDateFilter);
+    }
+    if (endDateFilter) {
+      filtered = filtered.filter(entry => new Date(entry.dateWorked) <= endDateFilter);
+    }
 
-                  {/* Quick Time Presets */}
-                  <div className="flex items-center gap-2 py-1">
-                    <span className="text-xs text-slate-600 dark:text-slate-400 min-w-[80px] flex items-center">
-                      <Zap className="w-3 h-3 mr-1" />
-                      Quick Times:
-                    </span>
-                    <div className="flex gap-1 flex-wrap">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          updateEntry(entry.id, 'timeIn', { hour: '06', minute: '00', period: 'AM' });
-                          updateEntry(entry.id, 'timeOut', { hour: '02', minute: '30', period: 'PM' });
-                        }}
-                        className="h-6 px-2 text-xs"
-                        disabled={isSubmitting}
-                      >
-                        6AM - 2:30PM
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          updateEntry(entry.id, 'timeIn', { hour: '07', minute: '00', period: 'AM' });
-                          updateEntry(entry.id, 'timeOut', { hour: '03', minute: '30', period: 'PM' });
-                        }}
-                        className="h-6 px-2 text-xs"
-                        disabled={isSubmitting}
-                      >
-                        7AM - 3:30PM
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          updateEntry(entry.id, 'timeIn', { hour: '08', minute: '00', period: 'AM' });
-                          updateEntry(entry.id, 'timeOut', { hour: '04', minute: '30', period: 'PM' });
-                        }}
-                        className="h-6 px-2 text-xs"
-                        disabled={isSubmitting}
-                      >
-                        8AM - 4:30PM
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          updateEntry(entry.id, 'timeIn', { hour: '09', minute: '00', period: 'AM' });
-                          updateEntry(entry.id, 'timeOut', { hour: '05', minute: '30', period: 'PM' });
-                        }}
-                        className="h-6 px-2 text-xs"
-                        disabled={isSubmitting}
-                      >
-                        9AM - 5:30PM
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-6 flex-wrap p-1 px-0 py-0">
-                    {/* Start and End Times in horizontal layout */}
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-slate-600 dark:text-slate-400 min-w-[35px] flex items-center">
-                          <Play className="w-3 h-3 mr-1 text-green-600" />
-                          Start:
-                        </span>
-                        <TimePicker
-                          value={entry.timeIn}
-                          onChange={(time) => updateEntry(entry.id, 'timeIn', time)}
-                        />
-                      </div>
-                      
-                      <span className="text-slate-400">-</span>
-                      
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-slate-600 dark:text-slate-400 min-w-[30px] flex items-center">
-                          <Pause className="w-3 h-3 mr-1 text-red-600" />
-                          End:
-                        </span>
-                        <TimePicker
-                          value={entry.timeOut}
-                          onChange={(time) => updateEntry(entry.id, 'timeOut', time)}
-                        />
-                      </div>
-                    </div>
+    // Status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(entry => entry.status === statusFilter);
+    }
 
-                    {/* Breaks section */}
-                    <div className="flex items-center gap-2">
-                      <div className="flex flex-col gap-2">
-                        {entry.breaks.map((breakItem, breakIndex) => (
-                          <div key={breakItem.id} className="flex items-center gap-2">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs text-slate-600 dark:text-slate-400 min-w-[35px] flex items-center">
-                                <Coffee className="w-3 h-3 mr-1 text-amber-600" />
-                                Break:
-                              </span>
-                              <TimePicker
-                                value={breakItem.startTime}
-                                onChange={(time) => updateBreak(entry.id, breakItem.id, 'startTime', time)}
-                              />
-                            </div>
-                            
-                            <span className="text-slate-400">-</span>
-                            
-                            <TimePicker
-                              value={breakItem.endTime}
-                              onChange={(time) => updateBreak(entry.id, breakItem.id, 'endTime', time)}
-                            />
-                            
-                            {breakIndex === 0 && (
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => addBreak(entry.id)}
-                                className="h-6 w-6 p-0 border-red-300 dark:border-red-600 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                                title="Add another break"
-                                disabled={isSubmitting}
-                              >
-                                <Plus className="h-3 w-3 text-red-600" />
-                              </Button>
-                            )}
-                            
-                            {breakIndex > 0 && (
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => removeBreak(entry.id, breakItem.id)}
-                                className="h-6 w-6 p-0 border-slate-300 dark:border-slate-600 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                                title="Remove break"
-                                disabled={isSubmitting}
-                              >
-                                <Trash2 className="h-3 w-3" />
-                              </Button>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+    // Project filter
+    if (projectFilter !== 'all') {
+      filtered = filtered.filter(entry => entry.projectCode === projectFilter);
+    }
 
-                  {/* Cross Midnight Warning */}
-                  {calc?.crossesMidnight && (
-                    <Alert className="border-amber-200 bg-amber-50">
-                      <AlertTriangle className="w-4 h-4 text-amber-600" />
-                      <AlertDescription>
-                        <div className="space-y-2">
-                          <div className="font-semibold text-amber-900">
-                            Cross-Midnight Shift Detected
-                          </div>
-                          <p className="text-amber-800 text-sm">
-                            This shift will be split into separate timesheet entries.
-                          </p>
-                        </div>
-                      </AlertDescription>
-                    </Alert>
-                  )}
+    // Search filter
+    if (searchFilter) {
+      const search = searchFilter.toLowerCase();
+      filtered = filtered.filter(entry =>
+        entry.projectCode.toLowerCase().includes(search) ||
+        entry.projectDescription.toLowerCase().includes(search) ||
+        entry.costCode.toLowerCase().includes(search) ||
+        entry.costCodeDescription.toLowerCase().includes(search) ||
+        entry.notes?.toLowerCase().includes(search)
+      );
+    }
 
-                  {/* Calculated Hours */}
-                  {calc && (
-                    <div className="bg-muted p-2 rounded-lg">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <Calculator className="w-3 h-3" />
-                        <span className="text-xs font-medium">Calculated Hours</span>
-                        {(entry.selectedEmployees.length > 1 || entry.selectedDates.length > 1) && (
-                          <Badge variant="outline" className="text-xs">
-                            × {entry.selectedEmployees.length} employees × {entry.selectedDates.length} dates
-                          </Badge>
-                        )}
-                      </div>
-                      
-                      <div className="grid grid-cols-4 gap-2 text-center">
-                        <div className="bg-card p-1.5 rounded border">
-                          <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Standard</div>
-                          <div className="text-sm font-bold text-blue-600">{calc.standardHours.toFixed(2)}</div>
-                        </div>
-                        <div className="bg-card p-1.5 rounded border">
-                          <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Overtime</div>
-                          <div className="text-sm font-bold text-orange-600">{calc.overtimeHours.toFixed(2)}</div>
-                        </div>
-                        <div className="bg-card p-1.5 rounded border">
-                          <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total</div>
-                          <div className="text-sm font-bold text-green-600">
-                            {(calc.standardHours + calc.overtimeHours).toFixed(2)}
-                          </div>
-                        </div>
-                        <div className="bg-card p-1.5 rounded border">
-                          <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Breaks</div>
-                          <div className="text-xs font-bold text-purple-600">
-                            {calc.totalBreakMinutes}m
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {calc.breakDetails.length > 0 && (
-                        <div className="mt-1 text-center text-xs text-muted-foreground">
-                          Breaks: {calc.breakDetails.map(b => `${b.startTime}-${b.endTime} (${b.minutes}m)`).join(', ')}
-                        </div>
-                      )}
-                    </div>
-                  )}
+    setFilteredEntries(filtered);
+  }, [entries, startDateFilter, endDateFilter, statusFilter, projectFilter, searchFilter]);
 
-                  {/* Notes */}
-                  <div>
-                    <Label className="text-xs">Notes</Label>
-                    <Textarea
-                      rows={2}
-                      placeholder="Enter any additional notes..."
-                      value={entry.notes || ''}
-                      onChange={(e) => updateEntry(entry.id, 'notes', e.target.value)}
-                      className="text-xs"
-                    />
-                  </div>
-                </div>
-              );
-            })}
+  // Calculate summary statistics
+  const summaryStats = useMemo(() => {
+    const totalStandard = filteredEntries.reduce((sum, entry) => sum + entry.standardHours, 0);
+    const totalOvertime = filteredEntries.reduce((sum, entry) => sum + entry.overtimeHours, 0);
+    const statusCounts = filteredEntries.reduce((counts, entry) => {
+      counts[entry.status] = (counts[entry.status] || 0) + 1;
+      return counts;
+    }, {} as Record<string, number>);
 
-            {/* Submit Button */}
-            <div className="flex justify-end space-x-2 pt-1">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={resetForm}
-                disabled={isSubmitting}
-                size="sm"
-              >
-                Reset Form
+    return {
+      totalEntries: filteredEntries.length,
+      totalStandardHours: totalStandard,
+      totalOvertimeHours: totalOvertime,
+      totalHours: totalStandard + totalOvertime,
+      statusCounts
+    };
+  }, [filteredEntries]);
+
+  // Handlers
+  const handleDateRangeChange = useCallback((start: Date | undefined, end: Date | undefined) => {
+    setStartDateFilter(start);
+    setEndDateFilter(end);
+  }, []);
+
+  const handleDeleteEntry = useCallback((entryId: number) => {
+    if (window.confirm('Are you sure you want to delete this timesheet entry?')) {
+      setEntries(prev => prev.filter(entry => entry.entryId !== entryId));
+      setSelectedEntries(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(entryId);
+        return newSet;
+      });
+    }
+  }, []);
+
+  const handleEditEntry = useCallback((entry: TimesheetEntry) => {
+    setEditingEntry(entry);
+  }, []);
+
+  const handleToggleSelection = useCallback((entryId: number) => {
+    setSelectedEntries(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(entryId)) {
+        newSet.delete(entryId);
+      } else {
+        newSet.add(entryId);
+      }
+      return newSet;
+    });
+  }, []);
+
+  const handleSelectAll = useCallback(() => {
+    if (selectedEntries.size === filteredEntries.length) {
+      setSelectedEntries(new Set());
+    } else {
+      setSelectedEntries(new Set(filteredEntries.map(entry => entry.entryId)));
+    }
+  }, [selectedEntries.size, filteredEntries]);
+
+  const handleSubmitWeek = useCallback((weekEndingDate: string) => {
+    if (window.confirm(`Submit timesheet for week ending ${formatDate(weekEndingDate)}?`)) {
+      setIsLoading(true);
+      // Simulate API call
+      setTimeout(() => {
+        alert('Timesheet submitted successfully!');
+        setIsLoading(false);
+      }, 1000);
+    }
+  }, []);
+
+  const handleQuickFilter = useCallback((filter: 'currentWeek' | 'lastWeek' | 'thisMonth') => {
+    const today = new Date();
+    
+    switch (filter) {
+      case 'currentWeek':
+        setStartDateFilter(currentWeek.start);
+        setEndDateFilter(currentWeek.end);
+        break;
+      case 'lastWeek':
+        const lastWeekStart = new Date(currentWeek.start);
+        lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+        const lastWeekEnd = new Date(currentWeek.end);
+        lastWeekEnd.setDate(lastWeekEnd.getDate() - 7);
+        setStartDateFilter(lastWeekStart);
+        setEndDateFilter(lastWeekEnd);
+        break;
+      case 'thisMonth':
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        setStartDateFilter(monthStart);
+        setEndDateFilter(monthEnd);
+        break;
+    }
+  }, [currentWeek]);
+
+  return (
+    <div className="max-w-7xl mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">My Timesheets</h1>
+          <p className="text-muted-foreground">View and manage your timesheet entries</p>
+        </div>
+        
+        <div className="flex items-center space-x-3">
+          <Button variant="outline" onClick={() => setView(view === 'list' ? 'weekly' : 'list')}>
+            {view === 'list' ? <BarChart3 className="w-4 h-4 mr-2" /> : <FileText className="w-4 h-4 mr-2" />}
+            {view === 'list' ? 'Weekly View' : 'List View'}
+          </Button>
+          
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="w-4 h-4 mr-2" />
+            New Entry
+          </Button>
+        </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <Timer className="w-4 h-4 text-blue-600" />
+              <div>
+                <p className="text-sm font-medium">Total Hours</p>
+                <p className="text-2xl font-bold">{summaryStats.totalHours.toFixed(1)}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <Clock className="w-4 h-4 text-green-600" />
+              <div>
+                <p className="text-sm font-medium">Standard</p>
+                <p className="text-2xl font-bold text-green-600">{summaryStats.totalStandardHours.toFixed(1)}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <AlertTriangle className="w-4 h-4 text-orange-600" />
+              <div>
+                <p className="text-sm font-medium">Overtime</p>
+                <p className="text-2xl font-bold text-orange-600">{summaryStats.totalOvertimeHours.toFixed(1)}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <FileText className="w-4 h-4 text-purple-600" />
+              <div>
+                <p className="text-sm font-medium">Entries</p>
+                <p className="text-2xl font-bold">{summaryStats.totalEntries}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center space-x-2">
+              <Search className="w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search entries..."
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                className="w-64"
+              />
+            </div>
+            
+            <DateRangePicker
+              startDate={startDateFilter}
+              endDate={endDateFilter}
+              onDateChange={handleDateRangeChange}
+            />
+            
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="Draft">Draft</SelectItem>
+                <SelectItem value="Submitted">Submitted</SelectItem>
+                <SelectItem value="Approved">Approved</SelectItem>
+                <SelectItem value="Rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Select value={projectFilter} onValueChange={setProjectFilter}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Project" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Projects</SelectItem>
+                {mockProjects.map(project => (
+                  <SelectItem key={project.projectCode} value={project.projectCode}>
+                    {project.projectCode} - {project.projectDescription.substring(0, 30)}...
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Separator orientation="vertical" className="h-6" />
+            
+            <div className="flex space-x-2">
+              <Button variant="outline" size="sm" onClick={() => handleQuickFilter('currentWeek')}>
+                This Week
               </Button>
-              <Button 
-                onClick={handleSubmit}
-                disabled={isSubmitting || totalTimesheetEntries === 0 || hasValidationErrors}
-                className="min-w-[120px]"
-                size="sm"
-              >
-                {isSubmitting ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                    <span>Creating...</span>
-                  </div>
-                ) : (
-                  `Submit ${totalTimesheetEntries} ${totalTimesheetEntries === 1 ? 'Entry' : 'Entries'}`
-                )}
+              <Button variant="outline" size="sm" onClick={() => handleQuickFilter('lastWeek')}>
+                Last Week
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => handleQuickFilter('thisMonth')}>
+                This Month
               </Button>
             </div>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                setStartDateFilter(undefined);
+                setEndDateFilter(undefined);
+                setStatusFilter('all');
+                setProjectFilter('all');
+                setSearchFilter('');
+              }}
+            >
+              <X className="w-4 h-4 mr-1" />
+              Clear
+            </Button>
           </div>
         </CardContent>
       </Card>
+
+      {view === 'weekly' ? (
+        /* Weekly Summary View */
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">Weekly Summaries</h2>
+          {weeklySummaries.map((summary, index) => (
+            <Card key={index}>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2">
+                    <h3 className="font-semibold">Week Ending {formatDate(summary.weekEndingDate)}</h3>
+                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                      <span>{summary.entriesCount} entries</span>
+                      <span>{summary.totalStandardHours.toFixed(1)}h standard</span>
+                      <span>{summary.totalOvertimeHours.toFixed(1)}h overtime</span>
+                      <span className="font-medium">{summary.totalHours.toFixed(1)}h total</span>
+                    </div>
+                    {summary.submittedOn && (
+                      <p className="text-xs text-muted-foreground">
+                        Submitted on {formatDate(summary.submittedOn, 'MMM dd, yyyy')}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <StatusBadge status={summary.submissionStatus} />
+                    {summary.submissionStatus === 'Draft' && (
+                      <Button 
+                        size="sm"
+                        onClick={() => handleSubmitWeek(summary.weekEndingDate)}
+                        disabled={isLoading}
+                      >
+                        {isLoading ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
+                        Submit Week
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        /* List View */
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">Timesheet Entries</CardTitle>
+              <div className="flex items-center space-x-2">
+                {selectedEntries.size > 0 && (
+                  <span className="text-sm text-muted-foreground">
+                    {selectedEntries.size} selected
+                  </span>
+                )}
+                <Button variant="outline" size="sm" onClick={handleSelectAll}>
+                  {selectedEntries.size === filteredEntries.length ? 'Deselect All' : 'Select All'}
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <ScrollArea className="h-96">
+              <div className="space-y-2 p-4">
+                {filteredEntries.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <h3 className="font-medium">No timesheet entries found</h3>
+                    <p className="text-sm">Try adjusting your filters or create a new entry</p>
+                  </div>
+                ) : (
+                  filteredEntries.map((entry) => (
+                    <Card key={entry.entryId} className={cn(
+                      "transition-all cursor-pointer hover:shadow-md",
+                      selectedEntries.has(entry.entryId) && "ring-2 ring-blue-500 bg-blue-50"
+                    )}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedEntries.has(entry.entryId)}
+                              onChange={() => handleToggleSelection(entry.entryId)}
+                              className="rounded"
+                            />
+                            <div className="space-y-1">
+                              <div className="flex items-center space-x-2">
+                                <h4 className="font-medium text-sm">{formatDate(entry.dateWorked, 'MMM dd, yyyy')}</h4>
+                                <StatusBadge status={entry.status} />
+                              </div>
+                              <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                                <span className="flex items-center">
+                                  <Building className="w-3 h-3 mr-1" />
+                                  {entry.projectCode}
+                                </span>
+                                <span className="flex items-center">
+                                  <Hash className="w-3 h-3 mr-1" />
+                                  {entry.costCode}
+                                </span>
+                                {entry.extraValue !== 'Default' && (
+                                  <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs">
+                                    {entry.extraValue}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground line-clamp-1">
+                                {entry.projectDescription}
+                              </p>
+                              {entry.notes && (
+                                <p className="text-xs text-muted-foreground italic line-clamp-1">
+                                  "{entry.notes}"
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-4">
+                            <div className="text-right">
+                              <div className="text-sm font-medium">
+                                {entry.totalHours.toFixed(2)}h
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {entry.standardHours > 0 && `${entry.standardHours.toFixed(1)}h reg`}
+                                {entry.standardHours > 0 && entry.overtimeHours > 0 && ' + '}
+                                {entry.overtimeHours > 0 && `${entry.overtimeHours.toFixed(1)}h OT`}
+                              </div>
+                              {entry.timeIn && entry.timeOut && (
+                                <div className="text-xs text-muted-foreground">
+                                  {entry.timeIn} - {entry.timeOut}
+                                </div>
+                              )}
+                            </div>
+                            
+                            <div className="flex space-x-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditEntry(entry)}
+                                disabled={entry.status !== 'Draft'}
+                                title={entry.status !== 'Draft' ? 'Only draft entries can be edited' : 'Edit entry'}
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteEntry(entry.entryId)}
+                                disabled={entry.status !== 'Draft'}
+                                className="text-red-600 hover:text-red-700"
+                                title={entry.status !== 'Draft' ? 'Only draft entries can be deleted' : 'Delete entry'}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Bulk Actions */}
+      {selectedEntries.size > 0 && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <span className="text-sm font-medium">
+                  {selectedEntries.size} entries selected
+                </span>
+                <div className="text-xs text-muted-foreground">
+                  Total: {filteredEntries
+                    .filter(entry => selectedEntries.has(entry.entryId))
+                    .reduce((sum, entry) => sum + entry.totalHours, 0)
+                    .toFixed(1)}h
+                </div>
+              </div>
+              <div className="flex space-x-2">
+                <Button variant="outline" size="sm">
+                  <Download className="w-4 h-4 mr-2" />
+                  Export Selected
+                </Button>
+                <Button variant="outline" size="sm" className="text-red-600">
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete Selected
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
-}
+};
