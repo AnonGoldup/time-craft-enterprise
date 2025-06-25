@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,12 +21,14 @@ import {
   Calendar,
   CheckCircle2,
   XCircle,
+  Coffee,
+  Play,
+  Pause,
   Zap,
   Check,
   ChevronsUpDown,
   X,
-  Search,
-  Clock
+  Search
 } from 'lucide-react';
 
 // Utility function to merge classNames
@@ -35,7 +36,7 @@ const cn = (...classes: (string | undefined | null | false)[]): string => {
   return classes.filter(Boolean).join(' ');
 };
 
-// Date formatting utilities
+// Date formatting utilities (replacing date-fns)
 const formatDate = (date: Date, format: string): string => {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
@@ -86,15 +87,46 @@ interface Extra {
   description: string;
 }
 
-interface StandardHoursEntry {
+interface TimeValue {
+  hour: string;
+  minute: string;
+  period: 'AM' | 'PM';
+}
+
+interface Break {
+  id: string;
+  startTime: TimeValue;
+  endTime: TimeValue;
+}
+
+interface TimeCalculation {
+  totalMinutes: number;
+  standardHours: number;
+  overtimeHours: number;
+  crossesMidnight: boolean;
+  totalBreakMinutes: number;
+  dayOneHours?: number;
+  dayTwoHours?: number;
+  dayOneDate?: string;
+  dayTwoDate?: string;
+  workMinutes: number;
+  breakDetails: {
+    startTime: string;
+    endTime: string;
+    minutes: number;
+  }[];
+}
+
+interface TimeEntry {
   id: string;
   selectedEmployees: Employee[];
   selectedDates: Date[];
   projectCode: string;
   extraValue: string;
   costCode: string;
-  standardHours: number;
-  overtimeHours: number;
+  timeIn: TimeValue;
+  timeOut: TimeValue;
+  breaks: Break[];
   notes?: string;
 }
 
@@ -633,9 +665,81 @@ const mockCostCodes: CostCode[] = [
   { costCodeId: 4, costCode: '001-040-055', description: 'INDIRECT LAB-Safety Training' },
 ];
 
+// Time picker component
+const TimePicker: React.FC<{
+  value: TimeValue;
+  onChange: (time: TimeValue) => void;
+  placeholder?: string;
+}> = ({ value, onChange, placeholder = "--" }) => {
+  const hours = Array.from({ length: 12 }, (_, i) => {
+    const hour = i === 0 ? 12 : i;
+    return hour.toString().padStart(2, '0');
+  });
+
+  const minutes = Array.from({ length: 60 }, (_, i) => {
+    return i.toString().padStart(2, '0');
+  });
+
+  return (
+    <div className="flex items-center gap-1">
+      <Select value={value.hour} onValueChange={(hour) => onChange({ ...value, hour })}>
+        <SelectTrigger className="w-14 h-8 border-slate-300 dark:border-slate-600 text-xs">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {hours.map(hour => (
+            <SelectItem key={hour} value={hour} className="text-xs">{hour}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      
+      <span className="text-xs">:</span>
+      
+      <Select value={value.minute} onValueChange={(minute) => onChange({ ...value, minute })}>
+        <SelectTrigger className="w-14 h-8 border-slate-300 dark:border-slate-600 text-xs">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {minutes.map(minute => (
+            <SelectItem key={minute} value={minute} className="text-xs">{minute}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      
+      <Select value={value.period} onValueChange={(period: 'AM' | 'PM') => onChange({ ...value, period })}>
+        <SelectTrigger className="w-14 h-8 border-slate-300 dark:border-slate-600 text-xs">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="AM" className="text-xs">AM</SelectItem>
+          <SelectItem value="PM" className="text-xs">PM</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
+
 // Utility functions
+const timeValueToString = (time: TimeValue): string => {
+  if (!time.hour || !time.minute) return '';
+  let hour = parseInt(time.hour);
+  if (time.period === 'PM' && hour !== 12) hour += 12;
+  if (time.period === 'AM' && hour === 12) hour = 0;
+  return `${hour.toString().padStart(2, '0')}:${time.minute}`;
+};
+
+const parseTimeToMinutes = (timeString: string): number => {
+  if (!timeString) return 0;
+  const [hours, minutes] = timeString.split(':').map(Number);
+  return hours * 60 + minutes;
+};
+
 const roundToQuarterHour = (hours: number): number => {
   return Math.round(hours * 4) / 4;
+};
+
+const formatDateString = (date: Date): string => {
+  return date.toISOString().split('T')[0];
 };
 
 const generateId = (): string => {
@@ -643,7 +747,11 @@ const generateId = (): string => {
 };
 
 // Validation functions
-const validateEntry = (entry: StandardHoursEntry): ValidationError[] => {
+const validateTimeValue = (time: TimeValue): boolean => {
+  return !!(time.hour && time.minute && time.period);
+};
+
+const validateEntry = (entry: TimeEntry): ValidationError[] => {
   const errors: ValidationError[] = [];
 
   if (!entry.selectedEmployees || entry.selectedEmployees.length === 0) {
@@ -673,31 +781,91 @@ const validateEntry = (entry: StandardHoursEntry): ValidationError[] => {
     errors.push({ field: 'costCode', message: 'Cost code is required' });
   }
 
-  // Validate hours
-  const totalHours = entry.standardHours + entry.overtimeHours;
-  if (totalHours <= 0) {
-    errors.push({ field: 'standardHours', message: 'Total hours must be greater than 0' });
+  if (!validateTimeValue(entry.timeIn)) {
+    errors.push({ field: 'timeIn', message: 'Time in is required' });
   }
 
-  if (totalHours > 24) {
-    errors.push({ field: 'standardHours', message: 'Total hours cannot exceed 24 per day' });
-  }
-
-  // Check for quarter-hour increments
-  if (entry.standardHours % 0.25 !== 0) {
-    errors.push({ field: 'standardHours', message: 'Standard hours must be in quarter-hour increments (0.25, 0.5, 0.75, etc.)' });
-  }
-
-  if (entry.overtimeHours % 0.25 !== 0) {
-    errors.push({ field: 'overtimeHours', message: 'Overtime hours must be in quarter-hour increments (0.25, 0.5, 0.75, etc.)' });
+  if (!validateTimeValue(entry.timeOut)) {
+    errors.push({ field: 'timeOut', message: 'Time out is required' });
   }
 
   return errors;
 };
 
-export default function StandardHoursTab() {
+const calculateTimeInOut = (
+  timeIn: TimeValue,
+  timeOut: TimeValue,
+  breaks: Break[],
+  dateWorked?: string
+): TimeCalculation => {
+  const timeInString = timeValueToString(timeIn);
+  const timeOutString = timeValueToString(timeOut);
+  
+  if (!timeInString || !timeOutString) {
+    return {
+      totalMinutes: 0,
+      workMinutes: 0,
+      standardHours: 0,
+      overtimeHours: 0,
+      crossesMidnight: false,
+      totalBreakMinutes: 0,
+      breakDetails: [],
+    };
+  }
+
+  const startMinutes = parseTimeToMinutes(timeInString);
+  let endMinutes = parseTimeToMinutes(timeOutString);
+  
+  const crossesMidnight = endMinutes <= startMinutes;
+  
+  if (crossesMidnight) {
+    endMinutes += 24 * 60;
+  }
+  
+  let totalMinutes = endMinutes - startMinutes;
+  
+  let totalBreakMinutes = 0;
+  const breakDetails: { startTime: string; endTime: string; minutes: number; }[] = [];
+  
+  breaks.forEach(breakItem => {
+    const breakStartString = timeValueToString(breakItem.startTime);
+    const breakEndString = timeValueToString(breakItem.endTime);
+    
+    if (breakStartString && breakEndString) {
+      const breakStartMinutes = parseTimeToMinutes(breakStartString);
+      const breakEndMinutes = parseTimeToMinutes(breakEndString);
+      const breakDuration = Math.max(0, breakEndMinutes - breakStartMinutes);
+      totalBreakMinutes += breakDuration;
+      
+      breakDetails.push({
+        startTime: breakStartString,
+        endTime: breakEndString,
+        minutes: breakDuration
+      });
+    }
+  });
+  
+  const workMinutes = Math.max(0, totalMinutes - totalBreakMinutes);
+  const totalHours = workMinutes / 60;
+  const roundedHours = roundToQuarterHour(totalHours);
+  
+  const standardHours = Math.min(roundedHours, 8);
+  const overtimeHours = Math.max(0, roundedHours - 8);
+  
+  return {
+    totalMinutes,
+    workMinutes,
+    standardHours,
+    overtimeHours,
+    crossesMidnight,
+    totalBreakMinutes,
+    breakDetails,
+  };
+};
+
+export default function MultiEmployeeTimeEntryForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [entries, setEntries] = useState<StandardHoursEntry[]>([
+  const [entries, setEntries] = useState<TimeEntry[]>([
     {
       id: generateId(),
       selectedEmployees: [mockEmployees[0]], // Default to first employee
@@ -705,14 +873,23 @@ export default function StandardHoursTab() {
       projectCode: '',
       extraValue: 'Default',
       costCode: '',
-      standardHours: 8,
-      overtimeHours: 0,
+      timeIn: { hour: '07', minute: '00', period: 'AM' },
+      timeOut: { hour: '03', minute: '30', period: 'PM' },
+      breaks: [
+        {
+          id: generateId(),
+          startTime: { hour: '12', minute: '00', period: 'PM' },
+          endTime: { hour: '12', minute: '30', period: 'PM' }
+        }
+      ],
       notes: '',
     }
   ]);
   const [errors, setErrors] = useState<EntryErrors>({});
+  const [calculations, setCalculations] = useState<Record<string, TimeCalculation>>({});
 
   useEffect(() => {
+    const newCalculations: Record<string, TimeCalculation> = {};
     const newErrors: EntryErrors = {};
     
     entries.forEach((entry) => {
@@ -720,28 +897,82 @@ export default function StandardHoursTab() {
       if (entryErrors.length > 0) {
         newErrors[entry.id] = entryErrors;
       }
+
+      if (validateTimeValue(entry.timeIn) && validateTimeValue(entry.timeOut)) {
+        try {
+          const calc = calculateTimeInOut(
+            entry.timeIn,
+            entry.timeOut,
+            entry.breaks
+          );
+          newCalculations[entry.id] = calc;
+        } catch (error) {
+          console.error(`Error calculating time for entry ${entry.id}:`, error);
+        }
+      }
     });
     
     setErrors(newErrors);
+    setCalculations(newCalculations);
   }, [entries]);
 
-  const updateEntry = useCallback((id: string, field: keyof StandardHoursEntry, value: any) => {
+  const updateEntry = useCallback((id: string, field: keyof TimeEntry, value: any) => {
     setEntries(prev => prev.map(entry => 
       entry.id === id ? { ...entry, [field]: value } : entry
     ));
   }, []);
 
+  const updateBreak = useCallback((entryId: string, breakId: string, field: 'startTime' | 'endTime', value: TimeValue) => {
+    setEntries(prev => prev.map(entry => 
+      entry.id === entryId ? {
+        ...entry,
+        breaks: entry.breaks.map(breakItem =>
+          breakItem.id === breakId ? { ...breakItem, [field]: value } : breakItem
+        )
+      } : entry
+    ));
+  }, []);
+
+  const addBreak = useCallback((entryId: string) => {
+    setEntries(prev => prev.map(entry => 
+      entry.id === entryId ? {
+        ...entry,
+        breaks: [...entry.breaks, {
+          id: generateId(),
+          startTime: { hour: '', minute: '', period: 'AM' },
+          endTime: { hour: '', minute: '', period: 'AM' }
+        }]
+      } : entry
+    ));
+  }, []);
+
+  const removeBreak = useCallback((entryId: string, breakId: string) => {
+    setEntries(prev => prev.map(entry => 
+      entry.id === entryId ? {
+        ...entry,
+        breaks: entry.breaks.filter(breakItem => breakItem.id !== breakId)
+      } : entry
+    ));
+  }, []);
+
   const addNewEntry = useCallback(() => {
     const lastEntry = entries[entries.length - 1];
-    const newEntry: StandardHoursEntry = {
+    const newEntry: TimeEntry = {
       id: generateId(),
       selectedEmployees: lastEntry?.selectedEmployees || [mockEmployees[0]],
       selectedDates: [new Date()], // Default to today
       projectCode: lastEntry?.projectCode || '',
       extraValue: 'Default',
       costCode: lastEntry?.costCode || '',
-      standardHours: 8,
-      overtimeHours: 0,
+      timeIn: { hour: '07', minute: '00', period: 'AM' },
+      timeOut: { hour: '03', minute: '30', period: 'PM' },
+      breaks: [
+        {
+          id: generateId(),
+          startTime: { hour: '12', minute: '00', period: 'PM' },
+          endTime: { hour: '12', minute: '30', period: 'PM' }
+        }
+      ],
       notes: '',
     };
     setEntries(prev => [...prev, newEntry]);
@@ -755,6 +986,11 @@ export default function StandardHoursTab() {
         delete newErrors[id];
         return newErrors;
       });
+      setCalculations(prev => {
+        const newCalc = { ...prev };
+        delete newCalc[id];
+        return newCalc;
+      });
     }
   }, [entries.length]);
 
@@ -766,17 +1002,26 @@ export default function StandardHoursTab() {
       projectCode: '',
       extraValue: 'Default',
       costCode: '',
-      standardHours: 8,
-      overtimeHours: 0,
+      timeIn: { hour: '07', minute: '00', period: 'AM' },
+      timeOut: { hour: '03', minute: '30', period: 'PM' },
+      breaks: [
+        {
+          id: generateId(),
+          startTime: { hour: '12', minute: '00', period: 'PM' },
+          endTime: { hour: '12', minute: '30', period: 'PM' }
+        }
+      ],
       notes: '',
     }]);
     setErrors({});
+    setCalculations({});
   }, []);
 
   const handleSubmit = async () => {
     const hasErrors = Object.keys(errors).length > 0;
+    const hasValidCalculations = entries.every(entry => calculations[entry.id]);
 
-    if (hasErrors) {
+    if (hasErrors || !hasValidCalculations) {
       alert('Please fix all validation errors before submitting.');
       return;
     }
@@ -787,14 +1032,21 @@ export default function StandardHoursTab() {
       const timesheetEntries: any[] = [];
       
       entries.forEach((entry) => {
+        const calc = calculations[entry.id];
+        if (!calc) return;
+        
         const notes = entry.notes || '';
+        
+        const breakInfo = calc.breakDetails.length > 0 
+          ? ` [Breaks: ${calc.breakDetails.map(b => `${b.startTime}-${b.endTime}`).join(', ')}]`
+          : '';
         
         // Create entries for each selected employee and date combination
         entry.selectedEmployees.forEach(employee => {
           entry.selectedDates.forEach(date => {
             const formattedDate = formatDate(date, 'yyyy-MM-dd');
             
-            if (entry.standardHours > 0) {
+            if (calc.standardHours > 0) {
               timesheetEntries.push({
                 employeeId: employee.employeeId,
                 employeeName: employee.fullName,
@@ -802,13 +1054,15 @@ export default function StandardHoursTab() {
                 projectCode: entry.projectCode,
                 extraValue: entry.extraValue,
                 costCode: entry.costCode,
-                standardHours: entry.standardHours,
+                standardHours: calc.standardHours,
                 overtimeHours: 0,
-                notes: notes,
+                notes: `${notes}${breakInfo}`,
+                timeIn: timeValueToString(entry.timeIn),
+                timeOut: timeValueToString(entry.timeOut),
               });
             }
             
-            if (entry.overtimeHours > 0) {
+            if (calc.overtimeHours > 0) {
               timesheetEntries.push({
                 employeeId: employee.employeeId,
                 employeeName: employee.fullName,
@@ -817,8 +1071,10 @@ export default function StandardHoursTab() {
                 extraValue: entry.extraValue,
                 costCode: entry.costCode,
                 standardHours: 0,
-                overtimeHours: entry.overtimeHours,
-                notes: `${notes} [Overtime]`,
+                overtimeHours: calc.overtimeHours,
+                notes: `${notes}${breakInfo} [Overtime]`,
+                timeIn: timeValueToString(entry.timeIn),
+                timeOut: timeValueToString(entry.timeOut),
               });
             }
           });
@@ -844,13 +1100,16 @@ export default function StandardHoursTab() {
 
   const totalTimesheetEntries = useMemo(() => {
     return entries.reduce((total, entry) => {
+      const calc = calculations[entry.id];
+      if (!calc) return total;
+      
       const employeeCount = entry.selectedEmployees.length;
       const dateCount = entry.selectedDates.length;
-      const entriesPerEmployeeDate = (entry.standardHours > 0 ? 1 : 0) + (entry.overtimeHours > 0 ? 1 : 0);
+      const entriesPerEmployeeDate = (calc.standardHours > 0 ? 1 : 0) + (calc.overtimeHours > 0 ? 1 : 0);
       
       return total + (employeeCount * dateCount * entriesPerEmployeeDate);
     }, 0);
-  }, [entries]);
+  }, [entries, calculations]);
 
   const hasValidationErrors = Object.keys(errors).length > 0;
 
@@ -865,10 +1124,10 @@ export default function StandardHoursTab() {
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2 pt-1">
-              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                <Clock className="w-4 h-4 text-green-600" />
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <Timer className="w-4 h-4 text-blue-600" />
               </div>
-              <h3 className="text-base font-semibold">Standard Hours</h3>
+              <h3 className="text-base font-semibold">Time In/Out</h3>
               <Badge variant="secondary" className="text-xs">
                 <Users className="w-3 h-3 mr-1" />
                 {entries.length} {entries.length === 1 ? 'entry' : 'entries'}
@@ -886,7 +1145,7 @@ export default function StandardHoursTab() {
                 variant="default"
                 size="sm"
                 onClick={addNewEntry}
-                className="flex items-center space-x-1 h-8 bg-green-600 hover:bg-green-700 text-white"
+                className="flex items-center space-x-1 h-8 bg-blue-600 hover:bg-blue-700 text-white"
                 disabled={isSubmitting}
               >
                 <Plus className="w-3 h-3" />
@@ -897,9 +1156,9 @@ export default function StandardHoursTab() {
 
           <div className="space-y-4">
             {entries.map((entry, index) => {
+              const calc = calculations[entry.id];
               const entryErrors = errors[entry.id] || [];
               const hasErrors = entryErrors.length > 0;
-              const totalHours = entry.standardHours + entry.overtimeHours;
               
               return (
                 <div key={entry.id} className="border rounded-lg p-3 relative space-y-3">
@@ -926,10 +1185,10 @@ export default function StandardHoursTab() {
                         Has Errors
                       </Badge>
                     )}
-                    {!hasErrors && totalHours > 0 && (
+                    {calc && !hasErrors && (
                       <Badge variant="secondary" className="ml-2 text-xs">
                         <CheckCircle2 className="w-3 h-3 mr-1" />
-                        Valid
+                        Calculated
                       </Badge>
                     )}
                     {entry.selectedEmployees.length > 0 && entry.selectedDates.length > 0 && (
@@ -1049,128 +1308,175 @@ export default function StandardHoursTab() {
                     </div>
                   </div>
 
-                  {/* Hours Entry */}
-                  <div className="pt-2">
-                    <Label className="text-xs font-medium flex items-center space-x-1 mb-2">
-                      <Timer className="w-3 h-3" />
-                      <span>Hours Entry</span>
-                    </Label>
-                    
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <Label className="text-xs">Standard Hours *</Label>
-                        <Input
-                          type="number"
-                          step="0.25"
-                          min="0"
-                          max="24"
-                          className="h-8 text-xs"
-                          value={entry.standardHours}
-                          onChange={(e) => updateEntry(entry.id, 'standardHours', parseFloat(e.target.value) || 0)}
-                          placeholder="0.00"
+                  {/* Quick Time Presets */}
+                  <div className="flex items-center gap-2 py-1">
+                    <span className="text-xs text-slate-600 dark:text-slate-400 min-w-[80px] flex items-center">
+                      <Zap className="w-3 h-3 mr-1" />
+                      Quick Times:
+                    </span>
+                    <div className="flex gap-1 flex-wrap">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          updateEntry(entry.id, 'timeIn', { hour: '06', minute: '00', period: 'AM' });
+                          updateEntry(entry.id, 'timeOut', { hour: '02', minute: '30', period: 'PM' });
+                        }}
+                        className="h-6 px-2 text-xs"
+                        disabled={isSubmitting}
+                      >
+                        6AM - 2:30PM
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          updateEntry(entry.id, 'timeIn', { hour: '07', minute: '00', period: 'AM' });
+                          updateEntry(entry.id, 'timeOut', { hour: '03', minute: '30', period: 'PM' });
+                        }}
+                        className="h-6 px-2 text-xs"
+                        disabled={isSubmitting}
+                      >
+                        7AM - 3:30PM
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          updateEntry(entry.id, 'timeIn', { hour: '08', minute: '00', period: 'AM' });
+                          updateEntry(entry.id, 'timeOut', { hour: '04', minute: '30', period: 'PM' });
+                        }}
+                        className="h-6 px-2 text-xs"
+                        disabled={isSubmitting}
+                      >
+                        8AM - 4:30PM
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          updateEntry(entry.id, 'timeIn', { hour: '09', minute: '00', period: 'AM' });
+                          updateEntry(entry.id, 'timeOut', { hour: '05', minute: '30', period: 'PM' });
+                        }}
+                        className="h-6 px-2 text-xs"
+                        disabled={isSubmitting}
+                      >
+                        9AM - 5:30PM
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-6 flex-wrap p-1 px-0 py-0">
+                    {/* Start and End Times in horizontal layout */}
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-slate-600 dark:text-slate-400 min-w-[35px] flex items-center">
+                          <Play className="w-3 h-3 mr-1 text-green-600" />
+                          Start:
+                        </span>
+                        <TimePicker
+                          value={entry.timeIn}
+                          onChange={(time) => updateEntry(entry.id, 'timeIn', time)}
                         />
-                        <p className="text-xs text-muted-foreground mt-1">Quarter-hour increments</p>
-                        {getFieldError(entry.id, 'standardHours') && (
-                          <p className="text-xs text-red-600 mt-1">{getFieldError(entry.id, 'standardHours')}</p>
-                        )}
                       </div>
-
-                      <div>
-                        <Label className="text-xs">Overtime Hours</Label>
-                        <Input
-                          type="number"
-                          step="0.25"
-                          min="0"
-                          max="24"
-                          className="h-8 text-xs"
-                          value={entry.overtimeHours}
-                          onChange={(e) => updateEntry(entry.id, 'overtimeHours', parseFloat(e.target.value) || 0)}
-                          placeholder="0.00"
+                      
+                      <span className="text-slate-400">-</span>
+                      
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-slate-600 dark:text-slate-400 min-w-[30px] flex items-center">
+                          <Pause className="w-3 h-3 mr-1 text-red-600" />
+                          End:
+                        </span>
+                        <TimePicker
+                          value={entry.timeOut}
+                          onChange={(time) => updateEntry(entry.id, 'timeOut', time)}
                         />
-                        <p className="text-xs text-muted-foreground mt-1">Quarter-hour increments</p>
-                        {getFieldError(entry.id, 'overtimeHours') && (
-                          <p className="text-xs text-red-600 mt-1">{getFieldError(entry.id, 'overtimeHours')}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <Label className="text-xs">Total Hours</Label>
-                        <div className="h-8 px-3 py-1 border rounded-md bg-muted text-xs flex items-center">
-                          {totalHours.toFixed(2)}
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">Calculated total</p>
                       </div>
                     </div>
 
-                    {/* Quick Hour Buttons */}
-                    <div className="flex items-center gap-2 py-2">
-                      <span className="text-xs text-slate-600 dark:text-slate-400 min-w-[80px] flex items-center">
-                        <Zap className="w-3 h-3 mr-1" />
-                        Quick Hours:
-                      </span>
-                      <div className="flex gap-1 flex-wrap">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            updateEntry(entry.id, 'standardHours', 8);
-                            updateEntry(entry.id, 'overtimeHours', 0);
-                          }}
-                          className="h-6 px-2 text-xs"
-                          disabled={isSubmitting}
-                        >
-                          8h Standard
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            updateEntry(entry.id, 'standardHours', 8);
-                            updateEntry(entry.id, 'overtimeHours', 2);
-                          }}
-                          className="h-6 px-2 text-xs"
-                          disabled={isSubmitting}
-                        >
-                          8h + 2h OT
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            updateEntry(entry.id, 'standardHours', 8);
-                            updateEntry(entry.id, 'overtimeHours', 4);
-                          }}
-                          className="h-6 px-2 text-xs"
-                          disabled={isSubmitting}
-                        >
-                          8h + 4h OT
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            updateEntry(entry.id, 'standardHours', 0);
-                            updateEntry(entry.id, 'overtimeHours', 0);
-                          }}
-                          className="h-6 px-2 text-xs"
-                          disabled={isSubmitting}
-                        >
-                          Clear
-                        </Button>
+                    {/* Breaks section */}
+                    <div className="flex items-center gap-2">
+                      <div className="flex flex-col gap-2">
+                        {entry.breaks.map((breakItem, breakIndex) => (
+                          <div key={breakItem.id} className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-slate-600 dark:text-slate-400 min-w-[35px] flex items-center">
+                                <Coffee className="w-3 h-3 mr-1 text-amber-600" />
+                                Break:
+                              </span>
+                              <TimePicker
+                                value={breakItem.startTime}
+                                onChange={(time) => updateBreak(entry.id, breakItem.id, 'startTime', time)}
+                              />
+                            </div>
+                            
+                            <span className="text-slate-400">-</span>
+                            
+                            <TimePicker
+                              value={breakItem.endTime}
+                              onChange={(time) => updateBreak(entry.id, breakItem.id, 'endTime', time)}
+                            />
+                            
+                            {breakIndex === 0 && (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => addBreak(entry.id)}
+                                className="h-6 w-6 p-0 border-red-300 dark:border-red-600 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                title="Add another break"
+                                disabled={isSubmitting}
+                              >
+                                <Plus className="h-3 w-3 text-red-600" />
+                              </Button>
+                            )}
+                            
+                            {breakIndex > 0 && (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeBreak(entry.id, breakItem.id)}
+                                className="h-6 w-6 p-0 border-slate-300 dark:border-slate-600 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                title="Remove break"
+                                disabled={isSubmitting}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
 
-                  {/* Hours Summary */}
-                  {totalHours > 0 && (
+                  {/* Cross Midnight Warning */}
+                  {calc?.crossesMidnight && (
+                    <Alert className="border-amber-200 bg-amber-50">
+                      <AlertTriangle className="w-4 h-4 text-amber-600" />
+                      <AlertDescription>
+                        <div className="space-y-2">
+                          <div className="font-semibold text-amber-900">
+                            Cross-Midnight Shift Detected
+                          </div>
+                          <p className="text-amber-800 text-sm">
+                            This shift will be split into separate timesheet entries.
+                          </p>
+                        </div>
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {/* Calculated Hours */}
+                  {calc && (
                     <div className="bg-muted p-2 rounded-lg">
                       <div className="flex items-center space-x-2 mb-1">
                         <Calculator className="w-3 h-3" />
-                        <span className="text-xs font-medium">Hours Summary</span>
+                        <span className="text-xs font-medium">Calculated Hours</span>
                         {(entry.selectedEmployees.length > 1 || entry.selectedDates.length > 1) && (
                           <Badge variant="outline" className="text-xs">
                             × {entry.selectedEmployees.length} employees × {entry.selectedDates.length} dates
@@ -1178,38 +1484,35 @@ export default function StandardHoursTab() {
                         )}
                       </div>
                       
-                      <div className="grid grid-cols-3 gap-2 text-center">
+                      <div className="grid grid-cols-4 gap-2 text-center">
                         <div className="bg-card p-1.5 rounded border">
                           <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Standard</div>
-                          <div className="text-sm font-bold text-blue-600">{entry.standardHours.toFixed(2)}</div>
+                          <div className="text-sm font-bold text-blue-600">{calc.standardHours.toFixed(2)}</div>
                         </div>
                         <div className="bg-card p-1.5 rounded border">
                           <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Overtime</div>
-                          <div className="text-sm font-bold text-orange-600">{entry.overtimeHours.toFixed(2)}</div>
+                          <div className="text-sm font-bold text-orange-600">{calc.overtimeHours.toFixed(2)}</div>
                         </div>
                         <div className="bg-card p-1.5 rounded border">
                           <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total</div>
-                          <div className="text-sm font-bold text-green-600">{totalHours.toFixed(2)}</div>
+                          <div className="text-sm font-bold text-green-600">
+                            {(calc.standardHours + calc.overtimeHours).toFixed(2)}
+                          </div>
+                        </div>
+                        <div className="bg-card p-1.5 rounded border">
+                          <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Breaks</div>
+                          <div className="text-xs font-bold text-purple-600">
+                            {calc.totalBreakMinutes}m
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Total hours warning */}
-                  {totalHours > 16 && (
-                    <Alert className="border-amber-200 bg-amber-50">
-                      <AlertTriangle className="w-4 h-4 text-amber-600" />
-                      <AlertDescription>
-                        <div className="space-y-2">
-                          <div className="font-semibold text-amber-900">
-                            High Hours Warning
-                          </div>
-                          <p className="text-amber-800 text-sm">
-                            Total hours exceed 16 hours per day. Please verify this is correct.
-                          </p>
+                      
+                      {calc.breakDetails.length > 0 && (
+                        <div className="mt-1 text-center text-xs text-muted-foreground">
+                          Breaks: {calc.breakDetails.map(b => `${b.startTime}-${b.endTime} (${b.minutes}m)`).join(', ')}
                         </div>
-                      </AlertDescription>
-                    </Alert>
+                      )}
+                    </div>
                   )}
 
                   {/* Notes */}
