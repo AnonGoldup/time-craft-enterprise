@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,25 +7,20 @@ import StandardHoursTab from './StandardHoursTab';
 import TimeInOutTab from './TimeInOutTab';
 import { ComprehensiveTimeEntryFormProps, TimeEntryData } from './types';
 import { toast } from 'sonner';
-
 export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProps> = ({
   onSubmit
 }) => {
   const [activeTab, setActiveTab] = useState('standard');
-
   const handleBulkSubmit = (entries: any[]) => {
     console.log('Bulk entries submitted:', entries);
     onSubmit(entries);
   };
-
   const handleTimeEntrySubmit = (data: any) => {
     console.log('Time entry submitted:', data);
     onSubmit(data);
     toast.success('Time entry submitted successfully!');
   };
-
-  return (
-    <Card className="w-full">
+  return <Card className="w-full">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         {/* Tab Headers - Mobile responsive */}
         <div className="border-b">
@@ -66,10 +60,9 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
         </TabsContent>
 
         {/* My Timesheets Tab */}
-        <TabsContent value="timesheets" className="p-3 sm:p-4 md:p-6 px-[8px] py-0">
+        <TabsContent value="timesheets" className="p-3 sm:p-4 md:p-6 px-[8px] py-[8px]">
           <MyTimesheetsTab />
         </TabsContent>
       </Tabs>
-    </Card>
-  );
+    </Card>;
 };
