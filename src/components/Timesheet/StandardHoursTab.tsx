@@ -703,8 +703,7 @@ const StandardHoursTab: React.FC<TabContentProps> = ({
   setSelectedDates,
   useMultiDateSelection,
   setUseMultiDateSelection,
-  onSubmit,
-  managerMode = false
+  onSubmit
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [standardEntries, setStandardEntries] = useState<StandardHoursEntry[]>([
