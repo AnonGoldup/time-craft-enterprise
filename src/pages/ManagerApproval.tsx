@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,35 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Users, Building, CheckCircle2, XCircle, Clock, AlertTriangle, Timer, Target, Hash, Activity, TrendingUp, Calendar, MapPin, Coffee, Wrench, Star, Award, Flag, BarChart3, FileText, Download, RefreshCw, Eye, MessageSquare, ChevronDown, ChevronUp, Zap } from 'lucide-react';
+
+// Types for better TypeScript support
+interface TimesheetSubmission {
+  id: number;
+  employeeName: string;
+  employeeId: string;
+  class: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  totalHours: number;
+  overtimeHours: number;
+  efficiency: number;
+  projectCode: string;
+  projectDescription: string;
+  extraValue: string;
+  extraDescription: string;
+  costCode: string;
+  costCodeDescription: string;
+  projects: string[];
+  anomalies: string[];
+  notes: string;
+  weekEnding: string;
+  submitDate: string;
+}
+
+interface ProjectGroup {
+  projectCode: string;
+  projectDescription: string;
+  submissions: TimesheetSubmission[];
+}
 
 // Mock data for the dashboard
 const dashboardData = {
@@ -22,7 +52,7 @@ const dashboardData = {
     employeeName: 'John Smith',
     employeeId: 'JSMITH',
     class: 'FMAN',
-    status: 'Pending',
+    status: 'Pending' as const,
     totalHours: 44.0,
     overtimeHours: 4.0,
     efficiency: 92,
@@ -42,7 +72,7 @@ const dashboardData = {
     employeeName: 'Sarah Johnson',
     employeeId: 'SJOHN',
     class: 'JMAN',
-    status: 'Pending',
+    status: 'Pending' as const,
     totalHours: 40.0,
     overtimeHours: 0,
     efficiency: 95,
@@ -62,7 +92,7 @@ const dashboardData = {
     employeeName: 'Mike Wilson',
     employeeId: 'MWILS',
     class: 'AP3',
-    status: 'Pending',
+    status: 'Pending' as const,
     totalHours: 42.0,
     overtimeHours: 2.0,
     efficiency: 85,
@@ -82,7 +112,7 @@ const dashboardData = {
     employeeName: 'Lisa Brown',
     employeeId: 'LBROW',
     class: 'JMAN',
-    status: 'Pending',
+    status: 'Pending' as const,
     totalHours: 40.0,
     overtimeHours: 0,
     efficiency: 88,
@@ -102,7 +132,7 @@ const dashboardData = {
     employeeName: 'Tom Davis',
     employeeId: 'TDAVI',
     class: 'AP2',
-    status: 'Pending',
+    status: 'Pending' as const,
     totalHours: 38.0,
     overtimeHours: 0,
     efficiency: 91,
@@ -117,7 +147,7 @@ const dashboardData = {
     notes: 'Completed safety certification training',
     weekEnding: '2025-06-21',
     submitDate: '2025-06-22T08:45:00'
-  }],
+  }] as TimesheetSubmission[],
   projectMetrics: [{
     code: '21-0066',
     name: 'Edmonton EXPO SOLAR IPD',
@@ -181,17 +211,17 @@ const dashboardData = {
 };
 
 // Utility function to merge classNames
-const cn = (...classes) => {
+const cn = (...classes: (string | undefined | boolean)[]) => {
   return classes.filter(Boolean).join(' ');
 };
-const formatCurrency = amount => {
+const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0
   }).format(amount);
 };
-const getStatusColor = status => {
+const getStatusColor = (status: string) => {
   switch (status) {
     case 'Pending':
       return 'bg-yellow-100 text-yellow-800 border-yellow-300';
@@ -203,7 +233,7 @@ const getStatusColor = status => {
       return 'bg-gray-100 text-gray-800 border-gray-300';
   }
 };
-const getEfficiencyColor = efficiency => {
+const getEfficiencyColor = (efficiency: number) => {
   if (efficiency >= 90) return 'text-green-600';
   if (efficiency >= 75) return 'text-yellow-600';
   return 'text-red-600';
@@ -215,6 +245,11 @@ const ProjectSelectButton = ({
   projectCode,
   selectedSubmissions,
   onSelectAllInProject
+}: {
+  group: ProjectGroup;
+  projectCode: string;
+  selectedSubmissions: Set<number>;
+  onSelectAllInProject: (projectCode: string) => void;
 }) => {
   const projectSubmissionIds = group.submissions.map(sub => sub.id);
   const allSelected = projectSubmissionIds.every(id => selectedSubmissions.has(id));
@@ -226,12 +261,19 @@ const ProjectSelectButton = ({
       {allSelected ? 'Deselect All' : 'Select All'}
     </Button>;
 };
+
 const SubmissionCard = ({
   submission,
   onApprove,
   onReject,
   isSelected,
   onSelect
+}: {
+  submission: TimesheetSubmission;
+  onApprove: (id: number) => void;
+  onReject: (id: number) => void;
+  isSelected: boolean;
+  onSelect: () => void;
 }) => {
   const [expanded, setExpanded] = useState(false);
   const isPending = submission.status === 'Pending';
@@ -420,10 +462,13 @@ const SubmissionCard = ({
       </CardContent>
     </Card>;
 };
+
 const ProjectMetricsCard = ({
   project
+}: {
+  project: any;
 }) => {
-  const getProjectStatusColor = status => {
+  const getProjectStatusColor = (status: string) => {
     switch (status) {
       case 'On Track':
         return 'text-green-600';
@@ -480,11 +525,15 @@ const ProjectMetricsCard = ({
       </CardContent>
     </Card>;
 };
+
 const WeeklyChart = ({
   data,
   type
+}: {
+  data: any;
+  type: string;
 }) => {
-  const maxValue = Math.max(...data.map(d => type === 'hours' ? d.standard + d.overtime : type === 'efficiency' ? d : d));
+  const maxValue = Math.max(...data.map((d: any) => type === 'hours' ? d.standard + d.overtime : type === 'efficiency' ? d : d));
   return <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h4 className="font-medium text-gray-900">
@@ -509,7 +558,7 @@ const WeeklyChart = ({
       })) : dashboardData.weeklyTrends.costTrend.map((val, i) => ({
         day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i],
         value: val
-      }))).map((item, index) => <div key={index} className="flex-1 flex flex-col items-center space-y-1">
+      }))).map((item: any, index: number) => <div key={index} className="flex-1 flex flex-col items-center space-y-1">
             <div className="w-full flex flex-col items-center justify-end" style={{
           height: '100px'
         }}>
@@ -529,14 +578,16 @@ const WeeklyChart = ({
       </div>
     </div>;
 };
+
 export default function AltaProManagerDashboard() {
-  const [submissions, setSubmissions] = useState(dashboardData.recentSubmissions);
-  const [selectedSubmissions, setSelectedSubmissions] = useState(new Set());
+  const [submissions, setSubmissions] = useState<TimesheetSubmission[]>(dashboardData.recentSubmissions);
+  const [selectedSubmissions, setSelectedSubmissions] = useState(new Set<number>());
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('approvals');
   const [sortBy, setSortBy] = useState('project');
   const [expandedProjects, setExpandedProjects] = useState(new Set(['21-0066', '24-0052', '22-0006']));
-  const handleToggleProject = useCallback(projectCode => {
+  
+  const handleToggleProject = useCallback((projectCode: string) => {
     setExpandedProjects(prev => {
       const newSet = new Set(prev);
       if (newSet.has(projectCode)) {
@@ -547,7 +598,8 @@ export default function AltaProManagerDashboard() {
       return newSet;
     });
   }, []);
-  const handleSelectSubmission = useCallback(submissionId => {
+  
+  const handleSelectSubmission = useCallback((submissionId: number) => {
     setSelectedSubmissions(prev => {
       const newSet = new Set(prev);
       if (newSet.has(submissionId)) {
@@ -558,7 +610,8 @@ export default function AltaProManagerDashboard() {
       return newSet;
     });
   }, []);
-  const handleSelectAllInProject = useCallback(projectCode => {
+  
+  const handleSelectAllInProject = useCallback((projectCode: string) => {
     const projectSubmissions = groupedSubmissions[projectCode]?.submissions || [];
     const projectSubmissionIds = projectSubmissions.map(sub => sub.id);
     const allSelected = projectSubmissionIds.every(id => selectedSubmissions.has(id));
@@ -582,41 +635,45 @@ export default function AltaProManagerDashboard() {
       setSelectedSubmissions(new Set(pendingIds));
     }
   }, [submissions, selectedSubmissions.size]);
+  
   const handleBulkApprove = useCallback(async () => {
     if (selectedSubmissions.size === 0) return;
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1500));
     setSubmissions(prev => prev.map(sub => selectedSubmissions.has(sub.id) ? {
       ...sub,
-      status: 'Approved'
+      status: 'Approved' as const
     } : sub));
     setSelectedSubmissions(new Set());
     setIsLoading(false);
   }, [selectedSubmissions]);
-  const handleApprove = useCallback(async submissionId => {
+  
+  const handleApprove = useCallback(async (submissionId: number) => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
     setSubmissions(prev => prev.map(sub => sub.id === submissionId ? {
       ...sub,
-      status: 'Approved'
+      status: 'Approved' as const
     } : sub));
     setIsLoading(false);
   }, []);
-  const handleReject = useCallback(async submissionId => {
+  
+  const handleReject = useCallback(async (submissionId: number) => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
     setSubmissions(prev => prev.map(sub => sub.id === submissionId ? {
       ...sub,
-      status: 'Rejected'
+      status: 'Rejected' as const
     } : sub));
     setIsLoading(false);
   }, []);
+  
   const pendingSubmissions = submissions.filter(s => s.status === 'Pending');
 
   // Group submissions by project
   const groupedSubmissions = useMemo(() => {
     const pending = submissions.filter(s => s.status === 'Pending');
-    return pending.reduce((groups, submission) => {
+    return pending.reduce((groups: Record<string, ProjectGroup>, submission) => {
       const project = submission.projectCode;
       if (!groups[project]) {
         groups[project] = {
@@ -629,8 +686,9 @@ export default function AltaProManagerDashboard() {
       return groups;
     }, {});
   }, [submissions]);
-  return <div className="min-h-screen bg-gray-50 p-4 px-0 py-0">
-      <div className="max-w-7xl mx-auto space-y-4">
+  
+  return <div className="min-h-screen bg-gray-50 p-6">
+      <div className="w-full mx-auto space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
