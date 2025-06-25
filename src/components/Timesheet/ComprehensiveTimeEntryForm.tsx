@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import BulkEntryTab from './BulkEntryTab';
 import { MyTimesheetsTab } from './MyTimesheetsTab';
 import StandardHoursTab from './StandardHoursTab';
-import { TimeInOutTab } from './TimeInOutTab';
+import TimeInOutTab from './TimeInOutTab';
 import { ComprehensiveTimeEntryFormProps, TimeEntryData } from './types';
 import { toast } from 'sonner';
 
@@ -56,10 +56,8 @@ export const ComprehensiveTimeEntryForm: React.FC<ComprehensiveTimeEntryFormProp
         </TabsContent>
 
         {/* Time In/Out Tab */}
-        <TabsContent value="timeinout" className="p-3 sm:p-4 md:p-6">
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">Time In/Out functionality coming soon...</p>
-          </div>
+        <TabsContent value="timeinout" className="p-0">
+          <TimeInOutTab />
         </TabsContent>
 
         {/* Bulk Entry Tab */}
