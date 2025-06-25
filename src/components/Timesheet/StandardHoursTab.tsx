@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TabContentProps } from './types';
 
-const StandardHoursTab: React.FC<TabContentProps> = ({
+export const StandardHoursTab: React.FC<TabContentProps> = ({
   entries,
   setEntries,
   selectedDates,
