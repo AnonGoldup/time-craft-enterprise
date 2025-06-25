@@ -780,7 +780,7 @@ export default function MyTimesheet() {
             </Card>
           </div>
           
-          <div className="border-t pt-6 mb-6"></div>
+          
           
           {/* Filters */}
           <div className="space-y-4 mb-6">
