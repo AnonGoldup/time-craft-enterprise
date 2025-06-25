@@ -629,7 +629,7 @@ export default function BulkTimesheetEntry() {
         <div className="lg:col-span-3 space-y-6">
           {/* Control Panel */}
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-6 px-[16px] py-[16px]">
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center space-x-2">
                   <Users className="w-5 h-5 text-blue-600" />
