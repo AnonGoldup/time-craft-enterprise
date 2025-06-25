@@ -5,13 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Users, Building, CheckCircle2, XCircle, Clock, AlertTriangle,
-  Timer, Target, Hash, Activity, TrendingUp,
-  Calendar, MapPin, Coffee, Wrench, Star, Award, Flag,
-  BarChart3, FileText, Download, RefreshCw, Eye, MessageSquare,
-  ChevronDown, ChevronUp, Zap
-} from 'lucide-react';
+import { Users, Building, CheckCircle2, XCircle, Clock, AlertTriangle, Timer, Target, Hash, Activity, TrendingUp, Calendar, MapPin, Coffee, Wrench, Star, Award, Flag, BarChart3, FileText, Download, RefreshCw, Eye, MessageSquare, ChevronDown, ChevronUp, Zap } from 'lucide-react';
 
 // Mock data for the dashboard
 const dashboardData = {
@@ -23,157 +17,164 @@ const dashboardData = {
     weeklyBudget: 125000,
     actualCost: 98750
   },
-  recentSubmissions: [
-    {
-      id: 1,
-      employeeName: 'John Smith',
-      employeeId: 'JSMITH',
-      class: 'FMAN',
-      status: 'Pending',
-      totalHours: 44.0,
-      overtimeHours: 4.0,
-      efficiency: 92,
-      projectCode: '21-0066',
-      projectDescription: 'Edmonton EXPO SOLAR IPD',
-      extraValue: 'Phase 1',
-      extraDescription: 'Initial Setup and Planning',
-      costCode: '001-040-043',
-      costCodeDescription: 'INDIRECT LAB-Direct Labor',
-      projects: ['21-0066', '22-0006'],
-      anomalies: ['Overtime exceeded 2hrs on Tuesday'],
-      notes: 'Weather delay required extended hours',
-      weekEnding: '2025-06-21',
-      submitDate: '2025-06-22T09:15:00'
-    },
-    {
-      id: 2,
-      employeeName: 'Sarah Johnson',
-      employeeId: 'SJOHN',
-      class: 'JMAN',
-      status: 'Pending',
-      totalHours: 40.0,
-      overtimeHours: 0,
-      efficiency: 95,
-      projectCode: '21-0066',
-      projectDescription: 'Edmonton EXPO SOLAR IPD',
-      extraValue: 'Phase 2',
-      extraDescription: 'Implementation Phase',
-      costCode: '001-040-054',
-      costCodeDescription: 'INDIRECT LAB-Employee Training',
-      projects: ['21-0066'],
-      anomalies: [],
-      notes: 'Standard week, excellent performance',
-      weekEnding: '2025-06-21',
-      submitDate: '2025-06-22T10:30:00'
-    },
-    {
-      id: 3,
-      employeeName: 'Mike Wilson',
-      employeeId: 'MWILS',
-      class: 'AP3',
-      status: 'Pending',
-      totalHours: 42.0,
-      overtimeHours: 2.0,
-      efficiency: 85,
-      projectCode: '24-0052',
-      projectDescription: 'Grant MacEwan School',
-      extraValue: 'Default',
-      extraDescription: 'Standard Work',
-      costCode: '001-040-043',
-      costCodeDescription: 'INDIRECT LAB-Direct Labor',
-      projects: ['24-0052'],
-      anomalies: [],
-      notes: 'Training completion bonus hours',
-      weekEnding: '2025-06-21',
-      submitDate: '2025-06-15T16:45:00'
-    },
-    {
-      id: 4,
-      employeeName: 'Lisa Brown',
-      employeeId: 'LBROW',
-      class: 'JMAN',
-      status: 'Pending',
-      totalHours: 40.0,
-      overtimeHours: 0,
-      efficiency: 88,
-      projectCode: '24-0052',
-      projectDescription: 'Grant MacEwan School',
-      extraValue: 'Phase 1',
-      extraDescription: 'Site Preparation',
-      costCode: '001-500-501',
-      costCodeDescription: 'GENEXP-Vehicle Travel',
-      projects: ['24-0052'],
-      anomalies: [],
-      notes: 'Site preparation completed ahead of schedule',
-      weekEnding: '2025-06-21',
-      submitDate: '2025-06-22T11:00:00'
-    },
-    {
-      id: 5,
-      employeeName: 'Tom Davis',
-      employeeId: 'TDAVI',
-      class: 'AP2',
-      status: 'Pending',
-      totalHours: 38.0,
-      overtimeHours: 0,
-      efficiency: 91,
-      projectCode: '22-0006',
-      projectDescription: 'AltaPro Service Department',
-      extraValue: 'Default',
-      extraDescription: 'Standard Service Work',
-      costCode: '001-040-055',
-      costCodeDescription: 'INDIRECT LAB-Safety Training',
-      projects: ['22-0006'],
-      anomalies: [],
-      notes: 'Completed safety certification training',
-      weekEnding: '2025-06-21',
-      submitDate: '2025-06-22T08:45:00'
-    }
-  ],
-  projectMetrics: [
-    {
-      code: '21-0066',
-      name: 'Edmonton EXPO SOLAR IPD',
-      totalHours: 156.5,
-      budgetHours: 2400,
-      budgetUsed: 67,
-      efficiency: 91,
-      daysRemaining: 45,
-      status: 'On Track',
-      cost: 145000
-    },
-    {
-      code: '22-0006',
-      name: 'AltaPro Service Department',
-      totalHours: 98.0,
-      budgetHours: 800,
-      budgetUsed: 78,
-      efficiency: 95,
-      daysRemaining: 30,
-      status: 'Behind Schedule',
-      cost: 89500
-    },
-    {
-      code: '24-0052',
-      name: 'Grant MacEwan School',
-      totalHours: 67.5,
-      budgetHours: 1200,
-      budgetUsed: 23,
-      efficiency: 88,
-      daysRemaining: 90,
-      status: 'Ahead of Schedule',
-      cost: 67200
-    }
-  ],
+  recentSubmissions: [{
+    id: 1,
+    employeeName: 'John Smith',
+    employeeId: 'JSMITH',
+    class: 'FMAN',
+    status: 'Pending',
+    totalHours: 44.0,
+    overtimeHours: 4.0,
+    efficiency: 92,
+    projectCode: '21-0066',
+    projectDescription: 'Edmonton EXPO SOLAR IPD',
+    extraValue: 'Phase 1',
+    extraDescription: 'Initial Setup and Planning',
+    costCode: '001-040-043',
+    costCodeDescription: 'INDIRECT LAB-Direct Labor',
+    projects: ['21-0066', '22-0006'],
+    anomalies: ['Overtime exceeded 2hrs on Tuesday'],
+    notes: 'Weather delay required extended hours',
+    weekEnding: '2025-06-21',
+    submitDate: '2025-06-22T09:15:00'
+  }, {
+    id: 2,
+    employeeName: 'Sarah Johnson',
+    employeeId: 'SJOHN',
+    class: 'JMAN',
+    status: 'Pending',
+    totalHours: 40.0,
+    overtimeHours: 0,
+    efficiency: 95,
+    projectCode: '21-0066',
+    projectDescription: 'Edmonton EXPO SOLAR IPD',
+    extraValue: 'Phase 2',
+    extraDescription: 'Implementation Phase',
+    costCode: '001-040-054',
+    costCodeDescription: 'INDIRECT LAB-Employee Training',
+    projects: ['21-0066'],
+    anomalies: [],
+    notes: 'Standard week, excellent performance',
+    weekEnding: '2025-06-21',
+    submitDate: '2025-06-22T10:30:00'
+  }, {
+    id: 3,
+    employeeName: 'Mike Wilson',
+    employeeId: 'MWILS',
+    class: 'AP3',
+    status: 'Pending',
+    totalHours: 42.0,
+    overtimeHours: 2.0,
+    efficiency: 85,
+    projectCode: '24-0052',
+    projectDescription: 'Grant MacEwan School',
+    extraValue: 'Default',
+    extraDescription: 'Standard Work',
+    costCode: '001-040-043',
+    costCodeDescription: 'INDIRECT LAB-Direct Labor',
+    projects: ['24-0052'],
+    anomalies: [],
+    notes: 'Training completion bonus hours',
+    weekEnding: '2025-06-21',
+    submitDate: '2025-06-15T16:45:00'
+  }, {
+    id: 4,
+    employeeName: 'Lisa Brown',
+    employeeId: 'LBROW',
+    class: 'JMAN',
+    status: 'Pending',
+    totalHours: 40.0,
+    overtimeHours: 0,
+    efficiency: 88,
+    projectCode: '24-0052',
+    projectDescription: 'Grant MacEwan School',
+    extraValue: 'Phase 1',
+    extraDescription: 'Site Preparation',
+    costCode: '001-500-501',
+    costCodeDescription: 'GENEXP-Vehicle Travel',
+    projects: ['24-0052'],
+    anomalies: [],
+    notes: 'Site preparation completed ahead of schedule',
+    weekEnding: '2025-06-21',
+    submitDate: '2025-06-22T11:00:00'
+  }, {
+    id: 5,
+    employeeName: 'Tom Davis',
+    employeeId: 'TDAVI',
+    class: 'AP2',
+    status: 'Pending',
+    totalHours: 38.0,
+    overtimeHours: 0,
+    efficiency: 91,
+    projectCode: '22-0006',
+    projectDescription: 'AltaPro Service Department',
+    extraValue: 'Default',
+    extraDescription: 'Standard Service Work',
+    costCode: '001-040-055',
+    costCodeDescription: 'INDIRECT LAB-Safety Training',
+    projects: ['22-0006'],
+    anomalies: [],
+    notes: 'Completed safety certification training',
+    weekEnding: '2025-06-21',
+    submitDate: '2025-06-22T08:45:00'
+  }],
+  projectMetrics: [{
+    code: '21-0066',
+    name: 'Edmonton EXPO SOLAR IPD',
+    totalHours: 156.5,
+    budgetHours: 2400,
+    budgetUsed: 67,
+    efficiency: 91,
+    daysRemaining: 45,
+    status: 'On Track',
+    cost: 145000
+  }, {
+    code: '22-0006',
+    name: 'AltaPro Service Department',
+    totalHours: 98.0,
+    budgetHours: 800,
+    budgetUsed: 78,
+    efficiency: 95,
+    daysRemaining: 30,
+    status: 'Behind Schedule',
+    cost: 89500
+  }, {
+    code: '24-0052',
+    name: 'Grant MacEwan School',
+    totalHours: 67.5,
+    budgetHours: 1200,
+    budgetUsed: 23,
+    efficiency: 88,
+    daysRemaining: 90,
+    status: 'Ahead of Schedule',
+    cost: 67200
+  }],
   weeklyTrends: {
-    hoursData: [
-      { day: 'Mon', standard: 320, overtime: 12 },
-      { day: 'Tue', standard: 315, overtime: 18 },
-      { day: 'Wed', standard: 310, overtime: 8 },
-      { day: 'Thu', standard: 325, overtime: 15 },
-      { day: 'Fri', standard: 305, overtime: 22 },
-      { day: 'Sat', standard: 45, overtime: 8 }
-    ],
+    hoursData: [{
+      day: 'Mon',
+      standard: 320,
+      overtime: 12
+    }, {
+      day: 'Tue',
+      standard: 315,
+      overtime: 18
+    }, {
+      day: 'Wed',
+      standard: 310,
+      overtime: 8
+    }, {
+      day: 'Thu',
+      standard: 325,
+      overtime: 15
+    }, {
+      day: 'Fri',
+      standard: 305,
+      overtime: 22
+    }, {
+      day: 'Sat',
+      standard: 45,
+      overtime: 8
+    }],
     efficiencyTrend: [88, 91, 87, 93, 89, 92],
     costTrend: [18500, 19200, 17800, 20100, 18900, 4200]
   }
@@ -183,81 +184,62 @@ const dashboardData = {
 const cn = (...classes) => {
   return classes.filter(Boolean).join(' ');
 };
-
-const formatCurrency = (amount) => {
+const formatCurrency = amount => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0
   }).format(amount);
 };
-
-const getStatusColor = (status) => {
+const getStatusColor = status => {
   switch (status) {
-    case 'Pending': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-    case 'Approved': return 'bg-green-100 text-green-800 border-green-300';
-    case 'Rejected': return 'bg-red-100 text-red-800 border-red-300';
-    default: return 'bg-gray-100 text-gray-800 border-gray-300';
+    case 'Pending':
+      return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+    case 'Approved':
+      return 'bg-green-100 text-green-800 border-green-300';
+    case 'Rejected':
+      return 'bg-red-100 text-red-800 border-red-300';
+    default:
+      return 'bg-gray-100 text-gray-800 border-gray-300';
   }
 };
-
-const getEfficiencyColor = (efficiency) => {
+const getEfficiencyColor = efficiency => {
   if (efficiency >= 90) return 'text-green-600';
   if (efficiency >= 75) return 'text-yellow-600';
   return 'text-red-600';
 };
 
 // Project Select Button Component
-const ProjectSelectButton = ({ group, projectCode, selectedSubmissions, onSelectAllInProject }) => {
+const ProjectSelectButton = ({
+  group,
+  projectCode,
+  selectedSubmissions,
+  onSelectAllInProject
+}) => {
   const projectSubmissionIds = group.submissions.map(sub => sub.id);
   const allSelected = projectSubmissionIds.every(id => selectedSubmissions.has(id));
   const someSelected = projectSubmissionIds.some(id => selectedSubmissions.has(id));
-
-  return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={() => onSelectAllInProject(projectCode)}
-      className={cn(
-        "text-blue-700 border-blue-300",
-        allSelected ? "bg-blue-100" : someSelected ? "bg-blue-50" : "hover:bg-blue-50"
-      )}
-    >
-      <input
-        type="checkbox"
-        checked={allSelected}
-        ref={(el) => {
-          if (el) el.indeterminate = someSelected && !allSelected;
-        }}
-        readOnly
-        className="mr-2"
-      />
+  return <Button variant="outline" size="sm" onClick={() => onSelectAllInProject(projectCode)} className={cn("text-blue-700 border-blue-300", allSelected ? "bg-blue-100" : someSelected ? "bg-blue-50" : "hover:bg-blue-50")}>
+      <input type="checkbox" checked={allSelected} ref={el => {
+      if (el) el.indeterminate = someSelected && !allSelected;
+    }} readOnly className="mr-2" />
       {allSelected ? 'Deselect All' : 'Select All'}
-    </Button>
-  );
+    </Button>;
 };
-
-const SubmissionCard = ({ submission, onApprove, onReject, isSelected, onSelect }) => {
+const SubmissionCard = ({
+  submission,
+  onApprove,
+  onReject,
+  isSelected,
+  onSelect
+}) => {
   const [expanded, setExpanded] = useState(false);
   const isPending = submission.status === 'Pending';
-
-  return (
-    <Card className={cn(
-      "transition-all duration-300 hover:shadow-lg",
-      isPending ? 'border-yellow-200 bg-yellow-50/30' : 'border-gray-200',
-      isSelected && 'ring-2 ring-blue-500 border-blue-300'
-    )}>
+  return <Card className={cn("transition-all duration-300 hover:shadow-lg", isPending ? 'border-yellow-200 bg-yellow-50/30' : 'border-gray-200', isSelected && 'ring-2 ring-blue-500 border-blue-300')}>
       <CardContent className="p-4">
         <div className="mb-3">
           <div className="flex items-center space-x-3 mb-2">
-            {isPending && (
-              <input
-                type="checkbox"
-                checked={isSelected}
-                onChange={onSelect}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-            )}
+            {isPending && <input type="checkbox" checked={isSelected} onChange={onSelect} className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />}
             <h3 className="text-base font-semibold text-gray-900">
               {submission.employeeName}
             </h3>
@@ -304,9 +286,7 @@ const SubmissionCard = ({ submission, onApprove, onReject, isSelected, onSelect 
                 <span className="text-xs font-medium text-blue-900">Total Hours</span>
               </div>
               <p className="text-base font-bold text-blue-600">{submission.totalHours}h</p>
-              {submission.overtimeHours > 0 && (
-                <p className="text-xs text-blue-700">+{submission.overtimeHours}h OT</p>
-              )}
+              {submission.overtimeHours > 0 && <p className="text-xs text-blue-700">+{submission.overtimeHours}h OT</p>}
             </div>
             
             <div className="bg-green-50 p-2 rounded-lg">
@@ -337,29 +317,23 @@ const SubmissionCard = ({ submission, onApprove, onReject, isSelected, onSelect 
           </div>
         </div>
 
-        {submission.anomalies.length > 0 && (
-          <Alert className="mb-3 border-amber-200 bg-amber-50">
+        {submission.anomalies.length > 0 && <Alert className="mb-3 border-amber-200 bg-amber-50">
             <AlertTriangle className="w-4 h-4 text-amber-600" />
             <AlertDescription>
               <div className="font-semibold text-amber-900 mb-1">Attention Required</div>
               <ul className="text-amber-800 text-xs">
-                {submission.anomalies.map((anomaly, index) => (
-                  <li key={index}>• {anomaly}</li>
-                ))}
+                {submission.anomalies.map((anomaly, index) => <li key={index}>• {anomaly}</li>)}
               </ul>
             </AlertDescription>
-          </Alert>
-        )}
+          </Alert>}
 
-        {submission.notes && (
-          <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
+        {submission.notes && <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
             <div className="flex items-center space-x-2 text-xs mb-1">
               <MessageSquare className="w-3 h-3 text-blue-600" />
               <span className="font-medium text-blue-800">Notes:</span>
             </div>
             <p className="text-xs text-blue-700 ml-5">{submission.notes}</p>
-          </div>
-        )}
+          </div>}
 
         {/* Action Buttons Section */}
         <div className="flex items-center justify-between mb-3">
@@ -368,51 +342,30 @@ const SubmissionCard = ({ submission, onApprove, onReject, isSelected, onSelect 
           </div>
           
           <div className="flex items-center space-x-2">
-            {isPending && (
-              <>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => onReject(submission.id)}
-                  className="text-red-600 border-red-200 hover:bg-red-50"
-                >
+            {isPending && <>
+                <Button size="sm" variant="outline" onClick={() => onReject(submission.id)} className="text-red-600 border-red-200 hover:bg-red-50">
                   <XCircle className="w-4 h-4 mr-1" />
                   Reject
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={() => onApprove(submission.id)}
-                  className="bg-green-600 hover:bg-green-700"
-                >
+                <Button size="sm" onClick={() => onApprove(submission.id)} className="bg-green-600 hover:bg-green-700">
                   <CheckCircle2 className="w-4 h-4 mr-1" />
                   Approve
                 </Button>
-              </>
-            )}
+              </>}
             
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => setExpanded(!expanded)}
-              className="text-gray-500"
-            >
-              {expanded ? (
-                <>
+            <Button size="sm" variant="ghost" onClick={() => setExpanded(!expanded)} className="text-gray-500">
+              {expanded ? <>
                   <ChevronUp className="w-4 h-4 mr-1" />
                   Less
-                </>
-              ) : (
-                <>
+                </> : <>
                   <ChevronDown className="w-4 h-4 mr-1" />
                   More
-                </>
-              )}
+                </>}
             </Button>
           </div>
         </div>
 
-        {expanded && (
-          <div className="pt-6 border-t border-gray-200">
+        {expanded && <div className="pt-6 border-t border-gray-200">
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <h4 className="font-medium text-gray-900 mb-3">Performance Metrics</h4>
@@ -430,7 +383,7 @@ const SubmissionCard = ({ submission, onApprove, onReject, isSelected, onSelect 
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600">Overtime Ratio:</span>
                     <span className="font-medium">
-                      {((submission.overtimeHours / submission.totalHours) * 100).toFixed(1)}%
+                      {(submission.overtimeHours / submission.totalHours * 100).toFixed(1)}%
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -457,33 +410,32 @@ const SubmissionCard = ({ submission, onApprove, onReject, isSelected, onSelect 
                       <span>OT: {submission.overtimeHours}h</span>
                     </div>
                   </div>
-                  {submission.projects && submission.projects.length > 1 && (
-                    <div className="text-xs text-gray-500">
+                  {submission.projects && submission.projects.length > 1 && <div className="text-xs text-gray-500">
                       * Multiple projects: {submission.projects.join(', ')}
-                    </div>
-                  )}
+                    </div>}
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          </div>}
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
-const ProjectMetricsCard = ({ project }) => {
-  const getProjectStatusColor = (status) => {
+const ProjectMetricsCard = ({
+  project
+}) => {
+  const getProjectStatusColor = status => {
     switch (status) {
-      case 'On Track': return 'text-green-600';
-      case 'Behind Schedule': return 'text-red-600';
-      case 'Ahead of Schedule': return 'text-blue-600';
-      default: return 'text-gray-600';
+      case 'On Track':
+        return 'text-green-600';
+      case 'Behind Schedule':
+        return 'text-red-600';
+      case 'Ahead of Schedule':
+        return 'text-blue-600';
+      default:
+        return 'text-gray-600';
     }
   };
-
-  return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
+  return <Card className="hover:shadow-lg transition-shadow duration-300">
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div>
@@ -526,25 +478,19 @@ const ProjectMetricsCard = ({ project }) => {
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
-const WeeklyChart = ({ data, type }) => {
-  const maxValue = Math.max(...data.map(d => 
-    type === 'hours' ? d.standard + d.overtime : 
-    type === 'efficiency' ? d : d
-  ));
-
-  return (
-    <div className="space-y-4">
+const WeeklyChart = ({
+  data,
+  type
+}) => {
+  const maxValue = Math.max(...data.map(d => type === 'hours' ? d.standard + d.overtime : type === 'efficiency' ? d : d));
+  return <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h4 className="font-medium text-gray-900">
-          {type === 'hours' ? 'Daily Hours' : 
-           type === 'efficiency' ? 'Efficiency Trend' : 'Daily Costs'}
+          {type === 'hours' ? 'Daily Hours' : type === 'efficiency' ? 'Efficiency Trend' : 'Daily Costs'}
         </h4>
-        {type === 'hours' && (
-          <div className="flex items-center space-x-4 text-xs">
+        {type === 'hours' && <div className="flex items-center space-x-4 text-xs">
             <div className="flex items-center space-x-1">
               <div className="w-3 h-3 bg-blue-500 rounded"></div>
               <span>Standard</span>
@@ -553,48 +499,36 @@ const WeeklyChart = ({ data, type }) => {
               <div className="w-3 h-3 bg-orange-500 rounded"></div>
               <span>Overtime</span>
             </div>
-          </div>
-        )}
+          </div>}
       </div>
       
       <div className="flex items-end space-x-2 h-32">
-        {(type === 'hours' ? dashboardData.weeklyTrends.hoursData : 
-          type === 'efficiency' ? dashboardData.weeklyTrends.efficiencyTrend.map((val, i) => ({ day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i], value: val })) :
-          dashboardData.weeklyTrends.costTrend.map((val, i) => ({ day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i], value: val }))
-        ).map((item, index) => (
-          <div key={index} className="flex-1 flex flex-col items-center space-y-1">
-            <div className="w-full flex flex-col items-center justify-end" style={{ height: '100px' }}>
-              {type === 'hours' ? (
-                <>
-                  <div 
-                    className="w-full bg-orange-500 rounded-t"
-                    style={{ height: `${(item.overtime / maxValue) * 80}px` }}
-                    title={`Overtime: ${item.overtime}h`}
-                  ></div>
-                  <div 
-                    className="w-full bg-blue-500 rounded-b"
-                    style={{ height: `${(item.standard / maxValue) * 80}px` }}
-                    title={`Standard: ${item.standard}h`}
-                  ></div>
-                </>
-              ) : (
-                <div 
-                  className={`w-full rounded ${
-                    type === 'efficiency' ? 'bg-green-500' : 'bg-purple-500'
-                  }`}
-                  style={{ height: `${(item.value / maxValue) * 80}px` }}
-                  title={`${type === 'efficiency' ? item.value + '%' : formatCurrency(item.value)}`}
-                ></div>
-              )}
+        {(type === 'hours' ? dashboardData.weeklyTrends.hoursData : type === 'efficiency' ? dashboardData.weeklyTrends.efficiencyTrend.map((val, i) => ({
+        day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i],
+        value: val
+      })) : dashboardData.weeklyTrends.costTrend.map((val, i) => ({
+        day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i],
+        value: val
+      }))).map((item, index) => <div key={index} className="flex-1 flex flex-col items-center space-y-1">
+            <div className="w-full flex flex-col items-center justify-end" style={{
+          height: '100px'
+        }}>
+              {type === 'hours' ? <>
+                  <div className="w-full bg-orange-500 rounded-t" style={{
+              height: `${item.overtime / maxValue * 80}px`
+            }} title={`Overtime: ${item.overtime}h`}></div>
+                  <div className="w-full bg-blue-500 rounded-b" style={{
+              height: `${item.standard / maxValue * 80}px`
+            }} title={`Standard: ${item.standard}h`}></div>
+                </> : <div className={`w-full rounded ${type === 'efficiency' ? 'bg-green-500' : 'bg-purple-500'}`} style={{
+            height: `${item.value / maxValue * 80}px`
+          }} title={`${type === 'efficiency' ? item.value + '%' : formatCurrency(item.value)}`}></div>}
             </div>
             <span className="text-xs text-gray-600">{item.day || item.day}</span>
-          </div>
-        ))}
+          </div>)}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default function AltaProManagerDashboard() {
   const [submissions, setSubmissions] = useState(dashboardData.recentSubmissions);
   const [selectedSubmissions, setSelectedSubmissions] = useState(new Set());
@@ -602,8 +536,7 @@ export default function AltaProManagerDashboard() {
   const [activeTab, setActiveTab] = useState('approvals');
   const [sortBy, setSortBy] = useState('project');
   const [expandedProjects, setExpandedProjects] = useState(new Set(['21-0066', '24-0052', '22-0006']));
-
-  const handleToggleProject = useCallback((projectCode) => {
+  const handleToggleProject = useCallback(projectCode => {
     setExpandedProjects(prev => {
       const newSet = new Set(prev);
       if (newSet.has(projectCode)) {
@@ -614,8 +547,7 @@ export default function AltaProManagerDashboard() {
       return newSet;
     });
   }, []);
-
-  const handleSelectSubmission = useCallback((submissionId) => {
+  const handleSelectSubmission = useCallback(submissionId => {
     setSelectedSubmissions(prev => {
       const newSet = new Set(prev);
       if (newSet.has(submissionId)) {
@@ -626,12 +558,10 @@ export default function AltaProManagerDashboard() {
       return newSet;
     });
   }, []);
-
-  const handleSelectAllInProject = useCallback((projectCode) => {
+  const handleSelectAllInProject = useCallback(projectCode => {
     const projectSubmissions = groupedSubmissions[projectCode]?.submissions || [];
     const projectSubmissionIds = projectSubmissions.map(sub => sub.id);
     const allSelected = projectSubmissionIds.every(id => selectedSubmissions.has(id));
-    
     setSelectedSubmissions(prev => {
       const newSet = new Set(prev);
       if (allSelected) {
@@ -645,59 +575,44 @@ export default function AltaProManagerDashboard() {
 
   // Fixed: Added missing handleSelectAll function
   const handleSelectAll = useCallback(() => {
-    const pendingIds = submissions
-      .filter(s => s.status === 'Pending')
-      .map(s => s.id);
-    
+    const pendingIds = submissions.filter(s => s.status === 'Pending').map(s => s.id);
     if (selectedSubmissions.size === pendingIds.length) {
       setSelectedSubmissions(new Set());
     } else {
       setSelectedSubmissions(new Set(pendingIds));
     }
   }, [submissions, selectedSubmissions.size]);
-
   const handleBulkApprove = useCallback(async () => {
     if (selectedSubmissions.size === 0) return;
-    
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setSubmissions(prev => prev.map(sub => 
-      selectedSubmissions.has(sub.id)
-        ? { ...sub, status: 'Approved' }
-        : sub
-    ));
-    
+    setSubmissions(prev => prev.map(sub => selectedSubmissions.has(sub.id) ? {
+      ...sub,
+      status: 'Approved'
+    } : sub));
     setSelectedSubmissions(new Set());
     setIsLoading(false);
   }, [selectedSubmissions]);
-
-  const handleApprove = useCallback(async (submissionId) => {
+  const handleApprove = useCallback(async submissionId => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setSubmissions(prev => prev.map(sub => 
-      sub.id === submissionId 
-        ? { ...sub, status: 'Approved' }
-        : sub
-    ));
+    setSubmissions(prev => prev.map(sub => sub.id === submissionId ? {
+      ...sub,
+      status: 'Approved'
+    } : sub));
     setIsLoading(false);
   }, []);
-
-  const handleReject = useCallback(async (submissionId) => {
+  const handleReject = useCallback(async submissionId => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setSubmissions(prev => prev.map(sub => 
-      sub.id === submissionId 
-        ? { ...sub, status: 'Rejected' }
-        : sub
-    ));
+    setSubmissions(prev => prev.map(sub => sub.id === submissionId ? {
+      ...sub,
+      status: 'Rejected'
+    } : sub));
     setIsLoading(false);
   }, []);
-
   const pendingSubmissions = submissions.filter(s => s.status === 'Pending');
-  
+
   // Group submissions by project
   const groupedSubmissions = useMemo(() => {
     const pending = submissions.filter(s => s.status === 'Pending');
@@ -714,9 +629,7 @@ export default function AltaProManagerDashboard() {
       return groups;
     }, {});
   }, [submissions]);
-
-  return (
-    <div className="min-h-screen bg-gray-50 p-4">
+  return <div className="min-h-screen bg-gray-50 p-4 px-0 py-0">
       <div className="max-w-7xl mx-auto space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -811,33 +724,20 @@ export default function AltaProManagerDashboard() {
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-gray-600">Grouped by:</span>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="cursor-default"
-                      >
+                      <Button variant="default" size="sm" className="cursor-default">
                         <Building className="w-4 h-4 mr-1" />
                         Project
                       </Button>
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={selectedSubmissions.size === pendingSubmissions.length && pendingSubmissions.length > 0}
-                        onChange={handleSelectAll}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                      />
+                      <input type="checkbox" checked={selectedSubmissions.size === pendingSubmissions.length && pendingSubmissions.length > 0} onChange={handleSelectAll} className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
                       <span className="text-sm text-gray-600">
                         Select All ({selectedSubmissions.size}/{pendingSubmissions.length})
                       </span>
                     </div>
                     
-                    <Button
-                      onClick={handleBulkApprove}
-                      disabled={selectedSubmissions.size === 0 || isLoading}
-                      className="bg-green-600 hover:bg-green-700"
-                    >
+                    <Button onClick={handleBulkApprove} disabled={selectedSubmissions.size === 0 || isLoading} className="bg-green-600 hover:bg-green-700">
                       <CheckCircle2 className="w-4 h-4 mr-1" />
                       Approve Selected ({selectedSubmissions.size})
                     </Button>
@@ -847,9 +747,8 @@ export default function AltaProManagerDashboard() {
               
               <CardContent className="space-y-6">
                 {Object.entries(groupedSubmissions).map(([projectCode, group]) => {
-                  const isExpanded = expandedProjects.has(projectCode);
-                  return (
-                    <div key={projectCode} className="space-y-4">
+                const isExpanded = expandedProjects.has(projectCode);
+                return <div key={projectCode} className="space-y-4">
                       <div className="border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-r-lg">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
@@ -864,60 +763,32 @@ export default function AltaProManagerDashboard() {
                               {group.submissions.reduce((sum, sub) => sum + sub.totalHours, 0)}h total
                             </Badge>
                             
-                            <ProjectSelectButton 
-                              group={group}
-                              projectCode={projectCode}
-                              selectedSubmissions={selectedSubmissions}
-                              onSelectAllInProject={handleSelectAllInProject}
-                            />
+                            <ProjectSelectButton group={group} projectCode={projectCode} selectedSubmissions={selectedSubmissions} onSelectAllInProject={handleSelectAllInProject} />
                             
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleToggleProject(projectCode)}
-                              className="text-blue-700 hover:bg-blue-100"
-                            >
-                              {isExpanded ? (
-                                <>
+                            <Button variant="ghost" size="sm" onClick={() => handleToggleProject(projectCode)} className="text-blue-700 hover:bg-blue-100">
+                              {isExpanded ? <>
                                   <ChevronUp className="w-4 h-4 mr-1" />
                                   Collapse
-                                </>
-                              ) : (
-                                <>
+                                </> : <>
                                   <ChevronDown className="w-4 h-4 mr-1" />
                                   Expand
-                                </>
-                              )}
+                                </>}
                             </Button>
                           </div>
                         </div>
                       </div>
                       
-                      {isExpanded && (
-                        <div className="grid gap-4 pl-4">
-                          {group.submissions.map(submission => (
-                            <SubmissionCard
-                              key={submission.id}
-                              submission={submission}
-                              onApprove={handleApprove}
-                              onReject={handleReject}
-                              isSelected={selectedSubmissions.has(submission.id)}
-                              onSelect={() => handleSelectSubmission(submission.id)}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                      {isExpanded && <div className="grid gap-4 pl-4">
+                          {group.submissions.map(submission => <SubmissionCard key={submission.id} submission={submission} onApprove={handleApprove} onReject={handleReject} isSelected={selectedSubmissions.has(submission.id)} onSelect={() => handleSelectSubmission(submission.id)} />)}
+                        </div>}
+                    </div>;
+              })}
                 
-                {pendingSubmissions.length === 0 && (
-                  <div className="text-center py-12">
+                {pendingSubmissions.length === 0 && <div className="text-center py-12">
                     <CheckCircle2 className="w-16 h-16 mx-auto text-green-500 mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">All Caught Up!</h3>
                     <p className="text-gray-600">No pending timesheet submissions to review.</p>
-                  </div>
-                )}
+                  </div>}
               </CardContent>
             </Card>
           </TabsContent>
@@ -956,9 +827,7 @@ export default function AltaProManagerDashboard() {
 
           <TabsContent value="projects" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {dashboardData.projectMetrics.map(project => (
-                <ProjectMetricsCard key={project.code} project={project} />
-              ))}
+              {dashboardData.projectMetrics.map(project => <ProjectMetricsCard key={project.code} project={project} />)}
             </div>
           </TabsContent>
 
@@ -1023,17 +892,14 @@ export default function AltaProManagerDashboard() {
         </Tabs>
 
         {/* Loading Overlay */}
-        {isLoading && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        {isLoading && <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg">
               <div className="flex items-center space-x-3">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                 <span className="text-lg font-medium">Processing approval...</span>
               </div>
             </div>
-          </div>
-        )}
+          </div>}
       </div>
-    </div>
-  );
+    </div>;
 }
