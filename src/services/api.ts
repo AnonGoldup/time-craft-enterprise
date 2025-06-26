@@ -1,108 +1,77 @@
 import axios from 'axios';
 
-// API base configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+// Use relative path to go through nginx proxy
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
-const apiClient = axios.create({
+const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
-// Request interceptor to add auth token
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('authToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// Add auth token to requests
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken'); // Use authToken to match AuthContext
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-// Response interceptor for error handling
-apiClient.interceptors.response.use(
+// Handle auth errors
+api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      // Clear token and redirect to login
       localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
       window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
 
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  meta?: {
-    timestamp: string;
-    version: string;
-  };
-  pagination?: {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
-  };
-}
-
-export interface ApiError {
-  success: false;
-  error: {
-    code: string;
-    message: string;
-    field?: string;
-    details?: any[];
-  };
-}
-
-// Employee interfaces matching SQL schema
-export interface Employee {
-  employeeID: string;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  email: string;
-  class: string;
-  department: string;
-  unionID: number;
-  activeEmp: boolean;
-  createdDate: string;
-  modifiedDate: string;
-}
-
-// Project interfaces
+// Type definitions
 export interface Project {
-  projectID: number;
-  projectCode: string;
-  projectDescription: string;
-  status: string;
-  isActive: boolean;
-  createdDate: string;
-  modifiedDate: string;
+  ProjectID: number;
+  ProjectCode: string;
+  ProjectDescription: string;
+  IsActive: boolean;
+  CreatedDate: string;
+  ModifiedDate?: string;
 }
 
-// Cost Code interfaces
-export interface CostCode {
-  costCodeID: number;
-  costCode: string;
-  costCodeForSAGE: string;
-  description: string;
-  isActive: boolean;
-}
-
-// Project Extra interfaces
 export interface ProjectExtra {
-  extraID: number;
-  projectID: number;
-  extraValue: string;
-  description: string;
-  isActive: boolean;
+  ExtraID: number;
+  ProjectID: number;
+  ExtraValue: string;
+  Description?: string;
+  IsActive: boolean;
 }
 
-// Timesheet Entry interfaces
+export interface CostCode {
+  CostCodeID: number;
+  CostCode: string;
+  Description?: string;
+  IsActive: boolean;
+}
+
+export interface Employee {
+  EmployeeID: string;
+  FullName: string;
+  Email?: string;
+  Class: string;
+  Department?: string;
+  ActiveEmp: boolean;
+}
+
 export interface TimesheetEntry {
+<<<<<<< HEAD
   entryID: number;
   employeeID: string;
   dateWorked: string;
@@ -170,9 +139,44 @@ export interface TimesheetTemplate {
   isActive: boolean;
   createdDate: string;
 }
+=======
+  EntryID?: number;
+  EmployeeID: string;
+  DateWorked: string;
+  ProjectCode: string;
+  ExtraValue?: string;
+  CostCodeID: number;
+  PayID: number;
+  Hours: number;
+  Notes?: string;
+  Status: string;
+  CreatedDate?: string;
+  ModifiedDate?: string;
+}
+
+// API service objects
+export const projectApi = {
+  getAll: () => api.get<{ success: boolean; data: Project[] }>('/projects'),
+  getById: (id: number) => api.get<{ success: boolean; data: Project }>(`/projects/${id}`),
+  getByCode: (code: string) => api.get<{ success: boolean; data: Project }>(`/projects/code/${code}`),
+  getExtras: (projectCode: string) => api.get<{ success: boolean; data: ProjectExtra[] }>(`/projects/${projectCode}/extras`),
+  getCostCodes: (projectCode: string, extraValue?: string) => {
+    const params = extraValue ? { extraValue } : {};
+    return api.get<{ success: boolean; data: CostCode[] }>(`/projects/${projectCode}/costcodes`, { params });
+  }
+};
+
+export const employeeApi = {
+  getAll: () => api.get<{ success: boolean; data: Employee[] }>('/employees'),
+  getById: (id: string) => api.get<{ success: boolean; data: Employee }>(`/employees/${id}`),
+  getTimesheets: (id: string, params?: any) => 
+    api.get<{ success: boolean; data: TimesheetEntry[] }>(`/employees/${id}/timesheets`, { params })
+};
+>>>>>>> f0a0cdd (feat: Complete Phase 1 - Frontend UI Implementation)
 
 // Enhanced timesheet API with comprehensive features
 export const timesheetApi = {
+<<<<<<< HEAD
   getEntries: (employeeId: string, weekEnding?: string) => 
     apiClient.get<ApiResponse<TimesheetEntry[]>>(`/employees/${employeeId}/timesheets${weekEnding ? `?week=${weekEnding}` : ''}`),
   
@@ -287,6 +291,25 @@ export const projectApi = {
 export const costCodeApi = {
   getAll: () => apiClient.get<ApiResponse<CostCode[]>>('/costcodes'),
   getActive: () => apiClient.get<ApiResponse<CostCode[]>>('/costcodes/active'),
+=======
+  getAll: (params?: any) => api.get<{ success: boolean; data: TimesheetEntry[] }>('/timesheets', { params }),
+  getById: (id: number) => api.get<{ success: boolean; data: TimesheetEntry }>(`/timesheets/${id}`),
+  create: (data: any) => api.post<{ success: boolean; data: TimesheetEntry }>('/timesheets', data),
+  update: (id: number, data: Partial<TimesheetEntry>) => 
+    api.put<{ success: boolean; data: TimesheetEntry }>(`/timesheets/${id}`, data),
+  delete: (id: number) => api.delete<{ success: boolean }>(`/timesheets/${id}`),
+  submit: (data: { employeeId: string; weekEndingDate: string }) => 
+    api.post<{ success: boolean; data: any }>('/timesheets/submit', data),
+  getWeeklySummary: (params: { employeeId: string; weekEndingDate: string }) =>
+    api.get<{ success: boolean; data: any }>('/timesheets/summary', { params })
 };
 
-export default apiClient;
+export const reportApi = {
+  getWeeklySummary: (params?: any) => api.get('/reports/weekly-summary', { params }),
+  getProjectHours: (params?: any) => api.get('/reports/project-hours', { params }),
+  getEmployeeHours: (params?: any) => api.get('/reports/employee-hours', { params }),
+  getOvertime: (params?: any) => api.get('/reports/overtime', { params })
+>>>>>>> f0a0cdd (feat: Complete Phase 1 - Frontend UI Implementation)
+};
+
+export default api;

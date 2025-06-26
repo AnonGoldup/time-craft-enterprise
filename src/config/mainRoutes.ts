@@ -5,7 +5,14 @@ import type { RouteConfig } from './types';
 // Main pages
 import Index from '@/pages/Index';
 import Log from '@/pages/Log';
+<<<<<<< HEAD
 import Timesheet from '@/pages/Timesheet';
+=======
+import TimeEntryStandard from '@/pages/TimeEntryStandard';
+import TimeEntryTimeInOut from '@/pages/TimeEntryTimeInOut';
+import EnhancedTimeEntry from '@/pages/EnhancedTimeEntry';
+import ModernTimeEntry from '@/pages/ModernTimeEntry';
+>>>>>>> f0a0cdd (feat: Complete Phase 1 - Frontend UI Implementation)
 import ManagerApproval from '@/pages/ManagerApproval';
 import DailyReporting from '@/pages/DailyReporting';
 import EditDailyReport from '@/pages/EditDailyReport';
@@ -33,6 +40,16 @@ export const mainRoutes: RouteConfig[] = [
     path: '/timesheet',
     component: Timesheet,
     requiredRoles: [UserRole.EMPLOYEE, UserRole.ADMIN]
+  },
+  {
+    path: '/time-entry/enhanced',
+    component: EnhancedTimeEntry,
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
+  },
+  {
+    path: '/time-entry/modern',
+    component: ModernTimeEntry,
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN]
   },
   {
     path: '/manager-approval',

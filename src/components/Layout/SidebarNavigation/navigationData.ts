@@ -17,7 +17,29 @@ export const timesheetModule: MenuItem[] = [
     path: '/timesheet',
     label: 'Timesheet',
     icon: Clock,
+<<<<<<< HEAD
     roles: [UserRole.EMPLOYEE, UserRole.ADMIN]
+=======
+    roles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN],
+    submenu: [
+      {
+        label: 'Standard Hours',
+        path: '/time-entry/standard'
+      },
+      {
+        label: 'Time In/Out',
+        path: '/time-entry/time-in-out'
+      },
+      {
+        label: 'Enhanced Entry',
+        path: '/time-entry/enhanced'
+      },
+      {
+        label: 'Modern Entry',
+        path: '/time-entry/modern'
+      }
+    ]
+>>>>>>> f0a0cdd (feat: Complete Phase 1 - Frontend UI Implementation)
   },
   {
     path: '/log',

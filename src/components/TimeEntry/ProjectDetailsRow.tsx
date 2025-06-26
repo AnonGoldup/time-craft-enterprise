@@ -32,6 +32,36 @@ const ProjectDetailsRow: React.FC<ProjectDetailsRowProps> = ({
   useCostCodeInput = false,
   useMultiDateSelection = false
 }) => {
+<<<<<<< HEAD
+=======
+  const { projects, employees, projectExtras, costCodes } = useProjectData(selectedProject, selectedExtra);
+  const loadProjects = async () => {
+    try {
+      setLoading(true);
+      const response = await projectApi.getAll(); // Use getAll instead of getActive
+      // Check if response.data is an array or has a data property
+      const projectsData = Array.isArray(response.data) 
+        ? response.data 
+        : (response.data.data || []);
+      setProjects(projectsData.filter(p => p.IsActive || p.isActive));
+    } catch (error) {
+      console.error('Failed to load projects:', error);
+      // Keep the fallback data
+      setProjects([
+        { ProjectID: 1, ProjectCode: "21-0075", ProjectDescription: "Kamloops RCMP IPD", Status: "Active", IsActive: true },
+        { ProjectID: 2, ProjectCode: "22-0003", ProjectDescription: "Highland Building Maintenance", Status: "Active", IsActive: true }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleProjectChange = (value: string) => {
+    setSelectedProject(value);
+    setSelectedExtra('');
+    setSelectedCostCode('');
+  };
+
+>>>>>>> f0a0cdd (feat: Complete Phase 1 - Frontend UI Implementation)
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div>

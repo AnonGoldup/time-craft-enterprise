@@ -11,6 +11,7 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { Suspense, useEffect } from "react";
 import { LoadingState } from "@/components/ui/loading";
 import { AppRoutes } from "@/components/App/AppRoutes";
+import MultiSelectTimeEntry from '@/components/TimeEntry/MultiSelectTimeEntry';
 
 const queryClient = new QueryClient({
   defaultOptions: {

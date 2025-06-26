@@ -1,6 +1,5 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Employee } from '../services/api';
+import api from '../services/api';
 
 export enum UserRole {
   EMPLOYEE = 'employee',
@@ -19,7 +18,7 @@ export interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (employeeId: string, email: string) => Promise<void>;
   logout: () => void;
   hasRole: (roles: string[]) => boolean;
   isManager: () => boolean;
@@ -47,76 +46,87 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Check for existing token on mount
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.exp * 1000 > Date.now()) {
-          setUser({
-            userId: payload.userId,
-            employeeId: payload.employeeId,
-            email: payload.email,
-            fullName: payload.fullName,
-            role: payload.role,
-            department: payload.department,
-            isActive: payload.isActive
-          });
-        } else {
+    const checkAuth = async () => {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        try {
+          // Verify token with backend
+          const response = await api.get('/auth/me');
+          if (response.data.success && response.data.user) {
+            setUser(response.data.user as User);
+          } else {
+            localStorage.removeItem('authToken');
+          }
+        } catch (error) {
+          console.error('Auth check failed:', error);
           localStorage.removeItem('authToken');
         }
-      } catch (error) {
-        localStorage.removeItem('authToken');
       }
-    }
-    setLoading(false);
+      setLoading(false);
+    };
+
+    checkAuth();
   }, []);
 
-  const login = async (email: string, password: string): Promise<void> => {
+  const login = async (employeeId: string, passwordOrEmail: string): Promise<void> => {
     try {
       setLoading(true);
       
-      // Mock authentication - replace with actual API call
-      if (email === 'john.doe@company.com' && password === 'password') {
-        const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiZW1wbG95ZWVJZCI6IkpEMDAxIiwiZW1haWwiOiJqb2huLmRvZUBjb21wYW55LmNvbSIsImZ1bGxOYW1lIjoiSm9obiBEb2UiLCJyb2xlIjoiZW1wbG95ZWUiLCJkZXBhcnRtZW50IjoiRWxlY3RyaWNhbCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NDA5OTUyMDAsImV4cCI6MjY0MDk5ODgwMH0.mockSignature';
-        
-        localStorage.setItem('authToken', mockToken);
-        
-        setUser({
-          userId: '1',
-          employeeId: 'JD001',
-          email: 'john.doe@company.com',
-          fullName: 'John Doe',
-          role: UserRole.EMPLOYEE,
-          department: 'Electrical',
-          isActive: true
-        });
-      } else if (email === 'admin@company.com' && password === 'password') {
-        const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzIiwiZW1wbG95ZWVJZCI6IkFEMDAxIiwiZW1haWwiOiJhZG1pbkBjb21wYW55LmNvbSIsImZ1bGxOYW1lIjoiQWRtaW4gVXNlciIsInJvbGUiOiJhZG1pbiIsImRlcGFydG1lbnQiOiJBZG1pbmlzdHJhdGlvbiIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NDA5OTUyMDAsImV4cCI6MjY0MDk5ODgwMH0.mockSignature';
-        
-        localStorage.setItem('authToken', mockToken);
-        
-        setUser({
-          userId: '3',
-          employeeId: 'AD001',
-          email: 'admin@company.com',
-          fullName: 'Admin User',
-          role: UserRole.ADMIN,
-          department: 'Administration',
-          isActive: true
-        });
-      } else {
-        throw new Error('Invalid credentials');
+      // Check if it's an email (for first-time login) or password
+      const isEmail = passwordOrEmail.includes('@');
+      
+      const payload = isEmail ? {
+        employeeId,
+        email: passwordOrEmail
+      } : {
+        employeeId,
+        password: passwordOrEmail
+      };
+      
+      const response = await api.post('/auth/login', payload);
+
+      if (response.data.needsPasswordSetup) {
+        // Throw error with setup token to be handled by Login component
+        const error = new Error('Password setup required') as any;
+        error.needsPasswordSetup = true;
+        error.setupToken = response.data.setupToken;
+        throw error;
       }
-    } catch (error) {
-      throw error;
+
+      if (response.data.success) {
+        const { token, user } = response.data;
+        
+        // Store token
+        localStorage.setItem('authToken', token);
+        
+        // Set user state
+        setUser(user as User);
+      } else {
+        throw new Error('Login failed');
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      // If it's a password setup error, re-throw it
+      if (error.needsPasswordSetup) {
+        throw error;
+      }
+      throw new Error(error.response?.data?.error?.message || 'Invalid credentials');
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    setUser(null);
+  const logout = async () => {
+    try {
+      // Call logout endpoint (optional, for logging purposes)
+      await api.post('/auth/logout').catch(() => {});
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      localStorage.removeItem('authToken');
+      setUser(null);
+      window.location.href = '/login';
+    }
   };
 
   const hasRole = (roles: string[]): boolean => {
@@ -125,7 +135,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const isManager = (): boolean => {
-    return hasRole(['admin']);
+    return hasRole([UserRole.MANAGER, UserRole.ADMIN]);
   };
 
   const value = {

@@ -4,10 +4,13 @@ import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { AppLayout } from '@/components/Layout/AppLayoutEnhanced';
 import { mainRoutes, settingsRoutes, reportRoutes, catchAllRoute } from '@/config/routes';
+import SetupPassword from '@/pages/SetupPassword';
 
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
+      {/* Public Routes - No authentication required */}
+      <Route path="/setup-password" element={<SetupPassword />} />
       {/* Main Routes */}
       {mainRoutes.map((route) => (
         <Route
