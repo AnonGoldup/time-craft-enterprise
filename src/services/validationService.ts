@@ -1,4 +1,3 @@
-
 import { timesheetApi } from './api';
 
 export interface DuplicateCheckParams {
@@ -20,14 +19,14 @@ export interface DuplicateCheckResult {
 
 export interface ValidationResult {
   readonly isValid: boolean;
-  readonly errors: readonly string[];
+  readonly errors: string[];
 }
 
 export interface BatchValidationResult {
   readonly isValid: boolean;
-  readonly entryErrors: readonly Array<{
+  readonly entryErrors: Array<{
     readonly index: number;
-    readonly errors: readonly string[];
+    readonly errors: string[];
   }>;
 }
 
@@ -66,10 +65,9 @@ const isValidHourIncrement = (hours: number): boolean => {
 
 const isValidDate = (dateString: string): boolean => {
   const date = new Date(dateString);
-  return !isNaN(date.getTime()) && dateString.match(/^\d{4}-\d{2}-\d{2}$/);
+  return !isNaN(date.getTime()) && Boolean(dateString.match(/^\d{4}-\d{2}-\d{2}$/));
 };
 
-// Check for duplicate timesheet entries
 export const checkDuplicateEntry = async (
   params: DuplicateCheckParams
 ): Promise<DuplicateCheckResult> => {
@@ -184,7 +182,7 @@ export const validateTimesheetEntry = async (entry: TimesheetEntryData): Promise
 
 // Batch validate multiple entries
 export const validateMultipleEntries = async (
-  entries: readonly TimesheetEntryData[]
+  entries: TimesheetEntryData[]
 ): Promise<BatchValidationResult> => {
   try {
     if (!Array.isArray(entries) || entries.length === 0) {
