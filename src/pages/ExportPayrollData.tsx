@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,11 +7,89 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Database, Package, Users, Clock, CheckCircle2, AlertTriangle, Activity, XCircle, Download, BarChart3, PieChart, RefreshCw, Settings, Building, DollarSign, Timer, Zap, Eye, Layers, TrendingUp, AlertCircle, FileSpreadsheet, Send } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import { 
+  Database, 
+  Package, 
+  Users, 
+  Clock, 
+  CheckCircle2, 
+  AlertTriangle, 
+  Activity, 
+  XCircle,
+  Download,
+  BarChart3,
+  PieChart,
+  RefreshCw,
+  Settings,
+  Building,
+  DollarSign,
+  Timer,
+  Zap,
+  Eye,
+  Layers,
+  TrendingUp,
+  AlertCircle,
+  FileSpreadsheet,
+  Send
+} from 'lucide-react';
 
-// Mock data
-const systemStatus = {
+// Types for better type safety
+interface SystemStatus {
+  readonly sql: {
+    readonly connected: boolean;
+    readonly latency: number;
+    readonly server: string;
+    readonly database: string;
+    readonly activeConnections: number;
+    readonly maxConnections: number;
+  };
+  readonly sage: {
+    readonly connected: boolean;
+    readonly latency: number;
+    readonly apiVersion: string;
+    readonly rateLimit: {
+      readonly used: number;
+      readonly limit: number;
+    };
+  };
+}
+
+interface ProjectData {
+  readonly code: string;
+  readonly name: string;
+  readonly employees: number;
+  readonly approved: number;
+  readonly pending: number;
+  readonly rejected: number;
+  readonly hours: number;
+}
+
+interface WeeklyStats {
+  readonly totalEmployees: number;
+  readonly submitted: number;
+  readonly pending: number;
+  readonly notSubmitted: number;
+  readonly regularHours: number;
+  readonly overtimeHours: number;
+  readonly totalEntries: number;
+  readonly estimatedPayroll: number;
+}
+
+interface LateSubmission {
+  readonly id: string;
+  readonly name: string;
+  readonly daysLate: number;
+}
+
+interface SystemAlert {
+  readonly type: 'warning' | 'info' | 'error';
+  readonly message: string;
+}
+
+// Mock data with proper typing
+const systemStatus: SystemStatus = {
   sql: {
     connected: true,
     latency: 23,
@@ -24,78 +102,22 @@ const systemStatus = {
     connected: true,
     latency: 156,
     apiVersion: '2.3.1',
-    rateLimit: {
-      used: 23,
-      limit: 100
-    }
+    rateLimit: { used: 23, limit: 100 }
   }
 };
-const projectData = [{
-  code: '21-0066',
-  name: 'Edmonton EXPO SOLAR IPD',
-  employees: 24,
-  approved: 24,
-  pending: 0,
-  rejected: 0,
-  hours: 968
-}, {
-  code: '22-0006',
-  name: 'AltaPro Service Department',
-  employees: 18,
-  approved: 15,
-  pending: 3,
-  rejected: 0,
-  hours: 704
-}, {
-  code: '24-0052',
-  name: 'Grant MacEwan School',
-  employees: 32,
-  approved: 28,
-  pending: 3,
-  rejected: 1,
-  hours: 1328
-}, {
-  code: '21-0029',
-  name: 'Edmonton EXPO IPD',
-  employees: 15,
-  approved: 15,
-  pending: 0,
-  rejected: 0,
-  hours: 600
-}, {
-  code: '23-0045',
-  name: 'Calgary Tower Retrofit',
-  employees: 22,
-  approved: 18,
-  pending: 4,
-  rejected: 0,
-  hours: 872
-}, {
-  code: '25-0012',
-  name: 'Red Deer Hospital Wing',
-  employees: 45,
-  approved: 45,
-  pending: 0,
-  rejected: 0,
-  hours: 1920
-}, {
-  code: '24-0078',
-  name: 'Lethbridge Solar Farm',
-  employees: 28,
-  approved: 22,
-  pending: 5,
-  rejected: 1,
-  hours: 1096
-}, {
-  code: '22-0089',
-  name: 'Fort Mac Emergency',
-  employees: 12,
-  approved: 8,
-  pending: 4,
-  rejected: 0,
-  hours: 528
-}];
-const weeklyStats = {
+
+const projectData: readonly ProjectData[] = [
+  { code: '21-0066', name: 'Edmonton EXPO SOLAR IPD', employees: 24, approved: 24, pending: 0, rejected: 0, hours: 968 },
+  { code: '22-0006', name: 'AltaPro Service Department', employees: 18, approved: 15, pending: 3, rejected: 0, hours: 704 },
+  { code: '24-0052', name: 'Grant MacEwan School', employees: 32, approved: 28, pending: 3, rejected: 1, hours: 1328 },
+  { code: '21-0029', name: 'Edmonton EXPO IPD', employees: 15, approved: 15, pending: 0, rejected: 0, hours: 600 },
+  { code: '23-0045', name: 'Calgary Tower Retrofit', employees: 22, approved: 18, pending: 4, rejected: 0, hours: 872 },
+  { code: '25-0012', name: 'Red Deer Hospital Wing', employees: 45, approved: 45, pending: 0, rejected: 0, hours: 1920 },
+  { code: '24-0078', name: 'Lethbridge Solar Farm', employees: 28, approved: 22, pending: 5, rejected: 1, hours: 1096 },
+  { code: '22-0089', name: 'Fort Mac Emergency', employees: 12, approved: 8, pending: 4, rejected: 0, hours: 528 }
+] as const;
+
+const weeklyStats: WeeklyStats = {
   totalEmployees: 160,
   submitted: 145,
   pending: 12,
@@ -105,44 +127,51 @@ const weeklyStats = {
   totalEntries: 1205,
   estimatedPayroll: 287543.50
 };
-const lateSubmissions = [{
-  id: 'JSMITH',
-  name: 'John Smith',
-  daysLate: 1
-}, {
-  id: 'MJONES',
-  name: 'Mary Jones',
-  daysLate: 2
-}, {
-  id: 'BWILSON',
-  name: 'Bob Wilson',
-  daysLate: 4
-}];
-export default function AltaProTimesheetDashboard() {
-  const [selectedWeek, setSelectedWeek] = useState('2025-06-21');
-  const [exportFormat, setExportFormat] = useState('sage300');
-  const [isExporting, setIsExporting] = useState(false);
-  const [exportProgress, setExportProgress] = useState(0);
-  const [refreshing, setRefreshing] = useState(false);
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [systemAlerts, setSystemAlerts] = useState([]);
 
-  // Update time every second
+const lateSubmissions: readonly LateSubmission[] = [
+  { id: 'JSMITH', name: 'John Smith', daysLate: 1 },
+  { id: 'MJONES', name: 'Mary Jones', daysLate: 2 },
+  { id: 'BWILSON', name: 'Bob Wilson', daysLate: 4 }
+] as const;
+
+const EXPORT_FORMATS = {
+  SAGE300: 'sage300',
+  SAGE300_CUSTOM: 'sage300custom',
+  EXCEL: 'excel'
+} as const;
+
+type ExportFormat = typeof EXPORT_FORMATS[keyof typeof EXPORT_FORMATS];
+
+export default function AltaProTimesheetDashboard() {
+  const { toast } = useToast();
+  
+  // State with proper typing
+  const [selectedWeek, setSelectedWeek] = useState<string>('2025-06-21');
+  const [exportFormat, setExportFormat] = useState<ExportFormat>(EXPORT_FORMATS.SAGE300);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [exportProgress, setExportProgress] = useState<number>(0);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [currentTime, setCurrentTime] = useState<Date>(new Date());
+  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
+  const [systemAlerts, setSystemAlerts] = useState<readonly SystemAlert[]>([]);
+
+  // Update time every second with cleanup
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // Simulate system alerts
+  // Generate system alerts
   useEffect(() => {
-    const alerts = [];
+    const alerts: SystemAlert[] = [];
+    
     if (lateSubmissions.length > 0) {
       alerts.push({
         type: 'warning',
         message: `${lateSubmissions.length} late submissions require attention`
       });
     }
+    
     const pendingProjects = projectData.filter(p => p.pending > 0).length;
     if (pendingProjects > 0) {
       alerts.push({
@@ -150,166 +179,275 @@ export default function AltaProTimesheetDashboard() {
         message: `${pendingProjects} projects have pending approvals`
       });
     }
+    
     setSystemAlerts(alerts);
   }, []);
-  const handleExport = async () => {
-    setIsExporting(true);
-    setExportProgress(0);
-    const interval = setInterval(() => {
-      setExportProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsExporting(false);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 300);
-  };
-  const handleRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1500);
-  };
+
+  // Memoized calculations
   const submissionRate = useMemo(() => {
-    return (weeklyStats.submitted / weeklyStats.totalEmployees * 100).toFixed(1);
+    return ((weeklyStats.submitted / weeklyStats.totalEmployees) * 100).toFixed(1);
   }, []);
+
   const totalHours = useMemo(() => {
     return projectData.reduce((sum, project) => sum + project.hours, 0);
   }, []);
-  return <div className="min-h-screen bg-gradient-to-br from-grey-100 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-6 bg-gray-100 px-[8px] py-[8px]">
+
+  // Event handlers
+  const handleExport = useCallback(async () => {
+    try {
+      setIsExporting(true);
+      setExportProgress(0);
+
+      // Simulate export progress
+      const interval = setInterval(() => {
+        setExportProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setIsExporting(false);
+            toast({
+              title: "Export Complete",
+              description: `Successfully exported ${weeklyStats.totalEntries} timesheet entries to ${exportFormat.toUpperCase()}.`,
+            });
+            return 100;
+          }
+          return prev + 10;
+        });
+      }, 300);
+    } catch (error) {
+      setIsExporting(false);
+      setExportProgress(0);
+      toast({
+        title: "Export Failed",
+        description: "An error occurred during export. Please try again.",
+        variant: "destructive",
+      });
+    }
+  }, [exportFormat, toast]);
+
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      toast({
+        title: "Data Refreshed",
+        description: "Dashboard data has been updated successfully.",
+      });
+    }, 1500);
+  }, [toast]);
+
+  const handleProjectSelect = useCallback((project: ProjectData) => {
+    setSelectedProject(project);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setSelectedProject(null);
+  }, []);
+
+  // Format preview component
+  const FormatPreview = React.memo(({ format }: { format: ExportFormat }) => {
+    const previews = {
+      [EXPORT_FORMATS.SAGE300]: (
+        <div className="space-y-1">
+          <div className="text-green-700 font-medium">SAGE 300 Standard CSV:</div>
+          <div className="bg-gray-100 p-2 rounded text-xs font-mono">
+            "EMP001","21-0066","","001-040-043",1,1,8.00,,,06212025
+          </div>
+          <div className="text-gray-500 text-xs">
+            Format: "EmployeeID","ProjectCode","Extra","CostCode",UnionID,PayID,Hours,,,MMDDYYYY
+          </div>
+        </div>
+      ),
+      [EXPORT_FORMATS.SAGE300_CUSTOM]: (
+        <div className="space-y-1">
+          <div className="text-blue-700 font-medium">SAGE 300 Custom CSV:</div>
+          <div className="bg-gray-100 p-2 rounded text-xs font-mono">
+            "EMP001","21-0066","","001-040-043",1,1,8.00,"Edmonton EXPO","Direct Labor",06212025
+          </div>
+          <div className="text-gray-500 text-xs">
+            Format: Includes project name and cost code description
+          </div>
+        </div>
+      ),
+      [EXPORT_FORMATS.EXCEL]: (
+        <div className="space-y-1">
+          <div className="text-purple-700 font-medium">Excel Detailed Format:</div>
+          <div className="bg-gray-100 p-2 rounded text-xs">
+            Full spreadsheet with headers and human-readable format
+          </div>
+          <div className="text-gray-500 text-xs">
+            Employee ID | Name | Date | Project | Hours | Type
+          </div>
+        </div>
+      )
+    };
+
+    return previews[format] || null;
+  });
+
+  FormatPreview.displayName = 'FormatPreview';
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-start">
+        <header className="flex justify-between items-start">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white flex items-center">
               <Building className="w-8 h-8 mr-3 text-blue-600" />
-              Export Payroll
+              AltaPro Timesheet System
             </h1>
             <p className="text-gray-600 dark:text-gray-300 mt-2">
-              Timesheet Management & Payroll Export Center
+              Enterprise Timesheet Management & Payroll Export Center
             </p>
             <div className="flex items-center mt-2 text-sm text-gray-500">
               <Clock className="w-4 h-4 mr-1" />
-              {currentTime.toLocaleString()}
+              <time dateTime={currentTime.toISOString()}>
+                {currentTime.toLocaleString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </time>
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
+            <Button 
+              variant="outline" 
+              onClick={handleRefresh} 
+              disabled={refreshing}
+              aria-label="Refresh dashboard data"
+            >
               <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" aria-label="Open settings">
               <Settings className="w-4 h-4 mr-2" />
               Settings
             </Button>
           </div>
-        </div>
+        </header>
 
         {/* System Alerts */}
-        {systemAlerts.length > 0 && <div className="space-y-2">
-            {systemAlerts.map((alert, index) => <Alert key={index} variant={alert.type === 'warning' ? 'destructive' : 'default'}>
-                <AlertTriangle className="w-4 h-4" />
-                <AlertDescription>{alert.message}</AlertDescription>
-              </Alert>)}
-          </div>}
+        {systemAlerts.length > 0 && (
+          <section aria-labelledby="alerts-heading">
+            <h2 id="alerts-heading" className="sr-only">System Alerts</h2>
+            <div className="space-y-2">
+              {systemAlerts.map((alert, index) => (
+                <Alert key={index} variant={alert.type === 'warning' ? 'destructive' : 'default'}>
+                  <AlertTriangle className="w-4 h-4" />
+                  <AlertDescription>{alert.message}</AlertDescription>
+                </Alert>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* System Status Cards */}
-        <div className="grid grid-cols-3 gap-4">
-          {/* SQL Database Status */}
-          <Card className="border-l-4 border-l-green-500">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center">
-                <Database className="w-5 h-5 mr-2 text-green-600" />
-                SQL Database
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Status:</span>
-                  <Badge variant="default" className="bg-green-500">
-                    <Activity className="w-3 h-3 mr-1" />
-                    Connected
-                  </Badge>
+        <section aria-labelledby="status-heading">
+          <h2 id="status-heading" className="sr-only">System Status</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="border-l-4 border-l-green-500">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center">
+                  <Database className="w-5 h-5 mr-2 text-green-600" />
+                  SQL Database
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Status:</span>
+                    <Badge variant="default" className="bg-green-500">
+                      <Activity className="w-3 h-3 mr-1" />
+                      Connected
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Latency:</span>
+                    <span className="text-sm font-medium">{systemStatus.sql.latency}ms</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Connections:</span>
+                    <span className="text-sm font-medium">
+                      {systemStatus.sql.activeConnections}/{systemStatus.sql.maxConnections}
+                    </span>
+                  </div>
+                  <Progress 
+                    value={(systemStatus.sql.activeConnections / systemStatus.sql.maxConnections) * 100} 
+                    className="h-2 mt-2"
+                    aria-label={`Database connection usage: ${systemStatus.sql.activeConnections} of ${systemStatus.sql.maxConnections}`}
+                  />
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Latency:</span>
-                  <span className="text-sm font-medium">{systemStatus.sql.latency}ms</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Connections:</span>
-                  <span className="text-sm font-medium">
-                    {systemStatus.sql.activeConnections}/{systemStatus.sql.maxConnections}
-                  </span>
-                </div>
-                <Progress value={systemStatus.sql.activeConnections / systemStatus.sql.maxConnections * 100} className="h-2 mt-2" />
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* SAGE API Status */}
-          <Card className="border-l-4 border-l-blue-500">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center">
-                <Package className="w-5 h-5 mr-2 text-blue-600" />
-                SAGE 300 API
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Status:</span>
-                  <Badge variant="default" className="bg-blue-500">
-                    <Zap className="w-3 h-3 mr-1" />
-                    Connected
-                  </Badge>
+            {/* SAGE API Status */}
+            <Card className="border-l-4 border-l-blue-500">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center">
+                  <Package className="w-5 h-5 mr-2 text-blue-600" />
+                  SAGE 300 API
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Status:</span>
+                    <Badge variant="default" className="bg-blue-500">
+                      <Zap className="w-3 h-3 mr-1" />
+                      Connected
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Version:</span>
+                    <span className="text-sm font-medium">v{systemStatus.sage.apiVersion}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Rate Limit:</span>
+                    <span className="text-sm font-medium">
+                      {systemStatus.sage.rateLimit.used}/{systemStatus.sage.rateLimit.limit}
+                    </span>
+                  </div>
+                  <Progress value={systemStatus.sage.rateLimit.used / systemStatus.sage.rateLimit.limit * 100} className="h-2 mt-2" />
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Version:</span>
-                  <span className="text-sm font-medium">v{systemStatus.sage.apiVersion}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Rate Limit:</span>
-                  <span className="text-sm font-medium">
-                    {systemStatus.sage.rateLimit.used}/{systemStatus.sage.rateLimit.limit}
-                  </span>
-                </div>
-                <Progress value={systemStatus.sage.rateLimit.used / systemStatus.sage.rateLimit.limit * 100} className="h-2 mt-2" />
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Weekly Summary */}
-          <Card className="border-l-4 border-l-purple-500">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center">
-                <PieChart className="w-5 h-5 mr-2 text-purple-600" />
-                Weekly Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Submitted:</span>
-                  <span className="text-sm font-medium text-green-600">
-                    {weeklyStats.submitted}/{weeklyStats.totalEmployees}
-                  </span>
+            {/* Weekly Summary */}
+            <Card className="border-l-4 border-l-purple-500">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center">
+                  <PieChart className="w-5 h-5 mr-2 text-purple-600" />
+                  Weekly Summary
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Submitted:</span>
+                    <span className="text-sm font-medium text-green-600">
+                      {weeklyStats.submitted}/{weeklyStats.totalEmployees}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Completion:</span>
+                    <span className="text-sm font-medium">{submissionRate}%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Total Hours:</span>
+                    <span className="text-sm font-medium">
+                      {(weeklyStats.regularHours + weeklyStats.overtimeHours).toLocaleString()}
+                    </span>
+                  </div>
+                  <Progress value={parseFloat(submissionRate)} className="h-2 mt-2" />
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Completion:</span>
-                  <span className="text-sm font-medium">{submissionRate}%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Total Hours:</span>
-                  <span className="text-sm font-medium">
-                    {(weeklyStats.regularHours + weeklyStats.overtimeHours).toLocaleString()}
-                  </span>
-                </div>
-                <Progress value={parseFloat(submissionRate)} className="h-2 mt-2" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="projects" className="space-y-6">
@@ -398,7 +536,7 @@ export default function AltaProTimesheetDashboard() {
             </Card>
           </TabsContent>
 
-          {/* Export Tab */}
+          {/* Export Tab - Enhanced */}
           <TabsContent value="export">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
@@ -410,9 +548,11 @@ export default function AltaProTimesheetDashboard() {
                   <CardContent className="space-y-6">
                     <div className="space-y-4">
                       <div>
-                        <label className="text-sm font-medium">Week Ending Date</label>
+                        <label htmlFor="week-select" className="text-sm font-medium block mb-2">
+                          Week Ending Date
+                        </label>
                         <Select value={selectedWeek} onValueChange={setSelectedWeek}>
-                          <SelectTrigger>
+                          <SelectTrigger id="week-select">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -424,25 +564,27 @@ export default function AltaProTimesheetDashboard() {
                       </div>
                       
                       <div>
-                        <label className="text-sm font-medium">Export Format</label>
-                        <Select value={exportFormat} onValueChange={value => setExportFormat(value)}>
-                          <SelectTrigger>
+                        <label htmlFor="format-select" className="text-sm font-medium block mb-2">
+                          Export Format
+                        </label>
+                        <Select value={exportFormat} onValueChange={(value: ExportFormat) => setExportFormat(value)}>
+                          <SelectTrigger id="format-select">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="sage300">
+                            <SelectItem value={EXPORT_FORMATS.SAGE300}>
                               <div className="flex flex-col">
                                 <span className="font-medium">SAGE 300 CSV Format</span>
                                 <span className="text-xs text-gray-500">Standard payroll import format</span>
                               </div>
                             </SelectItem>
-                            <SelectItem value="sage300custom">
+                            <SelectItem value={EXPORT_FORMATS.SAGE300_CUSTOM}>
                               <div className="flex flex-col">
                                 <span className="font-medium">SAGE 300 CSV (Custom)</span>
                                 <span className="text-xs text-gray-500">With additional project fields</span>
                               </div>
                             </SelectItem>
-                            <SelectItem value="excel">
+                            <SelectItem value={EXPORT_FORMATS.EXCEL}>
                               <div className="flex flex-col">
                                 <span className="font-medium">Excel Detailed Format</span>
                                 <span className="text-xs text-gray-500">Human-readable with all columns</span>
@@ -451,131 +593,104 @@ export default function AltaProTimesheetDashboard() {
                           </SelectContent>
                         </Select>
                         
-                        {/* Format Preview */}
                         <div className="mt-3 p-3 bg-gray-50 rounded border">
                           <div className="text-xs font-medium text-gray-700 mb-2">Format Preview:</div>
-                          <div className="text-xs font-mono text-gray-600">
-                            {exportFormat === 'sage300' && <div className="space-y-1">
-                                <div className="text-green-700 font-medium">SAGE 300 Standard CSV:</div>
-                                <div>"EMP001","21-0066","","001-040-043",1,1,8.00,,,06212025</div>
-                                <div className="text-gray-500 text-xs mt-1">
-                                  Format: "EmployeeID","ProjectCode","Extra","CostCode",UnionID,PayID,Hours,,,MMDDYYYY
-                                </div>
-                                <div className="text-gray-500 text-xs">
-                                  Note: Extra field is blank when "Default" is selected
-                                </div>
-                              </div>}
-                            {exportFormat === 'sage300custom' && <div className="space-y-1">
-                                <div className="text-blue-700 font-medium">SAGE 300 Custom CSV:</div>
-                                <div>"EMP001","21-0066","","001-040-043",1,1,8.00,"Edmonton EXPO","Direct Labor",06212025</div>
-                                <div className="text-gray-500 text-xs mt-1">
-                                  Format: "EmployeeID","ProjectCode","Extra","CostCode",UnionID,PayID,Hours,"ProjectName","CostDesc",MMDDYYYY
-                                </div>
-                                <div className="text-gray-500 text-xs">
-                                  Note: Extra field is blank when "Default" is selected
-                                </div>
-                              </div>}
-                            {exportFormat === 'excel' && <div className="space-y-1">
-                                <div className="text-purple-700 font-medium">Excel Detailed Format:</div>
-                                <div className="grid grid-cols-1 gap-1">
-                                  <div>Employee ID | Name | Date | Project | Description | Cost Code | Hours | Type</div>
-                                  <div>EMP001 | John Smith | 2025-06-21 | 21-0066 | Edmonton EXPO | 001-040-043 | 8.00 | Regular</div>
-                                </div>
-                                <div className="text-gray-500 text-xs mt-1">
-                                  Full spreadsheet with headers and human-readable format
-                                </div>
-                                <div className="text-gray-500 text-xs">
-                                  Note: Extra column shows "(Default)" when no specific extra is selected
-                                </div>
-                              </div>}
-                          </div>
+                          <FormatPreview format={exportFormat} />
                         </div>
                       </div>
                     </div>
                     
                     <div className="flex space-x-3">
-                      <Button variant="outline" className="flex-1">
+                      <Button variant="outline" className="flex-1" disabled={isExporting}>
                         <Eye className="w-4 h-4 mr-2" />
                         Preview Export
                       </Button>
-                      <Button onClick={handleExport} disabled={isExporting} className="flex-1">
-                        {isExporting ? <>
+                      <Button 
+                        onClick={handleExport} 
+                        disabled={isExporting}
+                        className="flex-1"
+                      >
+                        {isExporting ? (
+                          <>
                             <Timer className="w-4 h-4 mr-2 animate-spin" />
                             Exporting...
-                          </> : <>
+                          </>
+                        ) : (
+                          <>
                             <Download className="w-4 h-4 mr-2" />
                             Export to SAGE
-                          </>}
+                          </>
+                        )}
                       </Button>
                     </div>
                     
-                    {isExporting && <div className="space-y-2">
+                    {isExporting && (
+                      <div className="space-y-2" role="progressbar" aria-valuenow={exportProgress} aria-valuemin={0} aria-valuemax={100}>
                         <div className="flex justify-between text-sm">
                           <span>Processing entries...</span>
                           <span>{exportProgress}%</span>
                         </div>
                         <Progress value={exportProgress} />
-                      </div>}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
               
-              <div className="space-y-6">
-                {/* Export Summary */}
-                <Card>
+              {/* Export Summary */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Export Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Total Entries:</span>
+                    <span className="font-medium">{weeklyStats.totalEntries.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Regular Hours:</span>
+                    <span className="font-medium">{weeklyStats.regularHours.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Overtime Hours:</span>
+                    <span className="font-medium">{weeklyStats.overtimeHours.toLocaleString()}</span>
+                  </div>
+                  <div className="border-t pt-3">
+                    <div className="flex justify-between font-semibold">
+                      <span>Estimated Amount:</span>
+                      <span className="text-green-600">${weeklyStats.estimatedPayroll.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Late Submissions */}
+              {lateSubmissions.length > 0 && <Card className="border-orange-200">
                   <CardHeader>
-                    <CardTitle className="text-lg">Export Summary</CardTitle>
+                    <CardTitle className="text-lg text-orange-600 flex items-center">
+                      <AlertCircle className="w-5 h-5 mr-2" />
+                      Late Submissions
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Total Entries:</span>
-                      <span className="font-medium">{weeklyStats.totalEntries.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Regular Hours:</span>
-                      <span className="font-medium">{weeklyStats.regularHours.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Overtime Hours:</span>
-                      <span className="font-medium">{weeklyStats.overtimeHours.toLocaleString()}</span>
-                    </div>
-                    <div className="border-t pt-3">
-                      <div className="flex justify-between font-semibold">
-                        <span>Estimated Amount:</span>
-                        <span className="text-green-600">${weeklyStats.estimatedPayroll.toLocaleString()}</span>
+                  <CardContent>
+                    <ScrollArea className="h-32">
+                      <div className="space-y-2">
+                        {lateSubmissions.map(emp => <div key={emp.id} className="p-2 bg-orange-50 rounded border border-orange-200">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm font-medium">{emp.name}</span>
+                              <Badge variant="outline" className="text-orange-600">
+                                {emp.daysLate} days late
+                              </Badge>
+                            </div>
+                          </div>)}
                       </div>
-                    </div>
+                    </ScrollArea>
+                    <Button variant="outline" className="w-full mt-3" size="sm">
+                      <Send className="w-3 h-3 mr-2" />
+                      Send Reminders
+                    </Button>
                   </CardContent>
-                </Card>
-                
-                {/* Late Submissions */}
-                {lateSubmissions.length > 0 && <Card className="border-orange-200">
-                    <CardHeader>
-                      <CardTitle className="text-lg text-orange-600 flex items-center">
-                        <AlertCircle className="w-5 h-5 mr-2" />
-                        Late Submissions
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ScrollArea className="h-32">
-                        <div className="space-y-2">
-                          {lateSubmissions.map(emp => <div key={emp.id} className="p-2 bg-orange-50 rounded border border-orange-200">
-                              <div className="flex justify-between items-center">
-                                <span className="text-sm font-medium">{emp.name}</span>
-                                <Badge variant="outline" className="text-orange-600">
-                                  {emp.daysLate} days late
-                                </Badge>
-                              </div>
-                            </div>)}
-                        </div>
-                      </ScrollArea>
-                      <Button variant="outline" className="w-full mt-3" size="sm">
-                        <Send className="w-3 h-3 mr-2" />
-                        Send Reminders
-                      </Button>
-                    </CardContent>
-                  </Card>}
-              </div>
+                </Card>}
             </div>
           </TabsContent>
 
@@ -651,7 +766,7 @@ export default function AltaProTimesheetDashboard() {
         </Tabs>
 
         {/* Project Detail Modal */}
-        <Dialog open={!!selectedProject} onOpenChange={open => !open && setSelectedProject(null)}>
+        <Dialog open={!!selectedProject} onOpenChange={(open) => !open && handleCloseModal()}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>
@@ -661,7 +776,8 @@ export default function AltaProTimesheetDashboard() {
                 Detailed project information and approval status
               </DialogDescription>
             </DialogHeader>
-            {selectedProject && <div className="space-y-4">
+            {selectedProject && (
+              <div className="space-y-4">
                 <div className="grid grid-cols-4 gap-4">
                   <div className="text-center p-3 bg-blue-50 rounded">
                     <div className="text-lg font-bold">{selectedProject.employees}</div>
@@ -691,7 +807,7 @@ export default function AltaProTimesheetDashboard() {
                 </div>
                 
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setSelectedProject(null)}>
+                  <Button variant="outline" onClick={handleCloseModal}>
                     Close
                   </Button>
                   <Button>
@@ -699,9 +815,11 @@ export default function AltaProTimesheetDashboard() {
                     Export Project
                   </Button>
                 </div>
-              </div>}
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       </div>
-    </div>;
+    </div>
+  );
 }
