@@ -39,7 +39,7 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
       setLoading(true);
       const response = await projectApi.getAll();
       const projectsData = response.data || [];
-      setProjects(projectsData);
+      setProjects(Array.isArray(projectsData) ? projectsData : (projectsData?.data || []));
     } catch (error) {
       console.error('Failed to load projects:', error);
       setProjects([]);
@@ -53,7 +53,7 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
       setLoading(true);
       const response = await employeeApi.getAll();
       const employeesData = response.data || [];
-      setEmployees(employeesData);
+      setEmployees(Array.isArray(employeesData) ? employeesData : (employeesData?.data || []));
     } catch (error) {
       console.error('Failed to load employees:', error);
       setEmployees([]);
@@ -67,7 +67,7 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
       setLoading(true);
       const response = await projectApi.getExtras(projectCode);
       const extrasData = response.data || [];
-      setProjectExtras(extrasData);
+      setProjectExtras(Array.isArray(extrasData) ? extrasData : (extrasData?.data || []));
     } catch (error) {
       console.error('Failed to load project extras:', error);
       setProjectExtras([]);
@@ -81,7 +81,7 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
       setLoading(true);
       const response = await projectApi.getCostCodes(projectCode, extraValue);
       const costCodesData = response.data || [];
-      setCostCodes(costCodesData);
+      setCostCodes(Array.isArray(costCodesData) ? costCodesData : (costCodesData?.data || []));
     } catch (error) {
       console.error('Failed to load cost codes:', error);
       setCostCodes([]);

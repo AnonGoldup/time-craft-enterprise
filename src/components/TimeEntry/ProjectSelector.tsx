@@ -87,7 +87,8 @@ export function ProjectSelects({
   const fetchProjects = async () => {
     try {
       const response = await projectApi.getAll();
-      setProjects(response.data.data || response.data);
+      const data = response.data;
+      setProjects(Array.isArray(data) ? data : (data?.data || []));
       setLoading(prev => ({ ...prev, projects: false }));
     } catch (error) {
       console.error('Failed to fetch projects:', error);
@@ -99,7 +100,8 @@ export function ProjectSelects({
     setLoading(prev => ({ ...prev, extras: true }));
     try {
       const response = await projectApi.getExtras(code);
-      setExtras(response.data.data || response.data);
+      const data = response.data;
+      setExtras(Array.isArray(data) ? data : (data?.data || []));
     } catch (error) {
       console.error('Failed to fetch extras:', error);
       setExtras([]);
@@ -111,7 +113,8 @@ export function ProjectSelects({
     setLoading(prev => ({ ...prev, costCodes: true }));
     try {
       const response = await projectApi.getCostCodes(code, extra);
-      setCostCodes(response.data.data || response.data);
+      const data = response.data;
+      setCostCodes(Array.isArray(data) ? data : (data?.data || []));
     } catch (error) {
       console.error('Failed to fetch cost codes:', error);
       setCostCodes([]);

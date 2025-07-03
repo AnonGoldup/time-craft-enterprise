@@ -41,144 +41,118 @@ export const setMockData = (key: string, data: any[]) => {
 // Mock Employees
 export const mockEmployees: Employee[] = [
   {
-    employeeID: 'EMP001',
-    firstName: 'John',
-    lastName: 'Smith',
-    fullName: 'John Smith',
-    email: 'john.smith@company.com',
-    class: 'Foreman',
-    department: 'Construction',
-    unionID: 1,
-    activeEmp: true,
-    createdDate: '2024-01-01T00:00:00Z',
-    modifiedDate: '2024-01-01T00:00:00Z'
+    EmployeeID: 'EMP001',
+    FullName: 'John Smith',
+    Email: 'john.smith@company.com',
+    Class: 'Foreman',
+    Department: 'Construction',
+    ActiveEmp: true
   },
   {
-    employeeID: 'EMP002',
-    firstName: 'Sarah',
-    lastName: 'Johnson',
-    fullName: 'Sarah Johnson',
-    email: 'sarah.johnson@company.com',
-    class: 'Carpenter',
-    department: 'Construction',
-    unionID: 1,
-    activeEmp: true,
-    createdDate: '2024-01-01T00:00:00Z',
-    modifiedDate: '2024-01-01T00:00:00Z'
+    EmployeeID: 'EMP002',
+    FullName: 'Sarah Johnson',
+    Email: 'sarah.johnson@company.com',
+    Class: 'Carpenter',
+    Department: 'Construction',
+    ActiveEmp: true
   },
   {
-    employeeID: 'EMP003',
-    firstName: 'Mike',
-    lastName: 'Wilson',
-    fullName: 'Mike Wilson',
-    email: 'mike.wilson@company.com',
-    class: 'Laborer',
-    department: 'Construction',
-    unionID: 1,
-    activeEmp: true,
-    createdDate: '2024-01-01T00:00:00Z',
-    modifiedDate: '2024-01-01T00:00:00Z'
+    EmployeeID: 'EMP003',
+    FullName: 'Mike Wilson',
+    Email: 'mike.wilson@company.com',
+    Class: 'Laborer',
+    Department: 'Construction',
+    ActiveEmp: true
   },
   {
-    employeeID: 'EMP004',
-    firstName: 'Lisa',
-    lastName: 'Davis',
-    fullName: 'Lisa Davis',
-    email: 'lisa.davis@company.com',
-    class: 'Project Manager',
-    department: 'Management',
-    unionID: 1,
-    activeEmp: true,
-    createdDate: '2024-01-01T00:00:00Z',
-    modifiedDate: '2024-01-01T00:00:00Z'
+    EmployeeID: 'EMP004',
+    FullName: 'Lisa Davis',
+    Email: 'lisa.davis@company.com',
+    Class: 'Project Manager',
+    Department: 'Management',
+    ActiveEmp: true
   }
 ];
 
 // Mock Projects
 export const mockProjects: Project[] = [
   {
-    projectID: 1,
-    projectCode: 'PROJ001',
-    projectDescription: 'Office Building Renovation',
-    status: 'Active',
-    isActive: true,
-    createdDate: '2024-01-01T00:00:00Z',
-    modifiedDate: '2024-01-01T00:00:00Z'
+    ProjectID: 1,
+    ProjectCode: 'PROJ001',
+    ProjectDescription: 'Office Building Renovation',
+    IsActive: true,
+    CreatedDate: '2024-01-01T00:00:00Z',
+    ModifiedDate: '2024-01-01T00:00:00Z'
   },
   {
-    projectID: 2,
-    projectCode: 'PROJ002',
-    projectDescription: 'Shopping Mall Construction',
-    status: 'Active',
-    isActive: true,
-    createdDate: '2024-01-01T00:00:00Z',
-    modifiedDate: '2024-01-01T00:00:00Z'
+    ProjectID: 2,
+    ProjectCode: 'PROJ002',
+    ProjectDescription: 'Shopping Mall Construction',
+    IsActive: true,
+    CreatedDate: '2024-01-01T00:00:00Z',
+    ModifiedDate: '2024-01-01T00:00:00Z'
   },
   {
-    projectID: 3,
-    projectCode: 'PROJ003',
-    projectDescription: 'Residential Complex',
-    status: 'Active',
-    isActive: true,
-    createdDate: '2024-01-01T00:00:00Z',
-    modifiedDate: '2024-01-01T00:00:00Z'
+    ProjectID: 3,
+    ProjectCode: 'PROJ003',
+    ProjectDescription: 'Residential Complex',
+    IsActive: true,
+    CreatedDate: '2024-01-01T00:00:00Z',
+    ModifiedDate: '2024-01-01T00:00:00Z'
   }
 ];
 
 // Mock Project Extras
 export const mockProjectExtras: ProjectExtra[] = [
   {
-    extraID: 1,
-    projectID: 1,
-    extraValue: 'Phase 1',
-    description: 'Foundation Work',
-    isActive: true
+    ExtraID: 1,
+    ProjectID: 1,
+    ExtraValue: 'Phase 1',
+    Description: 'Foundation Work',
+    IsActive: true
   },
   {
-    extraID: 2,
-    projectID: 1,
-    extraValue: 'Phase 2',
-    description: 'Structural Work',
-    isActive: true
+    ExtraID: 2,
+    ProjectID: 1,
+    ExtraValue: 'Phase 2',
+    Description: 'Structural Work',
+    IsActive: true
   },
   {
-    extraID: 3,
-    projectID: 2,
-    extraValue: 'Phase 1',
-    description: 'Site Preparation',
-    isActive: true
+    ExtraID: 3,
+    ProjectID: 2,
+    ExtraValue: 'Phase 1',
+    Description: 'Site Preparation',
+    IsActive: true
   },
   {
-    extraID: 4,
-    projectID: 2,
-    extraValue: 'Phase 2',
-    description: 'Foundation Work',
-    isActive: true
+    ExtraID: 4,
+    ProjectID: 2,
+    ExtraValue: 'Phase 2',
+    Description: 'Foundation Work',
+    IsActive: true
   }
 ];
 
 // Mock Cost Codes
 export const mockCostCodes: CostCode[] = [
   {
-    costCodeID: 1,
-    costCode: 'LAB-001-001',
-    costCodeForSAGE: 'LAB001001',
-    description: 'General Labor',
-    isActive: true
+    CostCodeID: 1,
+    CostCode: 'LAB-001-001',
+    Description: 'General Labor',
+    IsActive: true
   },
   {
-    costCodeID: 2,
-    costCode: 'CAR-001-001',
-    costCodeForSAGE: 'CAR001001',
-    description: 'Carpentry Work',
-    isActive: true
+    CostCodeID: 2,
+    CostCode: 'CAR-001-001',
+    Description: 'Carpentry Work',
+    IsActive: true
   },
   {
-    costCodeID: 3,
-    costCode: 'EQP-001-001',
-    costCodeForSAGE: 'EQP001001',
-    description: 'Equipment Operation',
-    isActive: true
+    CostCodeID: 3,
+    CostCode: 'EQP-001-001',
+    Description: 'Equipment Operation',
+    IsActive: true
   }
 ];
 
@@ -231,9 +205,9 @@ export const mockProjectExtraCostCodes: ProjectExtraCostCodeMapping[] = [
 // Mock Timesheet Entries with all required fields
 export const mockTimesheetEntries: TimesheetEntry[] = [
   {
-    entryID: 1,
-    employeeID: 'EMP001',
-    dateWorked: '2024-06-17',
+    EntryID: 1,
+    EmployeeID: 'EMP001',
+    DateWorked: '2024-06-17',
     projectID: 1,
     extraID: 1,
     costCodeID: 1,
@@ -258,9 +232,9 @@ export const mockTimesheetEntries: TimesheetEntry[] = [
     breakOut: '12:30:00'
   },
   {
-    entryID: 2,
-    employeeID: 'EMP001',
-    dateWorked: '2024-06-18',
+    EntryID: 2,
+    EmployeeID: 'EMP001',
+    DateWorked: '2024-06-18',
     projectID: 1,
     extraID: 1,
     costCodeID: 2,
@@ -285,9 +259,9 @@ export const mockTimesheetEntries: TimesheetEntry[] = [
     breakOut: '12:30:00'
   },
   {
-    entryID: 3,
-    employeeID: 'EMP002',
-    dateWorked: '2024-06-17',
+    EntryID: 3,
+    EmployeeID: 'EMP002',
+    DateWorked: '2024-06-17',
     projectID: 2,
     extraID: 3,
     costCodeID: 1,

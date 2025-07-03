@@ -148,22 +148,9 @@ export default function MultiSelectTimeEntry() {
     }
   };
 
-  const handleDateSelect = (date: Date | undefined) => {
-    if (!date) return;
-    
-    setSelectedDates(prev => {
-      const dateExists = prev.some(d => 
-        format(d, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
-      );
-      
-      if (dateExists) {
-        return prev.filter(d => 
-          format(d, 'yyyy-MM-dd') !== format(date, 'yyyy-MM-dd')
-        );
-      } else {
-        return [...prev, date];
-      }
-    });
+  const handleDateSelect = (dates: Date[] | undefined) => {
+    if (!dates) return;
+    setSelectedDates(dates);
   };
 
   const handleEmployeeToggle = (employeeId: string) => {
