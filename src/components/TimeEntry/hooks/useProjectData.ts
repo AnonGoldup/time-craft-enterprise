@@ -37,8 +37,9 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
   const loadProjects = async () => {
     try {
       setLoading(true);
-      const projectsData = await projectApi.getAll();
-      setProjects(projectsData || []);
+      const response = await projectApi.getAll();
+      const projectsData = response.data || [];
+      setProjects(projectsData);
     } catch (error) {
       console.error('Failed to load projects:', error);
       setProjects([]);
@@ -50,8 +51,9 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
   const loadEmployees = async () => {
     try {
       setLoading(true);
-      const employeesData = await employeeApi.getAll();
-      setEmployees(employeesData || []);
+      const response = await employeeApi.getAll();
+      const employeesData = response.data || [];
+      setEmployees(employeesData);
     } catch (error) {
       console.error('Failed to load employees:', error);
       setEmployees([]);
@@ -63,8 +65,9 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
   const loadProjectExtras = async (projectCode: string) => {
     try {
       setLoading(true);
-      const extrasData = await projectApi.getExtras(projectCode);
-      setProjectExtras(extrasData || []);
+      const response = await projectApi.getExtras(projectCode);
+      const extrasData = response.data || [];
+      setProjectExtras(extrasData);
     } catch (error) {
       console.error('Failed to load project extras:', error);
       setProjectExtras([]);
@@ -76,8 +79,9 @@ export const useProjectData = (selectedProject?: string, selectedExtra?: string)
   const loadCostCodes = async (projectCode: string, extraValue?: string) => {
     try {
       setLoading(true);
-      const costCodesData = await projectApi.getCostCodes(projectCode, extraValue);
-      setCostCodes(costCodesData || []);
+      const response = await projectApi.getCostCodes(projectCode, extraValue);
+      const costCodesData = response.data || [];
+      setCostCodes(costCodesData);
     } catch (error) {
       console.error('Failed to load cost codes:', error);
       setCostCodes([]);

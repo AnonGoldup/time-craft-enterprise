@@ -70,6 +70,7 @@ export interface ProjectExtra {
   IsActive: boolean;
   // Add camelCase compatibility
   extraID?: number;
+  projectID?: number;
   extraValue?: string;
   description?: string;
 }
@@ -107,28 +108,18 @@ export interface TimesheetEntry {
 
 // API service objects
 export const projectApi = {
-  getAll: async () => {
-    const response = await api.get<{ success: boolean; data: Project[] }>('/projects');
-    return response.data.data || [];
-  },
+  getAll: () => api.get<{ success: boolean; data: Project[] }>('/projects'),
   getById: (id: number) => api.get<{ success: boolean; data: Project }>(`/projects/${id}`),
   getByCode: (code: string) => api.get<{ success: boolean; data: Project }>(`/projects/code/${code}`),
-  getExtras: async (projectCode: string) => {
-    const response = await api.get<{ success: boolean; data: ProjectExtra[] }>(`/projects/${projectCode}/extras`);
-    return response.data.data || [];
-  },
-  getCostCodes: async (projectCode: string, extraValue?: string) => {
+  getExtras: (projectCode: string) => api.get<{ success: boolean; data: ProjectExtra[] }>(`/projects/${projectCode}/extras`),
+  getCostCodes: (projectCode: string, extraValue?: string) => {
     const params = extraValue ? { extraValue } : {};
-    const response = await api.get<{ success: boolean; data: CostCode[] }>(`/projects/${projectCode}/costcodes`, { params });
-    return response.data.data || [];
+    return api.get<{ success: boolean; data: CostCode[] }>(`/projects/${projectCode}/costcodes`, { params });
   }
 };
 
 export const employeeApi = {
-  getAll: async () => {
-    const response = await api.get<{ success: boolean; data: Employee[] }>('/employees');
-    return response.data.data || [];
-  },
+  getAll: () => api.get<{ success: boolean; data: Employee[] }>('/employees'),
   getById: (id: string) => api.get<{ success: boolean; data: Employee }>(`/employees/${id}`),
   getTimesheets: (id: string, params?: any) => 
     api.get<{ success: boolean; data: TimesheetEntry[] }>(`/employees/${id}/timesheets`, { params })
@@ -154,5 +145,32 @@ export const reportApi = {
   getEmployeeHours: (params?: any) => api.get('/reports/employee-hours', { params }),
   getOvertime: (params?: any) => api.get('/reports/overtime', { params })
 };
+
+// Export types for backward compatibility
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
+
+export interface TimesheetSubmission {
+  id: number;
+  employeeName: string;
+  projectCode: string;
+  projectDescription: string;
+  weekEnding: string;
+  submittedDate: string;
+  totalHours: number;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  notes?: string;
+}
+
+export interface TimesheetApproval {
+  id: number;
+  submissionId: number;
+  approvedBy: string;
+  approvedDate: string;
+  notes?: string;
+}
 
 export default api;
