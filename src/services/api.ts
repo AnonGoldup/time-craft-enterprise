@@ -44,6 +44,22 @@ export interface Project {
   IsActive: boolean;
   CreatedDate: string;
   ModifiedDate?: string;
+  // Add camelCase compatibility
+  projectID?: number;
+  projectCode?: string;
+  projectDescription?: string;
+}
+
+
+export interface CostCode {
+  CostCodeID: number;
+  CostCode: string;
+  Description?: string;
+  IsActive: boolean;
+  // Add camelCase compatibility
+  costCodeID?: number;
+  costCode?: string;
+  description?: string;
 }
 
 export interface ProjectExtra {
@@ -52,13 +68,10 @@ export interface ProjectExtra {
   ExtraValue: string;
   Description?: string;
   IsActive: boolean;
-}
-
-export interface CostCode {
-  CostCodeID: number;
-  CostCode: string;
-  Description?: string;
-  IsActive: boolean;
+  // Add camelCase compatibility
+  extraID?: number;
+  extraValue?: string;
+  description?: string;
 }
 
 export interface Employee {
@@ -68,6 +81,13 @@ export interface Employee {
   Class: string;
   Department?: string;
   ActiveEmp: boolean;
+  // Add commonly used computed properties for compatibility
+  employeeID?: string;
+  fullName?: string;
+  department?: string;
+  firstName?: string;
+  lastName?: string;
+  class?: string;
 }
 
 export interface TimesheetEntry {
@@ -87,18 +107,28 @@ export interface TimesheetEntry {
 
 // API service objects
 export const projectApi = {
-  getAll: () => api.get<{ success: boolean; data: Project[] }>('/projects'),
+  getAll: async () => {
+    const response = await api.get<{ success: boolean; data: Project[] }>('/projects');
+    return response.data.data || [];
+  },
   getById: (id: number) => api.get<{ success: boolean; data: Project }>(`/projects/${id}`),
   getByCode: (code: string) => api.get<{ success: boolean; data: Project }>(`/projects/code/${code}`),
-  getExtras: (projectCode: string) => api.get<{ success: boolean; data: ProjectExtra[] }>(`/projects/${projectCode}/extras`),
-  getCostCodes: (projectCode: string, extraValue?: string) => {
+  getExtras: async (projectCode: string) => {
+    const response = await api.get<{ success: boolean; data: ProjectExtra[] }>(`/projects/${projectCode}/extras`);
+    return response.data.data || [];
+  },
+  getCostCodes: async (projectCode: string, extraValue?: string) => {
     const params = extraValue ? { extraValue } : {};
-    return api.get<{ success: boolean; data: CostCode[] }>(`/projects/${projectCode}/costcodes`, { params });
+    const response = await api.get<{ success: boolean; data: CostCode[] }>(`/projects/${projectCode}/costcodes`, { params });
+    return response.data.data || [];
   }
 };
 
 export const employeeApi = {
-  getAll: () => api.get<{ success: boolean; data: Employee[] }>('/employees'),
+  getAll: async () => {
+    const response = await api.get<{ success: boolean; data: Employee[] }>('/employees');
+    return response.data.data || [];
+  },
   getById: (id: string) => api.get<{ success: boolean; data: Employee }>(`/employees/${id}`),
   getTimesheets: (id: string, params?: any) => 
     api.get<{ success: boolean; data: TimesheetEntry[] }>(`/employees/${id}/timesheets`, { params })

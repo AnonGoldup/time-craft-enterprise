@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -143,7 +144,7 @@ export default function Dashboard() {
                 <p className="font-medium">Timesheet approved</p>
                 <p className="text-sm text-muted-foreground">Week ending June 8 - 5 days ago</p>
               </div>
-              <Badge variant="success">Approved</Badge>
+              <Badge variant="secondary">Approved</Badge>
             </div>
           </div>
         </CardContent>

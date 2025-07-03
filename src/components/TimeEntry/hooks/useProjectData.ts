@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { projectApi, employeeApi, Project, Employee, ProjectExtra, CostCode } from '@/services/api';
+import { projectApi, employeeApi } from '@/services/api';
+import type { Project, Employee, ProjectExtra, CostCode } from '@/services/api';
 
-export const useProjectData = (selectedProject: string, selectedExtra: string) => {
+export const useProjectData = (selectedProject?: string, selectedExtra?: string) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [projectExtras, setProjectExtras] = useState<ProjectExtra[]>([]);
@@ -14,39 +15,30 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
     loadEmployees();
   }, []);
 
-  // Load project extras and cost codes when project changes
+  // Load project extras when project changes
   useEffect(() => {
     if (selectedProject) {
       loadProjectExtras(selectedProject);
-      loadCostCodes(selectedProject);
     } else {
       setProjectExtras([]);
       setCostCodes([]);
     }
   }, [selectedProject]);
 
-  // Load cost codes when extra changes
+  // Load cost codes when project or extra changes
   useEffect(() => {
-    if (selectedProject && selectedExtra) {
+    if (selectedProject) {
       loadCostCodes(selectedProject, selectedExtra);
+    } else {
+      setCostCodes([]);
     }
   }, [selectedProject, selectedExtra]);
 
   const loadProjects = async () => {
     try {
       setLoading(true);
-      const response = await projectApi.getAll();
-      // Map SQL PascalCase to component's camelCase
-      const mappedProjects = response.data.map((p: any) => ({
-        projectID: p.ProjectID,
-        projectCode: p.ProjectCode,
-        projectDescription: p.ProjectDescription,
-        status: p.Status,
-        isActive: p.IsActive,
-        createdDate: p.CreatedDate,
-        modifiedDate: p.ModifiedDate
-      }));
-      setProjects(mappedProjects);
+      const projectsData = await projectApi.getAll();
+      setProjects(projectsData || []);
     } catch (error) {
       console.error('Failed to load projects:', error);
       setProjects([]);
@@ -57,61 +49,40 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
 
   const loadEmployees = async () => {
     try {
-      const response = await employeeApi.getAll();
-      // Map SQL PascalCase to component's camelCase
-      const mappedEmployees = response.data.map((e: any) => ({
-        employeeID: e.EmployeeID,
-        firstName: e.FirstName,
-        lastName: e.LastName,
-        fullName: e.FullName,
-        email: e.Email,
-        class: e.Class,
-        department: e.Department,
-        activeEmp: e.ActiveEmp,
-        createdDate: e.CreatedDate,
-        modifiedDate: e.ModifiedDate
-      }));
-      setEmployees(mappedEmployees);
+      setLoading(true);
+      const employeesData = await employeeApi.getAll();
+      setEmployees(employeesData || []);
     } catch (error) {
       console.error('Failed to load employees:', error);
       setEmployees([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   const loadProjectExtras = async (projectCode: string) => {
     try {
-      const response = await projectApi.getExtras(projectCode);
-      // Map the response if needed
-      const extras = response.data.map((e: any) => ({
-        extraID: e.ExtraID,
-        projectID: e.ProjectID,
-        extraValue: e.ExtraValue,
-        description: e.Description,
-        isActive: e.IsActive
-      }));
-      setProjectExtras(extras);
+      setLoading(true);
+      const extrasData = await projectApi.getExtras(projectCode);
+      setProjectExtras(extrasData || []);
     } catch (error) {
       console.error('Failed to load project extras:', error);
       setProjectExtras([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   const loadCostCodes = async (projectCode: string, extraValue?: string) => {
     try {
-      const response = await projectApi.getCostCodes(projectCode, extraValue);
-      // Map the response if needed
-      const codes = response.data.map((c: any) => ({
-        costCodeID: c.CostCodeID,
-        costCode: c.CostCode,
-        description: c.Description,
-        costCodeForSAGE: c.CostCodeForSAGE,
-        displayValue: c.DisplayValue || `${c.CostCode} - ${c.Description}`,
-        isActive: c.IsActive
-      }));
-      setCostCodes(codes);
+      setLoading(true);
+      const costCodesData = await projectApi.getCostCodes(projectCode, extraValue);
+      setCostCodes(costCodesData || []);
     } catch (error) {
       console.error('Failed to load cost codes:', error);
       setCostCodes([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,6 +91,10 @@ export const useProjectData = (selectedProject: string, selectedExtra: string) =
     employees,
     projectExtras,
     costCodes,
-    loading
+    loading,
+    loadProjects,
+    loadEmployees,
+    loadProjectExtras,
+    loadCostCodes,
   };
 };

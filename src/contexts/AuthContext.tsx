@@ -3,6 +3,7 @@ import api from '../services/api';
 
 export enum UserRole {
   EMPLOYEE = 'employee',
+  MANAGER = 'manager',
   ADMIN = 'admin'
 }
 
@@ -128,7 +129,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const isManager = (): boolean => {
-    return hasRole([UserRole.MANAGER, UserRole.ADMIN]);
+    return hasRole([UserRole.ADMIN]); // Only admin for now
   };
 
   const value = {
