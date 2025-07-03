@@ -54,6 +54,8 @@ const TimesheetRedesign: React.FC = () => {
   const [selectedEntries, setSelectedEntries] = useState<Set<string>>(new Set());
   const [showQuickEntry, setShowQuickEntry] = useState(false);
   const [showDiagrams, setShowDiagrams] = useState(false);
+  const [quickEntryPrefill, setQuickEntryPrefill] = useState<any>(null);
+  const [quickEntryMultiMode, setQuickEntryMultiMode] = useState(false);
 
   // Sample data for testing
   const sampleEntries: TimeEntry[] = [
@@ -156,6 +158,20 @@ const TimesheetRedesign: React.FC = () => {
     });
   }, [groupedEntries]);
 
+  const handleAddTimeBlock = useCallback((groupKey: string) => {
+    const group = groupedEntries[groupKey];
+    if (!group) return;
+
+    setQuickEntryPrefill({
+      projectCode: group.projectCode,
+      projectName: group.projectName,
+      costCode: group.costCode,
+      costCodeName: group.costCodeName,
+    });
+    setQuickEntryMultiMode(true);
+    setShowQuickEntry(true);
+  }, [groupedEntries]);
+
   const totalHours = useMemo(() => {
     return Object.values(groupedEntries).reduce((total, group) => total + group.totalDuration, 0) / 60;
   }, [groupedEntries]);
@@ -180,7 +196,11 @@ const TimesheetRedesign: React.FC = () => {
             {showDiagrams ? 'Hide' : 'Show'} Diagrams
           </Button>
           <Button 
-            onClick={() => setShowQuickEntry(true)}
+            onClick={() => {
+              setQuickEntryPrefill(null);
+              setQuickEntryMultiMode(false);
+              setShowQuickEntry(true);
+            }}
             className="gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -223,16 +243,17 @@ const TimesheetRedesign: React.FC = () => {
         </h2>
 
         {Object.entries(groupedEntries).map(([key, group]) => (
-          <TimesheetGroupCard
-            key={key}
-            group={group}
-            selectedEntries={selectedEntries}
-            onSelectEntry={handleSelectEntry}
-            onSelectGroup={handleSelectGroup}
-            onEditEntry={(entryId) => console.log('Edit entry:', entryId)}
-            onDuplicateEntry={(entryId) => console.log('Duplicate entry:', entryId)}
-            onDeleteEntry={(entryId) => console.log('Delete entry:', entryId)}
-          />
+            <TimesheetGroupCard
+              key={key}
+              group={group}
+              selectedEntries={selectedEntries}
+              onSelectEntry={handleSelectEntry}
+              onSelectGroup={handleSelectGroup}
+              onEditEntry={(entryId) => console.log('Edit entry:', entryId)}
+              onDuplicateEntry={(entryId) => console.log('Duplicate entry:', entryId)}
+              onDeleteEntry={(entryId) => console.log('Delete entry:', entryId)}
+              onAddTimeBlock={handleAddTimeBlock}
+            />
         ))}
 
         {Object.keys(groupedEntries).length === 0 && (
@@ -241,7 +262,11 @@ const TimesheetRedesign: React.FC = () => {
               <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium text-foreground mb-2">No entries for this date</h3>
               <p className="text-muted-foreground mb-4">Start tracking your time by creating a new entry</p>
-              <Button onClick={() => setShowQuickEntry(true)} className="gap-2">
+              <Button onClick={() => {
+                setQuickEntryPrefill(null);
+                setQuickEntryMultiMode(false);
+                setShowQuickEntry(true);
+              }} className="gap-2">
                 <Plus className="h-4 w-4" />
                 Add First Entry
               </Button>
@@ -256,11 +281,19 @@ const TimesheetRedesign: React.FC = () => {
       {/* Quick Entry Panel */}
       {showQuickEntry && (
         <QuickEntryPanel 
-          onClose={() => setShowQuickEntry(false)}
+          onClose={() => {
+            setShowQuickEntry(false);
+            setQuickEntryPrefill(null);
+            setQuickEntryMultiMode(false);
+          }}
           onSave={(entry) => {
             console.log('Save new entry:', entry);
             setShowQuickEntry(false);
+            setQuickEntryPrefill(null);
+            setQuickEntryMultiMode(false);
           }}
+          prefillData={quickEntryPrefill}
+          multipleMode={quickEntryMultiMode}
         />
       )}
     </div>

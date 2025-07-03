@@ -49,6 +49,7 @@ interface TimesheetGroupCardProps {
   onEditEntry: (entryId: string) => void;
   onDuplicateEntry: (entryId: string) => void;
   onDeleteEntry: (entryId: string) => void;
+  onAddTimeBlock: (groupKey: string) => void;
 }
 
 export const TimesheetGroupCard: React.FC<TimesheetGroupCardProps> = ({
@@ -59,6 +60,7 @@ export const TimesheetGroupCard: React.FC<TimesheetGroupCardProps> = ({
   onEditEntry,
   onDuplicateEntry,
   onDeleteEntry,
+  onAddTimeBlock,
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   
@@ -141,6 +143,16 @@ export const TimesheetGroupCard: React.FC<TimesheetGroupCardProps> = ({
               </div>
             </div>
             
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2"
+              onClick={() => onAddTimeBlock(groupKey)}
+            >
+              <Clock className="h-4 w-4" />
+              Add Time Block
+            </Button>
+            
             <Button variant="ghost" size="sm" className="gap-2">
               <Copy className="h-4 w-4" />
               Clone Group
@@ -152,6 +164,19 @@ export const TimesheetGroupCard: React.FC<TimesheetGroupCardProps> = ({
       {isExpanded && (
         <CardContent className="pt-0">
           <div className="space-y-3">
+            {/* Add Time Block Button */}
+            <div className="mb-3">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full gap-2 border-dashed border-2 hover:bg-muted/50"
+                onClick={() => onAddTimeBlock(groupKey)}
+              >
+                <Clock className="h-4 w-4" />
+                Add another time block for {group.projectCode} - {group.costCode}
+              </Button>
+            </div>
+
             {group.entries.map((entry, index) => (
               <div key={entry.id} className="group">
                 <div className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors">

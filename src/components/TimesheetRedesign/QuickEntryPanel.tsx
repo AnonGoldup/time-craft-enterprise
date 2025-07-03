@@ -33,21 +33,29 @@ interface QuickEntryData {
 interface QuickEntryPanelProps {
   onClose: () => void;
   onSave: (entry: QuickEntryData) => void;
+  prefillData?: Partial<QuickEntryData>;
+  multipleMode?: boolean;
 }
 
 export const QuickEntryPanel: React.FC<QuickEntryPanelProps> = ({
   onClose,
   onSave,
+  prefillData,
+  multipleMode = false,
 }) => {
   const [formData, setFormData] = useState<QuickEntryData>({
-    projectCode: '',
-    projectName: '',
-    costCode: '',
-    costCodeName: '',
-    timeIn: '',
-    timeOut: '',
-    notes: ''
+    projectCode: prefillData?.projectCode || '',
+    projectName: prefillData?.projectName || '',
+    costCode: prefillData?.costCode || '',
+    costCodeName: prefillData?.costCodeName || '',
+    timeIn: prefillData?.timeIn || '',
+    timeOut: prefillData?.timeOut || '',
+    notes: prefillData?.notes || ''
   });
+
+  const [timeBlocks, setTimeBlocks] = useState<Array<{timeIn: string; timeOut: string; notes?: string}>>([
+    { timeIn: '', timeOut: '', notes: '' }
+  ]);
 
   const [recentCombinations] = useState([
     { projectCode: '25-0001', projectName: 'AltaPro Project Alpha', costCode: '001-040-041', costCodeName: 'INDIRECT LABOR' },
@@ -97,7 +105,7 @@ export const QuickEntryPanel: React.FC<QuickEntryPanelProps> = ({
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              Quick Time Entry
+              {multipleMode ? 'Multiple Time Blocks Entry' : 'Quick Time Entry'}
             </CardTitle>
             <Button
               variant="ghost"
@@ -191,8 +199,10 @@ export const QuickEntryPanel: React.FC<QuickEntryPanelProps> = ({
           {/* Time Entry */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium">Time Period</Label>
-              {calculateDuration() && (
+              <Label className="text-sm font-medium">
+                {multipleMode ? 'Time Blocks' : 'Time Period'}
+              </Label>
+              {!multipleMode && calculateDuration() && (
                 <Badge variant="outline" className="gap-1">
                   <Clock className="h-3 w-3" />
                   {calculateDuration()}
@@ -200,59 +210,131 @@ export const QuickEntryPanel: React.FC<QuickEntryPanelProps> = ({
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="timeIn" className="flex items-center gap-1">
-                  <Play className="h-3 w-3 text-green-600" />
-                  Time In
-                </Label>
-                <Input
-                  id="timeIn"
-                  type="time"
-                  value={formData.timeIn}
-                  onChange={(e) => setFormData(prev => ({ ...prev, timeIn: e.target.value }))}
-                />
-                <div className="flex gap-1">
-                  {quickTimes.map((time) => (
-                    <Button
-                      key={time.label}
-                      variant="ghost"
-                      size="sm"
-                      className="text-xs h-6 px-2"
-                      onClick={() => setFormData(prev => ({ ...prev, timeIn: time.value }))}
-                    >
-                      {time.label}
-                    </Button>
-                  ))}
-                </div>
+            {multipleMode ? (
+              <div className="space-y-3">
+                {timeBlocks.map((block, index) => (
+                  <div key={index} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Time Block {index + 1}</Label>
+                      <div className="flex gap-2">
+                        {timeBlocks.length > 1 && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setTimeBlocks(prev => prev.filter((_, i) => i !== index))}
+                            className="h-6 w-6 p-0"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setTimeBlocks(prev => [...prev, { timeIn: block.timeOut || '', timeOut: '', notes: '' }])}
+                          className="h-6 w-6 p-0"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <Label className="text-xs">Time In</Label>
+                        <Input
+                          type="time"
+                          value={block.timeIn}
+                          onChange={(e) => {
+                            const newBlocks = [...timeBlocks];
+                            newBlocks[index].timeIn = e.target.value;
+                            setTimeBlocks(newBlocks);
+                          }}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Time Out</Label>
+                        <Input
+                          type="time"
+                          value={block.timeOut}
+                          onChange={(e) => {
+                            const newBlocks = [...timeBlocks];
+                            newBlocks[index].timeOut = e.target.value;
+                            setTimeBlocks(newBlocks);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    
+                    {block.timeIn && block.timeOut && (
+                      <Badge variant="outline" className="gap-1 text-xs">
+                        <Clock className="h-3 w-3" />
+                        {(() => {
+                          const start = new Date(`2000-01-01T${block.timeIn}`);
+                          const end = new Date(`2000-01-01T${block.timeOut}`);
+                          const diffMs = end.getTime() - start.getTime();
+                          const diffHours = diffMs / (1000 * 60 * 60);
+                          return diffHours > 0 ? `${diffHours.toFixed(1)}h` : 'Invalid';
+                        })()}
+                      </Badge>
+                    )}
+                  </div>
+                ))}
               </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="timeIn" className="flex items-center gap-1">
+                    <Play className="h-3 w-3 text-green-600" />
+                    Time In
+                  </Label>
+                  <Input
+                    id="timeIn"
+                    type="time"
+                    value={formData.timeIn}
+                    onChange={(e) => setFormData(prev => ({ ...prev, timeIn: e.target.value }))}
+                  />
+                  <div className="flex gap-1">
+                    {quickTimes.map((time) => (
+                      <Button
+                        key={time.label}
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs h-6 px-2"
+                        onClick={() => setFormData(prev => ({ ...prev, timeIn: time.value }))}
+                      >
+                        {time.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="timeOut" className="flex items-center gap-1">
-                  <Pause className="h-3 w-3 text-red-600" />
-                  Time Out
-                </Label>
-                <Input
-                  id="timeOut"
-                  type="time"
-                  value={formData.timeOut}
-                  onChange={(e) => setFormData(prev => ({ ...prev, timeOut: e.target.value }))}
-                />
-                <div className="flex gap-1">
-                  {quickTimes.map((time) => (
-                    <Button
-                      key={time.label}
-                      variant="ghost"
-                      size="sm"
-                      className="text-xs h-6 px-2"
-                      onClick={() => setFormData(prev => ({ ...prev, timeOut: time.value }))}
-                    >
-                      {time.label}
-                    </Button>
-                  ))}
+                <div className="space-y-2">
+                  <Label htmlFor="timeOut" className="flex items-center gap-1">
+                    <Pause className="h-3 w-3 text-red-600" />
+                    Time Out
+                  </Label>
+                  <Input
+                    id="timeOut"
+                    type="time"
+                    value={formData.timeOut}
+                    onChange={(e) => setFormData(prev => ({ ...prev, timeOut: e.target.value }))}
+                  />
+                  <div className="flex gap-1">
+                    {quickTimes.map((time) => (
+                      <Button
+                        key={time.label}
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs h-6 px-2"
+                        onClick={() => setFormData(prev => ({ ...prev, timeOut: time.value }))}
+                      >
+                        {time.label}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Notes */}
