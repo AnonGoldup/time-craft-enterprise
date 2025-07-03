@@ -259,7 +259,7 @@ const EditDailyReport: React.FC = () => {
     const fetchEmployees = async () => {
       try {
         setLoadingEmployees(true);
-        const response = await employeeApi.getActive();
+        const response = await employeeApi.getAll();
         setEmployees(response.data.data);
       } catch (error) {
         console.error('Failed to fetch employees:', error);

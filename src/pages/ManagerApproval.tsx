@@ -119,7 +119,10 @@ export default function AltaProManagerDashboard() {
           submissions: []
         };
       }
-      groups[project].submissions = [...groups[project].submissions, submission];
+      groups[project] = {
+        ...groups[project],
+        submissions: [...groups[project].submissions, submission]
+      };
       return groups;
     }, {});
   }, [submissions]);

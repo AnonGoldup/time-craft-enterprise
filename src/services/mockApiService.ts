@@ -36,15 +36,14 @@ export const mockApiService = {
       const employees = getMockData('employees', mockEmployees);
       return {
         success: true,
-        data: employees,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: employees
       };
     },
 
     getById: async (id: string): Promise<ApiResponse<Employee>> => {
       await simulateDelay();
       const employees = getMockData('employees', mockEmployees);
-      const employee = employees.find(emp => emp.employeeID === id);
+      const employee = employees.find(emp => emp.EmployeeID === id);
       
       if (!employee) {
         throw new Error(`Employee with ID ${id} not found`);
@@ -52,20 +51,17 @@ export const mockApiService = {
 
       return {
         success: true,
-        data: employee,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: employee
       };
     },
 
-    getActive: async (): Promise<ApiResponse<Employee[]>> => {
+    getTimesheets: async (id: string, params?: any): Promise<ApiResponse<TimesheetEntry[]>> => {
       await simulateDelay();
-      const employees = getMockData('employees', mockEmployees);
-      const activeEmployees = employees.filter(emp => emp.activeEmp);
-      
+      const entries = getMockData('timesheetEntries', mockTimesheetEntries);
+      const employeeEntries = entries.filter(entry => entry.EmployeeID === id);
       return {
         success: true,
-        data: activeEmployees,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: employeeEntries
       };
     }
   },
@@ -77,351 +73,280 @@ export const mockApiService = {
       const projects = getMockData('projects', mockProjects);
       return {
         success: true,
-        data: projects,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: projects
       };
     },
 
-    getActive: async (): Promise<ApiResponse<Project[]>> => {
+    getById: async (id: number): Promise<ApiResponse<Project>> => {
       await simulateDelay();
       const projects = getMockData('projects', mockProjects);
-      const activeProjects = projects.filter(proj => proj.isActive);
+      const project = projects.find(p => p.ProjectID === id);
       
+      if (!project) {
+        throw new Error(`Project with ID ${id} not found`);
+      }
+
       return {
         success: true,
-        data: activeProjects,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: project
       };
     },
 
-    getExtras: async (projectId: number): Promise<ApiResponse<ProjectExtra[]>> => {
+    getByCode: async (code: string): Promise<ApiResponse<Project>> => {
+      await simulateDelay();
+      const projects = getMockData('projects', mockProjects);
+      const project = projects.find(p => p.ProjectCode === code);
+      
+      if (!project) {
+        throw new Error(`Project with code ${code} not found`);
+      }
+
+      return {
+        success: true,
+        data: project
+      };
+    },
+
+    getExtras: async (projectCode: string): Promise<ApiResponse<ProjectExtra[]>> => {
       await simulateDelay();
       const extras = getMockData('projectExtras', mockProjectExtras);
-      const projectExtras = extras.filter(extra => extra.projectID === projectId && extra.isActive);
+      const projects = getMockData('projects', mockProjects);
+      const project = projects.find(p => p.ProjectCode === projectCode);
       
+      if (!project) {
+        return {
+          success: true,
+          data: []
+        };
+      }
+
+      const projectExtras = extras.filter(extra => extra.ProjectID === project.ProjectID);
       return {
         success: true,
-        data: projectExtras,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: projectExtras
       };
     },
 
-    getCostCodes: async (projectId: number, extraId?: number): Promise<ApiResponse<CostCode[]>> => {
+    getCostCodes: async (projectCode: string, extraValue?: string): Promise<ApiResponse<CostCode[]>> => {
       await simulateDelay();
-      const mappings = getMockData('projectExtraCostCodes', mockProjectExtraCostCodes);
       const costCodes = getMockData('costCodes', mockCostCodes);
+      const projects = getMockData('projects', mockProjects);
+      const project = projects.find(p => p.ProjectCode === projectCode);
       
-      let validCostCodeIds: number[];
-      
-      if (extraId) {
-        // Get cost codes for specific project and extra
-        validCostCodeIds = mappings
-          .filter(mapping => mapping.projectID === projectId && mapping.extraID === extraId && mapping.isActive)
-          .map(mapping => mapping.costCodeID);
-      } else {
-        // Get all cost codes for project
-        validCostCodeIds = mappings
-          .filter(mapping => mapping.projectID === projectId && mapping.isActive)
-          .map(mapping => mapping.costCodeID);
+      if (!project) {
+        return {
+          success: true,
+          data: []
+        };
       }
-      
-      const projectCostCodes = costCodes.filter(cc => 
-        validCostCodeIds.includes(cc.costCodeID) && cc.isActive
-      );
-      
+
+      // For simplicity, return all cost codes for now
+      // In real implementation, this would filter based on project and extra mappings
       return {
         success: true,
-        data: projectCostCodes,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: costCodes
       };
     }
   },
 
   // Timesheet endpoints
   timesheets: {
-    getEntries: async (employeeId: string, weekEnding?: string): Promise<ApiResponse<TimesheetEntry[]>> => {
+    getAll: async (params?: any): Promise<ApiResponse<TimesheetEntry[]>> => {
       await simulateDelay();
       const entries = getMockData('timesheetEntries', mockTimesheetEntries);
-      let filteredEntries = entries.filter(entry => entry.employeeID === employeeId);
-      
-      if (weekEnding) {
-        // Filter by week ending date (simple date range filter)
-        const weekStart = new Date(weekEnding);
-        weekStart.setDate(weekStart.getDate() - 6);
-        
-        filteredEntries = filteredEntries.filter(entry => {
-          const entryDate = new Date(entry.dateWorked);
-          return entryDate >= weekStart && entryDate <= new Date(weekEnding);
-        });
-      }
-      
       return {
         success: true,
-        data: filteredEntries,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: entries
       };
     },
 
-    createEntry: async (entry: Omit<TimesheetEntry, 'entryID'>): Promise<ApiResponse<TimesheetEntry>> => {
+    getById: async (id: number): Promise<ApiResponse<TimesheetEntry>> => {
       await simulateDelay();
       const entries = getMockData('timesheetEntries', mockTimesheetEntries);
+      const entry = entries.find(e => e.EntryID === id);
+      
+      if (!entry) {
+        throw new Error(`Timesheet entry with ID ${id} not found`);
+      }
+
+      return {
+        success: true,
+        data: entry
+      };
+    },
+
+    create: async (data: Omit<TimesheetEntry, 'EntryID'>): Promise<ApiResponse<TimesheetEntry>> => {
+      await simulateDelay();
+      const currentEntries = getMockData('timesheetEntries', mockTimesheetEntries);
       
       const newEntry: TimesheetEntry = {
-        ...entry,
-        entryID: Math.max(...entries.map(e => e.entryID), 0) + 1,
-        extraID: entry.extraID || 0, // Ensure extraID is always present
-        entryType: entry.entryType || 'Standard',
-        notes: entry.notes || '',
-        createdDate: entry.createdDate || new Date().toISOString(),
-        modifiedBy: entry.modifiedBy || '',
-        modifiedDate: entry.modifiedDate || '',
-        exportedDate: entry.exportedDate || '',
-        startTime: entry.startTime || '',
-        endTime: entry.endTime || '',
-        breakInTime: entry.breakInTime || '',
-        breakOutTime: entry.breakOutTime || '',
-        timeIn: entry.timeIn || '',
-        timeOut: entry.timeOut || '',
-        breakIn: entry.breakIn || '',
-        breakOut: entry.breakOut || ''
+        EntryID: Math.max(...currentEntries.map(e => e.EntryID || 0)) + 1,
+        ...data,
+        CreatedDate: new Date().toISOString(),
+        ModifiedDate: ''
       };
-      
-      const updatedEntries = [...entries, newEntry];
+
+      const updatedEntries = [...currentEntries, newEntry];
       setMockData('timesheetEntries', updatedEntries);
-      
+
       return {
         success: true,
-        data: newEntry,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: newEntry
       };
     },
 
-    updateEntry: async (entryId: number, updates: Partial<TimesheetEntry>): Promise<ApiResponse<TimesheetEntry>> => {
+    update: async (id: number, data: Partial<TimesheetEntry>): Promise<ApiResponse<TimesheetEntry>> => {
       await simulateDelay();
-      const entries = getMockData('timesheetEntries', mockTimesheetEntries);
-      const entryIndex = entries.findIndex(entry => entry.entryID === entryId);
+      const currentEntries = getMockData('timesheetEntries', mockTimesheetEntries);
+      const entryIndex = currentEntries.findIndex(e => e.EntryID === id);
       
       if (entryIndex === -1) {
-        throw new Error(`Timesheet entry with ID ${entryId} not found`);
+        throw new Error(`Timesheet entry with ID ${id} not found`);
       }
-      
-      const updatedEntry: TimesheetEntry = {
-        ...entries[entryIndex],
-        ...updates,
-        entryID: entryId,
-        modifiedDate: new Date().toISOString()
+
+      const updatedEntry = {
+        ...currentEntries[entryIndex],
+        ...data,
+        ModifiedDate: new Date().toISOString()
       };
-      
-      const updatedEntries = [...entries];
+
+      const updatedEntries = [...currentEntries];
       updatedEntries[entryIndex] = updatedEntry;
       setMockData('timesheetEntries', updatedEntries);
-      
+
       return {
         success: true,
-        data: updatedEntry,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: updatedEntry
       };
     },
 
-    deleteEntry: async (entryId: number): Promise<ApiResponse<void>> => {
+    delete: async (id: number): Promise<ApiResponse<void>> => {
       await simulateDelay();
-      const entries = getMockData('timesheetEntries', mockTimesheetEntries);
-      const filteredEntries = entries.filter(entry => entry.entryID !== entryId);
-      
-      if (entries.length === filteredEntries.length) {
-        throw new Error(`Timesheet entry with ID ${entryId} not found`);
-      }
-      
-      setMockData('timesheetEntries', filteredEntries);
-      
+      const currentEntries = getMockData('timesheetEntries', mockTimesheetEntries);
+      const updatedEntries = currentEntries.filter(e => e.EntryID !== id);
+      setMockData('timesheetEntries', updatedEntries);
+
       return {
         success: true,
-        data: undefined,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: undefined
       };
     },
 
-    submitWeek: async (employeeId: string, weekEnding: string): Promise<ApiResponse<TimesheetSubmission>> => {
+    submit: async (data: { employeeId: string; weekEndingDate: string }): Promise<ApiResponse<TimesheetSubmission>> => {
       await simulateDelay();
-      const submissions = getMockData('timesheetSubmissions', mockTimesheetSubmissions);
-      const entries = getMockData('timesheetEntries', mockTimesheetEntries);
-      
-      // Calculate totals for the week
-      const weekStart = new Date(weekEnding);
-      weekStart.setDate(weekStart.getDate() - 6);
-      
-      const weekEntries = entries.filter(entry => {
-        const entryDate = new Date(entry.dateWorked);
-        return entry.employeeID === employeeId && 
-               entryDate >= weekStart && 
-               entryDate <= new Date(weekEnding);
-      });
-      
-      const totalStandardHours = weekEntries
-        .filter(entry => entry.payID === 1)
-        .reduce((sum, entry) => sum + entry.hours, 0);
-      
-      const totalOvertimeHours = weekEntries
-        .filter(entry => entry.payID === 2)
-        .reduce((sum, entry) => sum + entry.hours, 0);
+      const currentSubmissions = getMockData('timesheetSubmissions', mockTimesheetSubmissions);
       
       const newSubmission: TimesheetSubmission = {
-        submissionID: Math.max(...submissions.map(s => s.submissionID || 0), 0) + 1,
-        employeeID: employeeId,
-        weekEndingDate: weekEnding,
-        submissionType: 'Self',
-        submittedBy: employeeId,
-        submittedFor: employeeId,
-        submittedOn: new Date().toISOString(),
-        totalStandardHours,
-        totalOvertimeHours,
-        submissionStatus: 'Pending',
-        notes: 'Submitted via web portal'
+        id: Math.max(...currentSubmissions.map(s => s.id)) + 1,
+        employeeName: 'Test Employee',
+        projectCode: 'PROJ001',
+        projectDescription: 'Test Project',
+        weekEnding: data.weekEndingDate,
+        submittedDate: new Date().toISOString(),
+        totalHours: 40,
+        status: 'Pending',
+        notes: ''
       };
-      
-      const updatedSubmissions = [...submissions, newSubmission];
+
+      const updatedSubmissions = [...currentSubmissions, newSubmission];
       setMockData('timesheetSubmissions', updatedSubmissions);
-      
+
       return {
         success: true,
-        data: newSubmission,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: newSubmission
       };
     },
 
-    getPendingApprovals: async (managerId?: string): Promise<ApiResponse<TimesheetSubmission[]>> => {
+    getWeeklySummary: async (params: { employeeId: string; weekEndingDate: string }): Promise<ApiResponse<TimesheetSubmission[]>> => {
       await simulateDelay();
       const submissions = getMockData('timesheetSubmissions', mockTimesheetSubmissions);
-      const pendingSubmissions = submissions.filter(sub => sub.submissionStatus === 'Pending');
-      
       return {
         success: true,
-        data: pendingSubmissions,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
-      };
-    },
-
-    approve: async (submissionId: number, notes?: string): Promise<ApiResponse<TimesheetApproval>> => {
-      await simulateDelay();
-      const submissions = getMockData('timesheetSubmissions', mockTimesheetSubmissions);
-      const approvals = getMockData('timesheetApprovals', mockTimesheetApprovals);
-      
-      // Update submission status
-      const submissionIndex = submissions.findIndex(sub => sub.submissionID === submissionId);
-      if (submissionIndex !== -1) {
-        submissions[submissionIndex].submissionStatus = 'Approved';
-        setMockData('timesheetSubmissions', submissions);
-      }
-      
-      // Create approval record
-      const newApproval: TimesheetApproval = {
-        approvalID: Math.max(...approvals.map(a => a.approvalID || 0), 0) + 1,
-        submissionID: submissionId,
-        approvalLevel: 1,
-        approverID: 'EMP004', // Mock manager ID
-        approvalAction: 'Approved',
-        approvalDate: new Date().toISOString(),
-        approvalNotes: notes || 'Approved via web portal'
-      };
-      
-      const updatedApprovals = [...approvals, newApproval];
-      setMockData('timesheetApprovals', updatedApprovals);
-      
-      return {
-        success: true,
-        data: newApproval,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
-      };
-    },
-
-    reject: async (submissionId: number, reason: string): Promise<ApiResponse<TimesheetApproval>> => {
-      await simulateDelay();
-      const submissions = getMockData('timesheetSubmissions', mockTimesheetSubmissions);
-      const approvals = getMockData('timesheetApprovals', mockTimesheetApprovals);
-      
-      // Update submission status to 'Rejected'
-      const submissionIndex = submissions.findIndex(sub => sub.submissionID === submissionId);
-      if (submissionIndex !== -1) {
-        submissions[submissionIndex].submissionStatus = 'Rejected';
-        setMockData('timesheetSubmissions', submissions);
-      }
-      
-      // Create approval record
-      const newApproval: TimesheetApproval = {
-        approvalID: Math.max(...approvals.map(a => a.approvalID || 0), 0) + 1,
-        submissionID: submissionId,
-        approvalLevel: 1,
-        approverID: 'EMP004', // Mock manager ID
-        approvalAction: 'Rejected',
-        approvalDate: new Date().toISOString(),
-        approvalNotes: reason
-      };
-      
-      const updatedApprovals = [...approvals, newApproval];
-      setMockData('timesheetApprovals', updatedApprovals);
-      
-      return {
-        success: true,
-        data: newApproval,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
-      };
-    },
-
-    requestChanges: async (submissionId: number, notes: string): Promise<ApiResponse<TimesheetApproval>> => {
-      await simulateDelay();
-      const submissions = getMockData('timesheetSubmissions', mockTimesheetSubmissions);
-      const approvals = getMockData('timesheetApprovals', mockTimesheetApprovals);
-      
-      // Update submission status back to 'Pending'
-      const submissionIndex = submissions.findIndex(sub => sub.submissionID === submissionId);
-      if (submissionIndex !== -1) {
-        submissions[submissionIndex].submissionStatus = 'Pending';
-        setMockData('timesheetSubmissions', submissions);
-      }
-      
-      // Create approval record
-      const newApproval: TimesheetApproval = {
-        approvalID: Math.max(...approvals.map(a => a.approvalID || 0), 0) + 1,
-        submissionID: submissionId,
-        approvalLevel: 1,
-        approverID: 'EMP004', // Mock manager ID
-        approvalAction: 'Returned',
-        approvalDate: new Date().toISOString(),
-        approvalNotes: notes
-      };
-      
-      const updatedApprovals = [...approvals, newApproval];
-      setMockData('timesheetApprovals', updatedApprovals);
-      
-      return {
-        success: true,
-        data: newApproval,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: submissions
       };
     }
   },
 
-  // Cost Code endpoints
+  // Approval endpoints
+  approvals: {
+    create: async (data: Omit<TimesheetApproval, 'id'>): Promise<ApiResponse<TimesheetApproval>> => {
+      await simulateDelay();
+      const currentApprovals = getMockData('timesheetApprovals', mockTimesheetApprovals);
+      
+      const newApproval: TimesheetApproval = {
+        id: Math.max(...currentApprovals.map(a => a.id)) + 1,
+        ...data
+      };
+
+      const updatedApprovals = [...currentApprovals, newApproval];
+      setMockData('timesheetApprovals', updatedApprovals);
+
+      return {
+        success: true,
+        data: newApproval
+      };
+    },
+
+    approve: async (submissionId: number, data: { approvedBy: string; notes?: string }): Promise<ApiResponse<TimesheetApproval>> => {
+      await simulateDelay();
+      const currentApprovals = getMockData('timesheetApprovals', mockTimesheetApprovals);
+      
+      const newApproval: TimesheetApproval = {
+        id: Math.max(...currentApprovals.map(a => a.id)) + 1,
+        submissionId,
+        approvedBy: data.approvedBy,
+        approvedDate: new Date().toISOString(),
+        notes: data.notes || ''
+      };
+
+      const updatedApprovals = [...currentApprovals, newApproval];
+      setMockData('timesheetApprovals', updatedApprovals);
+
+      return {
+        success: true,
+        data: newApproval
+      };
+    },
+
+    reject: async (submissionId: number, data: { approvedBy: string; notes?: string }): Promise<ApiResponse<TimesheetApproval>> => {
+      await simulateDelay();
+      const currentApprovals = getMockData('timesheetApprovals', mockTimesheetApprovals);
+      
+      const newApproval: TimesheetApproval = {
+        id: Math.max(...currentApprovals.map(a => a.id)) + 1,
+        submissionId,
+        approvedBy: data.approvedBy,
+        approvedDate: new Date().toISOString(),
+        notes: data.notes || 'Rejected'
+      };
+
+      const updatedApprovals = [...currentApprovals, newApproval];
+      setMockData('timesheetApprovals', updatedApprovals);
+
+      return {
+        success: true,
+        data: newApproval
+      };
+    }
+  },
+
+  // Cost code endpoints
   costCodes: {
     getAll: async (): Promise<ApiResponse<CostCode[]>> => {
       await simulateDelay();
       const costCodes = getMockData('costCodes', mockCostCodes);
       return {
         success: true,
-        data: costCodes,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: costCodes
       };
     },
 
-    getActive: async (): Promise<ApiResponse<CostCode[]>> => {
+    getByProject: async (projectCode: string): Promise<ApiResponse<CostCode[]>> => {
       await simulateDelay();
       const costCodes = getMockData('costCodes', mockCostCodes);
-      const activeCostCodes = costCodes.filter(cc => cc.isActive);
-      
       return {
         success: true,
-        data: activeCostCodes,
-        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+        data: costCodes
       };
     }
   }

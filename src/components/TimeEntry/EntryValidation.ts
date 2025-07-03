@@ -3,13 +3,15 @@ import { toast } from "sonner";
 
 export interface EntryFormData {
   id: number;
-  date: string;
-  projectID: string;
-  extraID: string;
-  costCodeID: string;
-  standardHours: string;
-  overtimeHours: string;
+  employeeID: string;
+  dateWorked: string;
+  projectID: number;
+  extraID?: number;
+  costCodeID: number;
+  hours: number;
+  payID: number;
   notes: string;
+  status?: string;
   errors: {
     [key: string]: string;
   };
@@ -18,8 +20,8 @@ export interface EntryFormData {
 export const validateEntry = (entry: EntryFormData): { [key: string]: string } => {
   const errors: { [key: string]: string } = {};
 
-  if (!entry.date) {
-    errors.date = "Date is required";
+  if (!entry.dateWorked) {
+    errors.dateWorked = "Date is required";
   }
 
   if (!entry.projectID) {
@@ -30,32 +32,18 @@ export const validateEntry = (entry: EntryFormData): { [key: string]: string } =
     errors.costCodeID = "Cost code is required";
   }
 
-  const standardHours = parseFloat(entry.standardHours) || 0;
-  const overtimeHours = parseFloat(entry.overtimeHours) || 0;
-  const totalHours = standardHours + overtimeHours;
-
-  if (standardHours < 0) {
-    errors.standardHours = "Standard hours cannot be negative";
+  if (!entry.employeeID) {
+    errors.employeeID = "Employee is required";
   }
 
-  if (standardHours > 16) {
-    errors.standardHours = "Standard hours cannot exceed 16 hours";
+  const hours = entry.hours || 0;
+
+  if (hours <= 0) {
+    errors.hours = "Hours must be greater than 0";
   }
 
-  if (overtimeHours < 0) {
-    errors.overtimeHours = "Overtime hours cannot be negative";
-  }
-
-  if (overtimeHours > 16) {
-    errors.overtimeHours = "Overtime hours cannot exceed 16 hours";
-  }
-
-  if (totalHours === 0) {
-    errors.hours = "Total hours must be greater than 0";
-  }
-
-  if (totalHours > 16) {
-    errors.hours = "Total hours cannot exceed 16 hours per day";
+  if (hours > 16) {
+    errors.hours = "Hours cannot exceed 16 hours per day";
   }
 
   return errors;
