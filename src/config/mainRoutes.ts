@@ -5,14 +5,10 @@ import type { RouteConfig } from './types';
 // Main pages
 import Index from '@/pages/Index';
 import Log from '@/pages/Log';
-<<<<<<< HEAD
+import Dashboard from '@/pages/Dashboard';
 import Timesheet from '@/pages/Timesheet';
-=======
-import TimeEntryStandard from '@/pages/TimeEntryStandard';
-import TimeEntryTimeInOut from '@/pages/TimeEntryTimeInOut';
 import EnhancedTimeEntry from '@/pages/EnhancedTimeEntry';
 import ModernTimeEntry from '@/pages/ModernTimeEntry';
->>>>>>> f0a0cdd (feat: Complete Phase 1 - Frontend UI Implementation)
 import ManagerApproval from '@/pages/ManagerApproval';
 import DailyReporting from '@/pages/DailyReporting';
 import EditDailyReport from '@/pages/EditDailyReport';
