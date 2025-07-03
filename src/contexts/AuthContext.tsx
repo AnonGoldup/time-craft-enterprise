@@ -46,26 +46,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Check for existing token on mount
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem('authToken');
-      if (token) {
-        try {
-          // Verify token with backend
-          const response = await api.get('/auth/me');
-          if (response.data.success && response.data.user) {
-            setUser(response.data.user as User);
-          } else {
-            localStorage.removeItem('authToken');
-          }
-        } catch (error) {
-          console.error('Auth check failed:', error);
-          localStorage.removeItem('authToken');
-        }
-      }
-      setLoading(false);
+    // Mock user for development - bypass login screen
+    const mockUser: User = {
+      userId: 'mock-user-1',
+      employeeId: 'EMP001',
+      email: 'admin@altapro.com',
+      fullName: 'Admin User',
+      role: UserRole.ADMIN,
+      department: 'IT',
+      isActive: true
     };
-
-    checkAuth();
+    
+    setUser(mockUser);
+    setLoading(false);
   }, []);
 
   const login = async (employeeId: string, passwordOrEmail: string): Promise<void> => {

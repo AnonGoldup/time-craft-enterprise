@@ -20,7 +20,7 @@ import { ProjectMetricsCard } from '@/components/ManagerApproval/ProjectMetricsC
 import { WeeklyChart } from '@/components/ManagerApproval/WeeklyChart';
 
 export default function AltaProManagerDashboard() {
-  const [submissions, setSubmissions] = useState<TimesheetSubmission[]>(dashboardData.recentSubmissions);
+  const [submissions, setSubmissions] = useState<TimesheetSubmission[]>([...dashboardData.recentSubmissions]);
   const [selectedSubmissions, setSelectedSubmissions] = useState(new Set<number>());
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('approvals');
