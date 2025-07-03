@@ -1,6 +1,9 @@
 
+import { lazy } from 'react';
 import { UserRole } from '@/contexts/AuthContext';
 import type { RouteConfig } from './types';
+
+const TimesheetRedesign = lazy(() => import('@/pages/TimesheetRedesign'));
 
 // Main pages
 import Index from '@/pages/Index';
@@ -35,6 +38,11 @@ export const mainRoutes: RouteConfig[] = [
   {
     path: '/timesheet',
     component: Timesheet,
+    requiredRoles: [UserRole.EMPLOYEE, UserRole.ADMIN]
+  },
+  {
+    path: '/timesheet-redesign',
+    component: TimesheetRedesign,
     requiredRoles: [UserRole.EMPLOYEE, UserRole.ADMIN]
   },
   {

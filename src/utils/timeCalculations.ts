@@ -178,3 +178,30 @@ export const calculateTotalBreakTime = (breaks: Break[]): number => {
     return total + (endMinutes - startMinutes);
   }, 0);
 };
+
+// Format duration in minutes to human readable format
+export const formatDuration = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  
+  if (hours === 0) {
+    return `${mins}m`;
+  }
+  if (mins === 0) {
+    return `${hours}h`;
+  }
+  return `${hours}h ${mins}m`;
+};
+
+// Calculate duration between two time strings
+export const calculateDuration = (timeIn: string, timeOut: string): number => {
+  const startMinutes = parseTimeToMinutes(timeIn);
+  let endMinutes = parseTimeToMinutes(timeOut);
+  
+  // Handle cross-midnight
+  if (endMinutes <= startMinutes) {
+    endMinutes += 24 * 60;
+  }
+  
+  return endMinutes - startMinutes;
+};

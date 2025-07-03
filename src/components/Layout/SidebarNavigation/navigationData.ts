@@ -20,6 +20,12 @@ export const timesheetModule: MenuItem[] = [
     roles: [UserRole.EMPLOYEE, UserRole.ADMIN]
   },
   {
+    path: '/timesheet-redesign',
+    label: 'Timesheet Redesign',
+    icon: Clock,
+    roles: [UserRole.EMPLOYEE, UserRole.ADMIN]
+  },
+  {
     path: '/log',
     label: 'Time Log',
     icon: FileText,
