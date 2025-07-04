@@ -13,6 +13,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Timer, Hash, AlertTriangle, Plus, Trash2, Calculator, Users, Calendar, CheckCircle2, XCircle, Coffee, Play, Pause, Zap, Check, ChevronsUpDown, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TimesheetSubmissionDialog } from './TimesheetSubmissionDialog';
+import ExtraSelector from '../TimeEntry/ExtraSelector';
+import CostCodeSelector from '../TimeEntry/CostCodeSelector';
 
 // Types
 interface Employee {
@@ -993,38 +995,41 @@ export default function MultiEmployeeTimeEntryForm() {
                       </div>
                       
                       <div>
-                        <Label className="text-xs">Extra</Label>
-                        <Select value={entry.extraValue} onValueChange={value => updateEntry(entry.id, 'extraValue', value)}>
-                          <SelectTrigger className="h-8">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {mockExtras.map(extra => <SelectItem key={extra.extraID} value={extra.extraValue}>
-                                <span className="text-xs">{extra.extraValue} - {extra.description}</span>
-                              </SelectItem>)}
-                          </SelectContent>
-                        </Select>
+                        <ExtraSelector
+                          selectedExtra={entry.extraValue}
+                          setSelectedExtra={value => updateEntry(entry.id, 'extraValue', value)}
+                          projectExtras={mockExtras.map(extra => ({
+                            ExtraID: extra.extraID,
+                            ProjectID: 1, // Default project ID
+                            ExtraValue: extra.extraValue,
+                            Description: extra.description,
+                            IsActive: true,
+                            extraID: extra.extraID,
+                            projectID: 1,
+                            extraValue: extra.extraValue,
+                            description: extra.description,
+                            isActive: true
+                          }))}
+                          disabled={isSubmitting}
+                        />
                       </div>
                     </div>
 
                     <div className="mt-3">
-                      <Label className="flex items-center space-x-1 text-xs">
-                        <Hash className="w-3 h-3" />
-                        <span>Cost Code *</span>
-                      </Label>
-                      <Select value={entry.costCode} onValueChange={value => updateEntry(entry.id, 'costCode', value)}>
-                        <SelectTrigger className="h-8">
-                          <SelectValue placeholder="Select Cost Code" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockCostCodes.map(code => <SelectItem key={code.costCodeId} value={code.costCode}>
-                              <div className="flex flex-col">
-                                <span className="font-medium text-xs">{code.costCode}</span>
-                                <span className="text-xs text-gray-500">{code.description}</span>
-                              </div>
-                            </SelectItem>)}
-                        </SelectContent>
-                      </Select>
+                      <CostCodeSelector
+                        selectedCostCode={entry.costCode}
+                        setSelectedCostCode={value => updateEntry(entry.id, 'costCode', value)}
+                        costCodes={mockCostCodes.map(code => ({
+                          CostCodeID: code.costCodeId,
+                          CostCode: code.costCode,
+                          Description: code.description,
+                          IsActive: true,
+                          costCodeID: code.costCodeId,
+                          costCode: code.costCode,
+                          description: code.description
+                        }))}
+                        disabled={isSubmitting}
+                      />
                       {getFieldError(entry.id, 'costCode') && <p className="text-xs text-red-600 mt-1">{getFieldError(entry.id, 'costCode')}</p>}
                     </div>
                   </div>
