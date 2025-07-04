@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Edit2, Check, Users, Calendar, Clock, FileText } from 'lucide-react';
 
 interface TimesheetEntry {
@@ -19,6 +20,18 @@ interface TimesheetEntry {
   standardHours: number;
   overtimeHours: number;
   notes: string;
+}
+
+interface Extra {
+  extraID: number;
+  extraValue: string;
+  description: string;
+}
+
+interface CostCode {
+  costCodeId: number;
+  costCode: string;
+  description: string;
 }
 
 interface TimesheetSubmissionDialogProps {
@@ -40,6 +53,21 @@ export const TimesheetSubmissionDialog: React.FC<TimesheetSubmissionDialogProps>
 }) => {
   const [editableEntries, setEditableEntries] = useState<TimesheetEntry[]>(entries);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+
+  // Mock data for extras and cost codes
+  const mockExtras: Extra[] = [
+    { extraID: 1, extraValue: 'Default', description: 'Default' },
+    { extraID: 2, extraValue: 'Phase 1', description: 'Phase 1 - Initial Setup' },
+    { extraID: 3, extraValue: 'Phase 2', description: 'Phase 2 - Implementation' },
+    { extraID: 4, extraValue: 'Phase 3', description: 'Phase 3 - Testing' }
+  ];
+
+  const mockCostCodes: CostCode[] = [
+    { costCodeId: 1, costCode: '001-040-043', description: 'INDIRECT LAB-Direct Labor' },
+    { costCodeId: 2, costCode: '001-040-054', description: 'INDIRECT LAB-Employee Training' },
+    { costCodeId: 3, costCode: '001-500-501', description: 'GENEXP-Vehicle Travel' },
+    { costCodeId: 4, costCode: '001-040-055', description: 'INDIRECT LAB-Safety Training' }
+  ];
 
   // Update entries when prop changes
   React.useEffect(() => {
@@ -147,6 +175,7 @@ export const TimesheetSubmissionDialog: React.FC<TimesheetSubmissionDialogProps>
                 <TableHead>Employee</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Project</TableHead>
+                <TableHead>Extra</TableHead>
                 <TableHead>Cost Code</TableHead>
                 <TableHead>Standard</TableHead>
                 <TableHead>Overtime</TableHead>
@@ -165,16 +194,52 @@ export const TimesheetSubmissionDialog: React.FC<TimesheetSubmissionDialogProps>
                   </TableCell>
                   <TableCell className="text-sm">{entry.dateWorked}</TableCell>
                   <TableCell>
-                    <div>
-                      <p className="text-sm font-medium">{entry.projectCode}</p>
-                      {entry.extraValue !== 'Default' && (
-                        <Badge variant="outline" className="text-xs mt-1">
-                          {entry.extraValue}
-                        </Badge>
-                      )}
-                    </div>
+                    <p className="text-sm font-medium">{entry.projectCode}</p>
                   </TableCell>
-                  <TableCell className="text-sm">{entry.costCode}</TableCell>
+                  <TableCell>
+                    {editingIndex === index ? (
+                      <Select
+                        value={entry.extraValue}
+                        onValueChange={(value) => updateEntry(index, 'extraValue', value)}
+                      >
+                        <SelectTrigger className="w-28 h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockExtras.map((extra) => (
+                            <SelectItem key={extra.extraID} value={extra.extraValue}>
+                              {extra.extraValue}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Badge variant="outline" className="text-xs">
+                        {entry.extraValue}
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editingIndex === index ? (
+                      <Select
+                        value={entry.costCode}
+                        onValueChange={(value) => updateEntry(index, 'costCode', value)}
+                      >
+                        <SelectTrigger className="w-32 h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockCostCodes.map((code) => (
+                            <SelectItem key={code.costCodeId} value={code.costCode}>
+                              {code.costCode}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <span className="text-sm">{entry.costCode}</span>
+                    )}
+                  </TableCell>
                   <TableCell>
                     {editingIndex === index ? (
                       <Input
