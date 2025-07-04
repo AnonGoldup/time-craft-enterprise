@@ -12,6 +12,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Timer, Hash, AlertTriangle, Plus, Trash2, Calculator, Users, Calendar, CheckCircle2, XCircle, Coffee, Play, Pause, Zap, Check, ChevronsUpDown, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { TimesheetSubmissionDialog } from './TimesheetSubmissionDialog';
 
 // Types
 interface Employee {
@@ -621,6 +622,8 @@ const calculateTimeInOut = (timeIn: TimeValue, timeOut: TimeValue, breaks: Break
 };
 export default function MultiEmployeeTimeEntryForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSubmissionDialog, setShowSubmissionDialog] = useState(false);
+  const [submissionEntries, setSubmissionEntries] = useState<any[]>([]);
   const [entries, setEntries] = useState<TimeEntry[]>([{
     id: generateId(),
     selectedEmployees: [mockEmployees[0]],
@@ -806,67 +809,81 @@ export default function MultiEmployeeTimeEntryForm() {
     setErrors({});
     setCalculations({});
   }, []);
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const hasErrors = Object.keys(errors).length > 0;
     const hasValidCalculations = entries.every(entry => calculations[entry.id]);
     if (hasErrors || !hasValidCalculations) {
       alert('Please fix all validation errors before submitting.');
       return;
     }
+
+    // Prepare timesheet entries for preview
+    const timesheetEntries: any[] = [];
+    entries.forEach(entry => {
+      const calc = calculations[entry.id];
+      if (!calc) return;
+      const notes = entry.notes || '';
+      const breakInfo = calc.breakDetails.length > 0 ? ` [Breaks: ${calc.breakDetails.map(b => `${b.startTime}-${b.endTime}`).join(', ')}]` : '';
+
+      // Create entries for each selected employee
+      entry.selectedEmployees.forEach(employee => {
+        if (calc.standardHours > 0) {
+          timesheetEntries.push({
+            employeeId: employee.employeeId,
+            employeeName: employee.fullName,
+            dateWorked: entry.dateWorked,
+            projectCode: entry.projectCode,
+            extraValue: entry.extraValue,
+            costCode: entry.costCode,
+            standardHours: calc.standardHours,
+            overtimeHours: 0,
+            notes: `${notes}${breakInfo}`,
+            timeIn: timeValueToString(entry.timeIn),
+            timeOut: timeValueToString(entry.timeOut)
+          });
+        }
+        if (calc.overtimeHours > 0) {
+          timesheetEntries.push({
+            employeeId: employee.employeeId,
+            employeeName: employee.fullName,
+            dateWorked: entry.dateWorked,
+            projectCode: entry.projectCode,
+            extraValue: entry.extraValue,
+            costCode: entry.costCode,
+            standardHours: 0,
+            overtimeHours: calc.overtimeHours,
+            notes: `${notes}${breakInfo} [Overtime]`,
+            timeIn: timeValueToString(entry.timeIn),
+            timeOut: timeValueToString(entry.timeOut)
+          });
+        }
+      });
+    });
+
+    // Show confirmation dialog
+    setSubmissionEntries(timesheetEntries);
+    setShowSubmissionDialog(true);
+  };
+
+  const handleConfirmSubmission = async (finalEntries: any[]) => {
     setIsSubmitting(true);
     try {
-      const timesheetEntries: any[] = [];
-      entries.forEach(entry => {
-        const calc = calculations[entry.id];
-        if (!calc) return;
-        const notes = entry.notes || '';
-        const breakInfo = calc.breakDetails.length > 0 ? ` [Breaks: ${calc.breakDetails.map(b => `${b.startTime}-${b.endTime}`).join(', ')}]` : '';
-
-        // Create entries for each selected employee
-        entry.selectedEmployees.forEach(employee => {
-          if (calc.standardHours > 0) {
-            timesheetEntries.push({
-              employeeId: employee.employeeId,
-              employeeName: employee.fullName,
-              dateWorked: entry.dateWorked,
-              projectCode: entry.projectCode,
-              extraValue: entry.extraValue,
-              costCode: entry.costCode,
-              standardHours: calc.standardHours,
-              overtimeHours: 0,
-              notes: `${notes}${breakInfo}`,
-              timeIn: timeValueToString(entry.timeIn),
-              timeOut: timeValueToString(entry.timeOut)
-            });
-          }
-          if (calc.overtimeHours > 0) {
-            timesheetEntries.push({
-              employeeId: employee.employeeId,
-              employeeName: employee.fullName,
-              dateWorked: entry.dateWorked,
-              projectCode: entry.projectCode,
-              extraValue: entry.extraValue,
-              costCode: entry.costCode,
-              standardHours: 0,
-              overtimeHours: calc.overtimeHours,
-              notes: `${notes}${breakInfo} [Overtime]`,
-              timeIn: timeValueToString(entry.timeIn),
-              timeOut: timeValueToString(entry.timeOut)
-            });
-          }
-        });
-      });
-
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-      alert(`Successfully created ${timesheetEntries.length} timesheet entries!\n\nEntries:\n${timesheetEntries.map((e, i) => `${i + 1}. ${e.employeeName} (${e.employeeId}) - ${e.dateWorked} - ${e.standardHours + e.overtimeHours}hrs (Project: ${e.projectCode})`).join('\n')}`);
+      alert(`Successfully created ${finalEntries.length} timesheet entries!\n\nEntries:\n${finalEntries.map((e, i) => `${i + 1}. ${e.employeeName} (${e.employeeId}) - ${e.dateWorked} - ${e.standardHours + e.overtimeHours}hrs (Project: ${e.projectCode})`).join('\n')}`);
       resetForm();
+      setShowSubmissionDialog(false);
     } catch (error) {
       console.error('Error submitting timesheet entries:', error);
       alert('Error submitting timesheet entries. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleCancelSubmission = () => {
+    setShowSubmissionDialog(false);
+    setSubmissionEntries([]);
   };
   const totalTimesheetEntries = useMemo(() => {
     return entries.reduce((total, entry) => {
@@ -1204,5 +1221,15 @@ export default function MultiEmployeeTimeEntryForm() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Submission Confirmation Dialog */}
+      <TimesheetSubmissionDialog
+        open={showSubmissionDialog}
+        onOpenChange={setShowSubmissionDialog}
+        entries={submissionEntries}
+        onConfirmSubmission={handleConfirmSubmission}
+        onCancel={handleCancelSubmission}
+        isSubmitting={isSubmitting}
+      />
     </div>;
 }
