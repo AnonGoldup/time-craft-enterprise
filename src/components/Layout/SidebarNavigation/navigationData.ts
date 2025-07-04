@@ -1,6 +1,6 @@
 
 import { UserRole } from '@/contexts/AuthContext';
-import { Home, Calendar, FileText, Users, BarChart3, Settings, Building2, Download, Clock } from 'lucide-react';
+import { Home, Calendar, FileText, Users, BarChart3, Settings, Building2, Download, Clock, Bug } from 'lucide-react';
 import type { MenuItem } from './types';
 
 export const navigationItems: MenuItem[] = [
@@ -89,6 +89,12 @@ export const administratorModule: MenuItem[] = [
     path: '/export-payroll',
     label: 'Export Payroll',
     icon: Download,
+    roles: [UserRole.ADMIN]
+  },
+  {
+    path: '/debug-logs',
+    label: 'Debug & Logs',
+    icon: Bug,
     roles: [UserRole.ADMIN]
   }
 ];

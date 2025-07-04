@@ -23,6 +23,7 @@ import Calendar from '@/pages/Calendar';
 import Documents from '@/pages/Documents';
 import CompanySettings from '@/pages/CompanySettings';
 import ExportPayrollData from '@/pages/ExportPayrollData';
+import DebugLogs from '@/pages/DebugLogs';
 
 export const mainRoutes: RouteConfig[] = [
   {
@@ -108,6 +109,11 @@ export const mainRoutes: RouteConfig[] = [
   {
     path: '/export-payroll',
     component: ExportPayrollData,
+    requiredRoles: [UserRole.ADMIN]
+  },
+  {
+    path: '/debug-logs',
+    component: DebugLogs,
     requiredRoles: [UserRole.ADMIN]
   }
 ];
