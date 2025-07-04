@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Timer, Hash, AlertTriangle, Plus, Trash2, Calculator, Users, Calendar, CheckCircle2, XCircle, Zap, Check, ChevronsUpDown, X, Search, Clock } from 'lucide-react';
+import { TimesheetSubmissionDialog } from './TimesheetSubmissionDialog';
 
 // Utility function to merge classNames
 const cn = (...classes: (string | undefined | null | false)[]): string => {
@@ -600,6 +601,8 @@ const validateEntry = (entry: StandardHoursEntry): ValidationError[] => {
 };
 export default function StandardHoursTab() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSubmissionDialog, setShowSubmissionDialog] = useState(false);
+  const [submissionEntries, setSubmissionEntries] = useState<any[]>([]);
   const [entries, setEntries] = useState<StandardHoursEntry[]>([{
     id: generateId(),
     selectedEmployees: [mockEmployees[0]],
@@ -673,62 +676,76 @@ export default function StandardHoursTab() {
     }]);
     setErrors({});
   }, []);
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const hasErrors = Object.keys(errors).length > 0;
     if (hasErrors) {
       alert('Please fix all validation errors before submitting.');
       return;
     }
-    setIsSubmitting(true);
-    try {
-      const timesheetEntries: any[] = [];
-      entries.forEach(entry => {
-        const notes = entry.notes || '';
 
-        // Create entries for each selected employee and date combination
-        entry.selectedEmployees.forEach(employee => {
-          entry.selectedDates.forEach(date => {
-            const formattedDate = formatDate(date, 'yyyy-MM-dd');
-            if (entry.standardHours > 0) {
-              timesheetEntries.push({
-                employeeId: employee.employeeId,
-                employeeName: employee.fullName,
-                dateWorked: formattedDate,
-                projectCode: entry.projectCode,
-                extraValue: entry.extraValue,
-                costCode: entry.costCode,
-                standardHours: entry.standardHours,
-                overtimeHours: 0,
-                notes: notes
-              });
-            }
-            if (entry.overtimeHours > 0) {
-              timesheetEntries.push({
-                employeeId: employee.employeeId,
-                employeeName: employee.fullName,
-                dateWorked: formattedDate,
-                projectCode: entry.projectCode,
-                extraValue: entry.extraValue,
-                costCode: entry.costCode,
-                standardHours: 0,
-                overtimeHours: entry.overtimeHours,
-                notes: `${notes} [Overtime]`
-              });
-            }
-          });
+    // Prepare timesheet entries for preview
+    const timesheetEntries: any[] = [];
+    entries.forEach(entry => {
+      const notes = entry.notes || '';
+
+      // Create entries for each selected employee and date combination
+      entry.selectedEmployees.forEach(employee => {
+        entry.selectedDates.forEach(date => {
+          const formattedDate = formatDate(date, 'yyyy-MM-dd');
+          if (entry.standardHours > 0) {
+            timesheetEntries.push({
+              employeeId: employee.employeeId,
+              employeeName: employee.fullName,
+              dateWorked: formattedDate,
+              projectCode: entry.projectCode,
+              extraValue: entry.extraValue,
+              costCode: entry.costCode,
+              standardHours: entry.standardHours,
+              overtimeHours: 0,
+              notes: notes
+            });
+          }
+          if (entry.overtimeHours > 0) {
+            timesheetEntries.push({
+              employeeId: employee.employeeId,
+              employeeName: employee.fullName,
+              dateWorked: formattedDate,
+              projectCode: entry.projectCode,
+              extraValue: entry.extraValue,
+              costCode: entry.costCode,
+              standardHours: 0,
+              overtimeHours: entry.overtimeHours,
+              notes: `${notes} [Overtime]`
+            });
+          }
         });
       });
+    });
 
+    // Show confirmation dialog
+    setSubmissionEntries(timesheetEntries);
+    setShowSubmissionDialog(true);
+  };
+
+  const handleConfirmSubmission = async (finalEntries: any[]) => {
+    setIsSubmitting(true);
+    try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-      alert(`Successfully created ${timesheetEntries.length} timesheet entries!\n\nEntries:\n${timesheetEntries.map((e, i) => `${i + 1}. ${e.employeeName} (${e.employeeId}) - ${e.dateWorked} - ${e.standardHours + e.overtimeHours}hrs (${e.projectCode})`).join('\n')}`);
+      alert(`Successfully created ${finalEntries.length} timesheet entries!\n\nEntries:\n${finalEntries.map((e, i) => `${i + 1}. ${e.employeeName} (${e.employeeId}) - ${e.dateWorked} - ${e.standardHours + e.overtimeHours}hrs (${e.projectCode})`).join('\n')}`);
       resetForm();
+      setShowSubmissionDialog(false);
     } catch (error) {
       console.error('Error submitting timesheet entries:', error);
       alert('Error submitting timesheet entries. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleCancelSubmission = () => {
+    setShowSubmissionDialog(false);
+    setSubmissionEntries([]);
   };
   const totalTimesheetEntries = useMemo(() => {
     return entries.reduce((total, entry) => {
@@ -1000,5 +1017,15 @@ export default function StandardHoursTab() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Submission Confirmation Dialog */}
+      <TimesheetSubmissionDialog
+        open={showSubmissionDialog}
+        onOpenChange={setShowSubmissionDialog}
+        entries={submissionEntries}
+        onConfirmSubmission={handleConfirmSubmission}
+        onCancel={handleCancelSubmission}
+        isSubmitting={isSubmitting}
+      />
     </div>;
 }
