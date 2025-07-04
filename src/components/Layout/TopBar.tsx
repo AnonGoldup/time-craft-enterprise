@@ -4,8 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Bell, User, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { ThemeToggleCompact } from '@/components/ThemeToggleCompact';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { ProfileModal } from '@/components/Profile/ProfileModal';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -59,9 +57,6 @@ export const TopBar: React.FC = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* Theme Toggle */}
-            {isMobile ? <ThemeToggleCompact /> : <ThemeToggle />}
-            
             {!isMobile && (
               <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
                 <Bell className="h-5 w-5" />
@@ -71,7 +66,7 @@ export const TopBar: React.FC = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-2 text-foreground hover:bg-accent p-2">
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 avatar-default rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
                     <User className="h-3 w-3 sm:h-4 sm:w-4" />
                   </div>
                   {!isMobile && <span className="hidden sm:block">{user?.fullName}</span>}

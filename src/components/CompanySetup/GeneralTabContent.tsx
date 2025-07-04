@@ -9,7 +9,6 @@ import {
   InputFormsSection,
   OutputFormsSection,
   ReportsSection,
-  ColorSection,
   HierarchyLoginSection
 } from './ConfigurationSections';
 
@@ -25,7 +24,6 @@ export const GeneralTabContent: React.FC = () => {
         <InputFormsSection />
         <OutputFormsSection />
         <ReportsSection />
-        <ColorSection />
         <HierarchyLoginSection />
       </div>
     </div>

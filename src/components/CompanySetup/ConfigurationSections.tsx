@@ -1,11 +1,7 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { useColorTheme } from '@/contexts/ThemeContext';
-import { useToast } from '@/hooks/use-toast';
 
 export const InputFormsSection: React.FC = () => {
   return (
@@ -43,7 +39,7 @@ export const OutputFormsSection: React.FC = () => {
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="no" id="track-contract-no" />
               <Label htmlFor="track-contract-no">No</Label>
-            </div>
+          </div>
           </RadioGroup>
         </div>
 
@@ -100,98 +96,6 @@ export const ReportsSection: React.FC = () => {
             <span className="text-sm text-muted-foreground">Calculated based on 8 hour day</span>
           </div>
         </div>
-      </div>
-    </div>
-  );
-};
-
-export const ColorSection: React.FC = () => {
-  const { currentTheme, setTheme, themes } = useColorTheme();
-  const { toast } = useToast();
-  const [selectedFont, setSelectedFont] = useState(() => {
-    return localStorage.getItem('selected-font') || 'Arial';
-  });
-
-  const availableFonts = [
-    { value: 'Arial', label: 'Arial' },
-    { value: 'Inter', label: 'Inter' },
-    { value: 'Roboto', label: 'Roboto' },
-    { value: 'Open Sans', label: 'Open Sans' },
-    { value: 'Lato', label: 'Lato' },
-    { value: 'Montserrat', label: 'Montserrat' },
-    { value: 'Poppins', label: 'Poppins' },
-    { value: 'Source Sans Pro', label: 'Source Sans Pro' },
-    { value: 'Nunito', label: 'Nunito' },
-    { value: 'PT Sans', label: 'PT Sans' }
-  ];
-
-  const handleThemeChange = (themeId: string) => {
-    setTheme(themeId);
-  };
-
-  const handleFontSave = () => {
-    // Apply the font to the document
-    document.documentElement.style.setProperty('--theme-font-family', selectedFont);
-    document.body.style.fontFamily = selectedFont;
-    
-    // Save to localStorage
-    localStorage.setItem('selected-font', selectedFont);
-    
-    // Show success toast
-    toast({
-      title: "Font Updated",
-      description: `Font changed to ${selectedFont}`,
-    });
-  };
-
-  return (
-    <div className="border-t pt-3">
-      <h3 className="text-lg font-medium text-primary mb-2">Color & Typography</h3>
-      
-      {/* Font Selector */}
-      <div className="mb-4 p-4 border rounded-lg">
-        <Label className="mb-3 block font-medium">Font Family:</Label>
-        <div className="flex items-center gap-3">
-          <Select value={selectedFont} onValueChange={setSelectedFont}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select a font" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableFonts.map((font) => (
-                <SelectItem key={font.value} value={font.value}>
-                  <span style={{ fontFamily: font.value }}>{font.label}</span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button onClick={handleFontSave} size="sm">
-            Save Font
-          </Button>
-        </div>
-      </div>
-
-      {/* Color Theme Selector */}
-      <div>
-        <Label className="mb-3 block font-medium">Color Theme:</Label>
-        <RadioGroup 
-          value={currentTheme.id} 
-          onValueChange={handleThemeChange}
-          className="grid grid-cols-2 gap-2"
-        >
-          {themes.map((theme) => (
-            <div key={theme.id} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted transition-colors">
-              <RadioGroupItem value={theme.id} id={theme.id} />
-              <div 
-                className="w-8 h-8 rounded-lg border-2 border-border shadow-sm" 
-                style={{ backgroundColor: `hsl(${theme.colors.primary})` }}
-                title={theme.name}
-              ></div>
-              <Label htmlFor={theme.id} className="text-sm font-medium cursor-pointer flex-1">
-                {theme.name}
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
       </div>
     </div>
   );

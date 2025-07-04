@@ -6,12 +6,10 @@ import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ColorThemeProvider } from "@/contexts/ThemeContext";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import { LoadingState } from "@/components/ui/loading";
 import { AppRoutes } from "@/components/App/AppRoutes";
-import MultiSelectTimeEntry from '@/components/TimeEntry/MultiSelectTimeEntry';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,48 +20,21 @@ const queryClient = new QueryClient({
   },
 });
 
-// Default Theme Initializer Component
-const DefaultThemeInitializer = ({ children }: { children: React.ReactNode }) => {
-  useEffect(() => {
-    // Apply Default theme class to body
-    document.body.classList.add('theme-default');
-    
-    // Set Default theme as default in ColorThemeProvider
-    const savedTheme = localStorage.getItem('color-theme');
-    if (!savedTheme) {
-      localStorage.setItem('color-theme', 'default');
-    }
-
-    // Apply saved font
-    const savedFont = localStorage.getItem('selected-font');
-    if (savedFont) {
-      document.documentElement.style.setProperty('--theme-font-family', savedFont);
-      document.body.style.fontFamily = savedFont;
-    }
-  }, []);
-
-  return <>{children}</>;
-};
-
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-        <ColorThemeProvider>
-          <DefaultThemeInitializer>
-            <AuthProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <Suspense fallback={<LoadingState message="Loading application..." />}>
-                    <AppRoutes />
-                  </Suspense>
-                </BrowserRouter>
-              </TooltipProvider>
-            </AuthProvider>
-          </DefaultThemeInitializer>
-        </ColorThemeProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Suspense fallback={<LoadingState message="Loading application..." />}>
+                <AppRoutes />
+              </Suspense>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   </ErrorBoundary>

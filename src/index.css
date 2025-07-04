@@ -1,264 +1,69 @@
-@import './styles/theme-variables.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
-/* Unity Theme - Complete Theme File */
 @layer base {
   :root {
-    /* Default Theme Colors */
     --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
-    
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
-    
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
-    
-    --primary: 210 40% 15%;
-    --primary-foreground: 0 0% 100%;
-    
-    --secondary: 210 40% 98%;
-    --secondary-foreground: 0 0% 0%;
-    
-    --muted: 210 20% 95%;
-    --muted-foreground: 0 0% 40%;
-    
-    --accent: 210 40% 95%;
-    --accent-foreground: 0 0% 0%;
-    
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    
-    --border: 210 20% 90%;
-    --input: 210 20% 95%;
-    --ring: 210 40% 15%;
-    
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
-    
-    /* Chart Colors - Default neutral palette */
-    --chart-1: 210 40% 50%;
-    --chart-2: 210 40% 40%;
-    --chart-3: 210 40% 30%;
-    --chart-4: 210 40% 60%;
-    --chart-5: 210 40% 70%;
-    
-    /* Status Colors */
-    --status-success: 120 60% 50%;
-    --status-warning: 43 74% 66%;
-    --status-info: 210 40% 60%;
-    --status-error: 0 84% 60%;
-    
-    /* Component Specific Colors */
-    --avatar-bg: var(--primary);
-    --avatar-fg: var(--primary-foreground);
-    
-    /* Default + AltaPro Brand Colors */
-    --altapro-orange: 25 95% 53%;
-    --altapro-dark: 222 13% 16%;
-    --altapro-darker: 222 13% 14%;
-    --altapro-light: 0 0% 98%;
-    
-    /* Sidebar Specific Colors - Light Grey Theme */
-    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - light grey */
-    --sidebar-foreground: 222 13% 16%; /* dark text on light background */
-    --sidebar-primary: var(--primary);
-    --sidebar-primary-foreground: var(--primary-foreground);
-    --sidebar-accent: 0 0% 92%;
-    --sidebar-accent-foreground: 222 13% 16%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: var(--primary);
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
   }
 
   .dark {
-    /* Default Dark Mode Colors */
-    --background: 222 13% 16%;
-    --foreground: 0 0% 98%;
-    
-    --card: 222 13% 18%;
-    --card-foreground: 0 0% 98%;
-    
-    --popover: 222 13% 16%;
-    --popover-foreground: 0 0% 98%;
-    
-    --primary: 210 40% 85%;
-    --primary-foreground: 0 0% 0%;
-    
-    --secondary: 222 13% 20%;
-    --secondary-foreground: 0 0% 98%;
-    
-    --muted: 222 13% 20%;
-    --muted-foreground: 0 0% 60%;
-    
-    --accent: 222 13% 25%;
-    --accent-foreground: 0 0% 98%;
-    
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 98%;
-    
-    --border: 222 13% 20%;
-    --input: 222 13% 20%;
-    --ring: 210 40% 85%;
-    
-    /* Keep Sidebar Light Grey Even in Dark Mode */
-    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - force light grey */
-    --sidebar-foreground: 222 13% 16%; /* dark text on light sidebar */
-    --sidebar-primary: var(--primary);
-    --sidebar-primary-foreground: var(--primary-foreground);
-    --sidebar-accent: 0 0% 92%;
-    --sidebar-accent-foreground: 222 13% 16%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: var(--primary);
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
-
-  /* Unity Theme specific overrides */
-  .theme-unity {
-    --background: 0 0% 97%;
-    --foreground: 222 13% 16%;
-    
-    --card: 0 0% 100%;
-    --card-foreground: 222 13% 16%;
-    
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 13% 16%;
-    
-    --primary: 25 95% 53%;
-    --primary-foreground: 0 0% 100%;
-    
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 222 13% 16%;
-    
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 42%;
-    
-    --accent: 25 95% 53%;
-    --accent-foreground: 0 0% 100%;
-    
-    --ring: 25 95% 53%;
-    
-    /* Unity specific status colors */
-    --status-success: 120 60% 50%;
-    --status-warning: 43 74% 66%;
-    --status-info: 25 95% 53%;
-    
-    /* Unity chart colors */
-    --chart-1: 25 95% 53%;
-    --chart-2: 25 95% 43%;
-    --chart-3: 25 95% 33%;
-    --chart-4: 25 95% 63%;
-    --chart-5: 25 95% 73%;
-  }
-
-  .theme-unity.dark {
-    --background: 222 13% 14%;
-    --foreground: 0 0% 96%;
-    
-    --card: 222 13% 16%;
-    --card-foreground: 0 0% 96%;
-    
-    --popover: 222 13% 14%;
-    --popover-foreground: 0 0% 96%;
-    
-    --primary: 25 95% 53%;
-    --primary-foreground: 0 0% 100%;
-    
-    --secondary: 222 13% 18%;
-    --secondary-foreground: 0 0% 96%;
-    
-    --muted: 222 13% 18%;
-    --muted-foreground: 0 0% 65%;
-    
-    --accent: 25 95% 53%;
-    --accent-foreground: 0 0% 100%;
-    
-    --destructive: 0 70% 45%;
-    --destructive-foreground: 0 0% 98%;
-    
-    --border: 222 13% 18%;
-    --input: 222 13% 18%;
-    --ring: 25 95% 53%;
-    
-    /* Force Light Grey Sidebar in Unity Dark Mode */
-    --sidebar-background: 0 0% 95.7%; /* #f4f4f4 - always light grey */
-    --sidebar-foreground: 222 13% 16%; /* dark text on light sidebar */
-    --sidebar-primary: 25 95% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 92%;
-    --sidebar-accent-foreground: 222 13% 16%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 25 95% 53%;
-  }
-
-  /* ... keep existing code (other theme overrides - dark-emerald, belize-hole, etc.) */
 }
 
 @layer base {
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
-    font-family: var(--theme-font-family, Arial, sans-serif);
   }
 }
-
-/* Enhanced Components with CSS Variables */
-@layer utilities {
-  .enhanced-card {
-    @apply transition-all duration-200;
-    box-shadow: 0 4px 20px hsl(var(--primary) / 0.1);
-    border-left: 4px solid hsl(var(--primary));
-  }
-  
-  .enhanced-card:hover {
-    box-shadow: 0 8px 30px hsl(var(--primary) / 0.15);
-    transform: translateY(-1px);
-  }
-  
-  .enhanced-input {
-    @apply transition-all duration-200;
-  }
-  
-  .enhanced-input:focus {
-    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
-    border-color: hsl(var(--primary));
-  }
-  
-  .enhanced-header {
-    @apply transition-all duration-200;
-    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--primary)) 100%);
-    color: hsl(var(--foreground));
-  }
-
-  /* Status indicator utilities */
-  .status-success {
-    background-color: hsl(var(--status-success));
-    color: white;
-  }
-  
-  .status-warning {
-    background-color: hsl(var(--status-warning));
-    color: white;
-  }
-  
-  .status-info {
-    background-color: hsl(var(--status-info));
-    color: white;
-  }
-  
-  .status-error {
-    background-color: hsl(var(--status-error));
-    color: white;
-  }
-
-  /* Avatar utilities */
-  .avatar-default {
-    background-color: hsl(var(--avatar-bg));
-    color: hsl(var(--avatar-fg));
-  }
-}
-
-/* Unity + AltaPro Sidebar Styles and remaining sections - keep existing code */
