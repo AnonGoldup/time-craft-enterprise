@@ -1,10 +1,13 @@
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
-import { Eye, Download, Timer } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Eye, Download, Timer, Plus, Edit, Trash2, MoreHorizontal } from 'lucide-react';
+import { CustomExportDialog } from './CustomExportDialog';
+import { useCustomExports, type CustomExportFormat } from '@/hooks/useCustomExports';
 
 interface WeeklyStats {
   readonly totalEmployees: number;
@@ -23,7 +26,7 @@ const EXPORT_FORMATS = {
   EXCEL: 'excel'
 } as const;
 
-type ExportFormat = typeof EXPORT_FORMATS[keyof typeof EXPORT_FORMATS];
+type ExportFormat = typeof EXPORT_FORMATS[keyof typeof EXPORT_FORMATS] | string;
 
 interface ExportConfigurationProps {
   selectedWeek: string;
@@ -88,6 +91,43 @@ export const ExportConfiguration: React.FC<ExportConfigurationProps> = ({
   onFormatChange,
   onExport
 }) => {
+  const { customFormats, addCustomFormat, updateCustomFormat, deleteCustomFormat } = useCustomExports();
+  const [customDialogOpen, setCustomDialogOpen] = useState(false);
+  const [editingFormat, setEditingFormat] = useState<CustomExportFormat | undefined>();
+
+  const handleCreateCustom = () => {
+    setEditingFormat(undefined);
+    setCustomDialogOpen(true);
+  };
+
+  const handleEditCustom = (format: CustomExportFormat) => {
+    setEditingFormat(format);
+    setCustomDialogOpen(true);
+  };
+
+  const handleSaveCustom = (format: Omit<CustomExportFormat, 'id' | 'createdAt'>) => {
+    if (editingFormat) {
+      updateCustomFormat(editingFormat.id, format);
+    } else {
+      const newFormat = addCustomFormat(format);
+      onFormatChange(newFormat.id);
+    }
+  };
+
+  const handleDeleteCustom = (formatId: string) => {
+    deleteCustomFormat(formatId);
+    if (exportFormat === formatId) {
+      onFormatChange(EXPORT_FORMATS.SAGE300);
+    }
+  };
+
+  const isCustomFormat = (format: string): boolean => {
+    return customFormats.some(f => f.id === format);
+  };
+
+  const getCustomFormat = (formatId: string): CustomExportFormat | undefined => {
+    return customFormats.find(f => f.id === formatId);
+  };
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2">
@@ -115,9 +155,20 @@ export const ExportConfiguration: React.FC<ExportConfigurationProps> = ({
               </div>
               
               <div>
-                <label htmlFor="format-select" className="text-sm font-medium block mb-2">
-                  Export Format
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label htmlFor="format-select" className="text-sm font-medium">
+                    Export Format
+                  </label>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCreateCustom}
+                    className="gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Create Custom
+                  </Button>
+                </div>
                 <Select value={exportFormat} onValueChange={onFormatChange}>
                   <SelectTrigger id="format-select">
                     <SelectValue />
@@ -141,12 +192,63 @@ export const ExportConfiguration: React.FC<ExportConfigurationProps> = ({
                         <span className="text-xs text-gray-500">Human-readable with all columns</span>
                       </div>
                     </SelectItem>
+                    
+                    {customFormats.length > 0 && (
+                      <>
+                        <div className="px-2 py-1.5">
+                          <div className="text-xs font-medium text-muted-foreground">Custom Formats</div>
+                        </div>
+                        {customFormats.map((format) => (
+                          <SelectItem key={format.id} value={format.id}>
+                            <div className="flex items-center justify-between w-full">
+                              <div className="flex flex-col">
+                                <span className="font-medium">{format.name}</span>
+                                <span className="text-xs text-gray-500">{format.description}</span>
+                              </div>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                  <Button variant="ghost" size="sm" className="h-auto p-1">
+                                    <MoreHorizontal className="h-3 w-3" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem onClick={() => handleEditCustom(format)}>
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    Edit
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem 
+                                    onClick={() => handleDeleteCustom(format.id)}
+                                    className="text-destructive"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
                 
                 <div className="mt-3 p-3 bg-gray-50 rounded border">
                   <div className="text-xs font-medium text-gray-700 mb-2">Format Preview:</div>
-                  <FormatPreview format={exportFormat} />
+                  {isCustomFormat(exportFormat) ? (
+                    <div className="space-y-1">
+                      <div className="text-blue-700 font-medium">Custom Format: {getCustomFormat(exportFormat)?.name}</div>
+                      <div className="bg-gray-100 p-2 rounded text-xs font-mono">
+                        {getCustomFormat(exportFormat)?.headers.join(',')}
+                      </div>
+                      <div className="text-gray-500 text-xs">
+                        {getCustomFormat(exportFormat)?.description}
+                      </div>
+                    </div>
+                  ) : (
+                    <FormatPreview format={exportFormat as typeof EXPORT_FORMATS[keyof typeof EXPORT_FORMATS]} />
+                  )}
                 </div>
               </div>
             </div>
@@ -186,6 +288,13 @@ export const ExportConfiguration: React.FC<ExportConfigurationProps> = ({
             )}
           </CardContent>
         </Card>
+        
+        <CustomExportDialog
+          open={customDialogOpen}
+          onOpenChange={setCustomDialogOpen}
+          onSave={handleSaveCustom}
+          editingFormat={editingFormat}
+        />
       </div>
       
       {/* Export Summary */}
