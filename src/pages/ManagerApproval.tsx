@@ -128,21 +128,21 @@ export default function AltaProManagerDashboard() {
   }, [submissions]);
 
   return (
-    <div className="p-4 bg-neutral-200">
-      <div className="w-full mx-auto space-y-3">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      <div className="container mx-auto p-6 space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">AltaPro Timesheet Manager</h1>
-            <p className="text-sm text-gray-600">Enterprise timesheet approval and analytics dashboard</p>
+          <div className="space-y-1">
+            <h1 className="text-3xl font-bold text-foreground">Manager Dashboard</h1>
+            <p className="text-muted-foreground">Enterprise timesheet approval and analytics platform</p>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm">
-              <RefreshCw className="w-4 h-4 mr-1" />
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm" className="gap-2">
+              <RefreshCw className="w-4 h-4" />
               Refresh
             </Button>
-            <Button variant="outline" size="sm">
-              <Download className="w-4 h-4 mr-1" />
+            <Button variant="outline" size="sm" className="gap-2">
+              <Download className="w-4 h-4" />
               Export
             </Button>
           </div>
@@ -157,54 +157,55 @@ export default function AltaProManagerDashboard() {
 
         {/* Main Dashboard Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-4 w-full h-10">
-            <TabsTrigger value="approvals" className="flex items-center space-x-2">
+          <TabsList className="grid grid-cols-4 w-full bg-muted/50 border">
+            <TabsTrigger value="approvals" className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <FileText className="w-4 h-4" />
-              <span>Approvals ({pendingSubmissions.length})</span>
+              <span className="hidden sm:inline">Approvals</span>
+              <Badge variant="secondary" className="ml-1">{pendingSubmissions.length}</Badge>
             </TabsTrigger>
-            <TabsTrigger value="overview" className="flex items-center space-x-2">
+            <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <BarChart3 className="w-4 h-4" />
-              <span>Overview</span>
+              <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
-            <TabsTrigger value="projects" className="flex items-center space-x-2">
+            <TabsTrigger value="projects" className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <Building className="w-4 h-4" />
-              <span>Projects</span>
+              <span className="hidden sm:inline">Projects</span>
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center space-x-2">
+            <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <Activity className="w-4 h-4" />
-              <span>Analytics</span>
+              <span className="hidden sm:inline">Analytics</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Approvals Tab */}
-          <TabsContent value="approvals" className="space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center space-x-3">
-                    <span>Pending Timesheet Submissions</span>
-                    <Badge className="bg-yellow-100 text-yellow-800">
+          <TabsContent value="approvals" className="space-y-6 mt-6">
+            <Card className="border-0 shadow-lg bg-card/50 backdrop-blur-sm">
+              <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-primary/10">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                  <CardTitle className="flex items-center gap-3">
+                    <span className="text-xl">Pending Submissions</span>
+                    <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
                       {pendingSubmissions.length} Pending
                     </Badge>
                   </CardTitle>
                   
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-600">Grouped by:</span>
-                      <Button variant="default" size="sm" className="cursor-default">
-                        <Building className="w-4 h-4 mr-1" />
+                  <div className="flex flex-wrap items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Grouped by:</span>
+                      <Badge variant="secondary" className="gap-1">
+                        <Building className="w-3 h-3" />
                         Project
-                      </Button>
+                      </Badge>
                     </div>
                     
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                       <input
                         type="checkbox"
                         checked={selectedSubmissions.size === pendingSubmissions.length && pendingSubmissions.length > 0}
                         onChange={handleSelectAll}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        className="w-4 h-4 rounded border-input accent-primary"
                       />
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-muted-foreground">
                         Select All ({selectedSubmissions.size}/{pendingSubmissions.length})
                       </span>
                     </div>
@@ -212,65 +213,68 @@ export default function AltaProManagerDashboard() {
                     <Button
                       onClick={handleBulkApprove}
                       disabled={selectedSubmissions.size === 0 || isLoading}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
                     >
-                      <CheckCircle2 className="w-4 h-4 mr-1" />
+                      <CheckCircle2 className="w-4 h-4" />
                       Approve Selected ({selectedSubmissions.size})
                     </Button>
                   </div>
                 </div>
               </CardHeader>
               
-              <CardContent className="space-y-4">
+              <CardContent className="p-6 space-y-6">
                 {Object.entries(groupedSubmissions).map(([projectCode, group]) => {
                   const isExpanded = expandedProjects.has(projectCode);
                   return (
                     <div key={projectCode} className="space-y-4">
-                      <div className="border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-r-lg">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-blue-900">{group.projectCode}</h3>
-                            <p className="text-sm text-blue-700">{group.projectDescription}</p>
-                          </div>
-                          <div className="flex items-center space-x-4">
-                            <Badge variant="outline" className="text-blue-700 border-blue-300">
-                              {group.submissions.length} {group.submissions.length === 1 ? 'employee' : 'employees'}
-                            </Badge>
-                            <Badge variant="outline" className="text-blue-700 border-blue-300">
-                              {group.submissions.reduce((sum, sub) => sum + sub.totalHours, 0)}h total
-                            </Badge>
-                            
-                            <ProjectSelectButton
-                              group={group}
-                              projectCode={projectCode}
-                              selectedSubmissions={selectedSubmissions}
-                              onSelectAllInProject={handleSelectAllInProject}
-                            />
-                            
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleToggleProject(projectCode)}
-                              className="text-blue-700 hover:bg-blue-100"
-                            >
-                              {isExpanded ? (
-                                <>
-                                  <ChevronUp className="w-4 h-4 mr-1" />
-                                  Collapse
-                                </>
-                              ) : (
-                                <>
-                                  <ChevronDown className="w-4 h-4 mr-1" />
-                                  Expand
-                                </>
-                              )}
-                            </Button>
+                      <div className="relative overflow-hidden rounded-xl border bg-gradient-to-r from-blue-50/80 to-indigo-50/80 dark:from-blue-950/20 dark:to-indigo-950/20">
+                        <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-blue-500 to-indigo-600"></div>
+                        <div className="p-6">
+                          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <div className="flex-1">
+                              <h3 className="text-lg font-semibold text-foreground">{group.projectCode}</h3>
+                              <p className="text-muted-foreground">{group.projectDescription}</p>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-3">
+                              <Badge variant="outline" className="bg-white/50 dark:bg-slate-800/50">
+                                {group.submissions.length} {group.submissions.length === 1 ? 'employee' : 'employees'}
+                              </Badge>
+                              <Badge variant="outline" className="bg-white/50 dark:bg-slate-800/50">
+                                {group.submissions.reduce((sum, sub) => sum + sub.totalHours, 0)}h total
+                              </Badge>
+                              
+                              <ProjectSelectButton
+                                group={group}
+                                projectCode={projectCode}
+                                selectedSubmissions={selectedSubmissions}
+                                onSelectAllInProject={handleSelectAllInProject}
+                              />
+                              
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleToggleProject(projectCode)}
+                                className="hover:bg-white/50 dark:hover:bg-slate-800/50 gap-1"
+                              >
+                                {isExpanded ? (
+                                  <>
+                                    <ChevronUp className="w-4 h-4" />
+                                    <span className="hidden sm:inline">Collapse</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <ChevronDown className="w-4 h-4" />
+                                    <span className="hidden sm:inline">Expand</span>
+                                  </>
+                                )}
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>
                       
                       {isExpanded && (
-                        <div className="grid gap-4 pl-4">
+                        <div className="grid gap-4 pl-6">
                           {group.submissions.map(submission => (
                             <SubmissionCard
                               key={submission.id}
@@ -288,10 +292,12 @@ export default function AltaProManagerDashboard() {
                 })}
                 
                 {pendingSubmissions.length === 0 && (
-                  <div className="text-center py-12">
-                    <CheckCircle2 className="w-16 h-16 mx-auto text-green-500 mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">All Caught Up!</h3>
-                    <p className="text-gray-600">No pending timesheet submissions to review.</p>
+                  <div className="text-center py-16">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-900/20 mb-4">
+                      <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-foreground mb-2">All Caught Up!</h3>
+                    <p className="text-muted-foreground">No pending timesheet submissions to review.</p>
                   </div>
                 )}
               </CardContent>
@@ -299,31 +305,31 @@ export default function AltaProManagerDashboard() {
           </TabsContent>
 
           {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Weekly Hours Trend</CardTitle>
+          <TabsContent value="overview" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-semibold">Weekly Hours Trend</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-2">
+                <CardContent>
                   <WeeklyChart data={dashboardData.weeklyTrends.hoursData} type="hours" />
                 </CardContent>
               </Card>
               
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Efficiency Trend</CardTitle>
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-semibold">Efficiency Trend</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-2">
+                <CardContent>
                   <WeeklyChart data={dashboardData.weeklyTrends.efficiencyTrend} type="efficiency" />
                 </CardContent>
               </Card>
               
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Daily Cost Trend</CardTitle>
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-semibold">Daily Cost Trend</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-2">
+                <CardContent>
                   <WeeklyChart data={dashboardData.weeklyTrends.costTrend} type="costs" />
                 </CardContent>
               </Card>
@@ -331,8 +337,8 @@ export default function AltaProManagerDashboard() {
           </TabsContent>
 
           {/* Projects Tab */}
-          <TabsContent value="projects" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <TabsContent value="projects" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {dashboardData.projectMetrics.map(project => (
                 <ProjectMetricsCard key={project.code} project={project} />
               ))}
@@ -340,57 +346,57 @@ export default function AltaProManagerDashboard() {
           </TabsContent>
 
           {/* Analytics Tab */}
-          <TabsContent value="analytics" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Performance Summary</CardTitle>
+          <TabsContent value="analytics" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-semibold">Performance Summary</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3 pt-2">
+                <CardContent className="space-y-4">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-green-600">87%</p>
-                    <p className="text-sm text-gray-600">Overall Team Efficiency</p>
+                    <p className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">87%</p>
+                    <p className="text-sm text-muted-foreground">Overall Team Efficiency</p>
                   </div>
                   
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Top Performer:</span>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Top Performer:</span>
                       <span className="font-medium">Sarah Johnson (95%)</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Most Improved:</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Most Improved:</span>
                       <span className="font-medium">Mike Wilson (+12%)</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Needs Attention:</span>
-                      <span className="font-medium text-yellow-600">2 employees</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Needs Attention:</span>
+                      <span className="font-medium text-amber-600">2 employees</span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
               
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Weekly Insights</CardTitle>
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-semibold">Weekly Insights</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3 pt-2">
-                  <Alert className="border-green-200 bg-green-50 py-2">
-                    <TrendingUp className="w-4 h-4 text-green-600" />
-                    <AlertDescription className="text-green-800">
+                <CardContent className="space-y-4">
+                  <Alert className="border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20">
+                    <TrendingUp className="w-4 h-4 text-emerald-600" />
+                    <AlertDescription className="text-emerald-800 dark:text-emerald-200">
                       <strong>Great News!</strong> Team efficiency is up 5% from last week.
                     </AlertDescription>
                   </Alert>
                   
-                  <Alert className="border-blue-200 bg-blue-50 py-2">
+                  <Alert className="border-blue-200 bg-gradient-to-r from-blue-50 to-sky-50 dark:from-blue-950/20 dark:to-sky-950/20">
                     <Eye className="w-4 h-4 text-blue-600" />
-                    <AlertDescription className="text-blue-800">
+                    <AlertDescription className="text-blue-800 dark:text-blue-200">
                       <strong>Notice:</strong> Project 21-0066 approaching budget limit (67% used).
                     </AlertDescription>
                   </Alert>
                   
-                  <Alert className="border-yellow-200 bg-yellow-50 py-2">
-                    <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                    <AlertDescription className="text-yellow-800">
+                  <Alert className="border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/20 dark:to-yellow-950/20">
+                    <AlertTriangle className="w-4 h-4 text-amber-600" />
+                    <AlertDescription className="text-amber-800 dark:text-amber-200">
                       <strong>Action Required:</strong> 3 timesheets have anomalies requiring review.
                     </AlertDescription>
                   </Alert>
