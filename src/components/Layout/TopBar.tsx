@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { ProfileModal } from '@/components/Profile/ProfileModal';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,6 +63,8 @@ export const TopBar: React.FC = () => {
                 <Bell className="h-5 w-5" />
               </Button>
             )}
+            
+            <ThemeToggle />
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
