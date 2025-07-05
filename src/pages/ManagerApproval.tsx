@@ -128,7 +128,7 @@ export default function AltaProManagerDashboard() {
   }, [submissions]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6 space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -179,12 +179,12 @@ export default function AltaProManagerDashboard() {
 
           {/* Approvals Tab */}
           <TabsContent value="approvals" className="space-y-6 mt-6">
-            <Card className="border-0 shadow-lg bg-card/50 backdrop-blur-sm">
-              <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-primary/10">
+            <Card className="border-0 shadow-lg bg-card">
+              <CardHeader className="border-b bg-muted/30">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                   <CardTitle className="flex items-center gap-3">
                     <span className="text-xl">Pending Submissions</span>
-                    <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                    <Badge variant="outline" className="bg-muted text-muted-foreground border-border">
                       {pendingSubmissions.length} Pending
                     </Badge>
                   </CardTitle>
@@ -213,7 +213,7 @@ export default function AltaProManagerDashboard() {
                     <Button
                       onClick={handleBulkApprove}
                       disabled={selectedSubmissions.size === 0 || isLoading}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
                     >
                       <CheckCircle2 className="w-4 h-4" />
                       Approve Selected ({selectedSubmissions.size})
@@ -227,8 +227,8 @@ export default function AltaProManagerDashboard() {
                   const isExpanded = expandedProjects.has(projectCode);
                   return (
                     <div key={projectCode} className="space-y-4">
-                      <div className="relative overflow-hidden rounded-xl border bg-gradient-to-r from-blue-50/80 to-indigo-50/80 dark:from-blue-950/20 dark:to-indigo-950/20">
-                        <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-blue-500 to-indigo-600"></div>
+                      <div className="relative overflow-hidden rounded-xl border bg-muted/50">
+                        <div className="absolute inset-y-0 left-0 w-1 bg-primary"></div>
                         <div className="p-6">
                           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                             <div className="flex-1">
@@ -236,10 +236,10 @@ export default function AltaProManagerDashboard() {
                               <p className="text-muted-foreground">{group.projectDescription}</p>
                             </div>
                             <div className="flex flex-wrap items-center gap-3">
-                              <Badge variant="outline" className="bg-white/50 dark:bg-slate-800/50">
+                              <Badge variant="outline" className="bg-muted/50">
                                 {group.submissions.length} {group.submissions.length === 1 ? 'employee' : 'employees'}
                               </Badge>
-                              <Badge variant="outline" className="bg-white/50 dark:bg-slate-800/50">
+                              <Badge variant="outline" className="bg-muted/50">
                                 {group.submissions.reduce((sum, sub) => sum + sub.totalHours, 0)}h total
                               </Badge>
                               
@@ -254,7 +254,7 @@ export default function AltaProManagerDashboard() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleToggleProject(projectCode)}
-                                className="hover:bg-white/50 dark:hover:bg-slate-800/50 gap-1"
+                                className="hover:bg-accent gap-1"
                               >
                                 {isExpanded ? (
                                   <>
@@ -293,8 +293,8 @@ export default function AltaProManagerDashboard() {
                 
                 {pendingSubmissions.length === 0 && (
                   <div className="text-center py-16">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-900/20 mb-4">
-                      <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/20 mb-4">
+                      <CheckCircle2 className="w-8 h-8 text-accent-foreground" />
                     </div>
                     <h3 className="text-xl font-semibold text-foreground mb-2">All Caught Up!</h3>
                     <p className="text-muted-foreground">No pending timesheet submissions to review.</p>
@@ -354,7 +354,7 @@ export default function AltaProManagerDashboard() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="text-center">
-                    <p className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">87%</p>
+                    <p className="text-3xl font-bold text-foreground">87%</p>
                     <p className="text-sm text-muted-foreground">Overall Team Efficiency</p>
                   </div>
                   
@@ -369,7 +369,7 @@ export default function AltaProManagerDashboard() {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Needs Attention:</span>
-                      <span className="font-medium text-amber-600">2 employees</span>
+                      <span className="font-medium text-muted-foreground">2 employees</span>
                     </div>
                   </div>
                 </CardContent>
@@ -380,23 +380,23 @@ export default function AltaProManagerDashboard() {
                   <CardTitle className="text-base font-semibold">Weekly Insights</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Alert className="border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20">
-                    <TrendingUp className="w-4 h-4 text-emerald-600" />
-                    <AlertDescription className="text-emerald-800 dark:text-emerald-200">
+                  <Alert className="border-border bg-muted/30">
+                    <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                    <AlertDescription className="text-foreground">
                       <strong>Great News!</strong> Team efficiency is up 5% from last week.
                     </AlertDescription>
                   </Alert>
                   
-                  <Alert className="border-blue-200 bg-gradient-to-r from-blue-50 to-sky-50 dark:from-blue-950/20 dark:to-sky-950/20">
-                    <Eye className="w-4 h-4 text-blue-600" />
-                    <AlertDescription className="text-blue-800 dark:text-blue-200">
+                  <Alert className="border-border bg-muted/30">
+                    <Eye className="w-4 h-4 text-muted-foreground" />
+                    <AlertDescription className="text-foreground">
                       <strong>Notice:</strong> Project 21-0066 approaching budget limit (67% used).
                     </AlertDescription>
                   </Alert>
                   
-                  <Alert className="border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/20 dark:to-yellow-950/20">
-                    <AlertTriangle className="w-4 h-4 text-amber-600" />
-                    <AlertDescription className="text-amber-800 dark:text-amber-200">
+                  <Alert className="border-border bg-muted/30">
+                    <AlertTriangle className="w-4 h-4 text-muted-foreground" />
+                    <AlertDescription className="text-foreground">
                       <strong>Action Required:</strong> 3 timesheets have anomalies requiring review.
                     </AlertDescription>
                   </Alert>
@@ -408,11 +408,11 @@ export default function AltaProManagerDashboard() {
 
         {/* Loading Overlay */}
         {isLoading && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
+          <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-card p-6 rounded-lg shadow-lg border">
               <div className="flex items-center space-x-3">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                <span className="text-lg font-medium">Processing approval...</span>
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                <span className="text-lg font-medium text-foreground">Processing approval...</span>
               </div>
             </div>
           </div>
